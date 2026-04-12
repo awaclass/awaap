@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY") 
 DEBUG = os.getenv("DEBUG", 'False') == 'True'  # Convert string to boolean
-USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
+USE_CLOUDINARY = True
 
 # Allowed hosts configuration
 ALLOWED_HOSTS = [
