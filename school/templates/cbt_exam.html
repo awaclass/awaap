@@ -1,0 +1,1502 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathematics CBT — awaClass</title>
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+
+  /* ══════════════════════════════════════════════════
+     BASE
+  ══════════════════════════════════════════════════ */
+  body {
+    background-color: #ffffff;
+  }
+
+  /* ══════════════════════════════════════════════════
+     PAGE LAYOUT
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 16px 16px 56px;
+  }
+
+  /* ══════════════════════════════════════════════════
+     INTRO SCREEN
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-intro-wrap {
+    min-height: 78vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-intro-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 36px 28px;
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,.06);
+  }
+
+  .awaClass-cbt-intro-emoji {
+    font-size: 3rem;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-intro-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f0f0f;
+    margin: 0 0 6px;
+  }
+
+  .awaClass-cbt-intro-sub {
+    font-size: 13px;
+    color: #606060;
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+
+  .awaClass-cbt-intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .awaClass-cbt-intro-item {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 13px 10px;
+  }
+
+  .awaClass-cbt-intro-item .awaClass-cbt-iv {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #3b82f6;
+    line-height: 1;
+  }
+
+  .awaClass-cbt-intro-item .awaClass-cbt-il {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 3px;
+  }
+
+  .awaClass-cbt-btn-start {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.18s;
+    box-shadow: 0 6px 18px rgba(59,130,246,.28);
+  }
+
+  .awaClass-cbt-btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59,130,246,.38);
+  }
+
+  /* ══════════════════════════════════════════════════
+     STICKY TOPBAR
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 11px 16px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+    box-shadow: 0 4px 18px rgba(0,0,0,.07);
+  }
+
+  .awaClass-cbt-topbar-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  /* ── Timer ── */
+  .awaClass-cbt-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+    padding: 6px 12px;
+    transition: all 0.3s;
+  }
+
+  .awaClass-cbt-timer.warn {
+    background: #fffbeb;
+    border-color: #fde68a;
+    animation: awaClass-pulse 1s infinite;
+  }
+
+  .awaClass-cbt-timer.danger {
+    background: #fef2f2;
+    border-color: #f87171;
+    animation: awaClass-pulse 0.5s infinite;
+  }
+
+  @keyframes awaClass-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.25); }
+    50%       { box-shadow: 0 0 0 4px rgba(239,68,68,0); }
+  }
+
+  .awaClass-cbt-timer-display {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ef4444;
+    min-width: 52px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Calc button ── */
+  .awaClass-cbt-btn-calc {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 9px;
+    padding: 6px 12px;
+    color: #3b82f6;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .awaClass-cbt-btn-calc:hover {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    transform: translateY(-1px);
+  }
+
+  /* ══════════════════════════════════════════════════
+     PROGRESS BAR
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-bar {
+    flex: 1;
+    height: 5px;
+    background: #e5e5e5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .awaClass-cbt-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 6px rgba(59,130,246,.4);
+  }
+
+  .awaClass-cbt-prog-lbl {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTION NAV DOTS
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1.5px solid #e5e5e5;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-dot:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+  }
+
+  .awaClass-cbt-dot.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+  }
+
+  .awaClass-cbt-dot.answered {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .awaClass-cbt-dot.answered.active {
+    background: #10b981;
+    color: #fff;
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTION CARD
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-q-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 24px 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    animation: awaClass-slideIn 0.26s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes awaClass-slideIn {
+    from { opacity: 0; transform: translateX(14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .awaClass-cbt-q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-q-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #06b6d4;
+    background: #ecfeff;
+    border: 1px solid #a5f3fc;
+    padding: 3px 9px;
+    border-radius: 5px;
+  }
+
+  .awaClass-cbt-q-num {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .awaClass-cbt-q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #0f0f0f;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  /* ── Options ── */
+  .awaClass-cbt-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 520px) {
+    .awaClass-cbt-opts { grid-template-columns: 1fr; }
+  }
+
+  .awaClass-cbt-opt {
+    background: #f9fafb;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 11px;
+    padding: 12px 14px;
+    color: #0f0f0f;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+
+  .awaClass-cbt-opt:hover:not(:disabled) {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(59,130,246,.1);
+  }
+
+  .awaClass-cbt-opt-lbl {
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+    background: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #606060;
+    transition: all 0.15s;
+  }
+
+  .awaClass-cbt-opt.correct {
+    border-color: #10b981;
+    background: #ecfdf5;
+    animation: awaClass-pop 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  .awaClass-cbt-opt.correct .awaClass-cbt-opt-lbl {
+    background: #10b981;
+    color: #fff;
+  }
+
+  .awaClass-cbt-opt.wrong {
+    border-color: #ef4444;
+    background: #fef2f2;
+    animation: awaClass-shake 0.38s ease;
+  }
+
+  .awaClass-cbt-opt.wrong .awaClass-cbt-opt-lbl {
+    background: #ef4444;
+    color: #fff;
+  }
+
+  .awaClass-cbt-opt:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  @keyframes awaClass-pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes awaClass-shake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-5px); }
+    40%     { transform: translateX(5px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+  }
+
+  /* ══════════════════════════════════════════════════
+     NAV BUTTONS
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-btn-outline {
+    background: transparent;
+    border: 1.5px solid #e5e5e5;
+    color: #9ca3af;
+  }
+
+  .awaClass-cbt-btn-outline:hover:not(:disabled) {
+    border-color: #3b82f6;
+    color: #3b82f6;
+  }
+
+  .awaClass-cbt-btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(59,130,246,.25);
+  }
+
+  .awaClass-cbt-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(59,130,246,.35);
+  }
+
+  .awaClass-cbt-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(239,68,68,.2);
+  }
+
+  .awaClass-cbt-btn-danger:hover {
+    transform: translateY(-1px);
+  }
+
+  .awaClass-cbt-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════
+     CONFETTI + TOAST
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    display: none;
+  }
+
+  .awaClass-cbt-cp {
+    position: absolute;
+    border-radius: 2px;
+    animation: awaClass-cfFall linear forwards;
+  }
+
+  @keyframes awaClass-cfFall {
+    0%   { transform: translateY(-20px) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .awaClass-cbt-toast {
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-18px);
+    background: linear-gradient(135deg, #064e3b, #065f46);
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    padding: 11px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #6ee7b7;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(.175,.885,.32,1.275);
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(16,185,129,.2);
+    pointer-events: none;
+  }
+
+  .awaClass-cbt-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR MODAL
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-calc-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    backdrop-filter: blur(6px);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-calc-overlay.open {
+    display: flex;
+  }
+
+  .awaClass-cbt-calculator {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 22px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 20px 48px rgba(0,0,0,.15);
+    animation: awaClass-popIn 0.26s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  @keyframes awaClass-popIn {
+    from { transform: scale(.88); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .awaClass-cbt-calc-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+  }
+
+  .awaClass-cbt-calc-lbl {
+    font-size: 13px;
+    font-weight: 700;
+    color: #3b82f6;
+  }
+
+  .awaClass-cbt-calc-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+  }
+
+  .awaClass-cbt-calc-close:hover { color: #0f0f0f; }
+
+  .awaClass-cbt-calc-disp {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 11px;
+    padding: 11px 14px;
+    text-align: right;
+    margin-bottom: 13px;
+  }
+
+  #awaClass-cExpr {
+    font-size: 11px;
+    color: #9ca3af;
+    min-height: 15px;
+    word-break: break-all;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #awaClass-cResult {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f0f0f;
+    word-break: break-all;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awaClass-cbt-ckeys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .awaClass-cbt-ck {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 9px;
+    padding: 12px 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f0f0f;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.12s;
+    text-align: center;
+  }
+
+  .awaClass-cbt-ck:hover { background: #e5e5e5; transform: translateY(-1px); }
+  .awaClass-cbt-ck:active { transform: scale(0.96); }
+
+  .awaClass-cbt-ck.op  { color: #3b82f6; background: #eff6ff; }
+  .awaClass-cbt-ck.eq  { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border-color: #3b82f6; }
+  .awaClass-cbt-ck.cl  { color: #ef4444; background: #fef2f2; }
+  .awaClass-cbt-ck.s2  { grid-column: span 2; }
+  .awaClass-cbt-ck.s4  { grid-column: span 4; font-size: 12px; }
+
+  /* ══════════════════════════════════════════════════
+     SUBMIT CONFIRM MODAL
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    backdrop-filter: blur(6px);
+    z-index: 600;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-confirm-overlay.open {
+    display: flex;
+  }
+
+  .awaClass-cbt-confirm-box {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 28px;
+    width: 310px;
+    text-align: center;
+    box-shadow: 0 20px 48px rgba(0,0,0,.12);
+    animation: awaClass-popIn 0.26s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  .awaClass-cbt-conf-icon  { font-size: 2.2rem; margin-bottom: 10px; }
+  .awaClass-cbt-conf-title { font-size: 16px; font-weight: 800; color: #0f0f0f; margin-bottom: 6px; }
+  .awaClass-cbt-conf-sub   { font-size: 13px; color: #606060; margin-bottom: 18px; line-height: 1.5; }
+
+  .awaClass-cbt-conf-btns {
+    display: flex;
+    gap: 9px;
+    justify-content: center;
+  }
+
+  /* ══════════════════════════════════════════════════
+     RESULTS SCREEN
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-results {
+    display: none;
+    animation: awaClass-fadeUp 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes awaClass-fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .awaClass-cbt-res-hero {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .awaClass-cbt-res-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(59,130,246,.07) 0%, transparent 70%);
+  }
+
+  .awaClass-cbt-score-ring {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .awaClass-cbt-score-ring svg { transform: rotate(-90deg); }
+
+  .awaClass-cbt-sring-bg {
+    fill: none;
+    stroke: #e5e5e5;
+    stroke-width: 8;
+  }
+
+  .awaClass-cbt-sring-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .awaClass-cbt-score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #awaClass-resPercent {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #0f0f0f;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awaClass-cbt-score-lbl-sm {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  #awaClass-resGrade {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f0f0f;
+    margin-bottom: 4px;
+  }
+
+  #awaClass-resSub {
+    font-size: 13px;
+    color: #606060;
+    margin-bottom: 16px;
+  }
+
+  .awaClass-cbt-stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .awaClass-cbt-stat-chip {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 9px 14px;
+    text-align: center;
+  }
+
+  .awaClass-cbt-stat-chip .awaClass-sv {
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awaClass-cbt-stat-chip .awaClass-sl {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  .awaClass-sv.c { color: #10b981; }
+  .awaClass-sv.w { color: #ef4444; }
+  .awaClass-sv.s { color: #f59e0b; }
+
+  /* Points banner */
+  .awaClass-cbt-points-banner {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .awaClass-cbt-points-icon { font-size: 1.75rem; }
+
+  .awaClass-cbt-points-body h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3b82f6;
+    margin: 0 0 2px;
+  }
+
+  .awaClass-cbt-points-body p {
+    font-size: 12px;
+    color: #606060;
+    margin: 0;
+  }
+
+  #awaClass-earnedPts { color: #f59e0b; font-weight: 800; }
+
+  /* Review */
+  .awaClass-cbt-rev-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f0f0f;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-rev-item {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 13px;
+    padding: 16px;
+    margin-bottom: 9px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.04);
+  }
+
+  .awaClass-cbt-rev-item.ri-c { border-left: 3px solid #10b981; }
+  .awaClass-cbt-rev-item.ri-w { border-left: 3px solid #ef4444; }
+  .awaClass-cbt-rev-item.ri-s { border-left: 3px solid #f59e0b; }
+
+  .awaClass-cbt-rev-q {
+    font-size: 13px;
+    font-weight: 500;
+    color: #0f0f0f;
+    line-height: 1.5;
+    margin-bottom: 9px;
+  }
+
+  .awaClass-cbt-rev-ans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .awaClass-cbt-rans {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .awaClass-cbt-rans.ya.c  { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .awaClass-cbt-rans.ya.w  { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .awaClass-cbt-rans.ca    { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .awaClass-cbt-rans.sk    { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+
+  /* Exam body hidden by default */
+  .awaClass-cbt-exam-body { display: none; }
+
+  @media (max-width: 520px) {
+    .awaClass-cbt-topbar { flex-wrap: wrap; gap: 8px; }
+    .awaClass-cbt-intro-card { padding: 24px 16px; }
+  }
+
+</style>
+</head>
+<body>
+{% include 'sidebar.html' %}
+
+<!-- confetti + toast -->
+<div class="awaClass-cbt-confetti" id="cbtConfetti"></div>
+<div class="awaClass-cbt-toast"    id="cbtToast">🎉 Correct! Well done!</div>
+
+<!-- ══════════════════════════════════════════
+     CALCULATOR MODAL
+══════════════════════════════════════════ -->
+<div class="awaClass-cbt-calc-overlay" id="calcOverlay" onclick="closeCalcClick(event)">
+  <div class="awaClass-cbt-calculator">
+    <div class="awaClass-cbt-calc-hdr">
+      <span class="awaClass-cbt-calc-lbl">🧮 Calculator</span>
+      <button class="awaClass-cbt-calc-close" onclick="toggleCalc()">✕</button>
+    </div>
+    <div class="awaClass-cbt-calc-disp">
+      <div id="awaClass-cExpr"></div>
+      <div id="awaClass-cResult">0</div>
+    </div>
+    <div class="awaClass-cbt-ckeys">
+      <button class="awaClass-cbt-ck cl" onclick="calcClear()">C</button>
+      <button class="awaClass-cbt-ck op" onclick="calcToggleSign()">±</button>
+      <button class="awaClass-cbt-ck op" onclick="calcPercent()">%</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('/')">÷</button>
+
+      <button class="awaClass-cbt-ck" onclick="calcInput('7')">7</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('8')">8</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('9')">9</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('*')">×</button>
+
+      <button class="awaClass-cbt-ck" onclick="calcInput('4')">4</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('5')">5</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('6')">6</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('-')">−</button>
+
+      <button class="awaClass-cbt-ck" onclick="calcInput('1')">1</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('2')">2</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('3')">3</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('+')">+</button>
+
+      <button class="awaClass-cbt-ck s2" onclick="calcInput('0')">0</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('.')">.</button>
+      <button class="awaClass-cbt-ck eq" onclick="calcEval()">=</button>
+
+      <button class="awaClass-cbt-ck s4 op" onclick="calcBack()">⌫ Backspace</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SUBMIT CONFIRM MODAL
+══════════════════════════════════════════ -->
+<div class="awaClass-cbt-confirm-overlay" id="confirmOverlay">
+  <div class="awaClass-cbt-confirm-box">
+    <div class="awaClass-cbt-conf-icon">📋</div>
+    <div class="awaClass-cbt-conf-title">Submit Exam?</div>
+    <div class="awaClass-cbt-conf-sub" id="confSub">Are you sure you want to submit?</div>
+    <div class="awaClass-cbt-conf-btns">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-danger"  onclick="submitExam()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<div class="awaClass-cbt-page">
+
+  <!-- INTRO -->
+  <div class="awaClass-cbt-intro-wrap" id="introWrap">
+    <div class="awaClass-cbt-intro-card">
+      <div class="awaClass-cbt-intro-emoji">📐</div>
+      <div class="awaClass-cbt-intro-title">Mathematics CBT</div>
+      <div class="awaClass-cbt-intro-sub">Senior Secondary · General Mathematics · awaClass</div>
+      <div class="awaClass-cbt-intro-grid">
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">20</div>
+          <div class="awaClass-cbt-il">Questions</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">30:00</div>
+          <div class="awaClass-cbt-il">Time Limit</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">1 mark</div>
+          <div class="awaClass-cbt-il">Per Question</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">0</div>
+          <div class="awaClass-cbt-il">Negative Mark</div>
+        </div>
+      </div>
+      <button class="awaClass-cbt-btn-start" onclick="startExam()">▶ Start Exam</button>
+    </div>
+  </div>
+
+  <!-- EXAM BODY -->
+  <div class="awaClass-cbt-exam-body" id="examBody">
+
+    <!-- Topbar -->
+    <div class="awaClass-cbt-topbar">
+      <div class="awaClass-cbt-topbar-title">
+        <i class="fa-solid fa-square-root-variable"></i> Maths CBT
+      </div>
+      <div class="awaClass-cbt-topbar-right">
+        <button class="awaClass-cbt-btn-calc" onclick="toggleCalc()">
+          <i class="fa-solid fa-calculator"></i> Calculator
+        </button>
+        <div class="awaClass-cbt-timer" id="timerPill">
+          <i class="fa-regular fa-clock" style="color:#ef4444;font-size:12px;"></i>
+          <span class="awaClass-cbt-timer-display" id="cbtTimer">30:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="awaClass-cbt-progress-wrap">
+      <div class="awaClass-cbt-bar">
+        <div class="awaClass-cbt-bar-fill" id="barFill" style="width:0%"></div>
+      </div>
+      <div class="awaClass-cbt-prog-lbl" id="progLbl">0 / 20</div>
+    </div>
+
+    <!-- Dots -->
+    <div class="awaClass-cbt-dots" id="dotRow"></div>
+
+    <!-- Question Card -->
+    <div class="awaClass-cbt-q-card" id="qCard">
+      <div class="awaClass-cbt-q-meta">
+        <span class="awaClass-cbt-q-badge" id="qTopic">Topic</span>
+        <span class="awaClass-cbt-q-num"   id="qNum">Question 1 of 20</span>
+      </div>
+      <div class="awaClass-cbt-q-text" id="qText"></div>
+      <div class="awaClass-cbt-opts"   id="optsGrid"></div>
+    </div>
+
+    <!-- Nav -->
+    <div class="awaClass-cbt-nav">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-outline" id="prevBtn" onclick="nav(-1)" disabled>← Prev</button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-danger"  onclick="openConfirm()">
+        <i class="fa-solid fa-flag-checkered"></i> Submit
+      </button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-primary" id="nextBtn" onclick="nav(1)">Next →</button>
+    </div>
+
+  </div><!-- /exam-body -->
+
+  <!-- RESULTS -->
+  <div class="awaClass-cbt-results" id="resultsWrap">
+
+    <div class="awaClass-cbt-res-hero">
+      <div class="awaClass-cbt-score-ring">
+        <svg width="128" height="128" viewBox="0 0 128 128">
+          <circle class="awaClass-cbt-sring-bg"   cx="64" cy="64" r="52"/>
+          <circle class="awaClass-cbt-sring-fill" id="sringFill" cx="64" cy="64" r="52"
+                  stroke-dasharray="327" stroke-dashoffset="327"/>
+        </svg>
+        <div class="awaClass-cbt-score-center">
+          <div id="awaClass-resPercent">0%</div>
+          <div class="awaClass-cbt-score-lbl-sm">Score</div>
+        </div>
+      </div>
+      <div id="awaClass-resGrade">—</div>
+      <div id="awaClass-resSub"></div>
+      <div class="awaClass-cbt-stats-row">
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv c" id="stC">0</div>
+          <div class="awaClass-sl">Correct</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv w" id="stW">0</div>
+          <div class="awaClass-sl">Wrong</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv s" id="stS">0</div>
+          <div class="awaClass-sl">Skipped</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv" id="stT" style="color:#3b82f6">—</div>
+          <div class="awaClass-sl">Time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Points banner -->
+    <div class="awaClass-cbt-points-banner" id="ptsBanner">
+      <div class="awaClass-cbt-points-icon">🏆</div>
+      <div class="awaClass-cbt-points-body">
+        <h3>Points Earned — <span id="awaClass-earnedPts">…</span> pts total</h3>
+        <p id="awaClass-ptsDetail">Loading your score…</p>
+      </div>
+    </div>
+
+    <div class="awaClass-cbt-rev-title">📝 Answer Review</div>
+    <div id="reviewList"></div>
+
+    <div style="text-align:center;margin:20px 0 8px;">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-primary" onclick="retake()" style="padding:12px 28px;font-size:14px;">
+        <i class="fa-solid fa-rotate-right"></i> Retake Exam
+      </button>
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /page -->
+
+<script>
+/* ═══════════════════════════════════════
+   QUESTIONS BANK (20 questions)
+═══════════════════════════════════════ */
+const QS = [
+  {t:"Number Theory",  q:"What is the value of 2⁸?",
+   o:["128","256","512","64"], a:1},
+  {t:"Algebra",        q:"Solve for x: 3x + 7 = 22",
+   o:["x = 3","x = 5","x = 7","x = 9"], a:1},
+  {t:"Geometry",       q:"Area of a circle with radius 7 cm? (π ≈ 22/7)",
+   o:["154 cm²","144 cm²","176 cm²","132 cm²"], a:0},
+  {t:"Fractions",      q:"Simplify: ³⁄₄ ÷ ⁹⁄₁₆",
+   o:["⁴⁄₃","³⁄₄","¹⁄₃","²⁷⁄₆₄"], a:0},
+  {t:"Quadratics",     q:"Roots of x² − 5x + 6 = 0",
+   o:["x = 1, 6","x = 2, 3","x = −2, −3","x = 3, 4"], a:1},
+  {t:"Statistics",     q:"Mean of 5 numbers is 12. What is their sum?",
+   o:["50","55","60","65"], a:2},
+  {t:"Indices",        q:"Simplify: (x³)² × x⁴",
+   o:["x⁹","x¹⁰","x¹²","x⁸"], a:1},
+  {t:"Geometry",       q:"Angles of a triangle in ratio 1:2:3. Largest angle?",
+   o:["60°","80°","90°","120°"], a:2},
+  {t:"Percentages",    q:"₦4,000 shirt — 25% discount. New price?",
+   o:["₦3,000","₦2,800","₦3,200","₦2,500"], a:0},
+  {t:"Logarithms",     q:"Evaluate: log₁₀(1000)",
+   o:["2","3","4","10"], a:1},
+  {t:"Sets",           q:"n(A)=15, n(B)=20, n(A∪B)=30. Find n(A∩B).",
+   o:["3","5","8","10"], a:1},
+  {t:"Mensuration",    q:"Volume of cylinder r=3 cm, h=10 cm? (π≈3.14)",
+   o:["282.6 cm³","188.4 cm³","314 cm³","251.2 cm³"], a:0},
+  {t:"Number Base",    q:"Convert 1011₂ to base 10.",
+   o:["9","10","11","13"], a:2},
+  {t:"Algebra",        q:"Factorize: 6x² + 11x + 4",
+   o:["(3x+4)(2x+1)","(2x+4)(3x+1)","(6x+1)(x+4)","(3x+1)(2x+4)"], a:0},
+  {t:"Trigonometry",   q:"What is sin(30°)?",
+   o:["√3/2","1/√2","1/2","√3/3"], a:2},
+  {t:"Probability",    q:"5 red + 3 blue balls. P(red)?",
+   o:["3/8","5/3","5/8","3/5"], a:2},
+  {t:"Surds",          q:"Rationalize: 1/√5",
+   o:["√5/25","√5/5","5/√5","1/5"], a:1},
+  {t:"Arithmetic",     q:"8th term of AP: 3, 7, 11, 15, …",
+   o:["27","29","31","33"], a:2},
+  {t:"Geometry",       q:"Sum of interior angles of a pentagon:",
+   o:["360°","450°","540°","720°"], a:2},
+  {t:"Variation",      q:"y ∝ x², y=12 when x=2. Find y when x=5.",
+   o:["60","65","75","80"], a:2},
+];
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let cur = 0, answers = new Array(QS.length).fill(null);
+let timeLeft = 30*60, timerID = null, startTime = null, submitted = false;
+
+/* ═══════════════════════════════════════
+   START
+═══════════════════════════════════════ */
+function startExam(){
+  document.getElementById('introWrap').style.display = 'none';
+  document.getElementById('examBody').style.display  = 'block';
+  buildDots(); renderQ(); startTimer();
+  startTime = Date.now();
+}
+
+/* ── timer ── */
+function startTimer(){
+  timerID = setInterval(()=>{
+    timeLeft--;
+    updateTimer();
+    if(timeLeft<=0){ clearInterval(timerID); submitExam(); }
+  },1000);
+}
+function updateTimer(){
+  const m=String(Math.floor(timeLeft/60)).padStart(2,'0');
+  const s=String(timeLeft%60).padStart(2,'0');
+  document.getElementById('cbtTimer').textContent=`${m}:${s}`;
+  const p=document.getElementById('timerPill');
+  p.className='awaClass-cbt-timer';
+  if(timeLeft<=60)  p.classList.add('danger');
+  else if(timeLeft<=300) p.classList.add('warn');
+}
+
+/* ── dots ── */
+function buildDots(){
+  const row=document.getElementById('dotRow'); row.innerHTML='';
+  QS.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='awaClass-cbt-dot'+(i===0?' active':'');
+    b.textContent=i+1; b.id=`d${i}`;
+    b.onclick=()=>goTo(i);
+    row.appendChild(b);
+  });
+}
+function refreshDots(){
+  QS.forEach((_,i)=>{
+    const d=document.getElementById(`d${i}`);
+    d.className='awaClass-cbt-dot';
+    if(answers[i]!==null) d.classList.add('answered');
+    if(i===cur)           d.classList.add('active');
+  });
+}
+
+/* ── render question ── */
+function renderQ(){
+  const q=QS[cur];
+  document.getElementById('qTopic').textContent=q.t;
+  document.getElementById('qNum').textContent=`Question ${cur+1} of ${QS.length}`;
+  document.getElementById('qText').textContent=q.q;
+
+  const grid=document.getElementById('optsGrid'); grid.innerHTML='';
+  const LBL=['A','B','C','D'];
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='awaClass-cbt-opt';
+    b.innerHTML=`<span class="awaClass-cbt-opt-lbl">${LBL[i]}</span>${opt}`;
+    b.onclick=()=>pick(i);
+    if(answers[cur]!==null){
+      b.disabled=true;
+      if(i===q.a)             b.classList.add('correct');
+      else if(i===answers[cur]) b.classList.add('wrong');
+    }
+    grid.appendChild(b);
+  });
+
+  updateProgress(); refreshDots();
+  document.getElementById('prevBtn').disabled=(cur===0);
+  document.getElementById('nextBtn').textContent=(cur===QS.length-1)?'Finish →':'Next →';
+
+  const card=document.getElementById('qCard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='';
+}
+
+function updateProgress(){
+  const done=answers.filter(a=>a!==null).length;
+  const pct=(done/QS.length)*100;
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=`${done} / ${QS.length}`;
+}
+
+/* ── pick answer ── */
+function pick(idx){
+  if(answers[cur]!==null||submitted) return;
+  answers[cur]=idx;
+  const q=QS[cur];
+  document.querySelectorAll('.awaClass-cbt-opt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a)      b.classList.add('correct');
+    else if(i===idx) b.classList.add('wrong');
+  });
+  if(idx===q.a){ showToast(); fireConfetti(); }
+  refreshDots(); updateProgress();
+}
+
+/* ── navigate ── */
+function nav(dir){ goTo(cur+dir); }
+function goTo(i){ if(i>=0&&i<QS.length){ cur=i; renderQ(); } }
+
+/* ── toast / confetti ── */
+function showToast(){
+  const t=document.getElementById('cbtToast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function fireConfetti(){
+  const el=document.getElementById('cbtConfetti');
+  el.style.display='block'; el.innerHTML='';
+  const C=['#3b82f6','#06b6d4','#10b981','#f59e0b','#ef4444','#a78bfa','#fb923c'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div'); p.className='awaClass-cbt-cp';
+    p.style.cssText=`left:${Math.random()*100}%;top:-20px;
+      background:${C[Math.floor(Math.random()*C.length)]};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.2+Math.random()*1.4}s;
+      animation-delay:${Math.random()*.5}s;`;
+    el.appendChild(p);
+  }
+  setTimeout(()=>{ el.style.display='none'; el.innerHTML=''; },2400);
+}
+
+/* ── confirm / submit ── */
+function openConfirm(){
+  const skip=answers.filter(a=>a===null).length;
+  document.getElementById('confSub').textContent=
+    skip>0 ? `${skip} question${skip>1?'s':''} unanswered. They will be marked as skipped.`
+           : `All ${QS.length} questions answered. Ready to submit!`;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('open'); }
+
+function submitExam(){
+  submitted=true;
+  clearInterval(timerID);
+  closeConfirm();
+
+  const timeUsed = startTime ? Math.floor((Date.now()-startTime)/1000) : (30*60-timeLeft);
+  const tm=String(Math.floor(timeUsed/60)).padStart(2,'0');
+  const ts=String(timeUsed%60).padStart(2,'0');
+
+  let correct=0, wrong=0, skip=0;
+  answers.forEach((a,i)=>{
+    if(a===null) skip++;
+    else if(a===QS[i].a) correct++;
+    else wrong++;
+  });
+  const pct=Math.round((correct/QS.length)*100);
+
+  let grade, gradeKey;
+  if(pct>=75){      grade='🏆 Distinction'; gradeKey='distinction'; }
+  else if(pct>=60){ grade='🥇 Credit';      gradeKey='credit';      }
+  else if(pct>=50){ grade='🥈 Pass';        gradeKey='pass';        }
+  else if(pct>=40){ grade='⚠️ Nearly';      gradeKey='nearly';      }
+  else{             grade='❌ Below Pass';   gradeKey='fail';        }
+
+  document.getElementById('examBody').style.display='none';
+  const rw=document.getElementById('resultsWrap'); rw.style.display='block';
+
+  setTimeout(()=>{
+    const circ=327;
+    const off=circ-(pct/100)*circ;
+    const col=pct>=70?'#10b981':pct>=50?'#f59e0b':'#ef4444';
+    const sf=document.getElementById('sringFill');
+    sf.style.stroke=col; sf.style.strokeDashoffset=off;
+    document.getElementById('awaClass-resPercent').textContent=pct+'%';
+    document.getElementById('awaClass-resPercent').style.color=col;
+  },80);
+
+  let sub='';
+  if(pct>=75)      sub='Outstanding performance! You aced it!';
+  else if(pct>=60) sub='Great job! Above average performance.';
+  else if(pct>=50) sub='You passed! Keep practicing to improve.';
+  else if(pct>=40) sub='Close to passing. More study needed.';
+  else             sub='Keep studying — you can do better!';
+
+  document.getElementById('awaClass-resGrade').textContent=grade;
+  document.getElementById('awaClass-resSub').textContent=sub;
+  document.getElementById('stC').textContent=correct;
+  document.getElementById('stW').textContent=wrong;
+  document.getElementById('stS').textContent=skip;
+  document.getElementById('stT').textContent=`${tm}:${ts}`;
+
+  buildReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  fetch("{% url 'cbt_submit' %}", {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({
+      subject:       'mathematics',
+      score:         correct,
+      total:         QS.length,
+      percentage:    pct,
+      grade:         gradeKey,
+      time_used_sec: timeUsed,
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.ok){
+      document.getElementById('awaClass-earnedPts').textContent=data.points;
+      document.getElementById('awaClass-ptsDetail').textContent=
+        `Best score ever: ${data.best}%  ·  Points from this exam: ${correct*5+(gradeKey==='distinction'?20:0)}`;
+    }
+  })
+  .catch(()=>{
+    document.getElementById('awaClass-ptsDetail').textContent='(Could not save — check your connection)';
+  });
+}
+
+/* ── review ── */
+function buildReview(){
+  const list=document.getElementById('reviewList'); list.innerHTML='';
+  const LBL=['A','B','C','D'];
+  QS.forEach((q,i)=>{
+    const ua=answers[i];
+    const ok=ua===q.a, sk=ua===null;
+    const item=document.createElement('div');
+    item.className=`awaClass-cbt-rev-item ${sk?'ri-s':ok?'ri-c':'ri-w'}`;
+
+    let html='';
+    if(sk){
+      html=`<div class="awaClass-cbt-rans sk">⏭ Not answered — Correct: <strong>${LBL[q.a]}. ${q.o[q.a]}</strong></div>`;
+    } else if(ok){
+      html=`<div class="awaClass-cbt-rans ya c">✅ Your answer: ${LBL[ua]}. ${q.o[ua]}</div>`;
+    } else {
+      html=`<div class="awaClass-cbt-rans ya w">❌ Your answer: ${LBL[ua]}. ${q.o[ua]}</div>
+            <div class="awaClass-cbt-rans ca">✅ Correct: ${LBL[q.a]}. ${q.o[q.a]}</div>`;
+    }
+    item.innerHTML=`
+      <div class="awaClass-cbt-rev-q">
+        <span style="color:#9ca3af;font-size:11px;">Q${i+1} · ${q.t}</span><br>${q.q}
+      </div>
+      <div class="awaClass-cbt-rev-ans-list">${html}</div>`;
+    list.appendChild(item);
+  });
+}
+
+function retake(){
+  cur=0; answers=new Array(QS.length).fill(null);
+  timeLeft=30*60; submitted=false; startTime=null;
+  document.getElementById('resultsWrap').style.display='none';
+  document.getElementById('introWrap').style.display='flex';
+}
+
+/* ═══════════════════════════════════════
+   CALCULATOR
+═══════════════════════════════════════ */
+let cExpr='', cDisp='0', cJustEval=false;
+
+function toggleCalc(){ document.getElementById('calcOverlay').classList.toggle('open'); }
+function closeCalcClick(e){ if(e.target===document.getElementById('calcOverlay')) toggleCalc(); }
+
+function calcInput(v){
+  if(cJustEval&&('0123456789.'.includes(v))){ cExpr=''; cDisp=''; cJustEval=false; }
+  else if(cJustEval){ cJustEval=false; }
+  const ops=['+','-','*','/'];
+  if(ops.includes(v)&&ops.includes(cExpr.slice(-1))) cExpr=cExpr.slice(0,-1)+v;
+  else cExpr+=v;
+  syncCalc();
+}
+function syncCalc(){
+  document.getElementById('awaClass-cExpr').textContent=cExpr.replace(/\*/g,'×').replace(/\//g,'÷');
+  try{
+    const r=Function('"use strict";return('+cExpr+')')();
+    if(isFinite(r)) cDisp=parseFloat(r.toFixed(10)).toString();
+  }catch(e){}
+  document.getElementById('awaClass-cResult').textContent=cDisp||'0';
+}
+function calcEval(){
+  if(!cExpr) return;
+  try{
+    const r=Function('"use strict";return('+cExpr+')')();
+    cDisp=isFinite(r)?parseFloat(r.toFixed(10)).toString():'Error';
+    cExpr=cDisp; cJustEval=true;
+  }catch(e){ cDisp='Error'; cExpr=''; }
+  document.getElementById('awaClass-cExpr').textContent='';
+  document.getElementById('awaClass-cResult').textContent=cDisp;
+}
+function calcClear(){
+  cExpr=''; cDisp='0'; cJustEval=false;
+  document.getElementById('awaClass-cExpr').textContent='';
+  document.getElementById('awaClass-cResult').textContent='0';
+}
+function calcBack(){
+  if(cJustEval){calcClear();return;}
+  cExpr=cExpr.slice(0,-1); syncCalc();
+  if(!cExpr) document.getElementById('awaClass-cResult').textContent='0';
+}
+function calcToggleSign(){
+  if(!cExpr) return;
+  cExpr=cExpr.startsWith('-')?cExpr.slice(1):'-'+cExpr; syncCalc();
+}
+function calcPercent(){
+  if(!cExpr) return;
+  try{
+    const r=Function('"use strict";return('+cExpr+')')();
+    cExpr=(r/100).toString(); cDisp=cExpr;
+    document.getElementById('awaClass-cResult').textContent=cDisp;
+    document.getElementById('awaClass-cExpr').textContent='';
+  }catch(e){}
+}
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('calcOverlay').classList.contains('open')) return;
+  if('0123456789.'.includes(e.key)) calcInput(e.key);
+  else if(e.key==='+') calcInput('+');
+  else if(e.key==='-') calcInput('-');
+  else if(e.key==='*') calcInput('*');
+  else if(e.key==='/'){ e.preventDefault(); calcInput('/'); }
+  else if(e.key==='Enter'||e.key==='=') calcEval();
+  else if(e.key==='Backspace') calcBack();
+  else if(e.key==='Escape') toggleCalc();
+  else if(e.key.toLowerCase()==='c') calcClear();
+});
+</script>
+
+{% include "footer.html" %}
+</body>
+</html>

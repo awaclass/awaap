@@ -1,0 +1,562 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>CBT Exams — awaClass</title>
+
+  <style>
+
+    /* ══════════════════════════════════════════════════
+       BASE
+    ══════════════════════════════════════════════════ */
+    body {
+      background-color: #ffffff;
+    }
+
+    .awaClass-home-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    .awaClass-divider {
+      border: none;
+      border-top: 1px solid var(--awaClass-border, #e5e5e5);
+      margin: 28px 0;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PAGE HEADER
+    ══════════════════════════════════════════════════ */
+    .awaClass-cbt-page-header {
+      background: linear-gradient(135deg, #0f2942 0%, #1a3a5c 50%, #0d2137 100%);
+      border: 1px solid rgba(59,130,246,.22);
+      border-radius: 18px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .awaClass-cbt-page-header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -40px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(59,130,246,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .awaClass-cbt-page-header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 40px;
+      width: 130px; height: 130px;
+      background: radial-gradient(circle, rgba(6,182,212,.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .awaClass-cbt-header-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .awaClass-cbt-header-emoji {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+    .awaClass-cbt-header-text h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #e2e8f0;
+      margin: 0 0 5px;
+    }
+    .awaClass-cbt-header-text p {
+      font-size: 13px;
+      color: rgba(226,232,240,.65);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .awaClass-cbt-header-stats {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .awaClass-cbt-stat-chip {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      padding: 7px 13px;
+      font-size: 12px;
+      color: rgba(226,232,240,.8);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .awaClass-cbt-stat-chip i {
+      color: #60a5fa;
+      font-size: 11px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SECTION TITLE
+    ══════════════════════════════════════════════════ */
+    .awaClass-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .awaClass-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--awaClass-border, #e5e5e5);
+      margin-left: 4px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       CBT SUBJECT CARDS GRID
+    ══════════════════════════════════════════════════ */
+    .awaClass-cbt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    @media (min-width: 480px) {
+      .awaClass-cbt-grid { gap: 14px; }
+    }
+    @media (min-width: 600px) {
+      .awaClass-cbt-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    }
+
+    .awaClass-cbt-card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 18px 14px 16px;
+      gap: 10px;
+      transition: all 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .awaClass-cbt-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.09);
+      border-color: var(--awaClass-cbt-card-accent, #3b82f6);
+    }
+    .awaClass-cbt-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--awaClass-cbt-card-accent, #3b82f6);
+      border-radius: 14px 14px 0 0;
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+    .awaClass-cbt-card:hover::before {
+      opacity: 1;
+    }
+
+    .awaClass-cbt-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--awaClass-cbt-card-bg, #eff6ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .awaClass-cbt-card-body {
+      flex: 1;
+    }
+    .awaClass-cbt-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 3px;
+    }
+    .awaClass-cbt-card-meta {
+      font-size: 11px;
+      color: #606060;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .awaClass-cbt-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .awaClass-cbt-card-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--awaClass-cbt-card-bg, #eff6ff);
+      color: var(--awaClass-cbt-card-accent, #3b82f6);
+    }
+    .awaClass-cbt-card-arrow {
+      font-size: 12px;
+      color: var(--awaClass-cbt-card-accent, #3b82f6);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.18s;
+    }
+    .awaClass-cbt-card:hover .awaClass-cbt-card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Colour themes per subject */
+    .awaClass-cbt-card--maths {
+      --awaClass-cbt-card-accent: #3b82f6;
+      --awaClass-cbt-card-bg: #eff6ff;
+    }
+    .awaClass-cbt-card--physics {
+      --awaClass-cbt-card-accent: #8b5cf6;
+      --awaClass-cbt-card-bg: #f5f3ff;
+    }
+    .awaClass-cbt-card--english {
+      --awaClass-cbt-card-accent: #10b981;
+      --awaClass-cbt-card-bg: #ecfdf5;
+    }
+    .awaClass-cbt-card--chemistry {
+      --awaClass-cbt-card-accent: #f59e0b;
+      --awaClass-cbt-card-bg: #fffbeb;
+    }
+    .awaClass-cbt-card--biology {
+      --awaClass-cbt-card-accent: #22c55e;
+      --awaClass-cbt-card-bg: #f0fdf4;
+    }
+    .awaClass-cbt-card--economics {
+      --awaClass-cbt-card-accent: #ef4444;
+      --awaClass-cbt-card-bg: #fef2f2;
+    }
+    .awaClass-cbt-card--government {
+      --awaClass-cbt-card-accent: #06b6d4;
+      --awaClass-cbt-card-bg: #ecfeff;
+    }
+    .awaClass-cbt-card--accounting {
+      --awaClass-cbt-card-accent: #f97316;
+      --awaClass-cbt-card-bg: #fff7ed;
+    }
+    .awaClass-cbt-card--geography {
+      --awaClass-cbt-card-accent: #84cc16;
+      --awaClass-cbt-card-bg: #f7fee7;
+    }
+    .awaClass-cbt-card--literature {
+      --awaClass-cbt-card-accent: #ec4899;
+      --awaClass-cbt-card-bg: #fdf2f8;
+    }
+
+    /* ── coming soon overlay ── */
+    .awaClass-cbt-card--soon {
+      opacity: .6;
+      pointer-events: none;
+    }
+    .awaClass-cbt-soon-tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      background: #f3f4f6;
+      color: #9ca3af;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       HOW IT WORKS
+    ══════════════════════════════════════════════════ */
+    .awaClass-cbt-how {
+      background: #f9fafb;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 0;
+    }
+    .awaClass-cbt-how h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 14px;
+    }
+    .awaClass-cbt-how-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .awaClass-cbt-how-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .awaClass-cbt-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .awaClass-cbt-step-text {
+      padding-top: 3px;
+    }
+    .awaClass-cbt-step-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin-bottom: 1px;
+    }
+    .awaClass-cbt-step-text span {
+      font-size: 12px;
+      color: #606060;
+    }
+
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<main class="awaClass-home-page">
+
+  <!-- ══════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-cbt-page-header">
+    <div class="awaClass-cbt-header-inner">
+      <div class="awaClass-cbt-header-emoji">🎯</div>
+      <div class="awaClass-cbt-header-text">
+        <h1>CBT Practice Exams</h1>
+        <p>Senior Secondary · Computer-Based Testing · awaClass</p>
+      </div>
+    </div>
+    <div class="awaClass-cbt-header-stats">
+      <div class="awaClass-cbt-stat-chip"><i class="fa-solid fa-list-check"></i> 20 Questions per exam</div>
+      <div class="awaClass-cbt-stat-chip"><i class="fa-regular fa-clock"></i> 30 min time limit</div>
+      <div class="awaClass-cbt-stat-chip"><i class="fa-solid fa-trophy"></i> Earn points</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CORE SUBJECTS
+  ══════════════════════════════════════════ -->
+  <h2 class="awaClass-section-title">
+    <i class="fa-solid fa-star" style="color:#f59e0b;font-size:12px;"></i>
+    Core Subjects
+  </h2>
+
+  <div class="awaClass-cbt-grid">
+
+    <!-- Mathematics -->
+    <a href="{% url 'cbt_exam' %}?subject=mathematics" class="awaClass-cbt-card awaClass-cbt-card--maths">
+      <div class="awaClass-cbt-card-icon">📐</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Mathematics</p>
+        <p class="awaClass-cbt-card-meta">Algebra, Numbers, Geometry &amp; more</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Physics -->
+    <a href="{% url 'cbt_exam' %}?subject=physics" class="awaClass-cbt-card awaClass-cbt-card--physics">
+      <div class="awaClass-cbt-card-icon">⚡</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Physics</p>
+        <p class="awaClass-cbt-card-meta">Mechanics, Waves, Electricity &amp; more</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- English -->
+    <a href="{% url 'cbt_exam' %}?subject=english" class="awaClass-cbt-card awaClass-cbt-card--english">
+      <div class="awaClass-cbt-card-icon">📝</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">English Language</p>
+        <p class="awaClass-cbt-card-meta">Comprehension, Grammar &amp; more</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Chemistry -->
+    <a href="{% url 'cbt_exam' %}?subject=chemistry" class="awaClass-cbt-card awaClass-cbt-card--chemistry">
+      <div class="awaClass-cbt-card-icon">🧪</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Chemistry</p>
+        <p class="awaClass-cbt-card-meta">Organic, Inorganic &amp; Physical Chem</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Biology -->
+    <a href="{% url 'cbt_exam' %}?subject=biology" class="awaClass-cbt-card awaClass-cbt-card--biology">
+      <div class="awaClass-cbt-card-icon">🧬</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Biology</p>
+        <p class="awaClass-cbt-card-meta">Cell Biology, Ecology &amp; Genetics</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Economics -->
+    <a href="{% url 'cbt_exam' %}?subject=economics" class="awaClass-cbt-card awaClass-cbt-card--economics">
+      <div class="awaClass-cbt-card-icon">📊</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Economics</p>
+        <p class="awaClass-cbt-card-meta">Micro, Macro &amp; Trade</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       OTHER SUBJECTS
+  ══════════════════════════════════════════ -->
+  <h2 class="awaClass-section-title">
+    <i class="fa-solid fa-book-open" style="color:#8b5cf6;font-size:12px;"></i>
+    Other Subjects
+  </h2>
+
+  <div class="awaClass-cbt-grid">
+
+    <!-- Government -->
+    <a href="{% url 'cbt_exam' %}?subject=government" class="awaClass-cbt-card awaClass-cbt-card--government">
+      <div class="awaClass-cbt-card-icon">🏛️</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Government</p>
+        <p class="awaClass-cbt-card-meta">Civics, Constitutions &amp; Politics</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Accounting -->
+    <a href="{% url 'cbt_exam' %}?subject=accounting" class="awaClass-cbt-card awaClass-cbt-card--accounting">
+      <div class="awaClass-cbt-card-icon">🧾</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Accounting</p>
+        <p class="awaClass-cbt-card-meta">Financial Records &amp; Statements</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Geography -->
+    <a href="{% url 'cbt_exam' %}?subject=geography" class="awaClass-cbt-card awaClass-cbt-card--geography">
+      <div class="awaClass-cbt-card-icon">🌍</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Geography</p>
+        <p class="awaClass-cbt-card-meta">Physical &amp; Human Geography</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
+      </div>
+    </a>
+
+    <!-- Literature — coming soon -->
+    <div class="awaClass-cbt-card awaClass-cbt-card--literature awaClass-cbt-card--soon">
+      <div class="awaClass-cbt-card-icon">📚</div>
+      <div class="awaClass-cbt-card-body">
+        <p class="awaClass-cbt-card-name">Literature</p>
+        <p class="awaClass-cbt-card-meta">Prose, Poetry &amp; Drama</p>
+      </div>
+      <div class="awaClass-cbt-card-footer">
+        <span class="awaClass-cbt-soon-tag">Coming Soon</span>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="awaClass-divider">
+
+  <!-- ══════════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-cbt-how">
+    <h3><i class="fa-solid fa-circle-info" style="color:#3b82f6;margin-right:7px;"></i>How CBT Exams Work</h3>
+    <div class="awaClass-cbt-how-steps">
+      <div class="awaClass-cbt-how-step">
+        <div class="awaClass-cbt-step-num">1</div>
+        <div class="awaClass-cbt-step-text">
+          <strong>Choose a subject</strong>
+          <span>Pick any subject from the list above to start your timed practice exam.</span>
+        </div>
+      </div>
+      <div class="awaClass-cbt-how-step">
+        <div class="awaClass-cbt-step-num">2</div>
+        <div class="awaClass-cbt-step-text">
+          <strong>Answer 20 questions</strong>
+          <span>Navigate questions freely, skip and come back — all within 30 minutes.</span>
+        </div>
+      </div>
+      <div class="awaClass-cbt-how-step">
+        <div class="awaClass-cbt-step-num">3</div>
+        <div class="awaClass-cbt-step-text">
+          <strong>See your results</strong>
+          <span>Get instant feedback with your score, grade, and a full answer review.</span>
+        </div>
+      </div>
+      <div class="awaClass-cbt-how-step">
+        <div class="awaClass-cbt-step-num">4</div>
+        <div class="awaClass-cbt-step-text">
+          <strong>Earn points</strong>
+          <span>Every exam earns you points on your awaClass profile. Improve your best score!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+{% include "footer.html" %}
+</body>
+</html>

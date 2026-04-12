@@ -1,0 +1,169 @@
+<style>
+  /* ═══════════════════════════════════════════
+     DESKTOP SIDEBAR  (hidden on mobile)
+  ═══════════════════════════════════════════ */
+  .ac-sidebar {
+    display: none; /* mobile: hidden */
+  }
+
+  @media (min-width: 768px) {
+    /* Sidebar wrapper */
+    .ac-sidebar {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      width: 220px;
+      height: 100vh;
+      background: var(--ac-white, #fff);
+      border-right: 1.5px solid var(--ac-border, #e5e5e5);
+      padding: 24px 12px 20px;
+      z-index: 900;
+      overflow-y: auto;
+      gap: 4px;
+      box-sizing: border-box;
+    }
+
+    /* Brand / logo area */
+    .ac-sidebar-brand {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ac-primary, #f97316);
+      letter-spacing: -0.3px;
+      padding: 0 12px 20px;
+      border-bottom: 1px solid var(--ac-border, #e5e5e5);
+      margin-bottom: 12px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Nav items */
+    .ac-sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--ac-text-light, #606060);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--ac-font, inherit);
+      transition: background 0.15s, color 0.15s;
+    }
+    .ac-sidebar-item svg {
+      width: 22px; height: 22px;
+      stroke: currentColor;
+      fill: none;
+      flex-shrink: 0;
+      transition: stroke 0.15s;
+    }
+    .ac-sidebar-item:hover,
+    .ac-sidebar-item.active {
+      background: var(--ac-primary-lt, #fff7ed);
+      color: var(--ac-primary, #f97316);
+    }
+
+    /* Profile avatar in sidebar */
+    .ac-sidebar-avatar {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+      transition: border-color 0.15s;
+    }
+    .ac-sidebar-item:hover .ac-sidebar-avatar,
+    .ac-sidebar-item.active .ac-sidebar-avatar {
+      border-color: var(--ac-primary, #f97316);
+    }
+
+    /* Create / "+" button in sidebar */
+    .ac-sidebar-create {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      margin: 8px 0;
+      padding: 11px 14px;
+      background: var(--ac-primary, #f97316);
+      color: #fff;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--ac-font, inherit);
+      transition: background 0.15s, transform 0.12s;
+    }
+    .ac-sidebar-create svg {
+      width: 20px; height: 20px;
+      stroke: #fff; fill: none;
+      flex-shrink: 0;
+    }
+    .ac-sidebar-create:hover {
+      background: var(--ac-primary-dk, #ea6c0a);
+      transform: translateY(-1px);
+    }
+
+    /* Spacer pushes logout to bottom */
+    .ac-sidebar-spacer {
+      flex: 1;
+    }
+
+    /* Push main content right so it doesn't hide behind sidebar */
+    body {
+      padding-left: 220px !important;
+    }
+  }
+</style>
+
+<aside class="ac-sidebar">
+
+  <!-- Brand -->
+  <a href="{% url 'home' %}" class="ac-sidebar-brand">awaClass</a>
+
+  <!-- Home -->
+  <a href="{% url 'home' %}" class="ac-sidebar-item active" title="Home">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12l9-9 9 9"/>
+      <path d="M4 10v10h5v-5h6v5h5V10"/>
+    </svg>
+    Home
+  </a>
+
+  <!-- Search -->
+  <a href="{% url 'search' %}" class="ac-sidebar-item" title="Search">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    Search
+  </a>
+
+  <!-- Create -->
+  <a href="{% url 'post' %}" class="ac-sidebar-create" title="Create">
+    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Create
+  </a>
+
+  <!-- Profile -->
+  <a href="{% url 'profile' user.username %}" class="ac-sidebar-item" title="Profile">
+    <img src="{{ user.profile.picture.url }}" alt="Profile" class="ac-sidebar-avatar">
+    Profile
+  </a>
+
+  <div class="ac-sidebar-spacer"></div>
+
+  <!-- Logout -->
+  <a href="{% url 'logout' %}" class="ac-sidebar-item" title="Logout">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+  </a>
+
+</aside>

@@ -1,0 +1,516 @@
+{% load static %}
+{% load pwa %}
+{% progressive_web_app_meta %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f97316'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-weight='bold'%3EA%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>awaClass | Login</title>
+
+  <style>
+    :root {
+      --awaClass-bg:          #ffffff;
+      --awaClass-surface:     #f9f6f1;
+      --awaClass-text:        #1c1917;
+      --awaClass-text-light:  #78716c;
+      --awaClass-primary:     #f97316;
+      --awaClass-primary-dk:  #ea6e0b;
+      --awaClass-primary-lt:  #fff7ed;
+      --awaClass-border:      #e7e5e4;
+      --awaClass-error:       #dc2626;
+      --awaClass-success:     #16a34a;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--awaClass-bg);
+      color: var(--awaClass-text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+     .awaClass-hero-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #f97316, #fdba74);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 24px rgba(249,115,22,0.25);
+    }
+    /* ══════════════════════════════════════════════════
+       TWO-PANEL LAYOUT
+    ══════════════════════════════════════════════════ */
+    .awaClass-page {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Left panel — hero */
+    .awaClass-hero-panel {
+      display: none;
+      flex: 1;
+      background: var(--awaClass-primary-lt);
+      padding: 60px 56px;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    @media (min-width: 860px) {
+      .awaClass-hero-panel { display: flex; }
+    }
+
+    /* subtle background pattern */
+    .awaClass-hero-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(249,115,22,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(249,115,22,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .awaClass-hero-inner { position: relative; z-index: 1; max-width: 420px; }
+
+    .awaClass-hero-logo {
+      width: 72px; height: 72px;
+      border-radius: 18px;
+      object-fit: cover;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 24px rgba(249,115,22,0.20);
+    }
+
+    .awaClass-hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(249,115,22,0.12);
+      color: var(--awaClass-primary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    .awaClass-hero-title {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: var(--awaClass-text);
+    }
+    .awaClass-hero-title em {
+      font-style: normal;
+      color: var(--awaClass-primary);
+    }
+
+    .awaClass-hero-sub {
+      font-size: 15px;
+      color: var(--awaClass-text-light);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .awaClass-hero-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .awaClass-hero-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--awaClass-text);
+    }
+    .awaClass-feature-dot {
+      width: 22px; height: 22px;
+      min-width: 22px;
+      background: var(--awaClass-primary);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .awaClass-feature-dot svg {
+      width: 12px; height: 12px;
+      fill: #fff;
+    }
+
+    /* Right panel — form */
+    .awaClass-form-panel {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      background: var(--awaClass-bg);
+    }
+    @media (min-width: 860px) {
+      .awaClass-form-panel {
+        width: 460px;
+        flex-shrink: 0;
+        padding: 60px 48px;
+        border-left: 1px solid var(--awaClass-border);
+      }
+    }
+
+    .awaClass-form-wrap {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    /* Logo (mobile only) */
+    .awaClass-mobile-logo {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 20px;
+    }
+    @media (min-width: 860px) { .awaClass-mobile-logo { display: none; } }
+
+    .awaClass-form-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+    @media (min-width: 860px) { .awaClass-form-title { text-align: left; } }
+
+    .awaClass-form-subtitle {
+      font-size: 14px;
+      color: var(--awaClass-text-light);
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    @media (min-width: 860px) { .awaClass-form-subtitle { text-align: left; } }
+
+    /* ── Messages ── */
+    .awaClass-messages { margin-bottom: 20px; }
+    .awaClass-message {
+      padding: 10px 14px;
+      font-size: 13px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: #f5f5f4;
+    }
+    .awaClass-message-error   { background: #fef2f2; color: var(--awaClass-error); }
+    .awaClass-message-success { background: #f0fdf4; color: var(--awaClass-success); }
+
+    /* ── Fields ── */
+    .awaClass-form { width: 100%; }
+    .awaClass-field { margin-bottom: 16px; }
+
+    .awaClass-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--awaClass-text);
+    }
+
+    .awaClass-input {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      background: var(--awaClass-surface);
+      border: 1.5px solid var(--awaClass-border);
+      border-radius: 10px;
+      color: var(--awaClass-text);
+      transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+    }
+    .awaClass-input:focus {
+      outline: none;
+      border-color: var(--awaClass-primary);
+      background: var(--awaClass-bg);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.10);
+    }
+    .awaClass-input::placeholder { color: #a8a29e; }
+
+    /* Password wrapper */
+    .awaClass-pw-wrap { position: relative; }
+    .awaClass-pw-toggle {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: #a8a29e; cursor: pointer;
+      font-size: 15px; line-height: 1;
+      padding: 4px;
+    }
+    .awaClass-pw-toggle:hover { color: var(--awaClass-primary); }
+
+    /* ── Submit button ── */
+    .awaClass-btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: var(--awaClass-primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+      box-shadow: 0 4px 14px rgba(249,115,22,0.28);
+      letter-spacing: 0.01em;
+    }
+    .awaClass-btn-primary:hover {
+      background: var(--awaClass-primary-dk);
+      box-shadow: 0 6px 20px rgba(249,115,22,0.36);
+      transform: translateY(-1px);
+    }
+    .awaClass-btn-primary:active { transform: translateY(0); }
+    .awaClass-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ── Forgot ── */
+    .awaClass-forgot {
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 16px;
+    }
+    .awaClass-forgot-link {
+      background: none; border: none;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--awaClass-primary);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .awaClass-forgot-link:hover { text-decoration: underline; }
+
+    /* ── Divider ── */
+    .awaClass-divider {
+      display: flex; align-items: center;
+      margin: 24px 0;
+      color: var(--awaClass-text-light);
+      font-size: 12px; font-weight: 500;
+    }
+    .awaClass-divider::before, .awaClass-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--awaClass-border);
+    }
+    .awaClass-divider span { padding: 0 14px; }
+
+    /* ── Register link ── */
+    .awaClass-alt-text {
+      font-size: 13px;
+      color: var(--awaClass-text-light);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .awaClass-btn-outline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: var(--awaClass-primary);
+      border: 1.5px solid var(--awaClass-primary);
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      transition: background 0.18s;
+    }
+    .awaClass-btn-outline:hover { background: var(--awaClass-primary-lt); }
+
+    /* ── Skeleton ── */
+    .awaClass-skeleton {
+      background: linear-gradient(90deg, #f0ede9 25%, #e8e4df 50%, #f0ede9 75%);
+      background-size: 200% 100%;
+      animation: awaClassShimmer 1.3s ease-in-out infinite;
+      border-radius: 10px;
+    }
+    @keyframes awaClassShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .awaClass-sk-logo  { width: 52px; height: 52px; border-radius: 14px; margin: 0 auto 20px; }
+    .awaClass-sk-title { width: 55%; height: 26px; margin: 0 auto 8px; }
+    .awaClass-sk-sub   { width: 70%; height: 14px; margin: 0 auto 32px; }
+    .awaClass-sk-field { height: 44px; margin-bottom: 16px; }
+    .awaClass-sk-btn   { height: 46px; margin-top: 6px; }
+
+    @media (max-width: 480px) {
+      .awaClass-form-panel { padding: 32px 20px; }
+      .awaClass-form-title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="awaClass-page">
+
+  <!-- ══════════════════════════════════════════
+       LEFT: HERO PANEL (desktop only)
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-hero-panel">
+    <div class="awaClass-hero-inner">
+
+     <div class="awaClass-hero-logo">A</div>
+
+      <div class="awaClass-hero-tag">🎓 Online Learning Platform</div>
+
+      <h1 class="awaClass-hero-title">
+        Learn from the<br><em>best instructors</em>
+      </h1>
+      <p class="awaClass-hero-sub">
+        Join thousands of students growing their skills with expert-led courses and personalized guidance.
+      </p>
+
+      <ul class="awaClass-hero-features">
+        <li>
+          <span class="awaClass-feature-dot">
+            <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          </span>
+          Live &amp; recorded lessons
+        </li>
+        <li>
+          <span class="awaClass-feature-dot">
+            <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          </span>
+          Expert certified instructors
+        </li>
+        <li>
+          <span class="awaClass-feature-dot">
+            <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          </span>
+          Learn at your own pace
+        </li>
+        <li>
+          <span class="awaClass-feature-dot">
+            <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          </span>
+          Certificates on completion
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       RIGHT: FORM PANEL
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-form-panel">
+    <div class="awaClass-form-wrap" id="awaClass-login-card">
+
+      <!-- Skeleton -->
+      <div id="awaClass-skeleton">
+        <div class="awaClass-skeleton awaClass-sk-logo"></div>
+        <div class="awaClass-skeleton awaClass-sk-title"></div>
+        <div class="awaClass-skeleton awaClass-sk-sub"></div>
+        <div class="awaClass-skeleton awaClass-sk-field"></div>
+        <div class="awaClass-skeleton awaClass-sk-field"></div>
+        <div class="awaClass-skeleton awaClass-sk-btn"></div>
+      </div>
+
+      <!-- Content -->
+      <div id="awaClass-content" style="display:none;">
+
+        <!-- Mobile logo -->
+        <div class="awaClass-hero-logo">A</div>
+
+
+        <h1 class="awaClass-form-title">Welcome back 👋</h1>
+        <p class="awaClass-form-subtitle">Sign in to continue your learning journey</p>
+
+        {% if messages %}
+        <div class="awaClass-messages">
+          {% for message in messages %}
+          <div class="awaClass-message {% if message.tags == 'error' %}awaClass-message-error{% elif message.tags == 'success' %}awaClass-message-success{% endif %}">
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="awaClass-form" id="awaClass-login-form">
+          {% csrf_token %}
+
+          <div class="awaClass-field">
+            <label class="awaClass-label">Username or Email</label>
+            <input type="text" name="user_check" class="awaClass-input" placeholder="Enter username or email" required autocomplete="username">
+          </div>
+
+          <div class="awaClass-field">
+            <label class="awaClass-label">Password</label>
+            <div class="awaClass-pw-wrap">
+              <input type="password" name="password" id="awaClass-password" class="awaClass-input" placeholder="Enter your password" required autocomplete="current-password">
+              <button type="button" class="awaClass-pw-toggle" id="awaClass-toggle-pw">👁️</button>
+            </div>
+          </div>
+
+          <div class="awaClass-forgot">
+            <button type="button" class="awaClass-forgot-link" id="awaClass-forgot-btn">Forgot password?</button>
+          </div>
+
+          <button type="submit" class="awaClass-btn-primary" id="awaClass-login-btn">Sign In</button>
+        </form>
+
+        <div class="awaClass-divider"><span>or</span></div>
+
+        <p class="awaClass-alt-text">New to awaClass?</p>
+        <a href="{% url 'register' %}" class="awaClass-btn-outline">Create a free account →</a>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  // Skeleton → content
+  setTimeout(function () {
+    var sk = document.getElementById('awaClass-skeleton');
+    var ct = document.getElementById('awaClass-content');
+    if (sk && ct) { sk.style.display = 'none'; ct.style.display = 'block'; }
+  }, 280);
+
+  // Password toggle
+  var toggle = document.getElementById('awaClass-toggle-pw');
+  var pw     = document.getElementById('awaClass-password');
+  if (toggle && pw) {
+    toggle.addEventListener('click', function () {
+      var t = pw.type === 'password' ? 'text' : 'password';
+      pw.type = t;
+      toggle.textContent = t === 'password' ? '👁️' : '🙈';
+    });
+  }
+
+  // Forgot password
+  var forgot = document.getElementById('awaClass-forgot-btn');
+  if (forgot) {
+    forgot.addEventListener('click', function () {
+      window.location.href = "{% url 'index' %}";
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

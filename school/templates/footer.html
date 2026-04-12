@@ -1,0 +1,136 @@
+<style>
+  /* ===== Bottom Nav ===== */
+  .ac-bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 62px;
+    background: var(--ac-white);
+    border-top: 1.5px solid var(--ac-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+  }
+
+  /* ── Hide bottom nav on desktop ── */
+  @media (min-width: 768px) {
+    .ac-bottom-nav { display: none !important; }
+  }
+
+  .ac-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: var(--ac-text-light);
+    min-width: 48px;
+    padding: 6px 4px;
+    border-radius: 12px;
+    transition: color 0.15s, background 0.15s;
+    position: relative;
+  }
+  .ac-nav-item:hover,
+  .ac-nav-item.active {
+    color: var(--ac-primary);
+  }
+  .ac-nav-item svg {
+    width: 24px; height: 24px;
+    stroke: currentColor;
+    fill: none;
+    flex-shrink: 0;
+    transition: stroke 0.15s;
+  }
+  .ac-nav-item span {
+    font-size: 10px;
+    font-weight: 600;
+    font-family: var(--ac-font);
+    line-height: 1;
+  }
+
+  /* Center "+" add button */
+  .ac-nav-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px; height: 46px;
+    background: var(--ac-primary);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+    flex-shrink: 0;
+  }
+  .ac-nav-add:hover {
+    background: var(--ac-primary-dk);
+    box-shadow: 0 6px 18px rgba(249,115,22,0.42);
+    transform: translateY(-2px);
+  }
+  .ac-nav-add svg {
+    width: 22px; height: 22px;
+    stroke: #fff; fill: none;
+  }
+
+  /* Profile avatar */
+  .ac-nav-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .ac-nav-item:hover .ac-nav-avatar,
+  .ac-nav-item.active .ac-nav-avatar {
+    border-color: var(--ac-primary);
+  }
+</style>
+
+<nav class="ac-bottom-nav">
+
+  <!-- Home -->
+  <a href="{% url 'home' %}" class="ac-nav-item active" title="Home">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12l9-9 9 9"/>
+      <path d="M4 10v10h5v-5h6v5h5V10"/>
+    </svg>
+    <span>Home</span>
+  </a>
+
+  <!-- Search -->
+  <a href="{% url 'search' %}" class="ac-nav-item" title="Search">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <span>Search</span>
+  </a>
+
+  <!-- Add Post (centre CTA) -->
+  <a href="{% url 'post' %}" class="ac-nav-add" title="Create">
+    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </a>
+
+  <!-- Profile -->
+  <a href="{% url 'profile' user.username %}" class="ac-nav-item" title="Profile">
+    <img src="{{user.profile.picture.url}}" alt="Profile" class="ac-nav-avatar">
+    <span>Profile</span>
+  </a>
+
+  <!-- Logout -->
+  <a href="{% url 'logout' %}" class="ac-nav-item" title="Logout">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    <span>Logout</span>
+  </a>
+
+</nav>

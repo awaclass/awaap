@@ -1,0 +1,833 @@
+{% load humanize %}
+{% load time %}
+{% include "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | {{ video.title }}</title>
+
+  <style>
+    /* ===================================================
+       Post Detail — awaClass uLesson design
+       =================================================== */
+
+    .awaClass-detail-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 0 40px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       CUSTOM VIDEO PLAYER
+    ══════════════════════════════════════════════════ */
+    .awaClass-player-wrap {
+      background: #0d0d0d;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      margin-bottom: 0;
+    }
+
+    /* Raw video — no native controls */
+    #awaClass-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Click-to-play ripple overlay */
+    .awaClass-play-ripple {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .awaClass-play-ripple.show { opacity: 1; animation: acRippleFade 0.55s ease forwards; }
+    @keyframes acRippleFade {
+      0%   { opacity: 1; transform: scale(0.85); }
+      60%  { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+    .awaClass-play-ripple-circle {
+      width: 64px; height: 64px;
+      background: rgba(249,115,22,0.85);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .awaClass-play-ripple-circle svg {
+      width: 28px; height: 28px; fill: #fff;
+      margin-left: 4px;
+    }
+
+    /* Buffering spinner */
+    .awaClass-spinner {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .awaClass-spinner.show { display: flex; }
+    .awaClass-spinner-ring {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: var(--awaClass-primary);
+      border-radius: 50%;
+      animation: acSpin 0.75s linear infinite;
+    }
+    @keyframes acSpin { to { transform: rotate(360deg); } }
+
+    /* ── Controls bar ── */
+    .awaClass-controls {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.0) 100%);
+      padding: 40px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    .awaClass-player-wrap.hide-controls .awaClass-controls { opacity: 0; }
+
+    /* Progress / seek row */
+    .awaClass-seek-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .awaClass-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      white-space: nowrap;
+      font-family: var(--awaClass-font);
+      min-width: 82px;
+      text-align: right;
+    }
+
+    /* Custom range base */
+    .awaClass-range {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 100px;
+      outline: none;
+      cursor: pointer;
+      transition: height 0.15s;
+    }
+    .awaClass-range:hover { height: 6px; }
+
+    /* Seek bar */
+    #awaClass-seek {
+      flex: 1;
+      background: rgba(255,255,255,0.25);
+    }
+    #awaClass-seek::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      background: var(--awaClass-primary);
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 4px rgba(249,115,22,0.6);
+      cursor: pointer;
+    }
+    #awaClass-seek::-moz-range-thumb {
+      width: 14px; height: 14px;
+      background: var(--awaClass-primary);
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+    }
+
+    /* Buttons row */
+    .awaClass-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Icon button */
+    .awaClass-ctrl-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .awaClass-ctrl-btn:hover {
+      background: rgba(249,115,22,0.22);
+      color: var(--awaClass-primary);
+    }
+    .awaClass-ctrl-btn:active { transform: scale(0.9); }
+    .awaClass-ctrl-btn svg {
+      width: 18px; height: 18px;
+      fill: currentColor;
+    }
+
+    /* Play/pause — slightly bigger */
+    #awaClass-play-btn {
+      width: 40px; height: 40px;
+      font-size: 18px;
+    }
+
+    /* Volume group */
+    .awaClass-vol-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    #awaClass-volume {
+      width: 72px;
+      background: rgba(255,255,255,0.25);
+    }
+    #awaClass-volume::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px; height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    #awaClass-volume::-moz-range-thumb {
+      width: 12px; height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Speed badge */
+    #awaClass-speed-btn {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--awaClass-font);
+      width: auto;
+      padding: 0 8px;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 6px;
+      height: 26px;
+    }
+    #awaClass-speed-btn:hover {
+      border-color: var(--awaClass-primary);
+      color: var(--awaClass-primary);
+      background: rgba(249,115,22,0.12);
+    }
+
+    /* Spacer */
+    .awaClass-spacer { flex: 1; }
+
+    /* Quality / fullscreen label */
+    .awaClass-ctrl-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      font-family: var(--awaClass-font);
+    }
+
+    /* ══════════════════════════════════════════════════
+       VIDEO META SECTION
+    ══════════════════════════════════════════════════ */
+    .awaClass-meta-card {
+      background: transparent;
+      padding: 12px 0 14px;
+      margin-bottom: 0;
+      border-bottom: 1px solid var(--awaClass-border);
+    }
+
+    .awaClass-meta-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--awaClass-text);
+      letter-spacing: -0.2px;
+      margin: 0 0 10px;
+      line-height: 1.4;
+    }
+
+    /* Channel row: avatar + name + subscribe button */
+    .awaClass-meta-author-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .awaClass-meta-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .awaClass-meta-author-info { flex: 1; min-width: 0; }
+    .awaClass-meta-author-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--awaClass-text);
+      text-decoration: none;
+      display: block;
+      line-height: 1.3;
+    }
+    .awaClass-meta-author-name:hover { color: var(--awaClass-primary); }
+
+    /* Stats row */
+    .awaClass-meta-stats {
+      font-size: 13px;
+      color: var(--awaClass-text-light);
+      font-weight: 400;
+      margin-top: 2px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .awaClass-meta-stats i { margin-right: 4px; }
+
+    /* Action bar: like + share etc */
+    .awaClass-meta-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .awaClass-action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: var(--awaClass-bg, #f2f2f2);
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--awaClass-text);
+      cursor: pointer;
+      font-family: var(--awaClass-font);
+      transition: background 0.15s;
+    }
+    .awaClass-action-pill:hover { background: #e0e0e0; }
+    .awaClass-action-pill i { font-size: 14px; }
+
+    /* Like button area */
+    .awaClass-like-wrap {
+      display: flex;
+      align-items: center;
+    }
+
+    /* ══════════════════════════════════════════════════
+       COMMENTS SECTION
+    ══════════════════════════════════════════════════ */
+    .awaClass-comments-section { margin-top: 20px; }
+
+    .awaClass-comments-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--awaClass-text);
+      margin: 0 0 18px;
+    }
+    .awaClass-comments-title span { color: var(--awaClass-text); }
+
+    /* Comment form — inline avatar + input style */
+    .awaClass-comment-form {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .awaClass-comment-form-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .awaClass-comment-form-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .awaClass-comment-form textarea {
+      width: 100%;
+      border: none !important;
+      border-bottom: 1.5px solid var(--awaClass-border) !important;
+      border-radius: 0 !important;
+      padding: 6px 0 8px !important;
+      font-family: var(--awaClass-font);
+      font-size: 14px;
+      resize: none;
+      min-height: 36px;
+      color: var(--awaClass-text);
+      background: transparent !important;
+      transition: border-color 0.18s;
+      box-sizing: border-box;
+      margin: 0 !important;
+    }
+    .awaClass-comment-form textarea:focus {
+      outline: none;
+      border-bottom-color: var(--awaClass-text) !important;
+      background: transparent !important;
+    }
+    .awaClass-comment-form textarea::placeholder { color: #a8a29e; }
+
+    .awaClass-comment-form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .awaClass-comment-cancel {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--awaClass-text, #0f0f0f);
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--awaClass-font, inherit);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .awaClass-comment-cancel:hover { background: var(--awaClass-bg, #f2f2f2); }
+
+    .awaClass-comment-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--awaClass-primary, #f97316);
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--awaClass-font, inherit);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .awaClass-comment-submit:hover { background: var(--awaClass-primary-dk, #ea6c0a); }
+
+    /* Comment list */
+    #comment_list { display: flex; flex-direction: column; }
+
+    .awaClass-no-comments {
+      text-align: center;
+      padding: 32px 20px;
+      font-size: 14px;
+      color: var(--awaClass-text-light);
+      font-weight: 500;
+    }
+    .awaClass-no-comments span { display: block; font-size: 28px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="awaClass-detail-page">
+
+  <!-- ══════════════════════════════════════════
+       CUSTOM VIDEO PLAYER
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-player-wrap" id="awaClass-player-wrap">
+
+    <video id="awaClass-video" preload="metadata" playsinline>
+      <source src="{{ video.video.url }}" type="video/mp4">
+    </video>
+
+    <!-- Click-to-play ripple -->
+    <div class="awaClass-play-ripple" id="awaClass-ripple">
+      <div class="awaClass-play-ripple-circle" id="awaClass-ripple-icon">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+    </div>
+
+    <!-- Buffering spinner -->
+    <div class="awaClass-spinner" id="awaClass-spinner">
+      <div class="awaClass-spinner-ring"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="awaClass-controls" id="awaClass-controls">
+
+      <!-- Seek / progress row -->
+      <div class="awaClass-seek-row">
+        <input type="range" id="awaClass-seek" class="awaClass-range" min="0" value="0" step="0.1">
+        <span class="awaClass-time" id="awaClass-time">0:00 / 0:00</span>
+      </div>
+
+      <!-- Buttons row -->
+      <div class="awaClass-btn-row">
+
+        <!-- Rewind 10s -->
+        <button class="awaClass-ctrl-btn" id="awaClass-rew-btn" title="Rewind 10s">
+          <svg viewBox="0 0 24 24"><path d="M12.5 3A9 9 0 1 0 21 12h-2a7 7 0 1 1-6.5-6.97V7l4-4-4-4v2.03A9 9 0 0 0 12.5 3z"/><text x="7" y="16" font-size="6" font-weight="bold" font-family="sans-serif" fill="currentColor">10</text></svg>
+        </button>
+
+        <!-- Play / Pause -->
+        <button class="awaClass-ctrl-btn" id="awaClass-play-btn" title="Play / Pause">
+          <svg id="awaClass-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+
+        <!-- Forward 10s -->
+        <button class="awaClass-ctrl-btn" id="awaClass-fwd-btn" title="Forward 10s">
+          <svg viewBox="0 0 24 24"><path d="M11.5 3A9 9 0 1 1 3 12H5a7 7 0 1 0 6.5-6.97V7l-4-4 4-4v2.03A9 9 0 0 1 11.5 3z"/><text x="9" y="16" font-size="6" font-weight="bold" font-family="sans-serif" fill="currentColor">10</text></svg>
+        </button>
+
+        <!-- Volume / Mute -->
+        <div class="awaClass-vol-group">
+          <button class="awaClass-ctrl-btn" id="awaClass-mute-btn" title="Mute / Unmute">
+            <svg id="awaClass-vol-icon" viewBox="0 0 24 24">
+              <path id="awaClass-vol-path" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/>
+            </svg>
+          </button>
+          <input type="range" id="awaClass-volume" class="awaClass-range" min="0" max="1" step="0.02" value="1">
+        </div>
+
+        <!-- Speed -->
+        <button class="awaClass-ctrl-btn" id="awaClass-speed-btn" title="Playback speed">1×</button>
+
+        <div class="awaClass-spacer"></div>
+
+        <!-- Picture in Picture -->
+        <button class="awaClass-ctrl-btn" id="awaClass-pip-btn" title="Picture in Picture">
+          <svg viewBox="0 0 24 24"><path d="M19 11h-8v6h8v-6zm4 8V4.98C23 3.88 22.1 3 21 3H3C1.9 3 1 3.88 1 4.98V19c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2zm-2 .02H3V4.97h18v14.05z"/></svg>
+        </button>
+
+        <!-- Fullscreen -->
+        <button class="awaClass-ctrl-btn" id="awaClass-fs-btn" title="Fullscreen">
+          <svg id="awaClass-fs-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zm-3-14v2h3v3h2V5h-5z"/></svg>
+        </button>
+
+      </div><!-- /btn-row -->
+    </div><!-- /controls -->
+  </div><!-- /player-wrap -->
+
+
+  <!-- ══════════════════════════════════════════
+       META SECTION
+  ══════════════════════════════════════════ -->
+  <div style="padding: 0 16px;">
+  <div class="awaClass-meta-card">
+    <!-- Title -->
+    <h1 class="awaClass-meta-title">{{ video.title }}</h1>
+
+    <!-- Channel row + actions -->
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+
+      <!-- Avatar + name -->
+      <a href="{% url 'profile' video.author %}" style="display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0;">
+        <img src="{{ video.author.profile.picture.url }}" alt="{{ video.author }}" class="awaClass-meta-avatar">
+        <div class="awaClass-meta-author-info">
+          <span class="awaClass-meta-author-name">
+            {% if video.author.first_name %}{{ video.author.first_name }} {{ video.author.last_name }}{% else %}{{ video.author }}{% endif %}
+          </span>
+          <div class="awaClass-meta-stats">
+            <span><i class="fa-regular fa-eye"></i>{{ video.view|intcomma }} views</span>
+            <span><i class="fa-regular fa-clock"></i>{{ video.created_at|insta_timesince }}</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Spacer -->
+      <div style="flex:1;"></div>
+
+      <!-- Action pills -->
+      <div class="awaClass-meta-actions">
+        <!-- Like pill -->
+        <div class="awaClass-action-pill awaClass-like-wrap">
+          <span id="post-like-{{ video.post_id }}">
+            {% include 'snippet/post_like.html' %}
+          </span>
+        </div>
+        <!-- Comment count pill -->
+        <div class="awaClass-action-pill">
+          <i class="fa-regular fa-comment"></i>{{ total_comment }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       COMMENTS
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-comments-section">
+    <h2 class="awaClass-comments-title"><span>{{ total_comment }}</span> Comments</h2>
+
+    <!-- Comment form -->
+    <form
+      class="awaClass-comment-form"
+      hx-post="{% url 'post_comment' video.post_id %}"
+      hx-swap="afterbegin"
+      hx-target="#comment_list"
+      hx-on::after-request="this.reset()">
+      {% csrf_token %}
+      <div class="awaClass-comment-form-inner">
+        <textarea name="comment" id="comment" placeholder="Add a comment…" rows="1"></textarea>
+        <div class="awaClass-comment-form-actions">
+          <button type="button" class="awaClass-comment-cancel" onclick="this.closest('form').reset()">Cancel</button>
+          <button type="submit" class="awaClass-comment-submit">Comment</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Comment list -->
+    <span id="comment_list">
+      {% for comment in comments %}
+        {% include 'snippet/comments_list.html' with comment=comment %}
+      {% empty %}
+        <div class="awaClass-no-comments">
+          <span>💬</span>
+          No comments yet — be the first!
+        </div>
+      {% endfor %}
+    </span>
+
+  </div><!-- /padding-wrap -->
+
+</div><!-- /detail-page -->
+
+
+<!-- ══════════════════════════════════════════
+     CUSTOM VIDEO PLAYER SCRIPT
+══════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  const wrap      = document.getElementById('awaClass-player-wrap');
+  const video     = document.getElementById('awaClass-video');
+  const playBtn   = document.getElementById('awaClass-play-btn');
+  const playIcon  = document.getElementById('awaClass-play-icon');
+  const seek      = document.getElementById('awaClass-seek');
+  const timeEl    = document.getElementById('awaClass-time');
+  const muteBtn   = document.getElementById('awaClass-mute-btn');
+  const volIcon   = document.getElementById('awaClass-vol-icon');
+  const volPath   = document.getElementById('awaClass-vol-path');
+  const volRange  = document.getElementById('awaClass-volume');
+  const rewBtn    = document.getElementById('awaClass-rew-btn');
+  const fwdBtn    = document.getElementById('awaClass-fwd-btn');
+  const speedBtn  = document.getElementById('awaClass-speed-btn');
+  const pipBtn    = document.getElementById('awaClass-pip-btn');
+  const fsBtn     = document.getElementById('awaClass-fs-btn');
+  const fsIcon    = document.getElementById('awaClass-fs-icon');
+  const ripple    = document.getElementById('awaClass-ripple');
+  const rippleIco = document.getElementById('awaClass-ripple-icon');
+  const spinner   = document.getElementById('awaClass-spinner');
+
+  const SPEEDS    = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+  let   speedIdx  = 2; // default 1×
+  let   hideTimer = null;
+  let   lastVol   = 1;
+
+  /* ── SVG paths ── */
+  const ICONS = {
+    play:   'M8 5v14l11-7z',
+    pause:  'M6 19h4V5H6v14zm8-14v14h4V5h-4z',
+    volHi:  'M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z',
+    volLo:  'M18.5 12A4.5 4.5 0 0 0 16 7.97v8.05A4.5 4.5 0 0 0 18.5 12zM5 9v6h4l5 5V4L9 9H5z',
+    volOff: 'M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z',
+    fsEnter:'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zm-3-14v2h3v3h2V5h-5z',
+    fsExit: 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z',
+  };
+
+  function setIcon(el, d) { el.innerHTML = `<path d="${d}"/>`; }
+
+  /* ── Format time mm:ss ── */
+  function fmt(s) {
+    if (isNaN(s) || !isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, '0');
+    return `${m}:${sec}`;
+  }
+
+  /* ── Auto-hide controls ── */
+  function showControls() {
+    wrap.classList.remove('hide-controls');
+    clearTimeout(hideTimer);
+    if (!video.paused) {
+      hideTimer = setTimeout(() => wrap.classList.add('hide-controls'), 3000);
+    }
+  }
+  wrap.addEventListener('mousemove', showControls);
+  wrap.addEventListener('touchstart', showControls, { passive: true });
+
+  /* ── Play / Pause ── */
+  function togglePlay() {
+    if (video.paused) { video.play(); } else { video.pause(); }
+  }
+  video.addEventListener('click', () => { togglePlay(); showRipple(!video.paused); });
+  playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
+
+  video.addEventListener('play', () => {
+    setIcon(playIcon, ICONS.pause);
+    showControls();
+  });
+  video.addEventListener('pause', () => {
+    setIcon(playIcon, ICONS.play);
+    wrap.classList.remove('hide-controls');
+    clearTimeout(hideTimer);
+  });
+
+  /* ── Ripple feedback ── */
+  function showRipple(playing) {
+    rippleIco.innerHTML = playing
+      ? `<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#fff;margin-left:4px"><path d="${ICONS.pause}"/></svg>`
+      : `<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#fff;margin-left:4px"><path d="${ICONS.play}"/></svg>`;
+    ripple.classList.remove('show');
+    void ripple.offsetWidth; // reflow
+    ripple.classList.add('show');
+  }
+
+  /* ── Buffering spinner ── */
+  video.addEventListener('waiting', () => spinner.classList.add('show'));
+  video.addEventListener('canplay', () => spinner.classList.remove('show'));
+
+  /* ── Seek bar ── */
+  video.addEventListener('loadedmetadata', () => {
+    seek.max = video.duration;
+    timeEl.textContent = `0:00 / ${fmt(video.duration)}`;
+  });
+  video.addEventListener('timeupdate', () => {
+    seek.value = video.currentTime;
+    // gradient fill
+    const pct = (video.currentTime / video.duration) * 100 || 0;
+    seek.style.background = `linear-gradient(to right, #f97316 ${pct}%, rgba(255,255,255,0.25) ${pct}%)`;
+    timeEl.textContent = `${fmt(video.currentTime)} / ${fmt(video.duration)}`;
+  });
+  seek.addEventListener('input', () => { video.currentTime = seek.value; });
+
+  /* ── Rewind / Forward ── */
+  rewBtn.addEventListener('click', () => { video.currentTime = Math.max(0, video.currentTime - 10); });
+  fwdBtn.addEventListener('click', () => { video.currentTime = Math.min(video.duration, video.currentTime + 10); });
+
+  /* ── Volume ── */
+  function updateVolIcon() {
+    const v = video.volume;
+    const muted = video.muted || v === 0;
+    if (muted)     { setIcon(volIcon, ICONS.volOff); }
+    else if (v < 0.5) { setIcon(volIcon, ICONS.volLo); }
+    else           { setIcon(volIcon, ICONS.volHi); }
+  }
+
+  volRange.addEventListener('input', () => {
+    video.volume  = volRange.value;
+    video.muted   = (volRange.value == 0);
+    lastVol       = volRange.value > 0 ? volRange.value : lastVol;
+    updateVolIcon();
+    // gradient fill
+    const pct = volRange.value * 100;
+    volRange.style.background = `linear-gradient(to right, #fff ${pct}%, rgba(255,255,255,0.25) ${pct}%)`;
+  });
+
+  muteBtn.addEventListener('click', () => {
+    if (video.muted || video.volume === 0) {
+      video.muted   = false;
+      video.volume  = lastVol || 0.7;
+      volRange.value = video.volume;
+    } else {
+      lastVol       = video.volume;
+      video.muted   = true;
+      volRange.value = 0;
+    }
+    updateVolIcon();
+    const pct = volRange.value * 100;
+    volRange.style.background = `linear-gradient(to right, #fff ${pct}%, rgba(255,255,255,0.25) ${pct}%)`;
+  });
+
+  /* ── Playback speed ── */
+  speedBtn.addEventListener('click', () => {
+    speedIdx = (speedIdx + 1) % SPEEDS.length;
+    const s  = SPEEDS[speedIdx];
+    video.playbackRate = s;
+    speedBtn.textContent = s % 1 === 0 ? `${s}×` : `${s}×`;
+  });
+
+  /* ── Picture in Picture ── */
+  pipBtn.addEventListener('click', async () => {
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else {
+        await video.requestPictureInPicture();
+      }
+    } catch (e) { /* PiP not supported */ }
+  });
+
+  /* ── Fullscreen ── */
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      wrap.requestFullscreen && wrap.requestFullscreen();
+    } else {
+      document.exitFullscreen && document.exitFullscreen();
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const full = !!document.fullscreenElement;
+    setIcon(fsIcon, full ? ICONS.fsExit : ICONS.fsEnter);
+  });
+
+  /* ── Keyboard shortcuts ── */
+  document.addEventListener('keydown', (e) => {
+    if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+    switch (e.key) {
+      case ' ':
+      case 'k':
+        e.preventDefault(); togglePlay(); showRipple(!video.paused); break;
+      case 'ArrowLeft':
+      case 'j':
+        e.preventDefault(); video.currentTime = Math.max(0, video.currentTime - 10); break;
+      case 'ArrowRight':
+      case 'l':
+        e.preventDefault(); video.currentTime = Math.min(video.duration, video.currentTime + 10); break;
+      case 'ArrowUp':
+        e.preventDefault();
+        video.volume = Math.min(1, video.volume + 0.1);
+        volRange.value = video.volume; updateVolIcon(); break;
+      case 'ArrowDown':
+        e.preventDefault();
+        video.volume = Math.max(0, video.volume - 0.1);
+        volRange.value = video.volume; updateVolIcon(); break;
+      case 'm':
+        muteBtn.click(); break;
+      case 'f':
+        fsBtn.click(); break;
+    }
+  });
+
+  /* ── End of video ── */
+  video.addEventListener('ended', () => {
+    setIcon(playIcon, ICONS.play);
+    wrap.classList.remove('hide-controls');
+  });
+
+  /* Init */
+  updateVolIcon();
+  volRange.style.background = 'linear-gradient(to right, #fff 100%, rgba(255,255,255,0.25) 100%)';
+
+})();
+</script>
+
+{% include 'footer.html' %}
+</body>
+</html>

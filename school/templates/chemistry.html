@@ -1,0 +1,344 @@
+{% load humanize %}
+{% load time %}
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | Chemistry</title>
+
+  <style>
+
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════════════ */
+    .awaClass-feed-page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    /* ── Page header ── */
+    .awaClass-page-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
+    }
+    .awaClass-page-header-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+    .awaClass-page-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 2px;
+      letter-spacing: -0.2px;
+    }
+    .awaClass-page-header p {
+      font-size: 13px;
+      color: var(--awaClass-text-light, #606060);
+      margin: 0;
+    }
+
+    /* ══════════════════════════════════════════════════
+       VIDEO GRID
+    ══════════════════════════════════════════════════ */
+    .awaClass-videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px 16px;
+    }
+
+    /* ── Single video card ── */
+    .awaClass-video-card {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Thumbnail */
+    .awaClass-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #0d0d0d;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .awaClass-thumb-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* Play overlay on hover */
+    .awaClass-play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.20);
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+    .awaClass-video-card:hover .awaClass-play-overlay { opacity: 1; }
+    .awaClass-play-circle {
+      width: 48px; height: 48px;
+      background: var(--awaClass-primary, #f97316);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .awaClass-play-circle svg {
+      width: 20px; height: 20px;
+      fill: #fff;
+      margin-left: 3px;
+    }
+
+    /* ── Card info row ── */
+    .awaClass-card-info {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding-right: 8px;
+    }
+
+    .awaClass-card-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .awaClass-card-meta { flex: 1; min-width: 0; }
+
+    .awaClass-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--awaClass-text, #0f0f0f);
+      line-height: 1.4;
+      margin: 0 0 3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .awaClass-card-author {
+      font-size: 13px;
+      color: var(--awaClass-text-light, #606060);
+      font-weight: 400;
+      margin: 0 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .awaClass-card-stats {
+      font-size: 12px;
+      color: var(--awaClass-text-light, #606060);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+    }
+    .awaClass-card-stats i { margin-right: 3px; }
+
+    /* ── Empty state ── */
+    .awaClass-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 56px 20px;
+      font-size: 15px;
+      color: var(--awaClass-text-light, #606060);
+    }
+    .awaClass-empty span {
+      display: block;
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE  ≤ 640px  →  HORIZONTAL LIST LAYOUT
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+
+      .awaClass-feed-page {
+        padding: 12px 12px 48px;
+      }
+
+      /* Switch grid → single-column flex list */
+      .awaClass-videos-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      /* Each card becomes a horizontal row */
+      .awaClass-video-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
+      }
+      .awaClass-video-card:last-child {
+        border-bottom: none;
+      }
+
+      /* Thumbnail: fixed width, no bottom margin */
+      .awaClass-thumb-wrap {
+        flex-shrink: 0;
+        width: 120px;
+        aspect-ratio: 16 / 9;
+        border-radius: 6px;
+        margin-bottom: 0;
+        overflow: hidden;
+      }
+
+      /* Play overlay circle smaller on mobile */
+      .awaClass-play-circle {
+        width: 32px;
+        height: 32px;
+      }
+      .awaClass-play-circle svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* Info sits beside the thumbnail */
+      .awaClass-card-info {
+        flex: 1;
+        min-width: 0;
+        padding-right: 4px;
+        /* Remove the avatar — inline with thumb layout */
+        align-items: flex-start;
+      }
+
+      /* Hide avatar on mobile (thumbnail is the visual anchor) */
+      .awaClass-card-avatar {
+        display: none;
+      }
+
+      /* Meta takes full width of the info col */
+      .awaClass-card-meta {
+        width: 100%;
+      }
+
+      .awaClass-card-title {
+        font-size: 13px;
+        -webkit-line-clamp: 3;
+      }
+
+      .awaClass-card-author {
+        font-size: 12px;
+      }
+
+      .awaClass-card-stats {
+        font-size: 11px;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      /* Serial number badge (added via counter) */
+      .awaClass-videos-grid {
+        counter-reset: video-item;
+      }
+      .awaClass-video-card {
+        counter-increment: video-item;
+        position: relative;
+      }
+      .awaClass-video-card::before {
+        content: counter(video-item) ".";
+        position: absolute;
+        top: 10px;
+        right: 2px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--awaClass-text-light, #606060);
+        line-height: 1;
+      }
+
+    }
+
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="awaClass-feed-page">
+
+  <!-- Page header -->
+  <div class="awaClass-page-header">
+    <div class="awaClass-page-header-icon">📐</div>
+    <div>
+      <h1>Chemistry</h1>
+      <p>Watch lessons, practice problems and more</p>
+    </div>
+  </div>
+
+  <!-- Videos grid -->
+  <div class="awaClass-videos-grid">
+
+    {% for video in videos %}
+    <a href="{% url 'post_detail' video.post_id %}" class="awaClass-video-card">
+
+      <!-- Thumbnail -->
+      <div class="awaClass-thumb-wrap">
+        <video preload="metadata" muted playsinline>
+          <source src="{{ video.video.url }}#t=0.5" type="video/mp4">
+        </video>
+        <div class="awaClass-play-overlay">
+          <div class="awaClass-play-circle">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info row -->
+      <div class="awaClass-card-info">
+        <img
+          src="{{ video.author.profile.picture.url }}"
+          alt="{{ video.author }}"
+          class="awaClass-card-avatar">
+        <div class="awaClass-card-meta">
+          <p class="awaClass-card-title">{{ video.title }}</p>
+          <p class="awaClass-card-author">{{ video.author }}</p>
+          <div class="awaClass-card-stats">
+            <span><i class="fa-regular fa-eye"></i>{{ video.view|intcomma }} views</span>
+            <span><i class="fa-regular fa-heart"></i>{{ video.like.count|intcomma }}</span>
+            <span><i class="fa-regular fa-clock"></i>{{ video.created_at|insta_timesince }}</span>
+          </div>
+        </div>
+      </div>
+
+    </a>
+    {% empty %}
+
+    <div class="awaClass-empty">
+      <span>🎬</span>
+      No Chemistry videos yet. Be the first to post!
+    </div>
+
+    {% endfor %}
+
+  </div>
+</div>
+
+{% include 'footer.html' %}
+</body>
+</html>

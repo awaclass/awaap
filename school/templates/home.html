@@ -1,0 +1,522 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | Home</title>
+
+  <style>
+
+    /* ══════════════════════════════════════════════════
+       BASE
+    ══════════════════════════════════════════════════ */
+    body {
+      background-color: #ffffff;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════════════ */
+    .awaClass-home-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    /* ── Section heading ── */
+    .awaClass-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 14px;
+    }
+
+    /* ── Thin divider between sections ── */
+    .awaClass-divider {
+      border: none;
+      border-top: 1px solid var(--awaClass-border, #e5e5e5);
+      margin: 28px 0;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SUBJECTS GRID
+    ══════════════════════════════════════════════════ */
+    .awaClass-subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (min-width: 400px) {
+      .awaClass-subjects-grid { gap: 12px; }
+    }
+    @media (min-width: 480px) {
+      .awaClass-subjects-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    }
+    @media (min-width: 600px) {
+      .awaClass-subjects-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-subjects-grid { gap: 18px; }
+    }
+    @media (min-width: 1024px) {
+      .awaClass-subjects-grid { gap: 20px; }
+    }
+
+    /* ── Tile (mobile-first, scales up) ── */
+    .awaClass-subject-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--awaClass-text, #0f0f0f);
+      padding: 12px 6px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      transition: transform 0.15s;
+    }
+    .awaClass-subject-tile:hover {
+      transform: translateY(-2px);
+    }
+    @media (min-width: 480px) {
+      .awaClass-subject-tile { padding: 14px 8px; gap: 8px; border-radius: 12px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-subject-tile { padding: 18px 10px; gap: 10px; border-radius: 14px; }
+    }
+    @media (min-width: 1024px) {
+      .awaClass-subject-tile { padding: 22px 12px; gap: 12px; border-radius: 16px; }
+    }
+
+    /* ── Icon circle (scales up) ── */
+    .awaClass-subject-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--awaClass-bg, #f5f5f5);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    @media (min-width: 480px) {
+      .awaClass-subject-icon { width: 48px; height: 48px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-subject-icon { width: 56px; height: 56px; }
+    }
+    @media (min-width: 1024px) {
+      .awaClass-subject-icon { width: 64px; height: 64px; }
+    }
+
+    .awaClass-subject-icon img {
+      width: 60%;
+      height: 60%;
+      object-fit: contain;
+    }
+
+    /* ── Label (scales up) ── */
+    .awaClass-subject-name {
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--awaClass-text, #0f0f0f);
+      line-height: 1.3;
+    }
+    @media (min-width: 480px) {
+      .awaClass-subject-name { font-size: 11px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-subject-name { font-size: 12px; }
+    }
+    @media (min-width: 1024px) {
+      .awaClass-subject-name { font-size: 13px; }
+    }
+
+    /* ══════════════════════════════════════════════════
+       LIVE CLASS BANNER
+    ══════════════════════════════════════════════════ */
+    .awaClass-live-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .awaClass-live-banner-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .awaClass-live-banner-icon img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+
+    .awaClass-live-banner-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .awaClass-live-banner-body h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      margin: 0 0 4px;
+    }
+
+    .awaClass-live-banner-body p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.9);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .awaClass-btn-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .awaClass-btn-live:hover {
+      transform: translateY(-2px);
+      color: #667eea;
+    }
+
+    /* ══════════════════════════════════════════════════
+       CBT EXAM BANNER  ← NEW
+    ══════════════════════════════════════════════════ */
+    .awaClass-cbt-banner {
+      background: linear-gradient(135deg, #0f2942 0%, #1a3a5c 50%, #0d2137 100%);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle animated glow */
+    .awaClass-cbt-banner::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 130px; height: 130px;
+      background: radial-gradient(circle, rgba(59,130,246,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .awaClass-cbt-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 60px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(6,182,212,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .awaClass-cbt-banner-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .awaClass-cbt-banner-body {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .awaClass-cbt-banner-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .awaClass-cbt-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: rgba(59,130,246,.2);
+      border: 1px solid rgba(59,130,246,.4);
+      color: #93c5fd;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .awaClass-cbt-banner-body p {
+      font-size: 13px;
+      color: rgba(226, 232, 240, 0.7);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .awaClass-btn-cbt {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 4px 14px rgba(59,130,246,.35);
+      position: relative;
+      z-index: 1;
+    }
+    .awaClass-btn-cbt:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(59,130,246,.45);
+      color: #fff;
+    }
+
+    /* ══════════════════════════════════════════════════
+       ADMIN CTA BANNER
+    ══════════════════════════════════════════════════ */
+    .awaClass-admin-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .awaClass-admin-banner-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--awaClass-primary-lt, #fff7ed);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .awaClass-admin-banner-icon img {
+      width: 28px; height: 28px;
+      object-fit: contain;
+    }
+
+    .awaClass-admin-banner-body { flex: 1; min-width: 0; }
+    .awaClass-admin-banner-body h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 2px;
+    }
+    .awaClass-admin-banner-body p {
+      font-size: 13px;
+      color: var(--awaClass-text-light, #606060);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .awaClass-btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--awaClass-primary, #f97316);
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .awaClass-btn-pill:hover { background: var(--awaClass-primary-dk, #ea6c0a); }
+
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<main class="awaClass-home-page">
+
+  <!-- ══════════════════════════════════════════
+       LIVE CLASSES BANNER
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-live-banner">
+    <div class="awaClass-live-banner-icon">
+      <img src="{% static 'images/video-call.png' %}" alt="Live">
+    </div>
+    <div class="awaClass-live-banner-body">
+      <h3><i class="fa-solid fa-circle" style="font-size: 10px; color: #ef4444;"></i> Live Interactive Classes</h3>
+      <p>Join real-time video sessions with your teachers and classmates</p>
+    </div>
+    <a href="{% url 'live_room_list' %}" class="awaClass-btn-live">
+      <i class="fa-solid fa-video"></i> Join Now
+    </a>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CBT EXAM BANNER  ← NEW
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-cbt-banner">
+    <div class="awaClass-cbt-banner-icon">🎯</div>
+    <div class="awaClass-cbt-banner-body">
+      <h3>
+        CBT Practice Exams
+        <span class="awaClass-cbt-badge">New</span>
+      </h3>
+      <p>Test your knowledge in Maths, Physics, English &amp; more with timed exams</p>
+    </div>
+    <a href="{% url 'cbt_subjects' %}" class="awaClass-btn-cbt">
+      <i class="fa-solid fa-pen-to-square"></i> Start Exam
+    </a>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SUBJECTS
+  ══════════════════════════════════════════ -->
+  <h2 class="awaClass-section-title">Explore Subjects</h2>
+
+  <div class="awaClass-subjects-grid">
+
+    <a href="{% url 'mathematics' %}" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/Mathematics.png' %}" alt="Mathematics">
+      </div>
+      <p class="awaClass-subject-name">Mathematics</p>
+    </a>
+
+    <a href="{% url 'english' %}" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/english.png' %}" alt="English">
+      </div>
+      <p class="awaClass-subject-name">English</p>
+    </a>
+
+    <a href="{% url 'chemistry' %}" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/chemistry.png' %}" alt="Chemistry">
+      </div>
+      <p class="awaClass-subject-name">Chemistry</p>
+    </a>
+
+    <a href="{% url 'physics' %}" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/physics.png' %}" alt="Physics">
+      </div>
+      <p class="awaClass-subject-name">Physics</p>
+    </a>
+
+    <a href="subjects/biology.php" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/biology.png' %}" alt="Biology">
+      </div>
+      <p class="awaClass-subject-name">Biology</p>
+    </a>
+
+    <a href="subjects/accounting.php" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/accounting.png' %}" alt="Accounting">
+      </div>
+      <p class="awaClass-subject-name">Accounting</p>
+    </a>
+
+    <a href="subjects/government.php" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/government.png' %}" alt="Government">
+      </div>
+      <p class="awaClass-subject-name">Government</p>
+    </a>
+
+    <a href="subjects/geography.php" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/geography.png' %}" alt="Geography">
+      </div>
+      <p class="awaClass-subject-name">Geography</p>
+    </a>
+
+    <a href="subjects/economics.php" class="awaClass-subject-tile">
+      <div class="awaClass-subject-icon">
+        <img src="{% static 'images/economics.png' %}" alt="Economics">
+      </div>
+      <p class="awaClass-subject-name">Economics</p>
+    </a>
+
+  </div>
+
+  <hr class="awaClass-divider">
+
+  <!-- ══════════════════════════════════════════
+       ADMIN CTA  (superuser only)
+  ══════════════════════════════════════════ -->
+  {% if user.is_superuser %}
+  <div class="awaClass-admin-banner">
+    <div class="awaClass-admin-banner-icon">
+      <img src="{% static 'images/classroom.png' %}" alt="Classroom">
+    </div>
+    <div class="awaClass-admin-banner-body">
+      <h3>Classroom Management</h3>
+      <p>Create your own classroom and share knowledge with others.</p>
+    </div>
+    <a href="{% url 'post' %}" class="awaClass-btn-pill">
+      <i class="fa-solid fa-plus"></i> Create Now
+    </a>
+  </div>
+  <hr class="awaClass-divider">
+  {% endif %}
+
+</main>
+
+{% include "footer.html" %}
+</body>
+</html>

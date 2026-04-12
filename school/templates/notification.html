@@ -1,0 +1,23 @@
+{% include 'header.html' %}
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for n in notifications %}
+<a href="{% url 'open_notify' n.id %}" style="color: #606060; text-decoration: none;"> {{n.message}} <br>
+{{n.created_at|naturaltime}} {{n.post.about|truncatechars:20 }} </a>
+    
+<br>
+{% empty %}
+<h2>No New Notification</h2>
+
+{% endfor %}
+</body>
+</html>
+{% include 'footer.html' %}

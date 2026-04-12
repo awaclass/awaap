@@ -1,0 +1,224 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>Live Classes | awaClass</title>
+  <style>
+    .live-classes-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0;
+    }
+
+    .create-room-btn {
+      background: linear-gradient(135deg, #f97316 0%, #ea6c0a 100%);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .create-room-btn:hover {
+      transform: translateY(-2px);
+      color: white;
+    }
+
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .room-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e5e5e5;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .room-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .room-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      color: white;
+      position: relative;
+    }
+
+    .live-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #ef4444;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .room-header h3 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+    }
+
+    .creator-info {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .room-body {
+      padding: 20px;
+    }
+
+    .room-stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #606060;
+    }
+
+    .stat i {
+      font-size: 16px;
+    }
+
+    .join-btn {
+      display: block;
+      text-align: center;
+      background: #f97316;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .join-btn:hover {
+      background: #ea6c0a;
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-state i {
+      font-size: 64px;
+      color: #d1d5db;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 20px;
+      color: #0f0f0f;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #606060;
+    }
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<main class="live-classes-page">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fa-solid fa-video"></i> Live Classes
+    </h1>
+    <a href="{% url 'create_live_room' %}" class="create-room-btn">
+      <i class="fa-solid fa-plus"></i> Create Live Class
+    </a>
+  </div>
+
+  <div class="rooms-grid">
+    {% for session in sessions %}
+    <div class="room-card">
+      <div class="room-header">
+        <div class="live-badge">
+          <i class="fa-solid fa-circle"></i> LIVE
+        </div>
+        <h3>{{ session.title }}</h3>
+        <div class="creator-info">
+          <i class="fa-solid fa-chalkboard-user"></i> {{ session.created_by.get_full_name|default:session.created_by.username }}
+        </div>
+      </div>
+      <div class="room-body">
+        <div class="room-stats">
+          <div class="stat">
+            <i class="fa-solid fa-users"></i>
+            <span>{{ session.participants.count }}/{{ session.max_participants }}</span>
+          </div>
+          <div class="stat">
+            <i class="fa-regular fa-clock"></i>
+            <span>{{ session.created_at|timesince }} ago</span>
+          </div>
+        </div>
+        <a href="{% url 'live_room' room_name=session.room_name %}" class="join-btn">
+          <i class="fa-solid fa-right-to-bracket"></i> Join Class
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="fa-solid fa-chalkboard-user"></i>
+      <h3>No Active Live Classes</h3>
+      <p>Be the first to create a live class and start teaching!</p>
+      <a href="{% url 'create_live_room' %}" class="create-room-btn" style="display: inline-block; margin-top: 20px;">
+        <i class="fa-solid fa-plus"></i> Create Your First Class
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</main>
+
+{% include 'footer.html' %}
+</body>
+</html>
