@@ -1,8 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.contrib.auth.models import User
-from school.models import LiveSession, LiveParticipant
+
 
 class LiveVideoConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -208,6 +207,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def add_participant(self):
+        from django.contrib.auth.models import User
+        from school.models import LiveSession, LiveParticipant
         try:
             # Get or create the live session
             session, created = LiveSession.objects.get_or_create(
@@ -241,6 +242,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def remove_participant(self):
+        from django.contrib.auth.models import User
+        from school.models import LiveSession, LiveParticipant
         try:
             participant = LiveParticipant.objects.get(
                 session__room_name=self.room_name,
@@ -266,6 +269,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_video_status(self, enabled):
+        from django.contrib.auth.models import User
+        from school.models import LiveSession, LiveParticipant
         try:
             participant = LiveParticipant.objects.get(
                 session__room_name=self.room_name,
@@ -280,6 +285,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_audio_status(self, enabled):
+        from django.contrib.auth.models import User
+        from school.models import LiveSession, LiveParticipant
         try:
             participant = LiveParticipant.objects.get(
                 session__room_name=self.room_name,
