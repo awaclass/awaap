@@ -15,7 +15,7 @@ USE_CLOUDINARY = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'https://awaapp.onrender.com',
+    'awaapp.onrender.com',
 ]
 
 # Add localhost ports for development
@@ -31,8 +31,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS.extend([
-        'http://localhost:8000',
-        'http://127.0.0.1:8000',
+        'localhost:8000',
+        '127.0.0.1:8000',
     ])
 
 MEDIA_URL = '/media/'
