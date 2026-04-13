@@ -503,7 +503,7 @@
 <div class="live-container">
   <!-- Main host stage (fullscreen) -->
   <div class="host-stage" id="host-stage">
-    <video id="host-video-element" autoplay playsinline muted></video>
+    <video id="host-video-element" autoplay playsinline></video>
     <div class="host-avatar-placeholder" id="host-placeholder">
       <div class="avatar-circle"><i class="fa-solid fa-chalkboard-user"></i></div>
       <span id="host-placeholder-name">Host</span>
@@ -612,6 +612,10 @@
   sessionTitleSpan.textContent = sessionTitle || 'Live Class';
   hostDisplaySpan.textContent = hostUsername || 'Host';
   document.getElementById('host-placeholder-name').textContent = hostUsername || 'Host';
+
+  // Host mutes their own video to avoid hearing themselves (echo prevention)
+  // Students must NOT have it muted — they need to hear the host
+  hostVideoEl.muted = isHost;
 
   // Helper: Show host video on main stage
   function setHostVideo(stream) {
