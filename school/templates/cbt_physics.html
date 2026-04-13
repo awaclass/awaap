@@ -1,0 +1,1776 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics CBT — awaClass</title>
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+
+  /* ══════════════════════════════════════════════════
+     BASE
+  ══════════════════════════════════════════════════ */
+  body {
+    background-color: #ffffff;
+  }
+
+  /* ══════════════════════════════════════════════════
+     PAGE LAYOUT
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 16px 16px 56px;
+  }
+
+  /* ══════════════════════════════════════════════════
+     INTRO SCREEN
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-intro-wrap {
+    min-height: 78vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-intro-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 36px 28px;
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,.06);
+  }
+
+  .awaClass-cbt-intro-emoji {
+    font-size: 3rem;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-intro-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f0f0f;
+    margin: 0 0 6px;
+  }
+
+  .awaClass-cbt-intro-sub {
+    font-size: 13px;
+    color: #606060;
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+
+  .awaClass-cbt-intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .awaClass-cbt-intro-item {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 13px 10px;
+  }
+
+  .awaClass-cbt-intro-item .awaClass-cbt-iv {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #8b5cf6;
+    line-height: 1;
+  }
+
+  .awaClass-cbt-intro-item .awaClass-cbt-il {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 3px;
+  }
+
+  .awaClass-cbt-btn-start {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.18s;
+    box-shadow: 0 6px 18px rgba(139,92,246,.28);
+  }
+
+  .awaClass-cbt-btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(139,92,246,.38);
+  }
+
+  /* ══════════════════════════════════════════════════
+     STICKY TOPBAR
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 11px 16px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+    box-shadow: 0 4px 18px rgba(0,0,0,.07);
+  }
+
+  .awaClass-cbt-topbar-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #8b5cf6;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  /* ── Timer ── */
+  .awaClass-cbt-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+    padding: 6px 12px;
+    transition: all 0.3s;
+  }
+
+  .awaClass-cbt-timer.warn {
+    background: #fffbeb;
+    border-color: #fde68a;
+    animation: awaClass-pulse 1s infinite;
+  }
+
+  .awaClass-cbt-timer.danger {
+    background: #fef2f2;
+    border-color: #f87171;
+    animation: awaClass-pulse 0.5s infinite;
+  }
+
+  @keyframes awaClass-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.25); }
+    50%       { box-shadow: 0 0 0 4px rgba(239,68,68,0); }
+  }
+
+  .awaClass-cbt-timer-display {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ef4444;
+    min-width: 52px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Calc button ── */
+  .awaClass-cbt-btn-calc {
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    border-radius: 9px;
+    padding: 6px 12px;
+    color: #8b5cf6;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .awaClass-cbt-btn-calc:hover {
+    background: #ede9fe;
+    border-color: #8b5cf6;
+    transform: translateY(-1px);
+  }
+
+  /* ══════════════════════════════════════════════════
+     PROGRESS BAR
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-bar {
+    flex: 1;
+    height: 5px;
+    background: #e5e5e5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .awaClass-cbt-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 6px rgba(139,92,246,.4);
+  }
+
+  .awaClass-cbt-prog-lbl {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTION NAV DOTS
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1.5px solid #e5e5e5;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-dot:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+  }
+
+  .awaClass-cbt-dot.active {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+    color: #fff;
+  }
+
+  .awaClass-cbt-dot.answered {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .awaClass-cbt-dot.answered.active {
+    background: #10b981;
+    color: #fff;
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTION CARD
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-q-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 24px 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    animation: awaClass-slideIn 0.26s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes awaClass-slideIn {
+    from { opacity: 0; transform: translateX(14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .awaClass-cbt-q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-q-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #8b5cf6;
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    padding: 3px 9px;
+    border-radius: 5px;
+  }
+
+  .awaClass-cbt-q-num {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .awaClass-cbt-q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #0f0f0f;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  /* ── Options ── */
+  .awaClass-cbt-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 520px) {
+    .awaClass-cbt-opts { grid-template-columns: 1fr; }
+  }
+
+  .awaClass-cbt-opt {
+    background: #f9fafb;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 11px;
+    padding: 12px 14px;
+    color: #0f0f0f;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+
+  .awaClass-cbt-opt:hover:not(:disabled) {
+    border-color: #8b5cf6;
+    background: #f5f3ff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(139,92,246,.1);
+  }
+
+  .awaClass-cbt-opt-lbl {
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+    background: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #606060;
+    transition: all 0.15s;
+  }
+
+  .awaClass-cbt-opt.correct {
+    border-color: #10b981;
+    background: #ecfdf5;
+    animation: awaClass-pop 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  .awaClass-cbt-opt.correct .awaClass-cbt-opt-lbl {
+    background: #10b981;
+    color: #fff;
+  }
+
+  .awaClass-cbt-opt.wrong {
+    border-color: #ef4444;
+    background: #fef2f2;
+    animation: awaClass-shake 0.38s ease;
+  }
+
+  .awaClass-cbt-opt.wrong .awaClass-cbt-opt-lbl {
+    background: #ef4444;
+    color: #fff;
+  }
+
+  .awaClass-cbt-opt:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  @keyframes awaClass-pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes awaClass-shake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-5px); }
+    40%     { transform: translateX(5px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+  }
+
+  /* ══════════════════════════════════════════════════
+     NAV BUTTONS
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-btn-outline {
+    background: transparent;
+    border: 1.5px solid #e5e5e5;
+    color: #9ca3af;
+  }
+
+  .awaClass-cbt-btn-outline:hover:not(:disabled) {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+  }
+
+  .awaClass-cbt-btn-primary {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(139,92,246,.25);
+  }
+
+  .awaClass-cbt-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(139,92,246,.35);
+  }
+
+  .awaClass-cbt-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(239,68,68,.2);
+  }
+
+  .awaClass-cbt-btn-danger:hover {
+    transform: translateY(-1px);
+  }
+
+  .awaClass-cbt-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════
+     CONFETTI + TOAST
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    display: none;
+  }
+
+  .awaClass-cbt-cp {
+    position: absolute;
+    border-radius: 2px;
+    animation: awaClass-cfFall linear forwards;
+  }
+
+  @keyframes awaClass-cfFall {
+    0%   { transform: translateY(-20px) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .awaClass-cbt-toast {
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-18px);
+    background: linear-gradient(135deg, #064e3b, #065f46);
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    padding: 11px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #6ee7b7;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(.175,.885,.32,1.275);
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(16,185,129,.2);
+    pointer-events: none;
+  }
+
+  .awaClass-cbt-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR MODAL
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-calc-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    backdrop-filter: blur(6px);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-calc-overlay.open {
+    display: flex;
+  }
+
+  .awaClass-cbt-calculator {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 22px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 20px 48px rgba(0,0,0,.15);
+    animation: awaClass-popIn 0.26s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  @keyframes awaClass-popIn {
+    from { transform: scale(.88); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .awaClass-cbt-calc-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+  }
+
+  .awaClass-cbt-calc-lbl { font-size: 13px; font-weight: 700; color: #8b5cf6; }
+
+  .awaClass-cbt-calc-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s;
+  }
+
+  .awaClass-cbt-calc-close:hover { color: #0f0f0f; }
+
+  .awaClass-cbt-calc-disp {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 11px;
+    padding: 11px 14px;
+    text-align: right;
+    margin-bottom: 13px;
+  }
+
+  #awaClass-cExpr {
+    font-size: 11px;
+    color: #9ca3af;
+    min-height: 15px;
+    word-break: break-all;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #awaClass-cResult {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f0f0f;
+    word-break: break-all;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awaClass-cbt-ckeys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .awaClass-cbt-ck {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 9px;
+    padding: 12px 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f0f0f;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.12s;
+    text-align: center;
+  }
+
+  .awaClass-cbt-ck:hover  { background: #e5e5e5; transform: translateY(-1px); }
+  .awaClass-cbt-ck:active { transform: scale(0.96); }
+
+  .awaClass-cbt-ck.op  { color: #8b5cf6; background: #f5f3ff; }
+  .awaClass-cbt-ck.eq  { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border-color: #8b5cf6; }
+  .awaClass-cbt-ck.cl  { color: #ef4444; background: #fef2f2; }
+  .awaClass-cbt-ck.s2  { grid-column: span 2; }
+  .awaClass-cbt-ck.s4  { grid-column: span 4; font-size: 12px; }
+
+  /* ══════════════════════════════════════════════════
+     SUBMIT CONFIRM MODAL
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    backdrop-filter: blur(6px);
+    z-index: 600;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-confirm-overlay.open { display: flex; }
+
+  .awaClass-cbt-confirm-box {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 28px;
+    width: 310px;
+    text-align: center;
+    box-shadow: 0 20px 48px rgba(0,0,0,.12);
+    animation: awaClass-popIn 0.26s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  .awaClass-cbt-conf-icon  { font-size: 2.2rem; margin-bottom: 10px; }
+  .awaClass-cbt-conf-title { font-size: 16px; font-weight: 800; color: #0f0f0f; margin-bottom: 6px; }
+  .awaClass-cbt-conf-sub   { font-size: 13px; color: #606060; margin-bottom: 18px; line-height: 1.5; }
+
+  .awaClass-cbt-conf-btns {
+    display: flex;
+    gap: 9px;
+    justify-content: center;
+  }
+
+  /* ══════════════════════════════════════════════════
+     RESULTS SCREEN
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-results {
+    display: none;
+    animation: awaClass-fadeUp 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes awaClass-fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .awaClass-cbt-res-hero {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .awaClass-cbt-res-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(139,92,246,.07) 0%, transparent 70%);
+  }
+
+  .awaClass-cbt-score-ring {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .awaClass-cbt-score-ring svg { transform: rotate(-90deg); }
+
+  .awaClass-cbt-sring-bg   { fill: none; stroke: #e5e5e5; stroke-width: 8; }
+  .awaClass-cbt-sring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1); }
+
+  .awaClass-cbt-score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #awaClass-resPercent      { font-size: 1.7rem; font-weight: 800; color: #0f0f0f; font-variant-numeric: tabular-nums; }
+  .awaClass-cbt-score-lbl-sm { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+  #awaClass-resGrade { font-size: 1.5rem; font-weight: 800; color: #0f0f0f; margin-bottom: 4px; }
+  #awaClass-resSub   { font-size: 13px; color: #606060; margin-bottom: 16px; }
+
+  .awaClass-cbt-stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .awaClass-cbt-stat-chip {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 9px 14px;
+    text-align: center;
+  }
+
+  .awaClass-cbt-stat-chip .awaClass-sv { font-size: 1.2rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .awaClass-cbt-stat-chip .awaClass-sl { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+  .awaClass-sv.c { color: #10b981; }
+  .awaClass-sv.w { color: #ef4444; }
+  .awaClass-sv.s { color: #f59e0b; }
+
+  .awaClass-cbt-points-banner {
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+    border: 1px solid #ddd6fe;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .awaClass-cbt-points-icon { font-size: 1.75rem; }
+  .awaClass-cbt-points-body h3 { font-size: 14px; font-weight: 700; color: #8b5cf6; margin: 0 0 2px; }
+  .awaClass-cbt-points-body p  { font-size: 12px; color: #606060; margin: 0; }
+  #awaClass-earnedPts          { color: #f59e0b; font-weight: 800; }
+
+  .awaClass-cbt-rev-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f0f0f;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-rev-item {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 13px;
+    padding: 16px;
+    margin-bottom: 9px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.04);
+  }
+
+  .awaClass-cbt-rev-q    { font-size: 13px; font-weight: 500; color: #0f0f0f; line-height: 1.5; margin-bottom: 9px; }
+  .awaClass-cbt-rev-ans-list { display: flex; flex-direction: column; gap: 5px; }
+
+  .awaClass-cbt-rans { font-size: 12px; padding: 6px 10px; border-radius: 7px; display: flex; align-items: center; gap: 6px; }
+  .awaClass-cbt-rans.ya.c { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .awaClass-cbt-rans.ya.w { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .awaClass-cbt-rans.ca   { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .awaClass-cbt-rans.sk   { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+
+  .awaClass-cbt-explanation {
+    margin-top: 9px;
+    background: #f8f4ff;
+    border: 1px solid #ede9fe;
+    border-radius: 9px;
+    padding: 11px 13px;
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .awaClass-cbt-explanation-hdr {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b5cf6;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .awaClass-cbt-exam-body { display: none; }
+
+  @media (max-width: 520px) {
+    .awaClass-cbt-topbar { flex-wrap: wrap; gap: 8px; }
+    .awaClass-cbt-intro-card { padding: 24px 16px; }
+  }
+
+</style>
+</head>
+<body>
+{% include 'sidebar.html' %}
+
+<!-- confetti + toast -->
+<div class="awaClass-cbt-confetti" id="cbtConfetti"></div>
+<div class="awaClass-cbt-toast"    id="cbtToast">🎉 Correct! Well done!</div>
+
+<!-- ══════════════════════════════════════
+     CALCULATOR MODAL
+══════════════════════════════════════ -->
+<div class="awaClass-cbt-calc-overlay" id="calcOverlay" onclick="closeCalcClick(event)">
+  <div class="awaClass-cbt-calculator">
+    <div class="awaClass-cbt-calc-hdr">
+      <span class="awaClass-cbt-calc-lbl">🧮 Calculator</span>
+      <button class="awaClass-cbt-calc-close" onclick="toggleCalc()">✕</button>
+    </div>
+    <div class="awaClass-cbt-calc-disp">
+      <div id="awaClass-cExpr"></div>
+      <div id="awaClass-cResult">0</div>
+    </div>
+    <div class="awaClass-cbt-ckeys">
+      <button class="awaClass-cbt-ck cl" onclick="calcClear()">C</button>
+      <button class="awaClass-cbt-ck op" onclick="calcToggleSign()">±</button>
+      <button class="awaClass-cbt-ck op" onclick="calcPercent()">%</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('/')">÷</button>
+
+      <button class="awaClass-cbt-ck" onclick="calcInput('7')">7</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('8')">8</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('9')">9</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('*')">×</button>
+
+      <button class="awaClass-cbt-ck" onclick="calcInput('4')">4</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('5')">5</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('6')">6</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('-')">−</button>
+
+      <button class="awaClass-cbt-ck" onclick="calcInput('1')">1</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('2')">2</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('3')">3</button>
+      <button class="awaClass-cbt-ck op" onclick="calcInput('+')">+</button>
+
+      <button class="awaClass-cbt-ck s2" onclick="calcInput('0')">0</button>
+      <button class="awaClass-cbt-ck" onclick="calcInput('.')">.</button>
+      <button class="awaClass-cbt-ck eq" onclick="calcEval()">=</button>
+
+      <button class="awaClass-cbt-ck s4 op" onclick="calcBack()">⌫ Backspace</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SUBMIT CONFIRM MODAL
+══════════════════════════════════════ -->
+<div class="awaClass-cbt-confirm-overlay" id="confirmOverlay">
+  <div class="awaClass-cbt-confirm-box">
+    <div class="awaClass-cbt-conf-icon">📋</div>
+    <div class="awaClass-cbt-conf-title">Submit Exam?</div>
+    <div class="awaClass-cbt-conf-sub" id="confSub">Are you sure you want to submit?</div>
+    <div class="awaClass-cbt-conf-btns">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-danger"  onclick="submitExam()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+<div class="awaClass-cbt-page">
+
+  <!-- INTRO -->
+  <div class="awaClass-cbt-intro-wrap" id="introWrap">
+    <div class="awaClass-cbt-intro-card">
+      <div class="awaClass-cbt-intro-emoji">⚡</div>
+      <div class="awaClass-cbt-intro-title">Physics CBT</div>
+      <div class="awaClass-cbt-intro-sub">Senior Secondary · General Physics · awaClass</div>
+      <div class="awaClass-cbt-intro-grid">
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">100</div>
+          <div class="awaClass-cbt-il">Questions</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">2:00:00</div>
+          <div class="awaClass-cbt-il">Time Limit</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">1 mark</div>
+          <div class="awaClass-cbt-il">Per Question</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">0</div>
+          <div class="awaClass-cbt-il">Negative Mark</div>
+        </div>
+      </div>
+      <button class="awaClass-cbt-btn-start" onclick="startExam()">▶ Start Exam</button>
+    </div>
+  </div>
+
+  <!-- EXAM BODY -->
+  <div class="awaClass-cbt-exam-body" id="examBody">
+
+    <!-- Topbar -->
+    <div class="awaClass-cbt-topbar">
+      <div class="awaClass-cbt-topbar-title">
+        <i class="fa-solid fa-bolt"></i> Physics CBT
+      </div>
+      <div class="awaClass-cbt-topbar-right">
+        <button class="awaClass-cbt-btn-calc" onclick="toggleCalc()">
+          <i class="fa-solid fa-calculator"></i> Calculator
+        </button>
+        <div class="awaClass-cbt-timer" id="timerPill">
+          <i class="fa-regular fa-clock" style="color:#ef4444;font-size:12px;"></i>
+          <span class="awaClass-cbt-timer-display" id="cbtTimer">2:00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="awaClass-cbt-progress-wrap">
+      <div class="awaClass-cbt-bar">
+        <div class="awaClass-cbt-bar-fill" id="barFill" style="width:0%"></div>
+      </div>
+      <div class="awaClass-cbt-prog-lbl" id="progLbl">0 / 100</div>
+    </div>
+
+    <!-- Dots -->
+    <div class="awaClass-cbt-dots" id="dotRow"></div>
+
+    <!-- Question Card -->
+    <div class="awaClass-cbt-q-card" id="qCard">
+      <div class="awaClass-cbt-q-meta">
+        <span class="awaClass-cbt-q-badge" id="qTopic">Topic</span>
+        <span class="awaClass-cbt-q-num"   id="qNum">Question 1 of 100</span>
+      </div>
+      <div class="awaClass-cbt-q-text" id="qText"></div>
+      <div class="awaClass-cbt-opts"   id="optsGrid"></div>
+    </div>
+
+    <!-- Nav -->
+    <div class="awaClass-cbt-nav">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-outline" id="prevBtn" onclick="nav(-1)" disabled>← Prev</button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-danger"  onclick="openConfirm()">
+        <i class="fa-solid fa-flag-checkered"></i> Submit
+      </button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-primary" id="nextBtn" onclick="nav(1)">Next →</button>
+    </div>
+
+  </div><!-- /exam-body -->
+
+  <!-- RESULTS -->
+  <div class="awaClass-cbt-results" id="resultsWrap">
+
+    <div class="awaClass-cbt-res-hero">
+      <div class="awaClass-cbt-score-ring">
+        <svg width="128" height="128" viewBox="0 0 128 128">
+          <circle class="awaClass-cbt-sring-bg"   cx="64" cy="64" r="52"/>
+          <circle class="awaClass-cbt-sring-fill" id="sringFill" cx="64" cy="64" r="52"
+                  stroke-dasharray="327" stroke-dashoffset="327"/>
+        </svg>
+        <div class="awaClass-cbt-score-center">
+          <div id="awaClass-resPercent">0%</div>
+          <div class="awaClass-cbt-score-lbl-sm">Score</div>
+        </div>
+      </div>
+      <div id="awaClass-resGrade">—</div>
+      <div id="awaClass-resSub"></div>
+      <div class="awaClass-cbt-stats-row">
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv c" id="stC">0</div>
+          <div class="awaClass-sl">Correct</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv w" id="stW">0</div>
+          <div class="awaClass-sl">Wrong</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv s" id="stS">0</div>
+          <div class="awaClass-sl">Skipped</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv" id="stT" style="color:#8b5cf6">—</div>
+          <div class="awaClass-sl">Time</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="awaClass-cbt-points-banner" id="ptsBanner">
+      <div class="awaClass-cbt-points-icon">🏆</div>
+      <div class="awaClass-cbt-points-body">
+        <h3>Points Earned — <span id="awaClass-earnedPts">…</span> pts total</h3>
+        <p id="awaClass-ptsDetail">Loading your score…</p>
+      </div>
+    </div>
+
+    <div class="awaClass-cbt-rev-title">📝 Answer Review</div>
+    <div id="reviewList"></div>
+
+    <div style="text-align:center;margin:20px 0 8px;">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-primary" onclick="retake()" style="padding:12px 28px;font-size:14px;">
+        <i class="fa-solid fa-rotate-right"></i> Retake Exam
+      </button>
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /page -->
+
+<script>
+/* ═══════════════════════════════════════
+   QUESTIONS BANK — 100 JAMB Physics Questions
+   Topics: Mechanics · Motion · Forces · Work/Energy/Power ·
+           Waves · Sound · Light/Optics · Electricity ·
+           Magnetism · Modern Physics · Heat/Thermodynamics ·
+           Machines · Pressure · Measurement · Nuclear Physics
+═══════════════════════════════════════ */
+const QS = [
+
+  /* ── MEASUREMENT ── */
+  {t:"Measurement",q:"Which of the following is a fundamental (base) unit in SI?",
+   o:["Newton","Joule","Kilogram","Pascal"],a:2,
+   e:"The SI base units are: metre, kilogram, second, ampere, kelvin, mole and candela.\nNewton, Joule and Pascal are all derived units.\nAnswer: Kilogram."},
+  {t:"Measurement",q:"The dimension of velocity is:",
+   o:["MLT⁻²","LT⁻¹","ML²T⁻²","LT⁻²"],a:1,
+   e:"Velocity = displacement / time → [L] / [T] = LT⁻¹.\nAnswer: LT⁻¹."},
+  {t:"Measurement",q:"What instrument is used to measure the diameter of a wire to the nearest 0.01 mm?",
+   o:["Vernier caliper","Metre rule","Micrometer screw gauge","Spring balance"],a:2,
+   e:"A micrometer screw gauge has a least count of 0.01 mm (sometimes 0.001 mm), making it the right choice for wire diameters.\nAnswer: Micrometer screw gauge."},
+  {t:"Measurement",q:"The SI unit of electric current is:",
+   o:["Volt","Watt","Ampere","Coulomb"],a:2,
+   e:"Electric current is a base SI quantity, measured in Amperes (A).\nAnswer: Ampere."},
+  {t:"Measurement",q:"Which of the following is a scalar quantity?",
+   o:["Velocity","Force","Temperature","Acceleration"],a:2,
+   e:"Scalars have magnitude only: temperature, mass, speed, energy.\nVectors have both magnitude and direction: velocity, force, acceleration.\nAnswer: Temperature."},
+
+  /* ── MOTION ── */
+  {t:"Motion",q:"A car accelerates uniformly from rest to 20 m/s in 5 s. What is the acceleration?",
+   o:["2 m/s²","4 m/s²","10 m/s²","100 m/s²"],a:1,
+   e:"a = (v − u) / t = (20 − 0) / 5 = 4 m/s².\nAnswer: 4 m/s²."},
+  {t:"Motion",q:"A body is thrown vertically upward with velocity 30 m/s. How high does it reach? (g = 10 m/s²)",
+   o:["30 m","45 m","60 m","90 m"],a:1,
+   e:"v² = u² − 2gs → 0 = 900 − 20s → s = 900/20 = 45 m.\nAnswer: 45 m."},
+  {t:"Motion",q:"The gradient of a velocity–time graph gives:",
+   o:["Speed","Distance","Acceleration","Displacement"],a:2,
+   e:"Gradient of a v–t graph = Δv/Δt = acceleration.\nAnswer: Acceleration."},
+  {t:"Motion",q:"A stone is dropped from rest and falls for 4 s. How far does it fall? (g = 10 m/s²)",
+   o:["40 m","80 m","120 m","160 m"],a:1,
+   e:"s = ut + ½gt² = 0 + ½ × 10 × 16 = 80 m.\nAnswer: 80 m."},
+  {t:"Motion",q:"The area under a velocity–time graph represents:",
+   o:["Acceleration","Force","Displacement","Power"],a:2,
+   e:"Area under v–t graph = v × t = displacement (for constant v) or total displacement for varying v.\nAnswer: Displacement."},
+  {t:"Motion",q:"A ball is projected horizontally at 20 m/s from the top of a cliff 80 m high. What horizontal distance does it cover before hitting the ground? (g = 10 m/s²)",
+   o:["40 m","60 m","80 m","100 m"],a:2,
+   e:"Time to fall: s = ½gt² → 80 = 5t² → t² = 16 → t = 4 s.\nHorizontal distance = 20 × 4 = 80 m.\nAnswer: 80 m."},
+  {t:"Motion",q:"Newton's first law of motion is also called the law of:",
+   o:["Gravitation","Inertia","Conservation","Friction"],a:1,
+   e:"Newton's first law states that a body remains at rest or in uniform motion unless acted upon by an external force — this property is inertia.\nAnswer: Inertia."},
+
+  /* ── FORCES ── */
+  {t:"Forces",q:"A net force of 24 N acts on a 6 kg mass. What is its acceleration?",
+   o:["2 m/s²","4 m/s²","6 m/s²","8 m/s²"],a:1,
+   e:"F = ma → a = F/m = 24/6 = 4 m/s².\nAnswer: 4 m/s²."},
+  {t:"Forces",q:"A 10 kg object rests on a smooth surface. A force of 20 N is applied at 30° to the horizontal. What is the horizontal acceleration? (cos 30° ≈ 0.87)",
+   o:["1.74 m/s²","2.0 m/s²","3.0 m/s²","0.87 m/s²"],a:0,
+   e:"Horizontal component = 20 cos30° = 20 × 0.87 = 17.4 N.\na = F/m = 17.4/10 = 1.74 m/s².\nAnswer: 1.74 m/s²."},
+  {t:"Forces",q:"Newton's third law states that:",
+   o:["F = ma","For every action there is an equal and opposite reaction","A body in motion stays in motion","Every mass attracts every other mass"],a:1,
+   e:"Newton's third law: action and reaction are equal in magnitude, opposite in direction, and act on different bodies.\nAnswer: For every action there is an equal and opposite reaction."},
+  {t:"Forces",q:"The coefficient of friction between a 5 kg block and a surface is 0.4. What is the friction force? (g = 10 m/s²)",
+   o:["2 N","10 N","20 N","40 N"],a:2,
+   e:"Normal force N = mg = 5 × 10 = 50 N.\nFriction = μN = 0.4 × 50 = 20 N.\nAnswer: 20 N."},
+  {t:"Forces",q:"The moment of a force about a point is the product of the force and the:",
+   o:["Speed of rotation","Perpendicular distance from the point to the line of action","Mass of the object","Angle of rotation"],a:1,
+   e:"Moment (torque) = Force × perpendicular distance from the pivot to the line of action of the force.\nAnswer: Perpendicular distance from the point to the line of action."},
+
+  /* ── WORK, ENERGY & POWER ── */
+  {t:"Work & Energy",q:"A force of 50 N moves an object 8 m in the direction of the force. How much work is done?",
+   o:["400 J","40 J","6.25 J","800 J"],a:0,
+   e:"W = F × d = 50 × 8 = 400 J.\nAnswer: 400 J."},
+  {t:"Work & Energy",q:"A 2 kg ball is raised 5 m above the ground. What is its gravitational potential energy? (g = 10 m/s²)",
+   o:["10 J","25 J","100 J","200 J"],a:2,
+   e:"GPE = mgh = 2 × 10 × 5 = 100 J.\nAnswer: 100 J."},
+  {t:"Work & Energy",q:"An object of mass 4 kg moves at 6 m/s. What is its kinetic energy?",
+   o:["12 J","24 J","48 J","72 J"],a:3,
+   e:"KE = ½mv² = ½ × 4 × 36 = 72 J.\nAnswer: 72 J."},
+  {t:"Work & Energy",q:"A machine does 3000 J of work in 60 s. What is its power output?",
+   o:["20 W","50 W","180 W","3060 W"],a:1,
+   e:"Power = Work / Time = 3000 / 60 = 50 W.\nAnswer: 50 W."},
+  {t:"Work & Energy",q:"The law of conservation of energy states that energy can be:",
+   o:["Created but not destroyed","Destroyed but not created","Neither created nor destroyed","Both created and destroyed"],a:2,
+   e:"Energy cannot be created or destroyed; it can only be converted from one form to another.\nAnswer: Neither created nor destroyed."},
+  {t:"Work & Energy",q:"A motor lifts a load of 400 N through a height of 10 m in 8 s. What is the power of the motor?",
+   o:["500 W","320 W","3200 W","50 W"],a:0,
+   e:"Work done = F × d = 400 × 10 = 4000 J.\nPower = 4000 / 8 = 500 W.\nAnswer: 500 W."},
+
+  /* ── SIMPLE MACHINES ── */
+  {t:"Simple Machines",q:"The mechanical advantage (MA) of a machine is defined as:",
+   o:["Effort ÷ Load","Load ÷ Effort","Work output ÷ Work input","Power output ÷ Power input"],a:1,
+   e:"MA = Load / Effort. It tells you how much the machine multiplies the applied force.\nAnswer: Load ÷ Effort."},
+  {t:"Simple Machines",q:"A lever has effort arm = 60 cm and load arm = 20 cm. What is its mechanical advantage?",
+   o:["0.33","1.5","3","12"],a:2,
+   e:"MA = effort arm / load arm = 60 / 20 = 3.\nAnswer: 3."},
+  {t:"Simple Machines",q:"Velocity ratio of a pulley system with 4 moveable pulleys is:",
+   o:["2","4","8","16"],a:2,
+   e:"For a block and tackle system, VR = 2 × number of moveable pulleys = 2 × 4 = 8.\nAnswer: 8."},
+
+  /* ── PRESSURE ── */
+  {t:"Pressure",q:"Pressure is defined as:",
+   o:["Force × Area","Force / Area","Area / Force","Mass × Acceleration"],a:1,
+   e:"Pressure P = Force / Area. SI unit is the Pascal (Pa).\nAnswer: Force / Area."},
+  {t:"Pressure",q:"The pressure at a depth of 10 m in water is (ρ = 1000 kg/m³, g = 10 m/s²):",
+   o:["1000 Pa","10,000 Pa","100,000 Pa","1,000,000 Pa"],a:2,
+   e:"P = ρgh = 1000 × 10 × 10 = 100,000 Pa.\nAnswer: 100,000 Pa."},
+  {t:"Pressure",q:"Atmospheric pressure at sea level is approximately:",
+   o:["1.01 × 10³ Pa","1.01 × 10⁴ Pa","1.01 × 10⁵ Pa","1.01 × 10⁶ Pa"],a:2,
+   e:"Standard atmospheric pressure ≈ 101,325 Pa ≈ 1.01 × 10⁵ Pa.\nAnswer: 1.01 × 10⁵ Pa."},
+  {t:"Pressure",q:"Archimedes' principle states that an object submerged in a fluid experiences an upthrust equal to:",
+   o:["The weight of the object","The weight of fluid displaced","The mass of fluid displaced","The volume of fluid displaced"],a:1,
+   e:"Archimedes' principle: the buoyant force (upthrust) equals the weight of the fluid displaced by the object.\nAnswer: The weight of fluid displaced."},
+
+  /* ── WAVES ── */
+  {t:"Waves",q:"The number of complete oscillations per second is called:",
+   o:["Wavelength","Period","Frequency","Amplitude"],a:2,
+   e:"Frequency (f) is the number of complete cycles per second, measured in Hertz (Hz).\nAnswer: Frequency."},
+  {t:"Waves",q:"The relationship between wave speed (v), frequency (f) and wavelength (λ) is:",
+   o:["v = f/λ","v = fλ","v = λ/f","f = vλ"],a:1,
+   e:"The wave equation: v = fλ (speed = frequency × wavelength).\nAnswer: v = fλ."},
+  {t:"Waves",q:"A wave has frequency 500 Hz and wavelength 0.6 m. What is its speed?",
+   o:["833 m/s","300 m/s","0.0012 m/s","500 m/s"],a:1,
+   e:"v = fλ = 500 × 0.6 = 300 m/s.\nAnswer: 300 m/s."},
+  {t:"Waves",q:"Which of these waves requires a material medium for propagation?",
+   o:["Light","X-rays","Sound","Radio waves"],a:2,
+   e:"Sound is a mechanical wave — it needs a medium (solid, liquid, or gas) to travel.\nLight and radio waves are electromagnetic and travel in a vacuum.\nAnswer: Sound."},
+  {t:"Waves",q:"The phenomenon whereby a wave bends around an obstacle or through an opening is called:",
+   o:["Refraction","Reflection","Diffraction","Interference"],a:2,
+   e:"Diffraction is the bending or spreading of waves around corners or through openings.\nAnswer: Diffraction."},
+  {t:"Waves",q:"Two waves of the same frequency and amplitude are in phase. What type of interference occurs?",
+   o:["Destructive","Constructive","No interference","Partial interference"],a:1,
+   e:"When two waves meet in phase (crest meets crest), they add to give constructive interference (larger amplitude).\nAnswer: Constructive."},
+
+  /* ── SOUND ── */
+  {t:"Sound",q:"The speed of sound in air at room temperature is approximately:",
+   o:["150 m/s","340 m/s","3 × 10⁸ m/s","1500 m/s"],a:1,
+   e:"The speed of sound in air at approximately 20°C is about 340 m/s.\nAnswer: 340 m/s."},
+  {t:"Sound",q:"The pitch of a sound wave is determined by its:",
+   o:["Amplitude","Frequency","Speed","Wavelength in vacuum"],a:1,
+   e:"Pitch corresponds to frequency — higher frequency = higher pitch.\nAnswer: Frequency."},
+  {t:"Sound",q:"Loudness of sound is related to:",
+   o:["Frequency","Wavelength","Amplitude","Speed"],a:2,
+   e:"Loudness depends on the amplitude of the sound wave — greater amplitude = louder sound.\nAnswer: Amplitude."},
+  {t:"Sound",q:"An echo is heard when sound reflects from a wall 85 m away. (Speed of sound = 340 m/s). What is the time delay?",
+   o:["0.25 s","0.5 s","0.75 s","1.0 s"],a:1,
+   e:"Total distance = 2 × 85 = 170 m.\nTime = distance/speed = 170/340 = 0.5 s.\nAnswer: 0.5 s."},
+  {t:"Sound",q:"The Doppler effect refers to:",
+   o:["Change in amplitude when source moves","Change in frequency due to relative motion between source and observer","Change in speed of sound in different media","Reflection of sound from hard surfaces"],a:1,
+   e:"The Doppler effect is the change in observed frequency (or pitch) when a source and observer are in relative motion.\nAnswer: Change in frequency due to relative motion between source and observer."},
+
+  /* ── LIGHT & OPTICS ── */
+  {t:"Light & Optics",q:"The speed of light in vacuum is:",
+   o:["3 × 10⁶ m/s","3 × 10⁷ m/s","3 × 10⁸ m/s","3 × 10⁹ m/s"],a:2,
+   e:"The speed of light in vacuum c ≈ 3 × 10⁸ m/s.\nAnswer: 3 × 10⁸ m/s."},
+  {t:"Light & Optics",q:"The refractive index of glass is 1.5. What is the speed of light in glass?",
+   o:["2 × 10⁸ m/s","1.5 × 10⁸ m/s","4.5 × 10⁸ m/s","3 × 10⁸ m/s"],a:0,
+   e:"n = c/v → v = c/n = (3×10⁸)/1.5 = 2×10⁸ m/s.\nAnswer: 2 × 10⁸ m/s."},
+  {t:"Light & Optics",q:"Snell's law states:",
+   o:["n₁ sin θ₂ = n₂ sin θ₁","n₁ cos θ₁ = n₂ cos θ₂","n₁ sin θ₁ = n₂ sin θ₂","n₁/sin θ₁ = n₂/sin θ₂"],a:2,
+   e:"Snell's law: n₁ sin θ₁ = n₂ sin θ₂, where θ₁ and θ₂ are the angles of incidence and refraction.\nAnswer: n₁ sin θ₁ = n₂ sin θ₂."},
+  {t:"Light & Optics",q:"A concave mirror has a focal length of 20 cm. An object is placed 60 cm from the mirror. What is the image distance?",
+   o:["20 cm","30 cm","40 cm","60 cm"],a:1,
+   e:"Mirror formula: 1/f = 1/v + 1/u.\n1/20 = 1/v + 1/60 → 1/v = 1/20 − 1/60 = 3/60 − 1/60 = 2/60 → v = 30 cm.\nAnswer: 30 cm."},
+  {t:"Light & Optics",q:"Total internal reflection can only occur when light travels:",
+   o:["From a denser to a less dense medium","From a less dense to a denser medium","At exactly 90° to the surface","Along the normal to the surface"],a:0,
+   e:"Total internal reflection requires light to move from a denser (higher n) to a less dense (lower n) medium at an angle greater than the critical angle.\nAnswer: From a denser to a less dense medium."},
+  {t:"Light & Optics",q:"A diverging lens has a focal length of −30 cm. An object is placed 60 cm from the lens. What is the image distance?",
+   o:["−20 cm","−60 cm","20 cm","30 cm"],a:0,
+   e:"Lens formula: 1/f = 1/v − 1/u.\n1/v = 1/f + 1/u = 1/(−30) + 1/(−60) = −2/60 − 1/60 = −3/60 = −1/20.\nv = −20 cm.\nAnswer: −20 cm."},
+  {t:"Light & Optics",q:"The colour of light that is least deviated by a glass prism is:",
+   o:["Violet","Blue","Green","Red"],a:3,
+   e:"Red light has the longest wavelength and lowest refractive index in glass, so it is deviated (refracted) the least.\nAnswer: Red."},
+
+  /* ── HEAT & THERMODYNAMICS ── */
+  {t:"Heat",q:"The SI unit of temperature is:",
+   o:["Celsius","Fahrenheit","Kelvin","Rankine"],a:2,
+   e:"The SI base unit of temperature is the Kelvin (K), not Celsius or Fahrenheit.\nAnswer: Kelvin."},
+  {t:"Heat",q:"Convert 27°C to Kelvin:",
+   o:["246 K","300 K","27 K","373 K"],a:1,
+   e:"K = °C + 273 = 27 + 273 = 300 K.\nAnswer: 300 K."},
+  {t:"Heat",q:"The specific heat capacity of water is 4200 J kg⁻¹ K⁻¹. How much heat is needed to raise 2 kg of water by 10°C?",
+   o:["420 J","4200 J","84,000 J","840 J"],a:2,
+   e:"Q = mcΔT = 2 × 4200 × 10 = 84,000 J.\nAnswer: 84,000 J."},
+  {t:"Heat",q:"The process by which heat is transferred through a vacuum is:",
+   o:["Conduction","Convection","Radiation","Evaporation"],a:2,
+   e:"Radiation (electromagnetic waves) is the only mode of heat transfer that does not require a medium.\nAnswer: Radiation."},
+  {t:"Heat",q:"Which type of surface is the best emitter and absorber of radiation?",
+   o:["Shiny white","Polished silver","Dull black","Light grey"],a:2,
+   e:"A perfectly black (dull matt black) surface is a perfect absorber and emitter of radiation (a 'black body').\nAnswer: Dull black."},
+  {t:"Heat",q:"Absolute zero is the temperature at which:",
+   o:["Water freezes","All molecular motion ceases","All gases liquefy","Entropy equals zero"],a:1,
+   e:"Absolute zero (0 K = −273.15°C) is the temperature at which molecular kinetic energy is at a minimum — effectively zero motion.\nAnswer: All molecular motion ceases."},
+  {t:"Heat",q:"A gas occupies 4 L at 300 K. What volume does it occupy at 600 K (pressure constant)?",
+   o:["2 L","4 L","8 L","16 L"],a:2,
+   e:"Charles's law: V₁/T₁ = V₂/T₂ → V₂ = 4 × 600/300 = 8 L.\nAnswer: 8 L."},
+
+  /* ── ELECTRICITY ── */
+  {t:"Electricity",q:"Ohm's law states that:",
+   o:["V = IR","V = I/R","V = I²R","V = R/I"],a:0,
+   e:"Ohm's law: V = IR (voltage = current × resistance), provided temperature remains constant.\nAnswer: V = IR."},
+  {t:"Electricity",q:"Three resistors of 4 Ω, 6 Ω, and 12 Ω are connected in parallel. What is the equivalent resistance?",
+   o:["2 Ω","22 Ω","4 Ω","3 Ω"],a:0,
+   e:"1/R = 1/4 + 1/6 + 1/12 = 3/12 + 2/12 + 1/12 = 6/12 = 1/2.\nR = 2 Ω.\nAnswer: 2 Ω."},
+  {t:"Electricity",q:"A 12 V battery is connected to a 4 Ω resistor. What is the current?",
+   o:["3 A","0.33 A","48 A","8 A"],a:0,
+   e:"I = V/R = 12/4 = 3 A.\nAnswer: 3 A."},
+  {t:"Electricity",q:"The power dissipated in a resistor is given by:",
+   o:["P = VI","P = V²/R","P = I²R","All of the above are equivalent"],a:3,
+   e:"P = VI = V²/R = I²R — all three expressions are correct forms of the power equation.\nAnswer: All of the above are equivalent."},
+  {t:"Electricity",q:"A 100 W bulb is used for 5 hours. How much electrical energy is consumed?",
+   o:["500 J","500 Wh","50 kJ","1800 kJ"],a:3,
+   e:"E = P × t = 100 W × (5 × 3600 s) = 1,800,000 J = 1800 kJ.\nAnswer: 1800 kJ."},
+  {t:"Electricity",q:"The quantity of charge is measured in:",
+   o:["Ampere","Volt","Coulomb","Ohm"],a:2,
+   e:"Electric charge is measured in Coulombs (C). 1 C = 1 A × 1 s.\nAnswer: Coulomb."},
+  {t:"Electricity",q:"For resistors in series, the equivalent resistance is:",
+   o:["Less than the smallest resistor","Equal to the average of all resistors","The sum of all resistors","The product divided by the sum"],a:2,
+   e:"For series connection: R_total = R₁ + R₂ + R₃ + …\nAnswer: The sum of all resistors."},
+  {t:"Electricity",q:"What is the electromotive force (EMF) of a battery?",
+   o:["Voltage drop across internal resistance","Total energy per unit charge supplied by the source","Current flowing through the circuit","Resistance of the battery"],a:1,
+   e:"EMF is the total energy (in joules) supplied per coulomb of charge by the source — including the energy lost internally.\nAnswer: Total energy per unit charge supplied by the source."},
+
+  /* ── MAGNETISM ── */
+  {t:"Magnetism",q:"The force on a current-carrying conductor in a magnetic field is given by:",
+   o:["F = qvB","F = BIL","F = B²IL","F = IL/B"],a:1,
+   e:"The magnetic force on a conductor: F = BIL sin θ. For θ = 90°, F = BIL.\nAnswer: F = BIL."},
+  {t:"Magnetism",q:"Fleming's left-hand rule is used to find the direction of:",
+   o:["Induced EMF","Force on a current-carrying conductor in a magnetic field","Force on a moving charge in electric field","Magnetic field around a wire"],a:1,
+   e:"Fleming's left-hand rule (for motors): thumb = force (motion), index = field, middle finger = current.\nAnswer: Force on a current-carrying conductor in a magnetic field."},
+  {t:"Magnetism",q:"A step-up transformer has 100 primary turns and 500 secondary turns. If the primary voltage is 240 V, what is the secondary voltage?",
+   o:["48 V","1200 V","2400 V","120 V"],a:1,
+   e:"Vs/Vp = Ns/Np → Vs = 240 × (500/100) = 240 × 5 = 1200 V.\nAnswer: 1200 V."},
+  {t:"Magnetism",q:"Faraday's law states that the induced EMF in a circuit is proportional to:",
+   o:["The magnetic field strength","The rate of change of magnetic flux","The current in the circuit","The resistance of the circuit"],a:1,
+   e:"Faraday's law: EMF = −dΦ/dt. The induced EMF equals the rate of change of magnetic flux linkage.\nAnswer: The rate of change of magnetic flux."},
+  {t:"Magnetism",q:"Lenz's law states that the direction of induced current is such that it:",
+   o:["Opposes the change that caused it","Enhances the change that caused it","Is always clockwise","Has no preferred direction"],a:0,
+   e:"Lenz's law: the induced current always flows in a direction to oppose the change in flux that produced it (conservation of energy).\nAnswer: Opposes the change that caused it."},
+
+  /* ── ELECTRIC FIELDS ── */
+  {t:"Electric Fields",q:"The electric field strength at a point is defined as:",
+   o:["Force per unit charge","Charge per unit force","Voltage per unit distance","Energy per unit charge"],a:0,
+   e:"E = F/Q — force per unit positive charge placed at that point.\nAnswer: Force per unit charge."},
+  {t:"Electric Fields",q:"Two point charges of +4 μC and −4 μC are placed 0.2 m apart. The force between them is (k = 9×10⁹ N m² C⁻²):",
+   o:["3.6 N","0.36 N","36 N","0.036 N"],a:0,
+   e:"F = kq₁q₂/r² = (9×10⁹)(4×10⁻⁶)(4×10⁻⁶)/(0.04) = (9×10⁹)(16×10⁻¹²)/0.04 = 144×10⁻³/0.04 = 3.6 N.\nAnswer: 3.6 N."},
+  {t:"Electric Fields",q:"A capacitor of capacitance 10 μF is charged to 100 V. The energy stored is:",
+   o:["0.01 J","0.05 J","0.1 J","1 J"],a:1,
+   e:"E = ½CV² = ½ × 10×10⁻⁶ × 10000 = 0.05 J.\nAnswer: 0.05 J."},
+
+  /* ── MODERN / NUCLEAR PHYSICS ── */
+  {t:"Nuclear Physics",q:"The mass number of an atom is the total number of:",
+   o:["Protons only","Neutrons only","Protons and neutrons","Protons and electrons"],a:2,
+   e:"Mass number (A) = number of protons (Z) + number of neutrons (N).\nAnswer: Protons and neutrons."},
+  {t:"Nuclear Physics",q:"Alpha (α) decay of ²³⁸₉₂U produces:",
+   o:["²³⁴₉₀Th","²³⁸₉₃Np","²³⁴₉₁Pa","²³⁶₉₀Th"],a:0,
+   e:"α decay loses 4 in mass number and 2 in atomic number.\n238 − 4 = 234 (mass number), 92 − 2 = 90 (Thorium).\nAnswer: ²³⁴₉₀Th."},
+  {t:"Nuclear Physics",q:"Beta-minus (β⁻) decay involves the emission of:",
+   o:["A proton","An alpha particle","An electron","A positron"],a:2,
+   e:"In β⁻ decay, a neutron converts to a proton + electron + antineutrino. The electron is emitted.\nAnswer: An electron."},
+  {t:"Nuclear Physics",q:"The half-life of a radioactive substance is the time taken for:",
+   o:["All atoms to decay","Half of the atoms to decay","The activity to reach zero","One atom to decay"],a:1,
+   e:"Half-life (t½) is the time for half of the original number of radioactive nuclei to decay.\nAnswer: Half of the atoms to decay."},
+  {t:"Nuclear Physics",q:"A radioactive sample has a half-life of 10 years. What fraction remains after 30 years?",
+   o:["1/2","1/4","1/8","1/16"],a:2,
+   e:"30 years = 3 half-lives. Fraction remaining = (1/2)³ = 1/8.\nAnswer: 1/8."},
+  {t:"Nuclear Physics",q:"Which of the following radiation is most penetrating?",
+   o:["Alpha","Beta","Gamma","X-ray"],a:2,
+   e:"Gamma radiation (γ) is the most penetrating — it requires several centimetres of lead or metres of concrete to attenuate significantly.\nAnswer: Gamma."},
+  {t:"Nuclear Physics",q:"E = mc² was formulated by:",
+   o:["Newton","Maxwell","Einstein","Bohr"],a:2,
+   e:"Einstein's mass-energy equivalence: E = mc², where c is the speed of light.\nAnswer: Einstein."},
+  {t:"Nuclear Physics",q:"Radioactivity is the spontaneous disintegration of:",
+   o:["Stable nuclei","Unstable nuclei","Electrons","Photons"],a:1,
+   e:"Radioactivity is the spontaneous emission of radiation from unstable atomic nuclei as they transform to more stable states.\nAnswer: Unstable nuclei."},
+
+  /* ── CIRCULAR MOTION & GRAVITATION ── */
+  {t:"Gravitation",q:"The centripetal acceleration of an object moving in a circle of radius r at speed v is:",
+   o:["v/r","v²/r","vr","v²r"],a:1,
+   e:"Centripetal acceleration a = v²/r (directed toward the centre of the circle).\nAnswer: v²/r."},
+  {t:"Gravitation",q:"Newton's law of universal gravitation states that the gravitational force between two masses is:",
+   o:["Proportional to the product of the masses and inversely proportional to the distance","Proportional to the product of the masses and inversely proportional to the square of the distance","Proportional to the sum of the masses","Independent of distance"],a:1,
+   e:"F = Gm₁m₂/r² — force is proportional to the product of masses and inversely proportional to the square of the distance.\nAnswer: Proportional to the product of the masses and inversely proportional to the square of the distance."},
+  {t:"Gravitation",q:"The acceleration due to gravity on the Moon is approximately:",
+   o:["9.8 m/s²","3.7 m/s²","1.6 m/s²","6.0 m/s²"],a:2,
+   e:"The Moon's gravitational acceleration is about 1.62 m/s² ≈ 1/6 of Earth's.\nAnswer: 1.6 m/s²."},
+  {t:"Gravitation",q:"Geostationary satellites orbit the Earth at:",
+   o:["Any altitude","The same altitude as the ISS","An altitude where their orbital period is 24 hours","The Earth's surface"],a:2,
+   e:"A geostationary satellite has an orbital period of exactly 24 hours, so it stays fixed above the same point on Earth.\nAnswer: An altitude where their orbital period is 24 hours."},
+
+  /* ── MOMENTUM & COLLISIONS ── */
+  {t:"Momentum",q:"A 3 kg object moves at 4 m/s. What is its momentum?",
+   o:["0.75 kg m/s","7 kg m/s","12 kg m/s","1.3 kg m/s"],a:2,
+   e:"Momentum p = mv = 3 × 4 = 12 kg m/s.\nAnswer: 12 kg m/s."},
+  {t:"Momentum",q:"The principle of conservation of momentum states that:",
+   o:["Momentum is always increasing","Total momentum of an isolated system remains constant","Momentum equals kinetic energy","Momentum can be created by internal forces"],a:1,
+   e:"In the absence of external forces, the total momentum of a system remains constant (is conserved).\nAnswer: Total momentum of an isolated system remains constant."},
+  {t:"Momentum",q:"A 1 kg ball moving at 6 m/s collides with a stationary 2 kg ball and they stick together. What is their common velocity?",
+   o:["3 m/s","2 m/s","6 m/s","4 m/s"],a:1,
+   e:"Conservation of momentum: m₁u₁ = (m₁+m₂)v → 1×6 = 3×v → v = 2 m/s.\nAnswer: 2 m/s."},
+  {t:"Momentum",q:"Impulse is defined as:",
+   o:["Force × distance","Force × time","Mass × velocity","Power × time"],a:1,
+   e:"Impulse = Force × time = change in momentum (J = FΔt = Δp).\nAnswer: Force × time."},
+
+  /* ── ELASTICITY ── */
+  {t:"Elasticity",q:"Hooke's law states that, within the elastic limit, the extension of a spring is:",
+   o:["Inversely proportional to the applied force","Directly proportional to the applied force","Equal to the applied force","Proportional to the square of the applied force"],a:1,
+   e:"Hooke's law: F = ke, where k is the spring constant and e is the extension. F ∝ e.\nAnswer: Directly proportional to the applied force."},
+  {t:"Elasticity",q:"A spring with spring constant 200 N/m is stretched by 0.05 m. What is the elastic potential energy stored?",
+   o:["0.1 J","0.25 J","5 J","10 J"],a:1,
+   e:"E = ½ke² = ½ × 200 × (0.05)² = ½ × 200 × 0.0025 = 0.25 J.\nAnswer: 0.25 J."},
+
+  /* ── ELECTROMAGNETIC WAVES ── */
+  {t:"EM Spectrum",q:"Which of the following has the highest frequency?",
+   o:["Microwaves","Infrared","Visible light","Gamma rays"],a:3,
+   e:"The electromagnetic spectrum in order of increasing frequency: radio → microwave → infrared → visible → UV → X-ray → gamma.\nGamma rays have the highest frequency.\nAnswer: Gamma rays."},
+  {t:"EM Spectrum",q:"Ultraviolet radiation is responsible for:",
+   o:["Night vision","Radio communication","Skin tanning and sunburn","Cooking food"],a:2,
+   e:"UV radiation carries enough energy to cause skin tanning and sunburn by damaging skin cells.\nAnswer: Skin tanning and sunburn."},
+  {t:"EM Spectrum",q:"All electromagnetic waves travel in a vacuum at:",
+   o:["Different speeds depending on frequency","3 × 10⁸ m/s","3 × 10⁶ m/s","Infinite speed"],a:1,
+   e:"All electromagnetic waves travel at the same speed in a vacuum: c = 3 × 10⁸ m/s.\nAnswer: 3 × 10⁸ m/s."},
+
+  /* ── ADDITIONAL MECHANICS ── */
+  {t:"Mechanics",q:"A body is in equilibrium when:",
+   o:["Net force is zero only","Net torque is zero only","Both net force and net torque are zero","It is at rest only"],a:2,
+   e:"For complete (static) equilibrium, both the sum of all forces (ΣF = 0) and the sum of all torques (Στ = 0) must be zero.\nAnswer: Both net force and net torque are zero."},
+  {t:"Mechanics",q:"The trajectory of a projectile (ignoring air resistance) is:",
+   o:["Circular","Linear","Parabolic","Elliptical"],a:2,
+   e:"A projectile under gravity follows a parabolic path because the horizontal motion is uniform while the vertical motion is uniformly accelerated.\nAnswer: Parabolic."},
+  {t:"Mechanics",q:"Terminal velocity is reached when:",
+   o:["Gravity becomes zero","Air resistance equals the weight of the falling object","The object reaches maximum height","Acceleration reaches maximum"],a:1,
+   e:"Terminal velocity occurs when the drag force (air resistance) equals the gravitational force (weight), so net force = 0 and acceleration = 0.\nAnswer: Air resistance equals the weight of the falling object."},
+
+  /* ── SURFACE TENSION & VISCOSITY ── */
+  {t:"Fluids",q:"Surface tension in liquids is responsible for:",
+   o:["Evaporation","Capillary action","Condensation","Boiling"],a:1,
+   e:"Surface tension causes the cohesive forces at the liquid surface that allow capillary action — liquid rising in narrow tubes.\nAnswer: Capillary action."},
+  {t:"Fluids",q:"Bernoulli's principle states that for a flowing fluid, as speed increases, pressure:",
+   o:["Increases","Decreases","Stays the same","First increases then decreases"],a:1,
+   e:"Bernoulli's principle: in a streamline flow, where fluid speed is higher, pressure is lower (and vice versa).\nAnswer: Decreases."},
+
+  /* ── ELECTRONICS ── */
+  {t:"Electronics",q:"A diode allows current to flow in:",
+   o:["Both directions","No direction","Only one direction","Alternating directions"],a:2,
+   e:"A diode is a one-way device — it only conducts when forward-biased (anode positive relative to cathode).\nAnswer: Only one direction."},
+  {t:"Electronics",q:"An NPN transistor is used as an amplifier. The base current controls:",
+   o:["The emitter voltage","The collector current","The supply voltage","The base resistance"],a:1,
+   e:"In an NPN transistor amplifier, a small base current controls a much larger collector current (current gain β = I_C/I_B).\nAnswer: The collector current."},
+  {t:"Electronics",q:"In a full-wave rectifier circuit, the output is:",
+   o:["AC with the same frequency","DC pulsating at twice the AC frequency","Pure DC","DC at half the AC frequency"],a:1,
+   e:"A full-wave rectifier converts both halves of the AC cycle to positive, giving pulsating DC at twice the original frequency.\nAnswer: DC pulsating at twice the AC frequency."},
+
+  /* ── ATOMIC STRUCTURE ── */
+  {t:"Atomic Structure",q:"The Bohr model of the atom states that electrons:",
+   o:["Are stationary around the nucleus","Move in fixed energy orbits without radiating energy","Move randomly within the atom","Are embedded in a positive sphere"],a:1,
+   e:"Bohr's model: electrons orbit the nucleus in fixed (quantised) energy levels and do not emit radiation unless they change levels.\nAnswer: Move in fixed energy orbits without radiating energy."},
+  {t:"Atomic Structure",q:"When an electron moves from a higher energy level to a lower one, it emits:",
+   o:["A neutron","A photon","A proton","An alpha particle"],a:1,
+   e:"The energy difference between levels is released as a photon of light (E = hf).\nAnswer: A photon."},
+  {t:"Atomic Structure",q:"The photoelectric effect shows that light behaves as:",
+   o:["A wave only","A particle (photon)","Both a wave and particle simultaneously","A magnetic wave"],a:1,
+   e:"The photoelectric effect demonstrated that light comes in packets (photons) of energy E = hf, confirming its particle nature.\nAnswer: A particle (photon)."},
+];
+
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let activeQS = [];
+let cur = 0, answers = [];
+let timeLeft = 2*60*60, timerID = null, startTime = null, submitted = false;
+
+/* ── Fisher-Yates shuffle ── */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ═══════════════════════════════════════
+   START
+═══════════════════════════════════════ */
+function startExam(){
+  activeQS = shuffle(QS);
+  answers  = new Array(activeQS.length).fill(null);
+  document.getElementById('introWrap').style.display = 'none';
+  document.getElementById('examBody').style.display  = 'block';
+  buildDots(); renderQ(); startTimer();
+  startTime = Date.now();
+}
+
+/* ── timer ── */
+function startTimer(){
+  timerID = setInterval(()=>{
+    timeLeft--;
+    updateTimer();
+    if(timeLeft<=0){ clearInterval(timerID); submitExam(); }
+  },1000);
+}
+function updateTimer(){
+  const h=Math.floor(timeLeft/3600);
+  const m=String(Math.floor((timeLeft%3600)/60)).padStart(2,'0');
+  const s=String(timeLeft%60).padStart(2,'0');
+  document.getElementById('cbtTimer').textContent=h>0?`${h}:${m}:${s}`:`${m}:${s}`;
+  const p=document.getElementById('timerPill');
+  p.className='awaClass-cbt-timer';
+  if(timeLeft<=60)   p.classList.add('danger');
+  else if(timeLeft<=600) p.classList.add('warn');
+}
+
+/* ── dots ── */
+function buildDots(){
+  const row=document.getElementById('dotRow'); row.innerHTML='';
+  activeQS.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='awaClass-cbt-dot'+(i===0?' active':'');
+    b.textContent=i+1; b.id=`d${i}`;
+    b.onclick=()=>goTo(i);
+    row.appendChild(b);
+  });
+}
+function refreshDots(){
+  activeQS.forEach((_,i)=>{
+    const d=document.getElementById(`d${i}`);
+    d.className='awaClass-cbt-dot';
+    if(answers[i]!==null) d.classList.add('answered');
+    if(i===cur)           d.classList.add('active');
+  });
+}
+
+/* ── render question ── */
+function renderQ(){
+  const q=activeQS[cur];
+  document.getElementById('qTopic').textContent=q.t;
+  document.getElementById('qNum').textContent=`Question ${cur+1} of ${activeQS.length}`;
+  document.getElementById('qText').innerHTML=q.q.replace(/\n/g,'<br>');
+
+  const grid=document.getElementById('optsGrid'); grid.innerHTML='';
+  const LBL=['A','B','C','D'];
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='awaClass-cbt-opt';
+    b.innerHTML=`<span class="awaClass-cbt-opt-lbl">${LBL[i]}</span>${opt}`;
+    b.onclick=()=>pick(i);
+    if(answers[cur]!==null){
+      b.disabled=true;
+      if(i===q.a)             b.classList.add('correct');
+      else if(i===answers[cur]) b.classList.add('wrong');
+    }
+    grid.appendChild(b);
+  });
+
+  updateProgress(); refreshDots();
+  document.getElementById('prevBtn').disabled=(cur===0);
+  document.getElementById('nextBtn').textContent=(cur===activeQS.length-1)?'Finish →':'Next →';
+
+  const card=document.getElementById('qCard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='';
+}
+
+function updateProgress(){
+  const done=answers.filter(a=>a!==null).length;
+  const pct=(done/activeQS.length)*100;
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=`${done} / ${activeQS.length}`;
+}
+
+/* ── pick answer ── */
+function pick(idx){
+  if(answers[cur]!==null||submitted) return;
+  answers[cur]=idx;
+  const q=activeQS[cur];
+  document.querySelectorAll('.awaClass-cbt-opt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a)      b.classList.add('correct');
+    else if(i===idx) b.classList.add('wrong');
+  });
+  if(idx===q.a){ showToast(); fireConfetti(); }
+  refreshDots(); updateProgress();
+}
+
+/* ── navigate ── */
+function nav(dir){ goTo(cur+dir); }
+function goTo(i){ if(i>=0&&i<activeQS.length){ cur=i; renderQ(); } }
+
+/* ── toast / confetti ── */
+function showToast(){
+  const t=document.getElementById('cbtToast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function fireConfetti(){
+  const el=document.getElementById('cbtConfetti');
+  el.style.display='block'; el.innerHTML='';
+  const C=['#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#a78bfa','#fb923c'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div'); p.className='awaClass-cbt-cp';
+    p.style.cssText=`left:${Math.random()*100}%;top:-20px;
+      background:${C[Math.floor(Math.random()*C.length)]};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.2+Math.random()*1.4}s;
+      animation-delay:${Math.random()*.5}s;`;
+    el.appendChild(p);
+  }
+  setTimeout(()=>{ el.style.display='none'; el.innerHTML=''; },2400);
+}
+
+/* ── confirm / submit ── */
+function openConfirm(){
+  const skip=answers.filter(a=>a===null).length;
+  document.getElementById('confSub').textContent=
+    skip>0 ? `${skip} question${skip>1?'s':''} unanswered. They will be marked as skipped.`
+           : `All ${activeQS.length} questions answered. Ready to submit!`;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('open'); }
+
+function submitExam(){
+  submitted=true;
+  clearInterval(timerID);
+  closeConfirm();
+
+  const timeUsed = startTime ? Math.floor((Date.now()-startTime)/1000) : (2*60*60-timeLeft);
+  const tm=String(Math.floor(timeUsed/60)).padStart(2,'0');
+  const ts=String(timeUsed%60).padStart(2,'0');
+
+  let correct=0, wrong=0, skip=0;
+  answers.forEach((a,i)=>{
+    if(a===null) skip++;
+    else if(a===activeQS[i].a) correct++;
+    else wrong++;
+  });
+  const pct=Math.round((correct/activeQS.length)*100);
+
+  let grade, gradeKey;
+  if(pct>=75){      grade='🏆 Distinction'; gradeKey='distinction'; }
+  else if(pct>=60){ grade='🥇 Credit';      gradeKey='credit';      }
+  else if(pct>=50){ grade='🥈 Pass';        gradeKey='pass';        }
+  else if(pct>=40){ grade='⚠️ Nearly';      gradeKey='nearly';      }
+  else{             grade='❌ Below Pass';   gradeKey='fail';        }
+
+  document.getElementById('examBody').style.display='none';
+  const rw=document.getElementById('resultsWrap'); rw.style.display='block';
+
+  setTimeout(()=>{
+    const circ=327;
+    const off=circ-(pct/100)*circ;
+    const col=pct>=70?'#10b981':pct>=50?'#f59e0b':'#ef4444';
+    const sf=document.getElementById('sringFill');
+    sf.style.stroke=col; sf.style.strokeDashoffset=off;
+    document.getElementById('awaClass-resPercent').textContent=pct+'%';
+    document.getElementById('awaClass-resPercent').style.color=col;
+  },80);
+
+  let sub='';
+  if(pct>=75)      sub='Outstanding performance! You aced it!';
+  else if(pct>=60) sub='Great job! Above average performance.';
+  else if(pct>=50) sub='You passed! Keep practicing to improve.';
+  else if(pct>=40) sub='Close to passing. More study needed.';
+  else             sub='Keep studying — you can do better!';
+
+  document.getElementById('awaClass-resGrade').textContent=grade;
+  document.getElementById('awaClass-resSub').textContent=sub;
+  document.getElementById('stC').textContent=correct;
+  document.getElementById('stW').textContent=wrong;
+  document.getElementById('stS').textContent=skip;
+  document.getElementById('stT').textContent=`${tm}:${ts}`;
+
+  buildReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  fetch("{% url 'cbt_submit' %}", {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({
+      subject:       'physics',
+      score:         correct,
+      total:         activeQS.length,
+      percentage:    pct,
+      grade:         gradeKey,
+      time_used_sec: timeUsed,
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.ok){
+      document.getElementById('awaClass-earnedPts').textContent=data.points;
+      document.getElementById('awaClass-ptsDetail').textContent=
+        `Best score ever: ${data.best}%  ·  Points from this exam: ${correct*5+(gradeKey==='distinction'?20:0)}`;
+    }
+  })
+  .catch(()=>{
+    document.getElementById('awaClass-ptsDetail').textContent='(Could not save — check your connection)';
+  });
+}
+
+/* ── review ── */
+function buildReview(){
+  const list=document.getElementById('reviewList'); list.innerHTML='';
+  const LBL=['A','B','C','D'];
+  activeQS.forEach((q,i)=>{
+    const ua=answers[i];
+    const ok=ua===q.a, sk=ua===null;
+    const item=document.createElement('div');
+    item.className=`awaClass-cbt-rev-item ${sk?'ri-s':ok?'ri-c':'ri-w'}`;
+
+    let html='';
+    if(sk){
+      html=`<div class="awaClass-cbt-rans sk">⏭ Not answered — Correct: <strong>${LBL[q.a]}. ${q.o[q.a]}</strong></div>`;
+    } else if(ok){
+      html=`<div class="awaClass-cbt-rans ya c">✅ Your answer: ${LBL[ua]}. ${q.o[ua]}</div>`;
+    } else {
+      html=`<div class="awaClass-cbt-rans ya w">❌ Your answer: ${LBL[ua]}. ${q.o[ua]}</div>
+            <div class="awaClass-cbt-rans ca">✅ Correct: ${LBL[q.a]}. ${q.o[q.a]}</div>`;
+    }
+    item.innerHTML=`
+      <div class="awaClass-cbt-rev-q">
+        <span style="color:#9ca3af;font-size:11px;">Q${i+1} · ${q.t}</span><br>${q.q}
+      </div>
+      <div class="awaClass-cbt-rev-ans-list">${html}</div>
+      <div class="awaClass-cbt-explanation">
+        <div class="awaClass-cbt-explanation-hdr">💡 Step-by-Step Explanation</div>${q.e}
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+function retake(){
+  cur=0; answers=[]; activeQS=[];
+  timeLeft=2*60*60; submitted=false; startTime=null;
+  document.getElementById('resultsWrap').style.display='none';
+  document.getElementById('introWrap').style.display='flex';
+}
+
+/* ═══════════════════════════════════════
+   CALCULATOR
+═══════════════════════════════════════ */
+let cExpr='', cDisp='0', cJustEval=false;
+
+function toggleCalc(){ document.getElementById('calcOverlay').classList.toggle('open'); }
+function closeCalcClick(e){ if(e.target===document.getElementById('calcOverlay')) toggleCalc(); }
+
+function calcInput(v){
+  if(cJustEval&&('0123456789.'.includes(v))){ cExpr=''; cDisp=''; cJustEval=false; }
+  else if(cJustEval){ cJustEval=false; }
+  const ops=['+','-','*','/'];
+  if(ops.includes(v)&&ops.includes(cExpr.slice(-1))) cExpr=cExpr.slice(0,-1)+v;
+  else cExpr+=v;
+  syncCalc();
+}
+function syncCalc(){
+  document.getElementById('awaClass-cExpr').textContent=cExpr.replace(/\*/g,'×').replace(/\//g,'÷');
+  try{
+    const r=Function('"use strict";return('+cExpr+')')();
+    if(isFinite(r)) cDisp=parseFloat(r.toFixed(10)).toString();
+  }catch(e){}
+  document.getElementById('awaClass-cResult').textContent=cDisp||'0';
+}
+function calcEval(){
+  if(!cExpr) return;
+  try{
+    const r=Function('"use strict";return('+cExpr+')')();
+    cDisp=isFinite(r)?parseFloat(r.toFixed(10)).toString():'Error';
+    cExpr=cDisp; cJustEval=true;
+  }catch(e){ cDisp='Error'; cExpr=''; }
+  document.getElementById('awaClass-cExpr').textContent='';
+  document.getElementById('awaClass-cResult').textContent=cDisp;
+}
+function calcClear(){
+  cExpr=''; cDisp='0'; cJustEval=false;
+  document.getElementById('awaClass-cExpr').textContent='';
+  document.getElementById('awaClass-cResult').textContent='0';
+}
+function calcBack(){
+  if(cJustEval){calcClear();return;}
+  cExpr=cExpr.slice(0,-1); syncCalc();
+  if(!cExpr) document.getElementById('awaClass-cResult').textContent='0';
+}
+function calcToggleSign(){
+  if(!cExpr) return;
+  cExpr=cExpr.startsWith('-')?cExpr.slice(1):'-'+cExpr; syncCalc();
+}
+function calcPercent(){
+  if(!cExpr) return;
+  try{
+    const r=Function('"use strict";return('+cExpr+')')();
+    cExpr=(r/100).toString(); cDisp=cExpr;
+    document.getElementById('awaClass-cResult').textContent=cDisp;
+    document.getElementById('awaClass-cExpr').textContent='';
+  }catch(e){}
+}
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('calcOverlay').classList.contains('open')) return;
+  if('0123456789.'.includes(e.key)) calcInput(e.key);
+  else if(e.key==='+') calcInput('+');
+  else if(e.key==='-') calcInput('-');
+  else if(e.key==='*') calcInput('*');
+  else if(e.key==='/'){ e.preventDefault(); calcInput('/'); }
+  else if(e.key==='Enter'||e.key==='=') calcEval();
+  else if(e.key==='Backspace') calcBack();
+  else if(e.key==='Escape') toggleCalc();
+  else if(e.key.toLowerCase()==='c') calcClear();
+});
+</script>
+
+{% include "footer.html" %}
+</body>
+</html>

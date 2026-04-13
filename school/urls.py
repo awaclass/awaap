@@ -23,8 +23,11 @@ urlpatterns = [
 
     # ── CBT Exam ──────────────────────────────────────────────────
     path('cbt/',             views.cbt_subjects, name='cbt_subjects'),   # subject picker page
-    path('cbt/mathematics/', views.cbt_exam,     name='cbt_exam'),       # maths exam (default)
-    path('cbt/submit/',      views.cbt_submit,   name='cbt_submit'),     # score submission
+    path('cbt/mathematics/', views.cbt_exam,     name='cbt_exam'),   
+    path('cbt/physics/',     views.cbt_physics,    name='cbt_physics'),
+    path('cbt/english/',     views.cbt_english,   name='cbt_english'),
+    path('cbt/chemistry/',   views.cbt_chemistry, name='cbt_chemistry'),  # ← Chemistry CBT
+    path('cbt/submit/',      views.cbt_submit,    name='cbt_submit'),     # score submission
     # ─────────────────────────────────────────────────────────────
 
     # Live video URLs

@@ -1,0 +1,1618 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Language CBT — awaClass</title>
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+
+  /* ══════════════════════════════════════════════════
+     BASE
+  ══════════════════════════════════════════════════ */
+  body {
+    background-color: #ffffff;
+  }
+
+  /* ══════════════════════════════════════════════════
+     PAGE LAYOUT
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 16px 16px 56px;
+  }
+
+  /* ══════════════════════════════════════════════════
+     INTRO SCREEN
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-intro-wrap {
+    min-height: 78vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-intro-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 36px 28px;
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,.06);
+  }
+
+  .awaClass-cbt-intro-emoji {
+    font-size: 3rem;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-intro-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f0f0f;
+    margin: 0 0 6px;
+  }
+
+  .awaClass-cbt-intro-sub {
+    font-size: 13px;
+    color: #606060;
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+
+  .awaClass-cbt-intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .awaClass-cbt-intro-item {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 13px 10px;
+  }
+
+  .awaClass-cbt-intro-item .awaClass-cbt-iv {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #10b981;
+    line-height: 1;
+  }
+
+  .awaClass-cbt-intro-item .awaClass-cbt-il {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 3px;
+  }
+
+  .awaClass-cbt-btn-start {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.18s;
+    box-shadow: 0 6px 18px rgba(16,185,129,.28);
+  }
+
+  .awaClass-cbt-btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16,185,129,.38);
+  }
+
+  /* ══════════════════════════════════════════════════
+     STICKY TOPBAR
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 11px 16px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+    box-shadow: 0 4px 18px rgba(0,0,0,.07);
+  }
+
+  .awaClass-cbt-topbar-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  /* ── Timer ── */
+  .awaClass-cbt-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+    padding: 6px 12px;
+    transition: all 0.3s;
+  }
+
+  .awaClass-cbt-timer.warn {
+    background: #fffbeb;
+    border-color: #fde68a;
+    animation: awaClass-pulse 1s infinite;
+  }
+
+  .awaClass-cbt-timer.danger {
+    background: #fef2f2;
+    border-color: #f87171;
+    animation: awaClass-pulse 0.5s infinite;
+  }
+
+  @keyframes awaClass-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.25); }
+    50%       { box-shadow: 0 0 0 4px rgba(239,68,68,0); }
+  }
+
+  .awaClass-cbt-timer-display {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ef4444;
+    min-width: 52px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ══════════════════════════════════════════════════
+     PROGRESS BAR
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-bar {
+    flex: 1;
+    height: 5px;
+    background: #e5e5e5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .awaClass-cbt-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #06b6d4);
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 6px rgba(16,185,129,.4);
+  }
+
+  .awaClass-cbt-prog-lbl {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTION NAV DOTS
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1.5px solid #e5e5e5;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-dot:hover {
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .awaClass-cbt-dot.active {
+    background: #10b981;
+    border-color: #10b981;
+    color: #fff;
+  }
+
+  .awaClass-cbt-dot.answered {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .awaClass-cbt-dot.answered.active {
+    background: #10b981;
+    color: #fff;
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTION CARD
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-q-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 24px 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    animation: awaClass-slideIn 0.26s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes awaClass-slideIn {
+    from { opacity: 0; transform: translateX(14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .awaClass-cbt-q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-q-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #10b981;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 3px 9px;
+    border-radius: 5px;
+  }
+
+  .awaClass-cbt-q-num {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .awaClass-cbt-q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #0f0f0f;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  /* Passage block for comprehension questions */
+  .awaClass-cbt-passage {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-left: 4px solid #10b981;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: #1f2937;
+    white-space: pre-line;
+  }
+
+  /* ── Options ── */
+  .awaClass-cbt-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 520px) {
+    .awaClass-cbt-opts { grid-template-columns: 1fr; }
+  }
+
+  .awaClass-cbt-opt {
+    background: #f9fafb;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 11px;
+    padding: 12px 14px;
+    color: #0f0f0f;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+
+  .awaClass-cbt-opt:hover:not(:disabled) {
+    border-color: #10b981;
+    background: #ecfdf5;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(16,185,129,.1);
+  }
+
+  .awaClass-cbt-opt-lbl {
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+    background: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #606060;
+    transition: all 0.15s;
+  }
+
+  .awaClass-cbt-opt.correct {
+    border-color: #10b981;
+    background: #ecfdf5;
+    animation: awaClass-pop 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  .awaClass-cbt-opt.correct .awaClass-cbt-opt-lbl {
+    background: #10b981;
+    color: #fff;
+  }
+
+  .awaClass-cbt-opt.wrong {
+    border-color: #ef4444;
+    background: #fef2f2;
+    animation: awaClass-shake 0.38s ease;
+  }
+
+  .awaClass-cbt-opt.wrong .awaClass-cbt-opt-lbl {
+    background: #ef4444;
+    color: #fff;
+  }
+
+  .awaClass-cbt-opt:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  @keyframes awaClass-pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes awaClass-shake {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-5px); }
+    40%     { transform: translateX(5px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+  }
+
+  /* ══════════════════════════════════════════════════
+     NAV BUTTONS
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .awaClass-cbt-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-btn-outline {
+    background: transparent;
+    border: 1.5px solid #e5e5e5;
+    color: #9ca3af;
+  }
+
+  .awaClass-cbt-btn-outline:hover:not(:disabled) {
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .awaClass-cbt-btn-primary {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(16,185,129,.25);
+  }
+
+  .awaClass-cbt-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16,185,129,.35);
+  }
+
+  .awaClass-cbt-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(239,68,68,.2);
+  }
+
+  .awaClass-cbt-btn-danger:hover {
+    transform: translateY(-1px);
+  }
+
+  .awaClass-cbt-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* ══════════════════════════════════════════════════
+     CONFETTI + TOAST
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    display: none;
+  }
+
+  .awaClass-cbt-cp {
+    position: absolute;
+    border-radius: 2px;
+    animation: awaClass-cfFall linear forwards;
+  }
+
+  @keyframes awaClass-cfFall {
+    0%   { transform: translateY(-20px) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .awaClass-cbt-toast {
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-18px);
+    background: linear-gradient(135deg, #064e3b, #065f46);
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    padding: 11px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #6ee7b7;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(.175,.885,.32,1.275);
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(16,185,129,.2);
+    pointer-events: none;
+  }
+
+  .awaClass-cbt-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ══════════════════════════════════════════════════
+     SUBMIT CONFIRM MODAL
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    backdrop-filter: blur(6px);
+    z-index: 600;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .awaClass-cbt-confirm-overlay.open {
+    display: flex;
+  }
+
+  .awaClass-cbt-confirm-box {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 28px;
+    width: 310px;
+    text-align: center;
+    box-shadow: 0 20px 48px rgba(0,0,0,.12);
+    animation: awaClass-popIn 0.26s cubic-bezier(.175,.885,.32,1.275);
+  }
+
+  @keyframes awaClass-popIn {
+    from { transform: scale(.88); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .awaClass-cbt-conf-icon  { font-size: 2.2rem; margin-bottom: 10px; }
+  .awaClass-cbt-conf-title { font-size: 16px; font-weight: 800; color: #0f0f0f; margin-bottom: 6px; }
+  .awaClass-cbt-conf-sub   { font-size: 13px; color: #606060; margin-bottom: 18px; line-height: 1.5; }
+
+  .awaClass-cbt-conf-btns {
+    display: flex;
+    gap: 9px;
+    justify-content: center;
+  }
+
+  /* ══════════════════════════════════════════════════
+     RESULTS SCREEN
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-results {
+    display: none;
+    animation: awaClass-fadeUp 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  @keyframes awaClass-fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .awaClass-cbt-res-hero {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .awaClass-cbt-res-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(16,185,129,.07) 0%, transparent 70%);
+  }
+
+  .awaClass-cbt-score-ring {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .awaClass-cbt-score-ring svg { transform: rotate(-90deg); }
+
+  .awaClass-cbt-sring-bg {
+    fill: none;
+    stroke: #e5e5e5;
+    stroke-width: 8;
+  }
+
+  .awaClass-cbt-sring-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .awaClass-cbt-score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #awaClass-resPercent {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #0f0f0f;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awaClass-cbt-score-lbl-sm {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  #awaClass-resGrade {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f0f0f;
+    margin-bottom: 4px;
+  }
+
+  #awaClass-resSub {
+    font-size: 13px;
+    color: #606060;
+    margin-bottom: 16px;
+  }
+
+  .awaClass-cbt-stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .awaClass-cbt-stat-chip {
+    background: #f9fafb;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 9px 14px;
+    text-align: center;
+  }
+
+  .awaClass-cbt-stat-chip .awaClass-sv {
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awaClass-cbt-stat-chip .awaClass-sl {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  .awaClass-sv.c { color: #10b981; }
+  .awaClass-sv.w { color: #ef4444; }
+  .awaClass-sv.s { color: #f59e0b; }
+
+  /* Points banner */
+  .awaClass-cbt-points-banner {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 1px solid #a7f3d0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .awaClass-cbt-points-icon { font-size: 1.75rem; }
+
+  .awaClass-cbt-points-body h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #10b981;
+    margin: 0 0 2px;
+  }
+
+  .awaClass-cbt-points-body p {
+    font-size: 12px;
+    color: #606060;
+    margin: 0;
+  }
+
+  #awaClass-earnedPts { color: #f59e0b; font-weight: 800; }
+
+  /* Review */
+  .awaClass-cbt-rev-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f0f0f;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .awaClass-cbt-rev-item {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 13px;
+    padding: 16px;
+    margin-bottom: 9px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.04);
+  }
+
+  .awaClass-cbt-rev-q {
+    font-size: 13px;
+    font-weight: 500;
+    color: #0f0f0f;
+    line-height: 1.5;
+    margin-bottom: 9px;
+  }
+
+  .awaClass-cbt-rev-ans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .awaClass-cbt-rans {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .awaClass-cbt-rans.ya.c  { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .awaClass-cbt-rans.ya.w  { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .awaClass-cbt-rans.ca    { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .awaClass-cbt-rans.sk    { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+
+  .awaClass-cbt-explanation {
+    margin-top: 9px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 9px;
+    padding: 11px 13px;
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .awaClass-cbt-explanation-hdr {
+    font-size: 11px;
+    font-weight: 700;
+    color: #10b981;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Exam body hidden by default */
+  .awaClass-cbt-exam-body { display: none; }
+
+  @media (max-width: 520px) {
+    .awaClass-cbt-topbar { flex-wrap: wrap; gap: 8px; }
+    .awaClass-cbt-intro-card { padding: 24px 16px; }
+  }
+
+</style>
+</head>
+<body>
+{% include 'sidebar.html' %}
+
+<!-- confetti + toast -->
+<div class="awaClass-cbt-confetti" id="cbtConfetti"></div>
+<div class="awaClass-cbt-toast"    id="cbtToast">🎉 Correct! Well done!</div>
+
+<!-- ══════════════════════════════════════════
+     SUBMIT CONFIRM MODAL
+══════════════════════════════════════════ -->
+<div class="awaClass-cbt-confirm-overlay" id="confirmOverlay">
+  <div class="awaClass-cbt-confirm-box">
+    <div class="awaClass-cbt-conf-icon">📋</div>
+    <div class="awaClass-cbt-conf-title">Submit Exam?</div>
+    <div class="awaClass-cbt-conf-sub" id="confSub">Are you sure you want to submit?</div>
+    <div class="awaClass-cbt-conf-btns">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-danger"  onclick="submitExam()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<div class="awaClass-cbt-page">
+
+  <!-- INTRO -->
+  <div class="awaClass-cbt-intro-wrap" id="introWrap">
+    <div class="awaClass-cbt-intro-card">
+      <div class="awaClass-cbt-intro-emoji">📝</div>
+      <div class="awaClass-cbt-intro-title">English Language CBT</div>
+      <div class="awaClass-cbt-intro-sub">Senior Secondary · English Language · awaClass</div>
+      <div class="awaClass-cbt-intro-grid">
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">100</div>
+          <div class="awaClass-cbt-il">Questions</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">1:30:00</div>
+          <div class="awaClass-cbt-il">Time Limit</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">1 mark</div>
+          <div class="awaClass-cbt-il">Per Question</div>
+        </div>
+        <div class="awaClass-cbt-intro-item">
+          <div class="awaClass-cbt-iv">0</div>
+          <div class="awaClass-cbt-il">Negative Mark</div>
+        </div>
+      </div>
+      <button class="awaClass-cbt-btn-start" onclick="startExam()">▶ Start Exam</button>
+    </div>
+  </div>
+
+  <!-- EXAM BODY -->
+  <div class="awaClass-cbt-exam-body" id="examBody">
+
+    <!-- Topbar -->
+    <div class="awaClass-cbt-topbar">
+      <div class="awaClass-cbt-topbar-title">
+        <i class="fa-solid fa-book-open"></i> English CBT
+      </div>
+      <div class="awaClass-cbt-topbar-right">
+        <div class="awaClass-cbt-timer" id="timerPill">
+          <i class="fa-regular fa-clock" style="color:#ef4444;font-size:12px;"></i>
+          <span class="awaClass-cbt-timer-display" id="cbtTimer">1:30:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="awaClass-cbt-progress-wrap">
+      <div class="awaClass-cbt-bar">
+        <div class="awaClass-cbt-bar-fill" id="barFill" style="width:0%"></div>
+      </div>
+      <div class="awaClass-cbt-prog-lbl" id="progLbl">0 / 100</div>
+    </div>
+
+    <!-- Dots -->
+    <div class="awaClass-cbt-dots" id="dotRow"></div>
+
+    <!-- Question Card -->
+    <div class="awaClass-cbt-q-card" id="qCard">
+      <div class="awaClass-cbt-q-meta">
+        <span class="awaClass-cbt-q-badge" id="qTopic">Topic</span>
+        <span class="awaClass-cbt-q-num"   id="qNum">Question 1 of 100</span>
+      </div>
+      <div class="awaClass-cbt-q-text" id="qText"></div>
+      <div class="awaClass-cbt-opts"   id="optsGrid"></div>
+    </div>
+
+    <!-- Nav -->
+    <div class="awaClass-cbt-nav">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-outline" id="prevBtn" onclick="nav(-1)" disabled>← Prev</button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-danger"  onclick="openConfirm()">
+        <i class="fa-solid fa-flag-checkered"></i> Submit
+      </button>
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-primary" id="nextBtn" onclick="nav(1)">Next →</button>
+    </div>
+
+  </div><!-- /exam-body -->
+
+  <!-- RESULTS -->
+  <div class="awaClass-cbt-results" id="resultsWrap">
+
+    <div class="awaClass-cbt-res-hero">
+      <div class="awaClass-cbt-score-ring">
+        <svg width="128" height="128" viewBox="0 0 128 128">
+          <circle class="awaClass-cbt-sring-bg"   cx="64" cy="64" r="52"/>
+          <circle class="awaClass-cbt-sring-fill" id="sringFill" cx="64" cy="64" r="52"
+                  stroke-dasharray="327" stroke-dashoffset="327"/>
+        </svg>
+        <div class="awaClass-cbt-score-center">
+          <div id="awaClass-resPercent">0%</div>
+          <div class="awaClass-cbt-score-lbl-sm">Score</div>
+        </div>
+      </div>
+      <div id="awaClass-resGrade">—</div>
+      <div id="awaClass-resSub"></div>
+      <div class="awaClass-cbt-stats-row">
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv c" id="stC">0</div>
+          <div class="awaClass-sl">Correct</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv w" id="stW">0</div>
+          <div class="awaClass-sl">Wrong</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv s" id="stS">0</div>
+          <div class="awaClass-sl">Skipped</div>
+        </div>
+        <div class="awaClass-cbt-stat-chip">
+          <div class="awaClass-sv" id="stT" style="color:#10b981">—</div>
+          <div class="awaClass-sl">Time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Points banner -->
+    <div class="awaClass-cbt-points-banner" id="ptsBanner">
+      <div class="awaClass-cbt-points-icon">🏆</div>
+      <div class="awaClass-cbt-points-body">
+        <h3>Points Earned — <span id="awaClass-earnedPts">…</span> pts total</h3>
+        <p id="awaClass-ptsDetail">Loading your score…</p>
+      </div>
+    </div>
+
+    <div class="awaClass-cbt-rev-title">📝 Answer Review</div>
+    <div id="reviewList"></div>
+
+    <div style="text-align:center;margin:20px 0 8px;">
+      <button class="awaClass-cbt-btn awaClass-cbt-btn-primary" onclick="retake()" style="padding:12px 28px;font-size:14px;">
+        <i class="fa-solid fa-rotate-right"></i> Retake Exam
+      </button>
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /page -->
+
+<script>
+/* ═══════════════════════════════════════
+   QUESTIONS BANK — 100 JAMB English Language Questions
+   Topics: Comprehension · Lexis & Structure · Oral English ·
+           Synonyms · Antonyms · Idioms & Phrases · Cloze Test ·
+           Parts of Speech · Tenses · Concord · Register ·
+           Figures of Speech · Punctuation · Vocabulary ·
+           Sentence Completion · Word Order · Spelling ·
+           Direct & Indirect Speech · Active & Passive Voice ·
+           One Word Substitution
+═══════════════════════════════════════ */
+const QS = [
+  /* ── COMPREHENSION ── */
+  {t:"Comprehension",
+   q:`Read the passage and answer the question.\n\n"The library was Amara's favourite place in the whole school. Unlike the noisy classroom or the busy playground, it offered silence and the smell of old paper. She could lose herself for hours among shelves that seemed to go on forever. Yet, lately, fewer and fewer students visited, preferring the glow of a phone screen to the weight of a book."\n\nWhat does the word 'preferred' suggest about students' attitude to books?`,
+   o:["They valued books more than phones","They chose phones over books","They never owned phones","They wanted more books in school"],a:1,
+   e:"'Preferred' means to choose one thing over another. The passage says students preferred 'the glow of a phone screen to the weight of a book', meaning they chose phones over books.\nAnswer: They chose phones over books."},
+
+  {t:"Comprehension",
+   q:`Read the passage and answer the question.\n\n"The library was Amara's favourite place in the whole school. Unlike the noisy classroom or the busy playground, it offered silence and the smell of old paper. She could lose herself for hours among shelves that seemed to go on forever. Yet, lately, fewer and fewer students visited, preferring the glow of a phone screen to the weight of a book."\n\nWhich literary device is used in 'shelves that seemed to go on forever'?`,
+   o:["Simile","Alliteration","Hyperbole","Onomatopoeia"],a:2,
+   e:"Exaggerating for effect ('go on forever') is a hyperbole. The shelves do not literally go on forever; the writer overstates to show how vast the library felt.\nAnswer: Hyperbole."},
+
+  {t:"Comprehension",
+   q:`Read the passage and answer the question.\n\n"The library was Amara's favourite place in the whole school. Unlike the noisy classroom or the busy playground, it offered silence and the smell of old paper. She could lose herself for hours among shelves that seemed to go on forever. Yet, lately, fewer and fewer students visited, preferring the glow of a phone screen to the weight of a book."\n\nThe phrase 'lose herself' most nearly means:`,
+   o:["Forget her way home","Become deeply absorbed","Misplace her belongings","Feel confused"],a:1,
+   e:"'Lose herself' is an idiom meaning to be so absorbed in an activity that one forgets time and surroundings.\nAnswer: Become deeply absorbed."},
+
+  {t:"Comprehension",
+   q:`Read the passage and answer the question.\n\n"The library was Amara's favourite place in the whole school. Unlike the noisy classroom or the busy playground, it offered silence and the smell of old paper. She could lose herself for hours among shelves that seemed to go on forever. Yet, lately, fewer and fewer students visited, preferring the glow of a phone screen to the weight of a book."\n\nThe mood of the passage is best described as:`,
+   o:["Joyful and celebratory","Nostalgic and concerned","Angry and bitter","Humorous and light"],a:1,
+   e:"The writer fondly describes the library (nostalgic) but notes that fewer students now visit (concerned). The overall tone is nostalgic and concerned.\nAnswer: Nostalgic and concerned."},
+
+  /* ── SYNONYMS ── */
+  {t:"Synonyms",q:"Choose the word closest in meaning to BENEVOLENT.",
+   o:["Cruel","Kind","Lazy","Noisy"],a:1,
+   e:"'Benevolent' means having goodwill or kindness towards others.\nAnswer: Kind."},
+  {t:"Synonyms",q:"Choose the word closest in meaning to METICULOUS.",
+   o:["Careless","Thorough","Quick","Loud"],a:1,
+   e:"'Meticulous' means showing great attention to detail; very careful and precise.\nAnswer: Thorough."},
+  {t:"Synonyms",q:"Choose the word closest in meaning to AUDACIOUS.",
+   o:["Timid","Bold","Quiet","Generous"],a:1,
+   e:"'Audacious' means showing a willingness to take surprisingly bold risks.\nAnswer: Bold."},
+  {t:"Synonyms",q:"Choose the word closest in meaning to LOQUACIOUS.",
+   o:["Silent","Talkative","Angry","Stingy"],a:1,
+   e:"'Loquacious' means tending to talk a great deal; talkative.\nAnswer: Talkative."},
+  {t:"Synonyms",q:"Choose the word closest in meaning to OBSOLETE.",
+   o:["Modern","Outdated","Expensive","Famous"],a:1,
+   e:"'Obsolete' means no longer produced or used; out of date.\nAnswer: Outdated."},
+
+  /* ── ANTONYMS ── */
+  {t:"Antonyms",q:"Choose the word OPPOSITE in meaning to VERBOSE.",
+   o:["Talkative","Concise","Angry","Polite"],a:1,
+   e:"'Verbose' means using more words than necessary. Its antonym is 'concise', meaning brief and to the point.\nAnswer: Concise."},
+  {t:"Antonyms",q:"Choose the word OPPOSITE in meaning to FRUGAL.",
+   o:["Thrifty","Wasteful","Careful","Honest"],a:1,
+   e:"'Frugal' means sparing or economical with money. Its antonym is 'wasteful'.\nAnswer: Wasteful."},
+  {t:"Antonyms",q:"Choose the word OPPOSITE in meaning to TRANSIENT.",
+   o:["Temporary","Permanent","Rare","Silent"],a:1,
+   e:"'Transient' means lasting only for a short time. Its antonym is 'permanent'.\nAnswer: Permanent."},
+  {t:"Antonyms",q:"Choose the word OPPOSITE in meaning to INDIGENOUS.",
+   o:["Native","Foreign","Rare","Loud"],a:1,
+   e:"'Indigenous' means originating from a particular place. Its antonym is 'foreign'.\nAnswer: Foreign."},
+  {t:"Antonyms",q:"Choose the word OPPOSITE in meaning to LUCID.",
+   o:["Clear","Obscure","Simple","Bright"],a:1,
+   e:"'Lucid' means easy to understand; clear. Its antonym is 'obscure', meaning unclear or difficult to understand.\nAnswer: Obscure."},
+
+  /* ── IDIOMS & PHRASES ── */
+  {t:"Idioms & Phrases",q:"What does the idiom 'beat around the bush' mean?",
+   o:["To hit something hard","To avoid the main topic","To search for something","To speak directly"],a:1,
+   e:"'Beat around the bush' means to avoid talking about the main subject, usually to delay or evade.\nAnswer: To avoid the main topic."},
+  {t:"Idioms & Phrases",q:"What does 'a blessing in disguise' mean?",
+   o:["A hidden curse","Something good that seemed bad at first","A religious practice","A secret gift"],a:1,
+   e:"'A blessing in disguise' refers to something that seems bad or unlucky at first but results in something good.\nAnswer: Something good that seemed bad at first."},
+  {t:"Idioms & Phrases",q:"What does 'bite the bullet' mean?",
+   o:["To eat something hard","To endure a painful situation with courage","To fight an enemy","To make a mistake"],a:1,
+   e:"'Bite the bullet' means to endure a painful or difficult situation with courage and patience.\nAnswer: To endure a painful situation with courage."},
+  {t:"Idioms & Phrases",q:"What does 'burning the midnight oil' mean?",
+   o:["Wasting energy","Working or studying late into the night","Starting a fire","Being careless"],a:1,
+   e:"'Burning the midnight oil' means working late into the night, historically referencing the use of oil lamps.\nAnswer: Working or studying late into the night."},
+  {t:"Idioms & Phrases",q:"What does the phrase 'get the ball rolling' mean?",
+   o:["Play a sport","Start an activity or process","Waste time","Ask for help"],a:1,
+   e:"'Get the ball rolling' means to start an activity or get a process going.\nAnswer: Start an activity or process."},
+
+  /* ── PARTS OF SPEECH ── */
+  {t:"Parts of Speech",q:"Identify the part of speech of the underlined word:\n'She sings BEAUTIFULLY.'",
+   o:["Adjective","Adverb","Noun","Verb"],a:1,
+   e:"'Beautifully' modifies the verb 'sings', telling us HOW she sings. Any word that modifies a verb is an adverb.\nAnswer: Adverb."},
+  {t:"Parts of Speech",q:"Identify the part of speech of the underlined word:\n'The GOLDEN trophy gleamed on the shelf.'",
+   o:["Adverb","Adjective","Noun","Verb"],a:1,
+   e:"'Golden' describes the noun 'trophy', so it is an adjective.\nAnswer: Adjective."},
+  {t:"Parts of Speech",q:"Which sentence contains a proper noun?",
+   o:["The dog ran fast.","Lagos is a busy city.","She loves reading.","They played all day."],a:1,
+   e:"'Lagos' is the name of a specific city, making it a proper noun. Proper nouns name specific people, places, or things.\nAnswer: Lagos is a busy city."},
+  {t:"Parts of Speech",q:"Identify the conjunction in: 'I wanted to go, BUT I was tired.'",
+   o:["wanted","tired","BUT","I"],a:2,
+   e:"'But' joins the two clauses, showing contrast. It is a coordinating conjunction.\nAnswer: BUT."},
+  {t:"Parts of Speech",q:"Which word in the sentence is a preposition?\n'The book is ON the table.'",
+   o:["book","is","ON","table"],a:2,
+   e:"'On' shows the relationship between 'book' and 'table' (position). Words that show relationships between nouns are prepositions.\nAnswer: ON."},
+
+  /* ── TENSES ── */
+  {t:"Tenses",q:"Choose the correct tense:\n'By the time she arrived, we _____ the food.'",
+   o:["ate","have eaten","had eaten","will eat"],a:2,
+   e:"The action (eating) was completed BEFORE another past action (she arrived). This requires the past perfect: 'had eaten'.\nAnswer: had eaten."},
+  {t:"Tenses",q:"Choose the correct form:\n'She _____ to the market every Friday.'",
+   o:["go","goes","went","is going"],a:1,
+   e:"'Every Friday' signals a habitual action in the present. For third-person singular (she), add -s: 'goes'.\nAnswer: goes."},
+  {t:"Tenses",q:"Choose the correct tense:\n'They _____ for three hours when the rain started.'",
+   o:["walk","walked","had been walking","have walked"],a:2,
+   e:"The past perfect continuous is used for an action that was ongoing before another past event.\n'Had been walking' is correct.\nAnswer: had been walking."},
+  {t:"Tenses",q:"Choose the correct form:\n'By next year, I _____ this course.'",
+   o:["finish","finished","will finish","will have finished"],a:3,
+   e:"'By next year' points to a future point by which an action will be completed. This requires the future perfect: 'will have finished'.\nAnswer: will have finished."},
+
+  /* ── CONCORD (SUBJECT-VERB AGREEMENT) ── */
+  {t:"Concord",q:"Choose the correct verb form:\n'Neither the teacher nor the students _____ present.'",
+   o:["was","were","is","are being"],a:1,
+   e:"With 'neither…nor', the verb agrees with the noun closest to it. 'Students' is plural, so use 'were'.\nAnswer: were."},
+  {t:"Concord",q:"Choose the correct verb form:\n'The news _____ very disturbing.'",
+   o:["are","were","is","have been"],a:2,
+   e:"'News' appears plural but is an uncountable noun that always takes a singular verb: 'is'.\nAnswer: is."},
+  {t:"Concord",q:"Choose the correct verb form:\n'Each of the boys _____ a uniform.'",
+   o:["wear","wears","are wearing","have worn"],a:1,
+   e:"'Each' is always singular. So the verb must be singular: 'wears'.\nAnswer: wears."},
+  {t:"Concord",q:"Choose the correct verb form:\n'Bread and butter _____ his favourite breakfast.'",
+   o:["are","were","is","have been"],a:2,
+   e:"'Bread and butter' refers to a single food item (considered as one unit), so it takes a singular verb.\nAnswer: is."},
+  {t:"Concord",q:"Choose the correct verb form:\n'The committee _____ reached a decision.'",
+   o:["have","has","are","were"],a:1,
+   e:"'Committee' is a collective noun used as a single unit here, so it takes a singular verb: 'has'.\nAnswer: has."},
+
+  /* ── ACTIVE & PASSIVE VOICE ── */
+  {t:"Active & Passive Voice",q:"Change to passive voice:\n'The teacher praised the student.'",
+   o:["The student was praised by the teacher.","The student praised the teacher.","The teacher was praised by the student.","The student has been praised."],a:0,
+   e:"Active: The teacher [subject] praised [verb] the student [object].\nPassive: The student [new subject] was praised by the teacher [agent].\nAnswer: The student was praised by the teacher."},
+  {t:"Active & Passive Voice",q:"Change to active voice:\n'The letter was written by Chidi.'",
+   o:["Chidi wrote the letter.","Chidi was writing the letter.","The letter wrote Chidi.","Chidi is written the letter."],a:0,
+   e:"In active voice, the doer (Chidi) becomes the subject: 'Chidi wrote the letter.'\nAnswer: Chidi wrote the letter."},
+  {t:"Active & Passive Voice",q:"Identify whether this sentence is active or passive:\n'The mango was eaten by the child.'",
+   o:["Active","Passive","Imperative","Interrogative"],a:1,
+   e:"The subject 'the mango' receives the action, and the agent 'the child' follows 'by'. This is a passive construction.\nAnswer: Passive."},
+
+  /* ── DIRECT & INDIRECT SPEECH ── */
+  {t:"Direct & Indirect Speech",q:"Change to indirect speech:\nAde said, 'I am happy.'",
+   o:["Ade said that he is happy.","Ade said that he was happy.","Ade says that he was happy.","Ade told that he is happy."],a:1,
+   e:"When reporting speech, the tense shifts back (backshift): 'am' → 'was'.\nAlso, 'I' → 'he' (pronoun change).\nAnswer: Ade said that he was happy."},
+  {t:"Direct & Indirect Speech",q:"Change to direct speech:\nShe asked if I had eaten.",
+   o:["She said, 'Have you eaten?'","She asked, 'Did I eat?'","She said, 'I had eaten.'","She asked, 'Had I eaten?'"],a:0,
+   e:"The indirect question 'if I had eaten' converts to direct 'Have you eaten?' — past perfect reverts to present perfect, and pronoun changes.\nAnswer: She said, 'Have you eaten?'"},
+
+  /* ── FIGURES OF SPEECH ── */
+  {t:"Figures of Speech",q:"Identify the figure of speech:\n'The wind whispered through the trees.'",
+   o:["Metaphor","Personification","Simile","Alliteration"],a:1,
+   e:"Giving the wind a human quality (whispering) is personification.\nAnswer: Personification."},
+  {t:"Figures of Speech",q:"Identify the figure of speech:\n'Life is a journey.'",
+   o:["Simile","Metaphor","Hyperbole","Oxymoron"],a:1,
+   e:"Comparing life to a journey WITHOUT using 'like' or 'as' is a metaphor.\nAnswer: Metaphor."},
+  {t:"Figures of Speech",q:"Identify the figure of speech:\n'She is as brave as a lion.'",
+   o:["Metaphor","Simile","Personification","Irony"],a:1,
+   e:"Comparing using 'as…as' is a simile.\nAnswer: Simile."},
+  {t:"Figures of Speech",q:"Identify the figure of speech:\n'I have told you a million times!'",
+   o:["Simile","Understatement","Hyperbole","Alliteration"],a:2,
+   e:"An obvious exaggeration for emphasis is a hyperbole.\nAnswer: Hyperbole."},
+  {t:"Figures of Speech",q:"Identify the figure of speech:\n'Peter Piper picked a peck of pickled peppers.'",
+   o:["Assonance","Alliteration","Onomatopoeia","Rhyme"],a:1,
+   e:"Repetition of the same consonant sound at the beginning of closely connected words is alliteration.\nAnswer: Alliteration."},
+
+  /* ── CLOZE TEST ── */
+  {t:"Cloze Test",q:"Fill in the blank with the most appropriate word:\n'He was so _____ that he forgot to eat.'",
+   o:["bored","busy","angry","happy"],a:1,
+   e:"The consequence of forgetting to eat is most logically caused by being very busy.\nAnswer: busy."},
+  {t:"Cloze Test",q:"Fill in the blank:\n'She has a _____ for languages; she speaks five fluently.'",
+   o:["dislike","talent","hatred","problem"],a:1,
+   e:"Speaking five languages fluently implies a gift or talent for languages.\nAnswer: talent."},
+  {t:"Cloze Test",q:"Fill in the blank:\n'Despite the _____ weather, they continued the match.'",
+   o:["fine","terrible","lovely","warm"],a:1,
+   e:"'Despite' signals a contrast — the match continued against an unfavourable condition.\nAnswer: terrible."},
+  {t:"Cloze Test",q:"Fill in the blank:\n'He always keeps his _____, no matter how difficult it is.'",
+   o:["enemies","promise","silence","distance"],a:1,
+   e:"The common expression is 'keep one's promise', meaning to honour a commitment.\nAnswer: promise."},
+  {t:"Cloze Test",q:"Fill in the blank:\n'The doctor advised him to _____ smoking immediately.'",
+   o:["start","continue","quit","enjoy"],a:2,
+   e:"Doctors advise patients to stop harmful habits. 'Quit' means to stop.\nAnswer: quit."},
+
+  /* ── SENTENCE COMPLETION ── */
+  {t:"Sentence Completion",q:"Choose the best completion:\n'He works very hard _____ he wants to succeed.'",
+   o:["but","although","because","unless"],a:2,
+   e:"'Because' introduces a reason (cause and effect). He works hard FOR THE REASON that he wants to succeed.\nAnswer: because."},
+  {t:"Sentence Completion",q:"Choose the best completion:\n'She had barely sat down _____ the phone rang.'",
+   o:["than","when","before","after"],a:1,
+   e:"'Barely…when' is a fixed correlative conjunction pattern.\nAnswer: when."},
+  {t:"Sentence Completion",q:"Choose the best completion:\n'You must study hard; _____, you will fail.'",
+   o:["therefore","otherwise","however","moreover"],a:1,
+   e:"'Otherwise' signals the consequence of NOT doing what was stated.\nAnswer: otherwise."},
+
+  /* ── ORAL ENGLISH ── */
+  {t:"Oral English",q:"Which of these words has the stress on the SECOND syllable?",
+   o:["TAble","baNAna","CARrot","PROgram"],a:1,
+   e:"'Ba-NA-na' — the stress falls on the second syllable NA.\nAnswer: baNAna."},
+  {t:"Oral English",q:"How many syllables does the word 'INFORMATION' have?",
+   o:["3","4","5","2"],a:1,
+   e:"IN-for-MA-tion = 4 syllables.\nAnswer: 4."},
+  {t:"Oral English",q:"Which word rhymes with 'BEAR'?",
+   o:["Beer","Bare","Bore","Blur"],a:1,
+   e:"'Bear' /bɛər/ and 'Bare' /bɛər/ share the same vowel sound and ending.\nAnswer: Bare."},
+  {t:"Oral English",q:"The word 'WIND' (a current of air) rhymes with:",
+   o:["find","sinned","kind","mind"],a:1,
+   e:"'Wind' (noun, /wɪnd/) rhymes with 'sinned' (/sɪnd/).\nAnswer: sinned."},
+  {t:"Oral English",q:"Which of the following is the correct stress pattern for 'PHOTOGRAPH'?",
+   o:["pho-TO-graph","PHO-to-graph","pho-to-GRAPH","PHO-TO-graph"],a:1,
+   e:"'PHO-to-graph' — primary stress on the first syllable.\nAnswer: PHO-to-graph."},
+
+  /* ── GRAMMAR — WORD ORDER & SENTENCE STRUCTURE ── */
+  {t:"Grammar",q:"Choose the grammatically correct sentence:",
+   o:["She don't like noise.","She doesn't likes noise.","She doesn't like noise.","She not like noise."],a:2,
+   e:"For third-person singular negative in simple present, use 'doesn't' + base form: 'She doesn't like noise.'\nAnswer: She doesn't like noise."},
+  {t:"Grammar",q:"Choose the grammatically correct sentence:",
+   o:["I have went to Abuja.","I have gone to Abuja.","I have go to Abuja.","I went have to Abuja."],a:1,
+   e:"Present perfect uses 'have/has' + past participle. 'Go' → past participle 'gone'.\nAnswer: I have gone to Abuja."},
+  {t:"Grammar",q:"Choose the grammatically correct sentence:",
+   o:["He is more taller than his brother.","He is taller than his brother.","He is most tall than his brother.","He is tallest than his brother."],a:1,
+   e:"Comparative adjectives do NOT combine with 'more'. Correct: 'taller than'.\nAnswer: He is taller than his brother."},
+  {t:"Grammar",q:"Identify the error in: 'One of the boys have lost their book.'",
+   o:["One of","the boys","have lost","their book"],a:2,
+   e:"'One' is singular, so the verb should be 'has lost', not 'have lost'.\nAnswer: have lost."},
+  {t:"Grammar",q:"Choose the correct preposition:\n'She is good _____ mathematics.'",
+   o:["in","at","on","for"],a:1,
+   e:"The correct collocation is 'good AT something'.\nAnswer: at."},
+
+  /* ── VOCABULARY ── */
+  {t:"Vocabulary",q:"What is the meaning of the word ALTRUISTIC?",
+   o:["Selfish","Concerned for others","Dangerous","Humorous"],a:1,
+   e:"'Altruistic' means showing a selfless concern for the well-being of others.\nAnswer: Concerned for others."},
+  {t:"Vocabulary",q:"What does AMBIVALENT mean?",
+   o:["Clearly decided","Having mixed feelings","Very confident","Completely wrong"],a:1,
+   e:"'Ambivalent' means having two opposing feelings or views at the same time; uncertain.\nAnswer: Having mixed feelings."},
+  {t:"Vocabulary",q:"What does the word GARRULOUS mean?",
+   o:["Very quiet","Excessively talkative","Extremely angry","Very shy"],a:1,
+   e:"'Garrulous' means excessively talkative, especially on trivial matters.\nAnswer: Excessively talkative."},
+  {t:"Vocabulary",q:"Choose the correct meaning of PRAGMATIC.",
+   o:["Idealistic","Practical and realistic","Emotional","Theoretical"],a:1,
+   e:"'Pragmatic' means dealing with things sensibly and realistically, based on practical considerations.\nAnswer: Practical and realistic."},
+  {t:"Vocabulary",q:"What does EPHEMERAL mean?",
+   o:["Lasting forever","Lasting for only a short time","Extremely large","Very important"],a:1,
+   e:"'Ephemeral' means lasting for a very short time.\nAnswer: Lasting for only a short time."},
+
+  /* ── REGISTER ── */
+  {t:"Register",q:"Which sentence uses FORMAL register?",
+   o:["Yo, what's up?","I am writing to formally request a meeting.","Gonna need those docs ASAP!","Hey, can we chat later?"],a:1,
+   e:"Formal register uses complete sentences, polite phrasing, and professional language. Option B is clearly formal.\nAnswer: I am writing to formally request a meeting."},
+  {t:"Register",q:"Which of these is an example of INFORMAL language?",
+   o:["The committee has resolved to adjourn the meeting.","Wanna grab lunch?","We hereby formally notify you of the decision.","Please be advised that the event has been cancelled."],a:1,
+   e:"'Wanna' is a contraction typical of informal, conversational speech.\nAnswer: Wanna grab lunch?"},
+
+  /* ── PUNCTUATION ── */
+  {t:"Punctuation",q:"Which punctuation mark is used to join two independent clauses?",
+   o:["Comma","Semicolon","Apostrophe","Exclamation mark"],a:1,
+   e:"A semicolon (;) can join two closely related independent clauses without a conjunction.\nAnswer: Semicolon."},
+  {t:"Punctuation",q:"Choose the correctly punctuated sentence:",
+   o:["Its a lovely day.","It's a lovely day.","Its' a lovely day.","It's' a lovely day."],a:1,
+   e:"'It's' is the contraction of 'it is'. The apostrophe replaces the missing letter 'i' in 'is'.\nAnswer: It's a lovely day."},
+  {t:"Punctuation",q:"Which sentence is correctly punctuated?",
+   o:["The boys book is missing.","The boys' book is missing.","The boy's book is missing.","The boys's book is missing."],a:2,
+   e:"Singular possessive = noun + apostrophe + s: 'boy's'. This shows the book belongs to ONE boy.\nAnswer: The boy's book is missing."},
+
+  /* ── ONE-WORD SUBSTITUTION ── */
+  {t:"One-Word Substitution",q:"One who cannot be corrected is called:",
+   o:["Infallible","Incorrigible","Impeccable","Invincible"],a:1,
+   e:"'Incorrigible' means not able to be corrected, improved, or reformed.\nAnswer: Incorrigible."},
+  {t:"One-Word Substitution",q:"A person who travels to a holy place as an act of devotion is called a:",
+   o:["Pilgrim","Hermit","Nomad","Ascetic"],a:0,
+   e:"A 'pilgrim' is a person who journeys to a sacred place for religious reasons.\nAnswer: Pilgrim."},
+  {t:"One-Word Substitution",q:"A speech made to oneself when alone is called a:",
+   o:["Dialogue","Soliloquy","Monologue","Eulogy"],a:1,
+   e:"A 'soliloquy' is an act of speaking one's thoughts aloud when by oneself or without addressing anyone.\nAnswer: Soliloquy."},
+  {t:"One-Word Substitution",q:"Words that are opposite in meaning are called:",
+   o:["Synonyms","Antonyms","Homophones","Homonyms"],a:1,
+   e:"'Antonyms' are words that have opposite meanings to each other.\nAnswer: Antonyms."},
+
+  /* ── SPELLING ── */
+  {t:"Spelling",q:"Choose the correctly spelt word:",
+   o:["Accomodation","Accommodation","Acomodation","Accomadation"],a:1,
+   e:"The correct spelling is A-C-C-O-M-M-O-D-A-T-I-O-N — double 'c' and double 'm'.\nAnswer: Accommodation."},
+  {t:"Spelling",q:"Choose the correctly spelt word:",
+   o:["Neccessary","Neccesary","Necessary","Nescessary"],a:2,
+   e:"The correct spelling is N-E-C-E-S-S-A-R-Y — one 'c', double 's'.\nAnswer: Necessary."},
+  {t:"Spelling",q:"Choose the correctly spelt word:",
+   o:["Cemetary","Cemetery","Cemeterry","Cemetory"],a:1,
+   e:"The correct spelling is C-E-M-E-T-E-R-Y.\nAnswer: Cemetery."},
+  {t:"Spelling",q:"Choose the correctly spelt word:",
+   o:["Occurence","Occurrence","Ocurrence","Occurrance"],a:1,
+   e:"The correct spelling is O-C-C-U-R-R-E-N-C-E — double 'c' and double 'r'.\nAnswer: Occurrence."},
+
+  /* ── MORE LEXIS & STRUCTURE ── */
+  {t:"Lexis & Structure",q:"Choose the word that best fills the gap:\n'The old man walked very _____ because of his bad knee.'",
+   o:["fast","slowly","angrily","brightly"],a:1,
+   e:"The context (bad knee) implies difficulty walking. 'Slowly' logically fits.\nAnswer: slowly."},
+  {t:"Lexis & Structure",q:"Choose the appropriate option:\n'She looked forward _____ seeing her family.'",
+   o:["to","for","at","of"],a:0,
+   e:"'Look forward to' is a fixed phrasal verb. 'To' is always used here.\nAnswer: to."},
+  {t:"Lexis & Structure",q:"Choose the word that best fills the gap:\n'The _____ of the accident was a broken traffic light.'",
+   o:["reason","result","cause","effect"],a:2,
+   e:"'Cause' refers to what made something happen. The broken traffic light caused the accident.\nAnswer: cause."},
+  {t:"Lexis & Structure",q:"Choose the correct option:\n'He _____ to the market before I arrived.'",
+   o:["goes","gone","had gone","has gone"],a:2,
+   e:"The action was completed before another past action. Past perfect 'had gone' is required.\nAnswer: had gone."},
+  {t:"Lexis & Structure",q:"Choose the correct option:\n'It is important that every student _____ on time.'",
+   o:["arrives","arrive","arrived","is arriving"],a:1,
+   e:"After 'It is important that', the subjunctive mood is used: base form without -s regardless of subject.\nAnswer: arrive."},
+  {t:"Lexis & Structure",q:"Identify the type of clause in the underlined part:\n'I will call you WHEN I arrive.'",
+   o:["Noun clause","Adjective clause","Adverbial clause","Main clause"],a:2,
+   e:"'When I arrive' modifies the main verb 'will call', telling us WHEN. This is an adverbial clause of time.\nAnswer: Adverbial clause."},
+  {t:"Lexis & Structure",q:"Choose the correct option:\n'She is the woman _____ son won the award.'",
+   o:["who","whom","whose","which"],a:2,
+   e:"'Whose' is the possessive relative pronoun used to show the son belongs to the woman.\nAnswer: whose."},
+  {t:"Lexis & Structure",q:"Choose the correct option:\n'Neither John nor his friends _____ interested.'",
+   o:["was","is","are","were being"],a:2,
+   e:"With 'neither…nor', the verb agrees with the noun nearer to it. 'Friends' is plural → 'are'.\nAnswer: are."},
+  {t:"Lexis & Structure",q:"Identify the phrasal verb in: 'She called off the meeting.'",
+   o:["called","called off","off the","the meeting"],a:1,
+   e:"'Called off' is a phrasal verb meaning to cancel.\nAnswer: called off."},
+  {t:"Lexis & Structure",q:"Choose the sentence that contains a dangling modifier:",
+   o:["Running fast, she won the race.","Running fast, the trophy was won.","She won the trophy by running fast.","She ran fast to win the trophy."],a:1,
+   e:"In option B, 'Running fast' has no clear subject — the trophy cannot run. This is a dangling modifier.\nAnswer: Running fast, the trophy was won."},
+  {t:"Lexis & Structure",q:"Choose the correct option:\n'I would rather _____ than cry.'",
+   o:["laughing","to laugh","laugh","laughed"],a:2,
+   e:"'Would rather' is followed by the bare infinitive (base form) without 'to'.\nAnswer: laugh."},
+  {t:"Lexis & Structure",q:"Choose the sentence with the correct use of articles:",
+   o:["She is a honest woman.","She is an honest woman.","She is the honest woman.","She is honest woman."],a:1,
+   e:"'Honest' begins with a silent 'h', so the vowel sound /ɒ/ follows the article — use 'an' not 'a'.\nAnswer: She is an honest woman."},
+  {t:"Lexis & Structure",q:"Choose the correct option:\n'The injured bird could barely _____ its wings.'",
+   o:["flay","flew","flap","flick"],a:2,
+   e:"Birds 'flap' their wings. 'Flap' is the correct collocational verb.\nAnswer: flap."},
+  {t:"Lexis & Structure",q:"'He has been living here _____ 2010.' Choose the correct preposition.",
+   o:["for","since","from","during"],a:1,
+   e:"'Since' is used with a point in time (2010) when combined with a perfect tense.\nAnswer: since."},
+  {t:"Lexis & Structure",q:"Choose the option nearest in meaning to the underlined word:\n'The lawyer gave a VERBOSE argument.'",
+   o:["Brief","Wordy","Logical","Strong"],a:1,
+   e:"'Verbose' means using more words than necessary; wordy.\nAnswer: Wordy."},
+  {t:"Lexis & Structure",q:"Choose the correct interrogative form:\n'You have finished your work.' →",
+   o:["Have you finish your work?","Have you finished your work?","You have finished your work?","Did you finished your work?"],a:1,
+   e:"Present perfect interrogative: Have + subject + past participle. → 'Have you finished your work?'\nAnswer: Have you finished your work?"},
+  {t:"Lexis & Structure",q:"Which sentence correctly uses a conditional clause?",
+   o:["If she will come, I will go.","If she comes, I will go.","If she came, I will go.","If she would come, I will go."],a:1,
+   e:"In a first conditional (real/possible future), use present simple in the 'if' clause and 'will' in the main clause.\nAnswer: If she comes, I will go."},
+  {t:"Lexis & Structure",q:"Choose the option that best explains the underlined expression:\n'The politician spoke with FORKED TONGUE.'",
+   o:["He spoke very fast","He was dishonest in his speech","He had a speech impediment","He spoke very slowly"],a:1,
+   e:"'Speaking with a forked tongue' is an idiom meaning to say one thing but mean another; to be deceitful.\nAnswer: He was dishonest in his speech."},
+  {t:"Lexis & Structure",q:"Identify the mood of the verb in: 'If I were rich, I would help the poor.'",
+   o:["Indicative","Subjunctive","Imperative","Interrogative"],a:1,
+   e:"'Were' (not 'was') after 'if' signals the subjunctive mood, used for hypothetical or contrary-to-fact conditions.\nAnswer: Subjunctive."},
+  {t:"Lexis & Structure",q:"Choose the correctly formed sentence:",
+   o:["He suggested that she goes early.","He suggested that she go early.","He suggested that she went early.","He suggested that she should goes early."],a:1,
+   e:"After 'suggest that', the subjunctive (base form) is used: 'she go' not 'she goes'.\nAnswer: He suggested that she go early."},
+];
+
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let activeQS = [];
+let cur = 0, answers = [];
+let timeLeft = 1*60*60 + 30*60, timerID = null, startTime = null, submitted = false;
+// 1 hr 30 min = 5400 seconds
+
+/* ── Fisher-Yates shuffle ── */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ═══════════════════════════════════════
+   START
+═══════════════════════════════════════ */
+function startExam(){
+  activeQS = shuffle(QS);
+  answers  = new Array(activeQS.length).fill(null);
+  document.getElementById('introWrap').style.display = 'none';
+  document.getElementById('examBody').style.display  = 'block';
+  buildDots(); renderQ(); startTimer();
+  startTime = Date.now();
+}
+
+/* ── timer ── */
+function startTimer(){
+  timerID = setInterval(()=>{
+    timeLeft--;
+    updateTimer();
+    if(timeLeft<=0){ clearInterval(timerID); submitExam(); }
+  },1000);
+}
+function updateTimer(){
+  const h=Math.floor(timeLeft/3600);
+  const m=String(Math.floor((timeLeft%3600)/60)).padStart(2,'0');
+  const s=String(timeLeft%60).padStart(2,'0');
+  document.getElementById('cbtTimer').textContent=h>0?`${h}:${m}:${s}`:`${m}:${s}`;
+  const p=document.getElementById('timerPill');
+  p.className='awaClass-cbt-timer';
+  if(timeLeft<=60)  p.classList.add('danger');
+  else if(timeLeft<=600) p.classList.add('warn');
+}
+
+/* ── dots ── */
+function buildDots(){
+  const row=document.getElementById('dotRow'); row.innerHTML='';
+  activeQS.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='awaClass-cbt-dot'+(i===0?' active':'');
+    b.textContent=i+1; b.id=`d${i}`;
+    b.onclick=()=>goTo(i);
+    row.appendChild(b);
+  });
+}
+function refreshDots(){
+  activeQS.forEach((_,i)=>{
+    const d=document.getElementById(`d${i}`);
+    d.className='awaClass-cbt-dot';
+    if(answers[i]!==null) d.classList.add('answered');
+    if(i===cur)           d.classList.add('active');
+  });
+}
+
+/* ── render question ── */
+function renderQ(){
+  const q=activeQS[cur];
+  document.getElementById('qTopic').textContent=q.t;
+  document.getElementById('qNum').textContent=`Question ${cur+1} of ${activeQS.length}`;
+  document.getElementById('qText').innerHTML=q.q.replace(/\n/g,'<br>');
+
+  const grid=document.getElementById('optsGrid'); grid.innerHTML='';
+  const LBL=['A','B','C','D'];
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='awaClass-cbt-opt';
+    b.innerHTML=`<span class="awaClass-cbt-opt-lbl">${LBL[i]}</span>${opt}`;
+    b.onclick=()=>pick(i);
+    if(answers[cur]!==null){
+      b.disabled=true;
+      if(i===q.a)             b.classList.add('correct');
+      else if(i===answers[cur]) b.classList.add('wrong');
+    }
+    grid.appendChild(b);
+  });
+
+  updateProgress(); refreshDots();
+  document.getElementById('prevBtn').disabled=(cur===0);
+  document.getElementById('nextBtn').textContent=(cur===activeQS.length-1)?'Finish →':'Next →';
+
+  const card=document.getElementById('qCard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='';
+}
+
+function updateProgress(){
+  const done=answers.filter(a=>a!==null).length;
+  const pct=(done/activeQS.length)*100;
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=`${done} / ${activeQS.length}`;
+}
+
+/* ── pick answer ── */
+function pick(idx){
+  if(answers[cur]!==null||submitted) return;
+  answers[cur]=idx;
+  const q=activeQS[cur];
+  document.querySelectorAll('.awaClass-cbt-opt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a)      b.classList.add('correct');
+    else if(i===idx) b.classList.add('wrong');
+  });
+  if(idx===q.a){ showToast(); fireConfetti(); }
+  refreshDots(); updateProgress();
+}
+
+/* ── navigate ── */
+function nav(dir){ goTo(cur+dir); }
+function goTo(i){ if(i>=0&&i<activeQS.length){ cur=i; renderQ(); } }
+
+/* ── toast / confetti ── */
+function showToast(){
+  const t=document.getElementById('cbtToast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function fireConfetti(){
+  const el=document.getElementById('cbtConfetti');
+  el.style.display='block'; el.innerHTML='';
+  const C=['#10b981','#06b6d4','#3b82f6','#f59e0b','#ef4444','#a78bfa','#fb923c'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div'); p.className='awaClass-cbt-cp';
+    p.style.cssText=`left:${Math.random()*100}%;top:-20px;
+      background:${C[Math.floor(Math.random()*C.length)]};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.2+Math.random()*1.4}s;
+      animation-delay:${Math.random()*.5}s;`;
+    el.appendChild(p);
+  }
+  setTimeout(()=>{ el.style.display='none'; el.innerHTML=''; },2400);
+}
+
+/* ── confirm / submit ── */
+function openConfirm(){
+  const skip=answers.filter(a=>a===null).length;
+  document.getElementById('confSub').textContent=
+    skip>0 ? `${skip} question${skip>1?'s':''} unanswered. They will be marked as skipped.`
+           : `All ${activeQS.length} questions answered. Ready to submit!`;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('open'); }
+
+function submitExam(){
+  submitted=true;
+  clearInterval(timerID);
+  closeConfirm();
+
+  const timeUsed = startTime ? Math.floor((Date.now()-startTime)/1000) : (1*60*60+30*60-timeLeft);
+  const tm=String(Math.floor(timeUsed/60)).padStart(2,'0');
+  const ts=String(timeUsed%60).padStart(2,'0');
+
+  let correct=0, wrong=0, skip=0;
+  answers.forEach((a,i)=>{
+    if(a===null) skip++;
+    else if(a===activeQS[i].a) correct++;
+    else wrong++;
+  });
+  const pct=Math.round((correct/activeQS.length)*100);
+
+  let grade, gradeKey;
+  if(pct>=75){      grade='🏆 Distinction'; gradeKey='distinction'; }
+  else if(pct>=60){ grade='🥇 Credit';      gradeKey='credit';      }
+  else if(pct>=50){ grade='🥈 Pass';        gradeKey='pass';        }
+  else if(pct>=40){ grade='⚠️ Nearly';      gradeKey='nearly';      }
+  else{             grade='❌ Below Pass';   gradeKey='fail';        }
+
+  document.getElementById('examBody').style.display='none';
+  const rw=document.getElementById('resultsWrap'); rw.style.display='block';
+
+  setTimeout(()=>{
+    const circ=327;
+    const off=circ-(pct/100)*circ;
+    const col=pct>=70?'#10b981':pct>=50?'#f59e0b':'#ef4444';
+    const sf=document.getElementById('sringFill');
+    sf.style.stroke=col; sf.style.strokeDashoffset=off;
+    document.getElementById('awaClass-resPercent').textContent=pct+'%';
+    document.getElementById('awaClass-resPercent').style.color=col;
+  },80);
+
+  let sub='';
+  if(pct>=75)      sub='Outstanding performance! You aced it!';
+  else if(pct>=60) sub='Great job! Above average performance.';
+  else if(pct>=50) sub='You passed! Keep practicing to improve.';
+  else if(pct>=40) sub='Close to passing. More study needed.';
+  else             sub='Keep studying — you can do better!';
+
+  document.getElementById('awaClass-resGrade').textContent=grade;
+  document.getElementById('awaClass-resSub').textContent=sub;
+  document.getElementById('stC').textContent=correct;
+  document.getElementById('stW').textContent=wrong;
+  document.getElementById('stS').textContent=skip;
+  document.getElementById('stT').textContent=`${tm}:${ts}`;
+
+  buildReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  fetch("{% url 'cbt_submit' %}", {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({
+      subject:       'english',
+      score:         correct,
+      total:         activeQS.length,
+      percentage:    pct,
+      grade:         gradeKey,
+      time_used_sec: timeUsed,
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.ok){
+      document.getElementById('awaClass-earnedPts').textContent=data.points;
+      document.getElementById('awaClass-ptsDetail').textContent=
+        `Best score ever: ${data.best}%  ·  Points from this exam: ${correct*5+(gradeKey==='distinction'?20:0)}`;
+    }
+  })
+  .catch(()=>{
+    document.getElementById('awaClass-ptsDetail').textContent='(Could not save — check your connection)';
+  });
+}
+
+/* ── review ── */
+function buildReview(){
+  const list=document.getElementById('reviewList'); list.innerHTML='';
+  const LBL=['A','B','C','D'];
+  activeQS.forEach((q,i)=>{
+    const ua=answers[i];
+    const ok=ua===q.a, sk=ua===null;
+    const item=document.createElement('div');
+    item.className=`awaClass-cbt-rev-item ${sk?'ri-s':ok?'ri-c':'ri-w'}`;
+
+    let html='';
+    if(sk){
+      html=`<div class="awaClass-cbt-rans sk">⏭ Not answered — Correct: <strong>${LBL[q.a]}. ${q.o[q.a]}</strong></div>`;
+    } else if(ok){
+      html=`<div class="awaClass-cbt-rans ya c">✅ Your answer: ${LBL[ua]}. ${q.o[ua]}</div>`;
+    } else {
+      html=`<div class="awaClass-cbt-rans ya w">❌ Your answer: ${LBL[ua]}. ${q.o[ua]}</div>
+            <div class="awaClass-cbt-rans ca">✅ Correct: ${LBL[q.a]}. ${q.o[q.a]}</div>`;
+    }
+    item.innerHTML=`
+      <div class="awaClass-cbt-rev-q">
+        <span style="color:#9ca3af;font-size:11px;">Q${i+1} · ${q.t}</span><br>${q.q.replace(/\n/g,'<br>')}
+      </div>
+      <div class="awaClass-cbt-rev-ans-list">${html}</div>
+      <div class="awaClass-cbt-explanation">
+        <div class="awaClass-cbt-explanation-hdr">💡 Explanation</div>${q.e}
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+function retake(){
+  cur=0; answers=[]; activeQS=[];
+  timeLeft=1*60*60+30*60; submitted=false; startTime=null;
+  document.getElementById('resultsWrap').style.display='none';
+  document.getElementById('introWrap').style.display='flex';
+}
+</script>
+
+{% include "footer.html" %}
+</body>
+</html>

@@ -306,6 +306,27 @@ def cbt_subjects(request):
 def cbt_exam(request):
     """Render the CBT exam page."""
     return render(request, 'cbt_exam.html')
+    
+
+
+@login_required
+def cbt_physics(request):
+    """Render the Physics CBT exam page."""
+    return render(request, 'cbt_physics.html')
+
+
+
+@login_required
+def cbt_english(request):
+    """Render the English Language CBT exam page."""
+    return render(request, 'cbt_english.html')
+
+
+@login_required
+def cbt_chemistry(request):
+    """Render the Chemistry CBT exam page."""
+    return render(request, 'cbt_chemistry.html')
+
 
 
 @login_required
