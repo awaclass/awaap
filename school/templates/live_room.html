@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"/>
   <title>Live Class: Fullscreen Host + Self Bubble | awaClass</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
@@ -314,35 +314,40 @@
       color: white;
     }
 
-    /* Controls Bar */
+    /* ========== FIXED CONTROLS BAR (always visible, never hidden) ========== */
     .controls-bar {
-      position: absolute;
-      bottom: 20px;
+      position: fixed;
+      bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1c1c1cee;
-      backdrop-filter: blur(16px);
+      background: rgba(28, 28, 28, 0.96);
+      backdrop-filter: blur(20px);
       border-radius: 60px;
-      padding: 8px 20px;
+      padding: 10px 24px;
       display: flex;
-      gap: 16px;
-      z-index: 30;
-      border: 1px solid #333;
+      gap: 18px;
+      z-index: 9999;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+      /* ensures it stays on top of all content, even chat overlays */
+      pointer-events: auto;
     }
 
     .control-btn {
       background: #2d2d2d;
       border: none;
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       color: white;
-      font-size: 20px;
+      font-size: 22px;
       cursor: pointer;
       transition: 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     .control-btn:hover { background: #3f3f3f; transform: scale(1.05); }
@@ -352,10 +357,10 @@
     .leave-btn {
       background: #ef4444;
       width: auto;
-      padding: 0 24px;
+      padding: 0 28px;
       border-radius: 40px;
-      gap: 8px;
-      font-size: 14px;
+      gap: 10px;
+      font-size: 15px;
       font-weight: 600;
     }
 
@@ -367,8 +372,10 @@
     }
 
     .control-group span {
-      font-size: 9px;
-      color: #aaa;
+      font-size: 10px;
+      color: #ddd;
+      font-weight: 500;
+      text-shadow: 0 1px 2px black;
     }
 
     /* chat sidebar */
@@ -382,7 +389,7 @@
       backdrop-filter: blur(20px);
       transform: translateX(100%);
       transition: 0.25s ease;
-      z-index: 50;
+      z-index: 10000;
       display: flex;
       flex-direction: column;
       border-left: 1px solid #333;
@@ -447,19 +454,48 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.4);
-      z-index: 45;
+      z-index: 9995;
       display: none;
     }
 
     .chat-overlay.active { display: block; }
 
+    /* responsive adjustments */
     @media (max-width: 640px) {
       .self-bubble { width: 72px; height: 72px; }
-      .controls-bar { padding: 6px 14px; gap: 12px; }
-      .control-btn { width: 42px; height: 42px; font-size: 18px; }
-      .leave-btn { padding: 0 16px; }
+      .controls-bar {
+        bottom: 16px;
+        padding: 6px 16px;
+        gap: 12px;
+      }
+      .control-btn {
+        width: 46px;
+        height: 46px;
+        font-size: 18px;
+      }
+      .leave-btn {
+        padding: 0 20px;
+        font-size: 13px;
+      }
       .student-tray { top: 12px; right: 12px; }
       .student-bubble { width: 56px; height: 56px; }
+      .control-group span { font-size: 8px; }
+    }
+
+    /* for extra small devices, keep bar fully accessible */
+    @media (max-width: 480px) {
+      .controls-bar {
+        gap: 8px;
+        padding: 6px 12px;
+      }
+      .control-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
+      }
+      .leave-btn {
+        padding: 0 16px;
+      }
     }
   </style>
 </head>
@@ -505,7 +541,7 @@
     </div>
   </div>
 
-  <!-- controls bar -->
+  <!-- FIXED CONTROLS BAR (never hidden, fixed relative to viewport) -->
   <div class="controls-bar">
     <div class="control-group"><button class="control-btn" id="toggle-video"><i class="fa-solid fa-video"></i></button><span>Camera</span></div>
     <div class="control-group"><button class="control-btn" id="toggle-audio"><i class="fa-solid fa-microphone"></i></button><span>Mic</span></div>
@@ -556,6 +592,7 @@
   let screenStream = null;
   let currentFacingMode = 'user';
   let reconnectAttempts = 0;
+  let flipInProgress = false;
 
   // DOM elements
   const hostVideoEl = document.getElementById('host-video-element');
@@ -688,7 +725,6 @@
     const pc = new RTCPeerConnection(configuration);
     peerConnections[remoteUserId] = pc;
     
-    // Add all local tracks
     if (localStream) {
       localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
@@ -718,7 +754,6 @@
     const pc = new RTCPeerConnection(configuration);
     peerConnections[data.user_id] = pc;
     
-    // Add local tracks
     if (localStream) {
       localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
@@ -762,20 +797,18 @@
     if (icon) icon.style.display = enabled ? 'none' : 'flex';
   }
 
-  // WebSocket signaling handler - FIXED for proper host/student roles
+  // WebSocket signaling handler
   function handleSignalingData(data) {
     switch (data.type) {
       case 'user_joined':
         if (data.user_id != userId) {
           console.log(`User joined: ${data.user} (${data.user_id})`);
           if (isHost) {
-            // Host creates offer for the new student
             if (data.user_id != hostId) {
               addStudentBubble(data.user, data.user_id);
             }
             createOffer(data.user_id);
           } else {
-            // Student: add other students to tray (if any), but don't create offers for host
             if (data.user_id != hostId) {
               addStudentBubble(data.user, data.user_id);
               createOffer(data.user_id);
@@ -855,40 +888,61 @@
     };
   }
 
-  // Initialize local media (camera + mic)
+  // FIXED: Properly initialize local stream with both video AND audio working
   async function initLocalStream() {
     try {
-      localStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: currentFacingMode },
-        audio: true
-      });
+      // Request both video and audio with optimal settings
+      const constraints = {
+        video: { 
+          facingMode: currentFacingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      };
+      
+      localStream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      // Verify audio tracks exist and are enabled
+      const audioTracks = localStream.getAudioTracks();
+      if (audioTracks.length === 0) {
+        console.warn('No audio track available');
+        addChatMessage('System', 'Microphone access denied or no mic found. Audio will not work.');
+      } else {
+        console.log('Audio track acquired, enabling:', isAudioEnabled);
+        audioTracks[0].enabled = isAudioEnabled;
+      }
+      
+      const videoTracks = localStream.getVideoTracks();
+      if (videoTracks.length > 0) {
+        videoTracks[0].enabled = isVideoEnabled;
+      }
       
       if (isHost) {
         setHostVideo(localStream);
         selfBubbleContainer.style.display = 'none';
-        // Host shows student tray
         studentTray.style.display = 'flex';
       } else {
-        // Student: show self bubble, hide other students tray
         showSelfBubble();
         studentTray.style.display = 'none';
         showWaitingOverlay();
         updateSelfMicIcon();
       }
       
-      // Apply initial mute states
-      const videoTrack = localStream.getVideoTracks()[0];
-      if (videoTrack) videoTrack.enabled = isVideoEnabled;
-      const audioTrack = localStream.getAudioTracks()[0];
-      if (audioTrack) audioTrack.enabled = isAudioEnabled;
-      
-      // Update UI buttons
       updateVideoButtonUI();
       updateAudioButtonUI();
       
     } catch (err) {
       console.error('Media access error:', err);
-      addChatMessage('System', 'Cannot access camera/microphone. Please check permissions.');
+      let errorMsg = 'Cannot access camera/microphone. ';
+      if (err.name === 'NotAllowedError') errorMsg += 'Please allow permissions.';
+      else if (err.name === 'NotFoundError') errorMsg += 'No camera/mic found.';
+      else errorMsg += err.message;
+      addChatMessage('System', errorMsg);
     }
   }
   
@@ -931,28 +985,68 @@
   function toggleAudio() {
     isAudioEnabled = !isAudioEnabled;
     const track = localStream?.getAudioTracks()[0];
-    if (track) track.enabled = isAudioEnabled;
+    if (track) {
+      track.enabled = isAudioEnabled;
+      console.log(`Audio ${isAudioEnabled ? 'enabled' : 'disabled'} on track`, track);
+    } else {
+      console.warn('No audio track found to toggle');
+    }
     updateAudioButtonUI();
     updateSelfMicIcon();
     socket.send(JSON.stringify({ type: 'toggle_audio', enabled: isAudioEnabled }));
   }
 
+  // Robust camera flip that maintains audio and updates all peers
   async function flipCamera() {
-    if (!isHost) return;
-    currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+    if (!isHost || flipInProgress) return;
+    flipInProgress = true;
+    
+    const flipBtn = document.getElementById('flip-camera');
+    const originalIcon = flipBtn.innerHTML;
+    flipBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    
     try {
-      const newStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false });
-      const newVideoTrack = newStream.getVideoTracks()[0];
-      Object.values(peerConnections).forEach(pc => {
-        const sender = pc.getSenders().find(s => s.track?.kind === 'video');
-        if (sender) sender.replaceTrack(newVideoTrack);
+      currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+      
+      const newVideoStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: currentFacingMode } },
+        audio: false
       });
-      const oldTrack = localStream.getVideoTracks()[0];
-      localStream.removeTrack(oldTrack);
+      
+      const newVideoTrack = newVideoStream.getVideoTracks()[0];
+      const oldVideoTrack = localStream.getVideoTracks()[0];
+      
+      localStream.removeTrack(oldVideoTrack);
       localStream.addTrack(newVideoTrack);
-      setHostVideo(localStream);
+      oldVideoTrack.stop();
+      
+      if (isHost) {
+        setHostVideo(localStream);
+      } else {
+        if (selfVideo) selfVideo.srcObject = localStream;
+      }
+      
+      const replacePromises = Object.values(peerConnections).map(async (pc) => {
+        const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
+        if (sender) {
+          try {
+            await sender.replaceTrack(newVideoTrack);
+          } catch (e) {
+            console.warn('Failed to replace track for peer:', e);
+          }
+        }
+      });
+      
+      await Promise.all(replacePromises);
+      console.log('Camera flipped successfully to', currentFacingMode);
+      
     } catch (err) {
-      console.error('Flip failed:', err);
+      console.error('Flip camera failed:', err);
+      currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+      addChatMessage('System', 'Failed to flip camera. Please check permissions.');
+    } finally {
+      flipInProgress = false;
+      flipBtn.innerHTML = originalIcon;
     }
   }
 
@@ -1003,6 +1097,7 @@
   }
   
   function escapeHtml(str) {
+    if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
       if (m === '&') return '&amp;';
       if (m === '<') return '&lt;';
@@ -1046,7 +1141,8 @@
     document.getElementById('toggle-audio').addEventListener('click', toggleAudio);
     document.getElementById('toggle-screen').addEventListener('click', toggleScreenShare);
     document.getElementById('leave-room').addEventListener('click', leaveRoom);
-    document.getElementById('flip-camera')?.addEventListener('click', flipCamera);
+    const flipBtn = document.getElementById('flip-camera');
+    if (flipBtn) flipBtn.addEventListener('click', flipCamera);
     
     // Chat UI
     const chatSide = document.getElementById('chat-sidebar');
