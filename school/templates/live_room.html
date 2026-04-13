@@ -617,6 +617,8 @@
   function setHostVideo(stream) {
     console.log('Setting host video on main stage');
     if (hostVideoEl) {
+      // Null srcObject first to force browser to re-render the new stream
+      hostVideoEl.srcObject = null;
       hostVideoEl.srcObject = stream;
       hostVideoEl.style.display = 'block';
       hostPlaceholder.style.display = 'none';
@@ -979,7 +981,9 @@
     } else if (isHost && isVideoEnabled && localStream) {
       setHostVideo(localStream);
     }
-    socket.send(JSON.stringify({ type: 'toggle_video', enabled: isVideoEnabled }));
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'video_toggle', enabled: isVideoEnabled }));
+    }
   }
 
   function toggleAudio() {
@@ -993,7 +997,9 @@
     }
     updateAudioButtonUI();
     updateSelfMicIcon();
-    socket.send(JSON.stringify({ type: 'toggle_audio', enabled: isAudioEnabled }));
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'audio_toggle', enabled: isAudioEnabled }));
+    }
   }
 
   // Robust camera flip that maintains audio and updates all peers
@@ -1009,23 +1015,32 @@
       currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
       
       const newVideoStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: currentFacingMode } },
+        video: { facingMode: currentFacingMode },
         audio: false
       });
       
       const newVideoTrack = newVideoStream.getVideoTracks()[0];
-      const oldVideoTrack = localStream.getVideoTracks()[0];
+      const oldVideoTrack = localStream?.getVideoTracks()[0];
       
-      localStream.removeTrack(oldVideoTrack);
+      // Apply same enabled state as current video
+      newVideoTrack.enabled = isVideoEnabled;
+
+      if (oldVideoTrack) {
+        localStream.removeTrack(oldVideoTrack);
+        oldVideoTrack.stop();
+      }
       localStream.addTrack(newVideoTrack);
-      oldVideoTrack.stop();
-      
-      if (isHost) {
-        setHostVideo(localStream);
-      } else {
-        if (selfVideo) selfVideo.srcObject = localStream;
+
+      // Force video element to re-render the updated stream
+      hostVideoEl.srcObject = null;
+      hostVideoEl.srcObject = localStream;
+      if (isVideoEnabled) {
+        hostVideoEl.style.display = 'block';
+        hostPlaceholder.style.display = 'none';
+        hostVideoEl.play().catch(e => console.log('Play error:', e));
       }
       
+      // Replace track in all active peer connections
       const replacePromises = Object.values(peerConnections).map(async (pc) => {
         const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
         if (sender) {
@@ -1042,8 +1057,9 @@
       
     } catch (err) {
       console.error('Flip camera failed:', err);
+      // Revert facing mode on failure
       currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-      addChatMessage('System', 'Failed to flip camera. Please check permissions.');
+      addChatMessage('System', 'Failed to flip camera. Your device may only have one camera.');
     } finally {
       flipInProgress = false;
       flipBtn.innerHTML = originalIcon;
