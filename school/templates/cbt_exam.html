@@ -346,6 +346,63 @@
     margin-bottom: 20px;
   }
 
+  /* Matrix display inside question text */
+  .awaClass-cbt-q-text .matrix-row {
+    font-family: 'Courier New', monospace;
+    background: #f0f4ff;
+    border: 1px solid #c7d7f9;
+    border-radius: 6px;
+    padding: 3px 12px;
+    display: inline-block;
+    margin: 2px 0;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: #1e3a8a;
+  }
+
+  /* Matrix table styling */
+  .cbt-matrix {
+    border-collapse: collapse;
+    display: inline-table;
+    margin: 8px 0 4px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e3a8a;
+    background: #eff6ff;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .cbt-matrix td {
+    padding: 7px 16px;
+    text-align: center;
+    border: 1px solid #bfdbfe;
+    min-width: 28px;
+  }
+
+  .cbt-matrix-opt {
+    border-collapse: collapse;
+    display: inline-table;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e3a8a;
+    background: #eff6ff;
+    border: 1.5px solid #3b82f6;
+    border-radius: 6px;
+    overflow: hidden;
+    vertical-align: middle;
+  }
+
+  .cbt-matrix-opt td {
+    padding: 3px 9px;
+    text-align: center;
+    border: 1px solid #bfdbfe;
+    min-width: 20px;
+  }
+
   /* ── Options ── */
   .awaClass-cbt-opts {
     display: grid;
@@ -869,9 +926,9 @@
     box-shadow: 0 1px 6px rgba(0,0,0,.04);
   }
 
-  .awaClass-cbt-rev-item.ri-c { border-left: 3px solid #10b981; }
-  .awaClass-cbt-rev-item.ri-w { border-left: 3px solid #ef4444; }
-  .awaClass-cbt-rev-item.ri-s { border-left: 3px solid #f59e0b; }
+  .awaClass-cbt-rev-item.ri-c { }
+  .awaClass-cbt-rev-item.ri-w { }
+  .awaClass-cbt-rev-item.ri-s { }
 
   .awaClass-cbt-rev-q {
     font-size: 13px;
@@ -900,6 +957,30 @@
   .awaClass-cbt-rans.ya.w  { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
   .awaClass-cbt-rans.ca    { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
   .awaClass-cbt-rans.sk    { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+
+  .awaClass-cbt-explanation {
+    margin-top: 9px;
+    background: #f8faff;
+    border: 1px solid #dbeafe;
+    border-radius: 9px;
+    padding: 11px 13px;
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .awaClass-cbt-explanation-hdr {
+    font-size: 11px;
+    font-weight: 700;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 
   /* Exam body hidden by default */
   .awaClass-cbt-exam-body { display: none; }
@@ -989,11 +1070,11 @@
       <div class="awaClass-cbt-intro-sub">Senior Secondary · General Mathematics · awaClass</div>
       <div class="awaClass-cbt-intro-grid">
         <div class="awaClass-cbt-intro-item">
-          <div class="awaClass-cbt-iv">20</div>
+          <div class="awaClass-cbt-iv">100</div>
           <div class="awaClass-cbt-il">Questions</div>
         </div>
         <div class="awaClass-cbt-intro-item">
-          <div class="awaClass-cbt-iv">30:00</div>
+          <div class="awaClass-cbt-iv">2:00:00</div>
           <div class="awaClass-cbt-il">Time Limit</div>
         </div>
         <div class="awaClass-cbt-intro-item">
@@ -1023,7 +1104,7 @@
         </button>
         <div class="awaClass-cbt-timer" id="timerPill">
           <i class="fa-regular fa-clock" style="color:#ef4444;font-size:12px;"></i>
-          <span class="awaClass-cbt-timer-display" id="cbtTimer">30:00</span>
+          <span class="awaClass-cbt-timer-display" id="cbtTimer">2:00:00</span>
         </div>
       </div>
     </div>
@@ -1033,7 +1114,7 @@
       <div class="awaClass-cbt-bar">
         <div class="awaClass-cbt-bar-fill" id="barFill" style="width:0%"></div>
       </div>
-      <div class="awaClass-cbt-prog-lbl" id="progLbl">0 / 20</div>
+      <div class="awaClass-cbt-prog-lbl" id="progLbl">0 / 100</div>
     </div>
 
     <!-- Dots -->
@@ -1043,7 +1124,7 @@
     <div class="awaClass-cbt-q-card" id="qCard">
       <div class="awaClass-cbt-q-meta">
         <span class="awaClass-cbt-q-badge" id="qTopic">Topic</span>
-        <span class="awaClass-cbt-q-num"   id="qNum">Question 1 of 20</span>
+        <span class="awaClass-cbt-q-num"   id="qNum">Question 1 of 100</span>
       </div>
       <div class="awaClass-cbt-q-text" id="qText"></div>
       <div class="awaClass-cbt-opts"   id="optsGrid"></div>
@@ -1121,61 +1202,386 @@
 
 <script>
 /* ═══════════════════════════════════════
-   QUESTIONS BANK (20 questions)
+   QUESTIONS BANK — 100 JAMB Mathematics Questions
+   Topics: Number Theory · Number Base · Fractions · Percentages ·
+           Algebra · Indices · Logarithms · Quadratics · Geometry ·
+           Trigonometry · Mensuration · Sets · Statistics · Probability ·
+           Variation · Surds · Sequences · Coord. Geometry · Matrices ·
+           Calculus · Inequalities · Commercial Maths · Binary Ops ·
+           Permutation & Combination
 ═══════════════════════════════════════ */
 const QS = [
-  {t:"Number Theory",  q:"What is the value of 2⁸?",
-   o:["128","256","512","64"], a:1},
-  {t:"Algebra",        q:"Solve for x: 3x + 7 = 22",
-   o:["x = 3","x = 5","x = 7","x = 9"], a:1},
-  {t:"Geometry",       q:"Area of a circle with radius 7 cm? (π ≈ 22/7)",
-   o:["154 cm²","144 cm²","176 cm²","132 cm²"], a:0},
-  {t:"Fractions",      q:"Simplify: ³⁄₄ ÷ ⁹⁄₁₆",
-   o:["⁴⁄₃","³⁄₄","¹⁄₃","²⁷⁄₆₄"], a:0},
-  {t:"Quadratics",     q:"Roots of x² − 5x + 6 = 0",
-   o:["x = 1, 6","x = 2, 3","x = −2, −3","x = 3, 4"], a:1},
-  {t:"Statistics",     q:"Mean of 5 numbers is 12. What is their sum?",
-   o:["50","55","60","65"], a:2},
-  {t:"Indices",        q:"Simplify: (x³)² × x⁴",
-   o:["x⁹","x¹⁰","x¹²","x⁸"], a:1},
-  {t:"Geometry",       q:"Angles of a triangle in ratio 1:2:3. Largest angle?",
-   o:["60°","80°","90°","120°"], a:2},
-  {t:"Percentages",    q:"₦4,000 shirt — 25% discount. New price?",
-   o:["₦3,000","₦2,800","₦3,200","₦2,500"], a:0},
-  {t:"Logarithms",     q:"Evaluate: log₁₀(1000)",
-   o:["2","3","4","10"], a:1},
-  {t:"Sets",           q:"n(A)=15, n(B)=20, n(A∪B)=30. Find n(A∩B).",
-   o:["3","5","8","10"], a:1},
-  {t:"Mensuration",    q:"Volume of cylinder r=3 cm, h=10 cm? (π≈3.14)",
-   o:["282.6 cm³","188.4 cm³","314 cm³","251.2 cm³"], a:0},
-  {t:"Number Base",    q:"Convert 1011₂ to base 10.",
-   o:["9","10","11","13"], a:2},
-  {t:"Algebra",        q:"Factorize: 6x² + 11x + 4",
-   o:["(3x+4)(2x+1)","(2x+4)(3x+1)","(6x+1)(x+4)","(3x+1)(2x+4)"], a:0},
-  {t:"Trigonometry",   q:"What is sin(30°)?",
-   o:["√3/2","1/√2","1/2","√3/3"], a:2},
-  {t:"Probability",    q:"5 red + 3 blue balls. P(red)?",
-   o:["3/8","5/3","5/8","3/5"], a:2},
-  {t:"Surds",          q:"Rationalize: 1/√5",
-   o:["√5/25","√5/5","5/√5","1/5"], a:1},
-  {t:"Arithmetic",     q:"8th term of AP: 3, 7, 11, 15, …",
-   o:["27","29","31","33"], a:2},
-  {t:"Geometry",       q:"Sum of interior angles of a pentagon:",
-   o:["360°","450°","540°","720°"], a:2},
-  {t:"Variation",      q:"y ∝ x², y=12 when x=2. Find y when x=5.",
-   o:["60","65","75","80"], a:2},
+  /* ── NUMBER THEORY ── */
+  {t:"Number Theory",q:"What is the value of 2⁸?",
+   o:["128","256","512","64"],a:1,
+   e:"2⁸ = 2×2×2×2×2×2×2×2.\nDouble step by step: 2→4→8→16→32→64→128→256.\nAnswer: 256."},
+  {t:"Number Theory",q:"Which of the following is a prime number?",
+   o:["51","57","59","63"],a:2,
+   e:"51 = 3×17, 57 = 3×19, 63 = 9×7. Only 59 has no factors other than 1 and itself.\nAnswer: 59."},
+  {t:"Number Theory",q:"Find the HCF of 24 and 36.",
+   o:["6","8","12","18"],a:2,
+   e:"Factors of 24: 1,2,3,4,6,8,12,24.\nFactors of 36: 1,2,3,4,6,9,12,18,36.\nHighest common factor = 12.\nAnswer: 12."},
+  {t:"Number Theory",q:"Find the LCM of 4, 6 and 9.",
+   o:["18","36","54","72"],a:1,
+   e:"Prime factorizations: 4=2², 6=2×3, 9=3².\nLCM = 2² × 3² = 4 × 9 = 36.\nAnswer: 36."},
+  {t:"Number Theory",q:"Express 0.000325 in standard form.",
+   o:["3.25 × 10⁻⁴","3.25 × 10⁻³","32.5 × 10⁻⁵","0.325 × 10⁻³"],a:0,
+   e:"Move the decimal point 4 places to the right to get 3.25.\nTherefore 0.000325 = 3.25 × 10⁻⁴.\nAnswer: 3.25 × 10⁻⁴."},
+  /* ── NUMBER BASE ── */
+  {t:"Number Base",q:"Convert 1011₂ to base 10.",
+   o:["9","10","11","13"],a:2,
+   e:"1×2³ + 0×2² + 1×2¹ + 1×2⁰ = 8+0+2+1 = 11.\nAnswer: 11."},
+  {t:"Number Base",q:"Convert 47₁₀ to base 2.",
+   o:["101111₂","101110₂","110111₂","100111₂"],a:0,
+   e:"47÷2=23 R1, 23÷2=11 R1, 11÷2=5 R1, 5÷2=2 R1, 2÷2=1 R0, 1÷2=0 R1.\nRead remainders bottom-up: 101111₂.\nAnswer: 101111₂."},
+  {t:"Number Base",q:"Evaluate 1101₂ + 111₂",
+   o:["10100₂","11000₂","10010₂","10101₂"],a:0,
+   e:"  1101\n+  0111\n------\n 10100  (carry as in binary addition)\nAnswer: 10100₂."},
+
+  /* ── FRACTIONS & DECIMALS ── */
+  {t:"Fractions",q:"Simplify: ³⁄₄ ÷ ⁹⁄₁₆",
+   o:["⁴⁄₃","³⁄₄","¹⁄₃","²⁷⁄₆₄"],a:0,
+   e:"³⁄₄ ÷ ⁹⁄₁₆ = ³⁄₄ × ¹⁶⁄₉ = 48/36 = 4/3.\nAnswer: ⁴⁄₃."},
+  {t:"Fractions",q:"Simplify: 2¹⁄₃ + 1⁵⁄₆",
+   o:["3⁷⁄₆","4¹⁄₆","4⁷⁄₆","3⁵⁄₆"],a:1,
+   e:"2¹⁄₃ = 7/3, 1⁵⁄₆ = 11/6.\n7/3 + 11/6 = 14/6 + 11/6 = 25/6 = 4¹⁄₆.\nAnswer: 4¹⁄₆."},
+
+  /* ── PERCENTAGES ── */
+  {t:"Percentages",q:"₦4,000 shirt — 25% discount. New price?",
+   o:["₦3,000","₦2,800","₦3,200","₦2,500"],a:0,
+   e:"Discount = 25% × 4000 = ₦1,000.\nNew price = 4000 − 1000 = ₦3,000.\nAnswer: ₦3,000."},
+  {t:"Percentages",q:"A man bought a car for ₦800,000 and sold it for ₦960,000. What is the percentage profit?",
+   o:["15%","20%","25%","18%"],a:1,
+   e:"Profit = 960,000 − 800,000 = 160,000.\n% profit = (160,000 / 800,000) × 100 = 20%.\nAnswer: 20%."},
+  {t:"Percentages",q:"If 30% of a number is 75, what is the number?",
+   o:["225","250","200","175"],a:1,
+   e:"Let the number be x. 30% of x = 75.\n0.3x = 75 → x = 75/0.3 = 250.\nAnswer: 250."},
+  {t:"Percentages",q:"An article is sold for ₦350 at a loss of 12.5%. Find the cost price.",
+   o:["₦390","₦400","₦420","₦380"],a:1,
+   e:"If SP = CP × (1 − loss%), then 350 = CP × 0.875.\nCP = 350 / 0.875 = ₦400.\nAnswer: ₦400."},
+
+  /* ── ALGEBRA ── */
+  {t:"Algebra",q:"Solve for x: 3x + 7 = 22",
+   o:["x = 3","x = 5","x = 7","x = 9"],a:1,
+   e:"3x = 22 − 7 = 15 → x = 5.\nAnswer: x = 5."},
+  {t:"Algebra",q:"Factorize: 6x² + 11x + 4",
+   o:["(3x+4)(2x+1)","(2x+4)(3x+1)","(6x+1)(x+4)","(3x+1)(2x+4)"],a:0,
+   e:"ac = 6×4 = 24. Find two numbers that multiply to 24 and add to 11: 8 and 3.\n6x² + 8x + 3x + 4 = 2x(3x+4) + 1(3x+4) = (3x+4)(2x+1).\nAnswer: (3x+4)(2x+1)."},
+  {t:"Algebra",q:"Simplify: (2a²b³)³",
+   o:["6a⁶b⁹","8a⁶b⁹","8a⁵b⁶","6a⁵b⁹"],a:1,
+   e:"(2a²b³)³ = 2³ × a⁶ × b⁹ = 8a⁶b⁹.\n(Power rule: multiply the exponents — a² raised to power 3 = a⁶, b³ raised to power 3 = b⁹.)\nAnswer: 8a⁶b⁹."},
+  {t:"Algebra",q:"Solve simultaneously: 2x + y = 7 and x − y = 2",
+   o:["x=2, y=3","x=3, y=1","x=4, y=−1","x=3, y=2"],a:1,
+   e:"Add both equations: 3x = 9 → x = 3.\nSubstitute: 3 − y = 2 → y = 1.\nAnswer: x=3, y=1."},
+  {t:"Algebra",q:"Make r the subject of the formula: V = πr²h",
+   o:["r = √(V/πh)","r = V/πh","r = √(πh/V)","r = V²/πh"],a:0,
+   e:"V = πr²h → r² = V/(πh) → r = √(V/πh).\nAnswer: r = √(V/πh)."},
+  {t:"Algebra",q:"Solve: |2x − 3| = 7",
+   o:["x = 5 or x = −2","x = 5 or x = 2","x = −5 or x = 2","x = 4 or x = −2"],a:0,
+   e:"Case 1: 2x − 3 = 7 → 2x = 10 → x = 5.\nCase 2: 2x − 3 = −7 → 2x = −4 → x = −2.\nAnswer: x = 5 or x = −2."},
+  {t:"Algebra",q:"If f(x) = 2x² − 3x + 1, find f(−2).",
+   o:["11","15","7","13"],a:1,
+   e:"f(−2) = 2(−2)² − 3(−2) + 1 = 2(4) + 6 + 1 = 8 + 6 + 1 = 15.\nAnswer: 15."},
+  /* ── INDICES ── */
+  {t:"Indices",q:"Simplify: (x³)² × x⁴",
+   o:["x⁹","x¹⁰","x¹²","x⁸"],a:1,
+   e:"(x³)² = x⁶. Then x⁶ × x⁴ = x^(6+4) = x¹⁰.\nAnswer: x¹⁰."},
+  {t:"Indices",q:"Evaluate: 27^(2/3)",
+   o:["3","6","9","18"],a:2,
+   e:"27^(1/3) = ∛27 = 3. Then 27^(2/3) = (27^(1/3))² = 3² = 9.\nAnswer: 9."},
+  {t:"Indices",q:"If 2 raised to the power x equals 64 (2ˣ = 64), find x.",
+   o:["4","5","6","7"],a:2,
+   e:"64 = 2⁶. Therefore x = 6.\nAnswer: 6."},
+
+  /* ── LOGARITHMS ── */
+  {t:"Logarithms",q:"Evaluate: log₁₀(1000)",
+   o:["2","3","4","10"],a:1,
+   e:"10³ = 1000, so log₁₀(1000) = 3.\nAnswer: 3."},
+  {t:"Logarithms",q:"Simplify: log 6 + log 5 − log 3",
+   o:["log 8","log 10","log 15","log 2"],a:1,
+   e:"log 6 + log 5 = log(6×5) = log 30.\nlog 30 − log 3 = log(30/3) = log 10 = 1.\nAnswer: log 10 = 1."},
+  {t:"Logarithms",q:"If log₂ x = 5, find x.",
+   o:["10","16","32","64"],a:2,
+   e:"log₂ x = 5 means 2⁵ = x. 2⁵ = 32.\nAnswer: 32."},
+  {t:"Logarithms",q:"Evaluate: log₃ 81",
+   o:["3","4","5","9"],a:1,
+   e:"3⁴ = 81, so log₃ 81 = 4.\nAnswer: 4."},
+  /* ── QUADRATICS ── */
+  {t:"Quadratics",q:"Roots of x² − 5x + 6 = 0",
+   o:["x = 1, 6","x = 2, 3","x = −2, −3","x = 3, 4"],a:1,
+   e:"Factor: (x−2)(x−3) = 0 → x = 2 or x = 3.\nAnswer: x = 2, 3."},
+  {t:"Quadratics",q:"The sum of roots of 2x² − 5x + 3 = 0 is:",
+   o:["3/2","5/2","−5/2","3"],a:1,
+   e:"For ax² + bx + c = 0, sum of roots = −b/a = −(−5)/2 = 5/2.\nAnswer: 5/2."},
+  {t:"Quadratics",q:"Product of roots of 3x² + 6x − 9 = 0 is:",
+   o:["2","−3","3","−2"],a:1,
+   e:"Product of roots = c/a = −9/3 = −3.\nAnswer: −3."},
+  {t:"Quadratics",q:"Find the minimum value of f(x) = x² − 6x + 11.",
+   o:["2","5","11","0"],a:0,
+   e:"Complete the square: x² − 6x + 9 + 2 = (x−3)² + 2.\nMinimum value = 2 (when x = 3).\nAnswer: 2."},
+  {t:"Quadratics",q:"For what value of k does x² − kx + 9 = 0 have equal roots?",
+   o:["3","6","9","±6"],a:3,
+   e:"Equal roots when discriminant = 0: k² − 4(9) = 0 → k² = 36 → k = ±6.\nAnswer: ±6."},
+
+  /* ── GEOMETRY ── */
+  {t:"Geometry",q:"Area of a circle with radius 7 cm? (π ≈ 22/7)",
+   o:["154 cm²","144 cm²","176 cm²","132 cm²"],a:0,
+   e:"Area = πr² = (22/7) × 49 = 22 × 7 = 154 cm².\nAnswer: 154 cm²."},
+  {t:"Geometry",q:"Angles of a triangle in ratio 1:2:3. Largest angle?",
+   o:["60°","80°","90°","120°"],a:2,
+   e:"Total = 180°. Parts = 6. Largest = 3×(180/6) = 90°.\nAnswer: 90°."},
+  {t:"Geometry",q:"Sum of interior angles of a pentagon:",
+   o:["360°","450°","540°","720°"],a:2,
+   e:"Sum = (n−2)×180 = (5−2)×180 = 540°.\nAnswer: 540°."},
+  {t:"Geometry",q:"A chord of length 16 cm is 6 cm from the centre. Find the radius.",
+   o:["8 cm","10 cm","12 cm","14 cm"],a:1,
+   e:"Half-chord = 8 cm. Perpendicular from centre = 6 cm.\nr² = 8² + 6² = 64 + 36 = 100 → r = 10 cm.\nAnswer: 10 cm."},
+  {t:"Geometry",q:"The exterior angle of a regular polygon is 45°. How many sides?",
+   o:["6","7","8","9"],a:2,
+   e:"Number of sides = 360°/exterior angle = 360/45 = 8.\nAnswer: 8."},
+  {t:"Geometry",q:"Find the area of a triangle with base 10 cm and height 8 cm.",
+   o:["80 cm²","40 cm²","20 cm²","60 cm²"],a:1,
+   e:"Area = ½ × base × height = ½ × 10 × 8 = 40 cm².\nAnswer: 40 cm²."},
+  {t:"Geometry",q:"A square has a diagonal of 10 cm. Find its area.",
+   o:["25 cm²","50 cm²","100 cm²","70 cm²"],a:1,
+   e:"For a square, Area = d²/2 = 10²/2 = 100/2 = 50 cm².\nAnswer: 50 cm²."},
+
+  /* ── TRIGONOMETRY ── */
+  {t:"Trigonometry",q:"What is sin(30°)?",
+   o:["√3/2","1/√2","1/2","√3/3"],a:2,
+   e:"From the 30-60-90 triangle, sin(30°) = opposite/hypotenuse = 1/2.\nAnswer: 1/2."},
+  {t:"Trigonometry",q:"If cos θ = 3/5, find sin θ (θ is acute).",
+   o:["4/5","3/4","5/4","2/5"],a:0,
+   e:"In a right triangle with cos θ = 3/5: adjacent=3, hypotenuse=5.\nopposite = √(5²−3²) = √16 = 4. sin θ = 4/5.\nAnswer: 4/5."},
+  {t:"Trigonometry",q:"Find the value of tan(45°).",
+   o:["0","1","√3","1/√2"],a:1,
+   e:"tan(45°) = sin(45°)/cos(45°) = (1/√2)/(1/√2) = 1.\nAnswer: 1."},
+  {t:"Trigonometry",q:"In triangle ABC, a=7, b=5 and C=60°. Find side c using the cosine rule.",
+   o:["√39","√49","√59","√19"],a:0,
+   e:"c² = a² + b² − 2ab cos C = 49 + 25 − 2(7)(5)(0.5) = 74 − 35 = 39.\nc = √39.\nAnswer: √39."},
+  {t:"Trigonometry",q:"What is cos(60°)?",
+   o:["√3/2","1/2","1","0"],a:1,
+   e:"From the 30-60-90 triangle, cos(60°) = adjacent/hypotenuse = 1/2.\nAnswer: 1/2."},
+
+  /* ── MENSURATION ── */
+  {t:"Mensuration",q:"Volume of cylinder r=3 cm, h=10 cm? (π≈3.14)",
+   o:["282.6 cm³","188.4 cm³","314 cm³","251.2 cm³"],a:0,
+   e:"V = πr²h = 3.14 × 9 × 10 = 282.6 cm³.\nAnswer: 282.6 cm³."},
+  {t:"Mensuration",q:"Total surface area of a cuboid: l=5, w=4, h=3 cm.",
+   o:["74 cm²","94 cm²","50 cm²","120 cm²"],a:1,
+   e:"TSA = 2(lw + lh + wh) = 2(20+15+12) = 2×47 = 94 cm².\nAnswer: 94 cm²."},
+  {t:"Mensuration",q:"The circumference of a circle is 44 cm. Find its diameter. (π ≈ 22/7)",
+   o:["7 cm","14 cm","11 cm","22 cm"],a:1,
+   e:"C = πd → 44 = (22/7)d → d = 44×7/22 = 14 cm.\nAnswer: 14 cm."},
+  {t:"Mensuration",q:"Volume of a cone with r = 6 cm and h = 14 cm. (π ≈ 22/7)",
+   o:["528 cm³","576 cm³","352 cm³","264 cm³"],a:0,
+   e:"V = (1/3)πr²h = (1/3)×(22/7)×36×14 = (1/3)×(22/7)×504 = (22×504)/(21) = 528 cm³.\nAnswer: 528 cm³."},
+  /* ── SETS ── */
+  {t:"Sets",q:"n(A)=15, n(B)=20, n(A∪B)=30. Find n(A∩B).",
+   o:["3","5","8","10"],a:1,
+   e:"n(A∩B) = n(A)+n(B)−n(A∪B) = 15+20−30 = 5.\nAnswer: 5."},
+  {t:"Sets",q:"In a class of 40 students, 25 study Maths, 20 study English and 10 study both. How many study neither?",
+   o:["3","5","7","10"],a:1,
+   e:"n(M∪E) = 25+20−10 = 35. Neither = 40−35 = 5.\nAnswer: 5."},
+  {t:"Sets",q:"If U = {1,2,3,4,5,6,7,8}, A = {2,4,6,8}, find A' (complement of A).",
+   o:["{1,2,3}","{1,3,5,7}","{3,5,7}","{1,3,5}"],a:1,
+   e:"A' contains all elements in U that are NOT in A.\nU−A = {1,3,5,7}.\nAnswer: {1,3,5,7}."},
+
+  /* ── STATISTICS ── */
+  {t:"Statistics",q:"Mean of 5 numbers is 12. What is their sum?",
+   o:["50","55","60","65"],a:2,
+   e:"Sum = Mean × Count = 12 × 5 = 60.\nAnswer: 60."},
+  {t:"Statistics",q:"Find the median of: 3, 7, 2, 9, 5, 1, 8.",
+   o:["5","7","3","6"],a:0,
+   e:"Arranged in order: 1, 2, 3, 5, 7, 8, 9.\nMedian = middle value = 5th position = 5.\nAnswer: 5."},
+  {t:"Statistics",q:"What is the mode of: 4, 3, 5, 4, 6, 4, 3, 5?",
+   o:["3","4","5","6"],a:1,
+   e:"4 appears 3 times (most frequent), 3 and 5 appear twice each.\nMode = 4.\nAnswer: 4."},
+  {t:"Statistics",q:"Find the range of: 12, 7, 25, 3, 18, 9.",
+   o:["18","22","15","21"],a:1,
+   e:"Range = Maximum − Minimum = 25 − 3 = 22.\nAnswer: 22."},
+  {t:"Statistics",q:"A frequency table shows marks: 50(f=3), 60(f=5), 70(f=8), 80(f=4). Find the mean.",
+   o:["65.5","66.5","67.5","68"],a:1,
+   e:"Σfx = 50×3+60×5+70×8+80×4 = 150+300+560+320 = 1330.\nΣf = 3+5+8+4 = 20.\nMean = 1330/20 = 66.5.\nAnswer: 66.5."},
+
+  /* ── PROBABILITY ── */
+  {t:"Probability",q:"5 red + 3 blue balls. P(red)?",
+   o:["3/8","5/3","5/8","3/5"],a:2,
+   e:"P(red) = 5/(5+3) = 5/8.\nAnswer: 5/8."},
+  {t:"Probability",q:"A die is rolled. Find P(even number).",
+   o:["1/6","1/3","1/2","2/3"],a:2,
+   e:"Even numbers on a die: 2, 4, 6 → 3 outcomes out of 6.\nP(even) = 3/6 = 1/2.\nAnswer: 1/2."},
+  {t:"Probability",q:"Two coins are tossed. P(at least one head)?",
+   o:["1/4","1/2","3/4","1"],a:2,
+   e:"Sample space: HH, HT, TH, TT (4 outcomes).\nAt least one head: HH, HT, TH → 3 outcomes.\nP = 3/4.\nAnswer: 3/4."},
+  {t:"Probability",q:"A card is drawn from a standard deck. P(king or queen)?",
+   o:["1/13","2/13","3/13","4/13"],a:1,
+   e:"4 kings + 4 queens = 8 cards.\nP = 8/52 = 2/13.\nAnswer: 2/13."},
+  /* ── VARIATION ── */
+  {t:"Variation",q:"y ∝ x², y=12 when x=2. Find y when x=5.",
+   o:["60","65","75","80"],a:2,
+   e:"y = kx². k = 12/4 = 3. When x=5: y = 3×25 = 75.\nAnswer: 75."},
+  {t:"Variation",q:"y varies inversely as x. y=6 when x=4. Find y when x=12.",
+   o:["18","4","2","3"],a:2,
+   e:"y = k/x. k = 6×4 = 24. When x=12: y = 24/12 = 2.\nAnswer: 2."},
+  {t:"Variation",q:"z varies jointly as x and the square of y. z=36 when x=4, y=3. Find z when x=2, y=6.",
+   o:["36","72","18","54"],a:1,
+   e:"z = kxy². k = 36/(4×9) = 1. When x=2, y=6: z = 1×2×36 = 72.\nAnswer: 72."},
+
+  /* ── SURDS ── */
+  {t:"Surds",q:"Rationalize: 1/√5",
+   o:["√5/25","√5/5","5/√5","1/5"],a:1,
+   e:"Multiply top and bottom by √5: √5/(√5×√5) = √5/5.\nAnswer: √5/5."},
+  {t:"Surds",q:"Simplify: √48 + √75 − √27",
+   o:["4√3","6√3","8√3","2√3"],a:1,
+   e:"√48 = 4√3, √75 = 5√3, √27 = 3√3.\n4√3 + 5√3 − 3√3 = 6√3.\nAnswer: 6√3."},
+  {t:"Surds",q:"Rationalize: 4/(√6 − √2)",
+   o:["√6+√2","2(√6+√2)","√6−√2","4(√6+√2)"],a:0,
+   e:"Multiply by conjugate (√6+√2)/(√6+√2):\n4(√6+√2)/((√6)²−(√2)²) = 4(√6+√2)/(6−2) = 4(√6+√2)/4 = √6+√2.\nAnswer: √6+√2."},
+  {t:"Surds",q:"Simplify: (2+√3)(2−√3)",
+   o:["1","4−√3","4+√3","7"],a:0,
+   e:"Use difference of squares: (a+b)(a−b) = a² − b².\n= 4 − (√3)² = 4 − 3 = 1.\nAnswer: 1."},
+
+  /* ── SEQUENCES & SERIES ── */
+  {t:"Sequences",q:"8th term of AP: 3, 7, 11, 15, …",
+   o:["27","29","31","33"],a:2,
+   e:"a=3, d=4. T₈ = 3+(8−1)×4 = 3+28 = 31.\nAnswer: 31."},
+  {t:"Sequences",q:"Sum of the first 10 terms of AP: 2, 5, 8, 11, …",
+   o:["147","155","140","165"],a:1,
+   e:"a=2, d=3, n=10.\nS₁₀ = (10/2)[2×2+(10−1)×3] = 5[4+27] = 5×31 = 155.\nAnswer: 155."},
+  {t:"Sequences",q:"The 3rd term of a GP is 18 and the 6th term is 486. Find the common ratio.",
+   o:["2","3","4","6"],a:1,
+   e:"T₃ = ar² = 18, T₆ = ar⁵ = 486.\nDivide: r³ = 486/18 = 27 → r = 3.\nAnswer: 3."},
+  /* ── COORDINATE GEOMETRY ── */
+  {t:"Coord. Geometry",q:"Find the midpoint of the line joining (2, 4) and (8, 10).",
+   o:["(5, 7)","(4, 6)","(6, 8)","(3, 5)"],a:0,
+   e:"Midpoint = ((x₁+x₂)/2, (y₁+y₂)/2) = ((2+8)/2, (4+10)/2) = (5, 7).\nAnswer: (5, 7)."},
+  {t:"Coord. Geometry",q:"Find the gradient of the line 3y = 6x − 9.",
+   o:["2","3","1/2","6"],a:0,
+   e:"3y = 6x − 9 → y = 2x − 3. Gradient (slope) = 2.\nAnswer: 2."},
+  {t:"Coord. Geometry",q:"What is the equation of a line with gradient 3 passing through (1, 2)?",
+   o:["y = 3x − 1","y = 3x + 2","y = 3x + 1","y = x + 3"],a:0,
+   e:"y − y₁ = m(x − x₁) → y − 2 = 3(x − 1) → y = 3x − 3 + 2 = 3x − 1.\nAnswer: y = 3x − 1."},
+  {t:"Coord. Geometry",q:"Two lines y = 2x + 1 and y = mx − 3 are perpendicular. Find m.",
+   o:["2","-1/2","1/2","-2"],a:1,
+   e:"For perpendicular lines, m₁ × m₂ = −1.\n2 × m = −1 → m = −1/2.\nAnswer: −1/2."},
+
+  /* ── MATRICES ── */
+  {t:"Matrices",q:"Find the determinant of the matrix below:\n<table class='cbt-matrix'><tr><td>3</td><td>2</td></tr><tr><td>1</td><td>4</td></tr></table>",
+   o:["10","14","8","12"],a:0,
+   e:"For a 2×2 matrix  | a  b |\n                  | c  d |\ndet = (a×d) − (b×c)\n= (3×4) − (2×1)\n= 12 − 2 = 10.\nAnswer: 10."},
+  {t:"Matrices",q:"Given matrix A below, find 2A:\n<table class='cbt-matrix'><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>4</td></tr></table>",
+   o:["<table class='cbt-matrix-opt'><tr><td>4</td><td>2</td></tr><tr><td>6</td><td>8</td></tr></table>","<table class='cbt-matrix-opt'><tr><td>4</td><td>1</td></tr><tr><td>6</td><td>4</td></tr></table>","<table class='cbt-matrix-opt'><tr><td>4</td><td>2</td></tr><tr><td>3</td><td>8</td></tr></table>","<table class='cbt-matrix-opt'><tr><td>2</td><td>2</td></tr><tr><td>6</td><td>8</td></tr></table>"],a:0,
+   e:"Multiply every element by 2:\n2×2=4,  2×1=2  →  top row: 4, 2\n2×3=6,  2×4=8  →  bottom row: 6, 8\nAnswer:\n| 4  2 |\n| 6  8 |"},
+  {t:"Matrices",q:"Find the inverse of the matrix below:\n<table class='cbt-matrix'><tr><td>2</td><td>1</td></tr><tr><td>5</td><td>3</td></tr></table>",
+   o:["<table class='cbt-matrix-opt'><tr><td>3</td><td>−1</td></tr><tr><td>−5</td><td>2</td></tr></table>","<table class='cbt-matrix-opt'><tr><td>3</td><td>1</td></tr><tr><td>−5</td><td>2</td></tr></table>","<table class='cbt-matrix-opt'><tr><td>−3</td><td>1</td></tr><tr><td>5</td><td>−2</td></tr></table>","<table class='cbt-matrix-opt'><tr><td>3</td><td>−1</td></tr><tr><td>5</td><td>−2</td></tr></table>"],a:0,
+   e:"Step 1 — Find determinant:\ndet = (2×3) − (1×5) = 6 − 5 = 1.\nStep 2 — Swap the diagonal (a and d), negate b and c:\nInverse = (1/det) × | d  −b |\n                    | −c   a |\n= | 3  −1 |\n  | −5   2 |\nAnswer:\n| 3  −1 |\n| −5   2 |"},
+
+  /* ── ARITHMETIC OPERATIONS / MODULAR ── */
+  {t:"Modular Arith.",q:"Find the value of 17 mod 5.",
+   o:["1","2","3","4"],a:1,
+   e:"17 = 3×5 + 2. Therefore 17 mod 5 = 2.\nAnswer: 2."},
+  {t:"Modular Arith.",q:"Evaluate: (23 + 15) mod 6",
+   o:["0","2","3","4"],a:1,
+   e:"23 + 15 = 38.\n38 ÷ 6 = 6 remainder 2 (since 6×6 = 36, and 38 − 36 = 2).\nSo 38 mod 6 = 2.\nAnswer: 2."},
+  {t:"Sequences",q:"Find the 5th term of the sequence: 2, −6, 18, −54, …",
+   o:["162","−162","54","−54"],a:0,
+   e:"This is a GP with a=2, r=−3.\nT₅ = 2×(−3)⁴ = 2×81 = 162.\nAnswer: 162."},
+  {t:"Algebra",q:"Solve: (x+2)/(x−1) = 3",
+   o:["x = 5/2","x = 7/2","x = 3/2","x = 1/2"],a:0,
+   e:"x+2 = 3(x−1) → x+2 = 3x−3 → 2+3 = 3x−x → 5 = 2x → x = 5/2.\nAnswer: x = 5/2."},
+
+  /* ── DIFFERENTIATION ── */
+  {t:"Calculus",q:"Find dy/dx if y = 3x⁴ − 2x² + 5.",
+   o:["12x³ − 4x","12x³ − 2","12x³ + 4x","4x³ − 4x"],a:0,
+   e:"Differentiate term by term:\nd/dx(3x⁴) = 12x³, d/dx(−2x²) = −4x, d/dx(5) = 0.\ndy/dx = 12x³ − 4x.\nAnswer: 12x³ − 4x."},
+  {t:"Calculus",q:"Find the gradient of y = x² − 3x + 2 at x = 4.",
+   o:["3","5","7","9"],a:1,
+   e:"dy/dx = 2x − 3. At x=4: dy/dx = 2(4)−3 = 8−3 = 5.\nAnswer: 5."},
+  {t:"Calculus",q:"Find the stationary point of y = x² − 4x + 3.",
+   o:["(2, −1)","(4, 3)","(−2, 15)","(1, 0)"],a:0,
+   e:"dy/dx = 2x − 4 = 0 → x = 2. y = 4−8+3 = −1.\nStationary point = (2, −1).\nAnswer: (2, −1)."},
+  {t:"Calculus",q:"Differentiate y = sin x.",
+   o:["−cos x","cos x","−sin x","tan x"],a:1,
+   e:"The derivative of sin x with respect to x is cos x.\nAnswer: cos x."},
+
+  /* ── INTEGRATION ── */
+  {t:"Calculus",q:"Evaluate ∫(3x² + 2x) dx",
+   o:["x³ + x² + C","6x + 2 + C","x³ + 2x + C","3x + x² + C"],a:0,
+   e:"∫3x² dx = x³, ∫2x dx = x².\nResult: x³ + x² + C.\nAnswer: x³ + x² + C."},
+  {t:"Calculus",q:"Evaluate ∫₀² (2x + 1) dx",
+   o:["4","5","6","8"],a:2,
+   e:"∫(2x+1)dx = x²+x. Evaluate from 0 to 2: (4+2)−(0) = 6.\nAnswer: 6."},
+
+  /* ── INEQUALITIES ── */
+  {t:"Inequalities",q:"Solve: 2x − 3 > 7",
+   o:["x > 2","x > 5","x < 5","x > 7"],a:1,
+   e:"2x > 7+3 = 10 → x > 5.\nAnswer: x > 5."},
+  {t:"Inequalities",q:"Solve: −3 ≤ 2x + 1 < 9",
+   o:["−2 ≤ x < 4","−1 ≤ x < 4","−2 < x ≤ 4","−2 ≤ x ≤ 4"],a:0,
+   e:"Subtract 1: −4 ≤ 2x < 8.\nDivide by 2: −2 ≤ x < 4.\nAnswer: −2 ≤ x < 4."},
+  {t:"Inequalities",q:"Find the range of x for which x² − x − 6 < 0.",
+   o:["x < −2 or x > 3","−2 < x < 3","x < 3","x > −2"],a:1,
+   e:"Factorise: (x−3)(x+2) < 0.\nThe parabola opens upward; negative between roots −2 and 3.\nSo −2 < x < 3.\nAnswer: −2 < x < 3."},
+
+  /* ── COMMERCIAL MATHS ── */
+  {t:"Commercial Maths",q:"₦200,000 is invested at 5% simple interest per year. Interest after 3 years?",
+   o:["₦20,000","₦25,000","₦30,000","₦35,000"],a:2,
+   e:"SI = PRT/100 = 200000×5×3/100 = 3,000,000/100 = ₦30,000.\nAnswer: ₦30,000."},
+  {t:"Commercial Maths",q:"₦50,000 is invested at 10% compound interest per year. Amount after 2 years?",
+   o:["₦60,000","₦60,500","₦61,000","₦55,000"],a:1,
+   e:"A = P(1+r)ⁿ = 50000(1.1)² = 50000×1.21 = ₦60,500.\nAnswer: ₦60,500."},
+  {t:"Commercial Maths",q:"A car depreciates at 20% per year. Initial value ₦500,000. Value after 2 years?",
+   o:["₦320,000","₦300,000","₦350,000","₦280,000"],a:0,
+   e:"After year 1: 500000×0.8 = 400,000.\nAfter year 2: 400000×0.8 = ₦320,000.\nAnswer: ₦320,000."},
+
+  /* ── BINARY OPERATIONS ── */
+  {t:"Binary Operations",q:"An operation * is defined by a * b = a + b − ab. Find 3 * 4.",
+   o:["−5","−4","5","4"],a:0,
+   e:"3 * 4 = 3 + 4 − (3×4) = 7 − 12 = −5.\nAnswer: −5."},
+  {t:"Binary Operations",q:"If a ⊕ b = a² + b², find 3 ⊕ 4.",
+   o:["7","12","25","49"],a:2,
+   e:"3 ⊕ 4 = 3² + 4² = 9 + 16 = 25.\nAnswer: 25."},
+  {t:"Binary Operations",q:"An operation # is defined as a # b = (a+b)/2. Is the operation commutative?",
+   o:["No, because a+b ≠ b+a","Yes, because (a+b)/2 = (b+a)/2","Only when a = b","Cannot be determined"],a:1,
+   e:"a # b = (a+b)/2 and b # a = (b+a)/2.\nSince addition is commutative, a+b = b+a, so a#b = b#a. Yes, it is commutative.\nAnswer: Yes."},
+
+  /* ── PERMUTATION & COMBINATION ── */
+  {t:"Permutation",q:"In how many ways can 4 people be seated in a row?",
+   o:["4","12","24","16"],a:2,
+   e:"The number of arrangements = 4! = 4×3×2×1 = 24.\nAnswer: 24."},
+  {t:"Permutation",q:"How many ways can 3 items be chosen from 7? (⁷C₃)",
+   o:["21","35","42","70"],a:1,
+   e:"⁷C₃ = 7!/(3!×4!) = (7×6×5)/(3×2×1) = 210/6 = 35.\nAnswer: 35."},
+  {t:"Permutation",q:"How many 3-digit numbers can be formed from digits 1,2,3,4,5 without repetition?",
+   o:["10","20","60","120"],a:2,
+   e:"= ⁵P₃ = 5×4×3 = 60.\nAnswer: 60."},
 ];
+
 
 /* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
-let cur = 0, answers = new Array(QS.length).fill(null);
-let timeLeft = 30*60, timerID = null, startTime = null, submitted = false;
+let activeQS = [];
+let cur = 0, answers = [];
+let timeLeft = 2*60*60, timerID = null, startTime = null, submitted = false;
+
+/* ── Fisher-Yates shuffle ── */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 /* ═══════════════════════════════════════
    START
 ═══════════════════════════════════════ */
 function startExam(){
+  activeQS = shuffle(QS);
+  answers  = new Array(activeQS.length).fill(null);
   document.getElementById('introWrap').style.display = 'none';
   document.getElementById('examBody').style.display  = 'block';
   buildDots(); renderQ(); startTimer();
@@ -1191,19 +1597,20 @@ function startTimer(){
   },1000);
 }
 function updateTimer(){
-  const m=String(Math.floor(timeLeft/60)).padStart(2,'0');
+  const h=Math.floor(timeLeft/3600);
+  const m=String(Math.floor((timeLeft%3600)/60)).padStart(2,'0');
   const s=String(timeLeft%60).padStart(2,'0');
-  document.getElementById('cbtTimer').textContent=`${m}:${s}`;
+  document.getElementById('cbtTimer').textContent=h>0?`${h}:${m}:${s}`:`${m}:${s}`;
   const p=document.getElementById('timerPill');
   p.className='awaClass-cbt-timer';
   if(timeLeft<=60)  p.classList.add('danger');
-  else if(timeLeft<=300) p.classList.add('warn');
+  else if(timeLeft<=600) p.classList.add('warn');
 }
 
 /* ── dots ── */
 function buildDots(){
   const row=document.getElementById('dotRow'); row.innerHTML='';
-  QS.forEach((_,i)=>{
+  activeQS.forEach((_,i)=>{
     const b=document.createElement('button');
     b.className='awaClass-cbt-dot'+(i===0?' active':'');
     b.textContent=i+1; b.id=`d${i}`;
@@ -1212,7 +1619,7 @@ function buildDots(){
   });
 }
 function refreshDots(){
-  QS.forEach((_,i)=>{
+  activeQS.forEach((_,i)=>{
     const d=document.getElementById(`d${i}`);
     d.className='awaClass-cbt-dot';
     if(answers[i]!==null) d.classList.add('answered');
@@ -1222,10 +1629,10 @@ function refreshDots(){
 
 /* ── render question ── */
 function renderQ(){
-  const q=QS[cur];
+  const q=activeQS[cur];
   document.getElementById('qTopic').textContent=q.t;
-  document.getElementById('qNum').textContent=`Question ${cur+1} of ${QS.length}`;
-  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qNum').textContent=`Question ${cur+1} of ${activeQS.length}`;
+  document.getElementById('qText').innerHTML=q.q.replace(/\n/g,'<br>');
 
   const grid=document.getElementById('optsGrid'); grid.innerHTML='';
   const LBL=['A','B','C','D'];
@@ -1244,7 +1651,7 @@ function renderQ(){
 
   updateProgress(); refreshDots();
   document.getElementById('prevBtn').disabled=(cur===0);
-  document.getElementById('nextBtn').textContent=(cur===QS.length-1)?'Finish →':'Next →';
+  document.getElementById('nextBtn').textContent=(cur===activeQS.length-1)?'Finish →':'Next →';
 
   const card=document.getElementById('qCard');
   card.style.animation='none'; card.offsetHeight; card.style.animation='';
@@ -1252,16 +1659,16 @@ function renderQ(){
 
 function updateProgress(){
   const done=answers.filter(a=>a!==null).length;
-  const pct=(done/QS.length)*100;
+  const pct=(done/activeQS.length)*100;
   document.getElementById('barFill').style.width=pct+'%';
-  document.getElementById('progLbl').textContent=`${done} / ${QS.length}`;
+  document.getElementById('progLbl').textContent=`${done} / ${activeQS.length}`;
 }
 
 /* ── pick answer ── */
 function pick(idx){
   if(answers[cur]!==null||submitted) return;
   answers[cur]=idx;
-  const q=QS[cur];
+  const q=activeQS[cur];
   document.querySelectorAll('.awaClass-cbt-opt').forEach((b,i)=>{
     b.disabled=true;
     if(i===q.a)      b.classList.add('correct');
@@ -1273,7 +1680,7 @@ function pick(idx){
 
 /* ── navigate ── */
 function nav(dir){ goTo(cur+dir); }
-function goTo(i){ if(i>=0&&i<QS.length){ cur=i; renderQ(); } }
+function goTo(i){ if(i>=0&&i<activeQS.length){ cur=i; renderQ(); } }
 
 /* ── toast / confetti ── */
 function showToast(){
@@ -1303,7 +1710,7 @@ function openConfirm(){
   const skip=answers.filter(a=>a===null).length;
   document.getElementById('confSub').textContent=
     skip>0 ? `${skip} question${skip>1?'s':''} unanswered. They will be marked as skipped.`
-           : `All ${QS.length} questions answered. Ready to submit!`;
+           : `All ${activeQS.length} questions answered. Ready to submit!`;
   document.getElementById('confirmOverlay').classList.add('open');
 }
 function closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('open'); }
@@ -1313,17 +1720,17 @@ function submitExam(){
   clearInterval(timerID);
   closeConfirm();
 
-  const timeUsed = startTime ? Math.floor((Date.now()-startTime)/1000) : (30*60-timeLeft);
+  const timeUsed = startTime ? Math.floor((Date.now()-startTime)/1000) : (2*60*60-timeLeft);
   const tm=String(Math.floor(timeUsed/60)).padStart(2,'0');
   const ts=String(timeUsed%60).padStart(2,'0');
 
   let correct=0, wrong=0, skip=0;
   answers.forEach((a,i)=>{
     if(a===null) skip++;
-    else if(a===QS[i].a) correct++;
+    else if(a===activeQS[i].a) correct++;
     else wrong++;
   });
-  const pct=Math.round((correct/QS.length)*100);
+  const pct=Math.round((correct/activeQS.length)*100);
 
   let grade, gradeKey;
   if(pct>=75){      grade='🏆 Distinction'; gradeKey='distinction'; }
@@ -1371,7 +1778,7 @@ function submitExam(){
     body: JSON.stringify({
       subject:       'mathematics',
       score:         correct,
-      total:         QS.length,
+      total:         activeQS.length,
       percentage:    pct,
       grade:         gradeKey,
       time_used_sec: timeUsed,
@@ -1394,7 +1801,7 @@ function submitExam(){
 function buildReview(){
   const list=document.getElementById('reviewList'); list.innerHTML='';
   const LBL=['A','B','C','D'];
-  QS.forEach((q,i)=>{
+  activeQS.forEach((q,i)=>{
     const ua=answers[i];
     const ok=ua===q.a, sk=ua===null;
     const item=document.createElement('div');
@@ -1413,14 +1820,17 @@ function buildReview(){
       <div class="awaClass-cbt-rev-q">
         <span style="color:#9ca3af;font-size:11px;">Q${i+1} · ${q.t}</span><br>${q.q}
       </div>
-      <div class="awaClass-cbt-rev-ans-list">${html}</div>`;
+      <div class="awaClass-cbt-rev-ans-list">${html}</div>
+      <div class="awaClass-cbt-explanation">
+        <div class="awaClass-cbt-explanation-hdr">💡 Step-by-Step Explanation</div>${q.e}
+      </div>`;
     list.appendChild(item);
   });
 }
 
 function retake(){
-  cur=0; answers=new Array(QS.length).fill(null);
-  timeLeft=30*60; submitted=false; startTime=null;
+  cur=0; answers=[]; activeQS=[];
+  timeLeft=2*60*60; submitted=false; startTime=null;
   document.getElementById('resultsWrap').style.display='none';
   document.getElementById('introWrap').style.display='flex';
 }

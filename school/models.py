@@ -158,11 +158,19 @@ class PostComment(models.Model):
 
 
 class Notification(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    # null=True so notifications not tied to a post (follow, birthday, etc.) are allowed,
+    # and SET_NULL prevents the notification from being wiped when a post is deleted.
+    post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification')
     message = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Notif → {self.user.username}: {self.message[:50]}"
 
 
 # Live Video Models
@@ -174,9 +182,17 @@ class LiveSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     max_participants = models.IntegerField(default=50)
-    
+
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return self.title
+        return f"{self.title} (by {self.created_by.username})"
+
+    @property
+    def host(self):
+        """Alias so templates can use {{ session.host }} interchangeably with created_by."""
+        return self.created_by
 
 
 class LiveParticipant(models.Model):
@@ -193,10 +209,9 @@ class LiveParticipant(models.Model):
     
     def __str__(self):
         return f"{self.user.username} in {self.session.title}"
-        
-# ─────────────────────────────────────────────────────────────────
-# ADD THESE TWO MODELS AT THE BOTTOM OF YOUR EXISTING models.py
-# ─────────────────────────────────────────────────────────────────
+
+
+# ── CBT Models ────────────────────────────────────────────────────
 
 class CBTExam(models.Model):
     """Stores a CBT exam attempt result for a user."""
@@ -253,16 +268,20 @@ class CBTScore(models.Model):
         return f"{self.user.username} CBT Points: {self.points}"
 
     def recalculate(self):
-        """Recompute all fields from the user's CBTExam history."""
+        """Recompute all fields from the user's CBTExam history using DB aggregates."""
+        from django.db.models import Sum, Max, Count
         exams = CBTExam.objects.filter(student=self.user)
-        self.total_attempts  = exams.count()
-        self.total_correct   = sum(e.score for e in exams)
-        self.total_questions = sum(e.total for e in exams)
-        best = exams.order_by('-percentage').first()
-        self.best_score      = best.percentage if best else 0
-        # Points formula: 5 pts per correct answer + 20 bonus for Distinction
-        self.points = sum(
-            e.score * 5 + (20 if e.grade == 'distinction' else 0)
-            for e in exams
+        agg = exams.aggregate(
+            count=Count('exam_id'),
+            total_correct=Sum('score'),
+            total_questions=Sum('total'),
+            best_score=Max('percentage'),
         )
+        self.total_attempts  = agg['count'] or 0
+        self.total_correct   = agg['total_correct'] or 0
+        self.total_questions = agg['total_questions'] or 0
+        self.best_score      = agg['best_score'] or 0
+        # Points: 5 pts per correct answer + 20 bonus for each Distinction
+        distinction_count = exams.filter(grade='distinction').count()
+        self.points = (self.total_correct * 5) + (distinction_count * 20)
         self.save()

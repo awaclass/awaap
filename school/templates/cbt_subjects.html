@@ -155,8 +155,6 @@
     }
     .awaClass-cbt-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,.09);
-      border-color: var(--awaClass-cbt-card-accent, #3b82f6);
     }
     .awaClass-cbt-card::before {
       content: '';
@@ -168,9 +166,7 @@
       opacity: 0;
       transition: opacity 0.18s;
     }
-    .awaClass-cbt-card:hover::before {
-      opacity: 1;
-    }
+    /* top bar intentionally hidden on hover — no accent color on active */
 
     .awaClass-cbt-card-icon {
       width: 44px;
@@ -357,8 +353,8 @@
       </div>
     </div>
     <div class="awaClass-cbt-header-stats">
-      <div class="awaClass-cbt-stat-chip"><i class="fa-solid fa-list-check"></i> 20 Questions per exam</div>
-      <div class="awaClass-cbt-stat-chip"><i class="fa-regular fa-clock"></i> 30 min time limit</div>
+      <div class="awaClass-cbt-stat-chip"><i class="fa-solid fa-list-check"></i> 100 Questions per exam</div>
+      <div class="awaClass-cbt-stat-chip"><i class="fa-regular fa-clock"></i> 2 hour time limit</div>
       <div class="awaClass-cbt-stat-chip"><i class="fa-solid fa-trophy"></i> Earn points</div>
     </div>
   </div>
@@ -381,7 +377,7 @@
         <p class="awaClass-cbt-card-meta">Algebra, Numbers, Geometry &amp; more</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -394,7 +390,7 @@
         <p class="awaClass-cbt-card-meta">Mechanics, Waves, Electricity &amp; more</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -407,7 +403,7 @@
         <p class="awaClass-cbt-card-meta">Comprehension, Grammar &amp; more</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -420,7 +416,7 @@
         <p class="awaClass-cbt-card-meta">Organic, Inorganic &amp; Physical Chem</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -433,7 +429,7 @@
         <p class="awaClass-cbt-card-meta">Cell Biology, Ecology &amp; Genetics</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -446,7 +442,7 @@
         <p class="awaClass-cbt-card-meta">Micro, Macro &amp; Trade</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -471,7 +467,7 @@
         <p class="awaClass-cbt-card-meta">Civics, Constitutions &amp; Politics</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -484,7 +480,7 @@
         <p class="awaClass-cbt-card-meta">Financial Records &amp; Statements</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -497,7 +493,7 @@
         <p class="awaClass-cbt-card-meta">Physical &amp; Human Geography</p>
       </div>
       <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">20 Qs · 30 min</span>
+        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
         <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
       </div>
     </a>
@@ -534,8 +530,8 @@
       <div class="awaClass-cbt-how-step">
         <div class="awaClass-cbt-step-num">2</div>
         <div class="awaClass-cbt-step-text">
-          <strong>Answer 20 questions</strong>
-          <span>Navigate questions freely, skip and come back — all within 30 minutes.</span>
+          <strong>Answer 100 questions</strong>
+          <span>Navigate questions freely, skip and come back — all within 2 hours.</span>
         </div>
       </div>
       <div class="awaClass-cbt-how-step">

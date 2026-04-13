@@ -16,7 +16,7 @@
     }
 
     body {
-      background: #1a1a1a;
+      background: #0f0f0f;
       overflow: hidden;
     }
 
@@ -24,86 +24,280 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      background: #1a1a1a;
-    }
-
-    /* Main Video Grid */
-    .videos-grid {
-      flex: 1;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-      overflow-y: auto;
-      align-content: start;
-    }
-
-    .video-card {
-      background: #2d2d2d;
-      border-radius: 12px;
-      overflow: hidden;
+      background: #0f0f0f;
       position: relative;
-      aspect-ratio: 4/3;
     }
 
-    .video-card video {
+    /* ─── HOST STAGE (big video) ─────────────────────────────── */
+    .host-stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #111;
+    }
+
+    #host-video-element {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
-    .video-label {
+    /* Placeholder when host cam is off */
+    .host-avatar-placeholder {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      height: 100%;
+      background: #1a1a1a;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .host-avatar-placeholder .avatar-circle {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: #2d2d2d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: #f97316;
+    }
+
+    /* Host name badge on the big video */
+    .host-name-badge {
       position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.7);
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(6px);
+      z-index: 5;
+    }
+
+    .host-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f97316;
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* ─── STUDENT BUBBLES TRAY ───────────────────────────────── */
+    .student-tray {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .student-tray::-webkit-scrollbar { display: none; }
+
+    .student-bubble {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      background: #2d2d2d;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .student-bubble:hover {
+      transform: scale(1.08);
+      border-color: #f97316;
+    }
+
+    .student-bubble video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Student avatar fallback */
+    .student-bubble .bubble-avatar {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #2d2d2d;
+      color: #888;
+      font-size: 28px;
+    }
+
+    /* Name tooltip below bubble */
+    .student-bubble .bubble-name {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      background: rgba(0,0,0,0.6);
+      padding: 2px 6px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    .student-bubble-wrapper {
+      position: relative;
+      margin-bottom: 20px; /* space for the name label */
+    }
+
+    /* Muted indicator on bubble */
+    .bubble-muted-icon {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
       color: white;
-      padding: 4px 12px;
+      display: none;
+    }
+
+    /* ─── ROOM INFO ─────────────────────────────────────────── */
+    .room-info {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .live-badge {
+      background: #ef4444;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .live-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: white;
+      animation: pulse-dot 1.4s infinite;
+    }
+
+    /* Viewer counter */
+    .viewer-counter {
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .viewer-counter i {
+      color: #f97316;
+      font-size: 13px;
+    }
+
+    .viewer-counter .vc-count {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      min-width: 16px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .viewer-counter .vc-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 400;
+    }
+
+    @keyframes count-pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.4); color: #f97316; }
+      100% { transform: scale(1); }
+    }
+
+    .vc-count.popping {
+      animation: count-pop 0.35s ease-out;
+    }
+
+    /* Session title pill */
+    .session-title-pill {
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.85);
+      padding: 5px 12px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 500;
-      z-index: 1;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .video-status {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 11px;
-      display: flex;
-      gap: 6px;
-      z-index: 1;
-    }
-
-    .video-status i {
-      font-size: 11px;
-    }
-
-    .video-status .muted {
-      color: #ef4444;
-    }
-
-    .local-video {
-      border: 2px solid #f97316;
-    }
-
-    /* Controls Bar */
+    /* ─── CONTROLS BAR ──────────────────────────────────────── */
     .controls-bar {
-      background: #2d2d2d;
-      padding: 16px 24px;
+      background: #1c1c1c;
+      padding: 14px 24px;
       display: flex;
       justify-content: center;
-      gap: 16px;
-      border-top: 1px solid #404040;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid #2a2a2a;
       flex-wrap: wrap;
+      z-index: 10;
     }
 
     .control-btn {
-      background: #404040;
+      background: #2d2d2d;
       border: none;
       color: white;
       width: 48px;
@@ -111,12 +305,16 @@
       border-radius: 50%;
       cursor: pointer;
       transition: all 0.2s;
-      font-size: 20px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
     .control-btn:hover {
-      background: #505050;
-      transform: scale(1.05);
+      background: #3a3a3a;
+      transform: scale(1.07);
     }
 
     .control-btn.active {
@@ -131,39 +329,55 @@
       background: #dc2626;
     }
 
+    /* Camera flip — only shown to host */
+    #flip-camera {
+      display: none; /* shown via JS if isHost */
+    }
+
     .leave-btn {
       background: #ef4444;
       width: auto;
-      padding: 0 24px;
+      padding: 0 22px;
       border-radius: 24px;
+      font-size: 14px;
+      gap: 6px;
     }
 
-    .room-info {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 12px;
-      z-index: 10;
-      backdrop-filter: blur(10px);
+    .leave-btn:hover {
+      background: #dc2626;
     }
 
-    /* Chat Sidebar */
+    .btn-label {
+      font-size: 11px;
+      margin-top: 1px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .control-group span {
+      font-size: 10px;
+      color: #888;
+    }
+
+    /* ─── CHAT SIDEBAR ──────────────────────────────────────── */
     .chat-sidebar {
       position: fixed;
       right: 0;
       top: 0;
       width: 320px;
       height: 100vh;
-      background: white;
+      background: #1e1e1e;
       transform: translateX(100%);
       transition: transform 0.3s;
-      z-index: 20;
+      z-index: 30;
       display: flex;
       flex-direction: column;
+      border-left: 1px solid #2d2d2d;
     }
 
     .chat-sidebar.open {
@@ -177,20 +391,25 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-weight: 600;
     }
 
     .chat-messages {
       flex: 1;
       overflow-y: auto;
       padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .chat-message {
-      margin-bottom: 12px;
       padding: 8px 12px;
-      background: #f5f5f5;
-      border-radius: 8px;
+      background: #2d2d2d;
+      border-radius: 10px;
       font-size: 13px;
+      color: #e5e5e5;
+      line-height: 1.4;
     }
 
     .chat-message strong {
@@ -198,8 +417,8 @@
     }
 
     .chat-input {
-      padding: 16px;
-      border-top: 1px solid #e5e5e5;
+      padding: 14px;
+      border-top: 1px solid #2d2d2d;
       display: flex;
       gap: 8px;
     }
@@ -207,107 +426,167 @@
     .chat-input input {
       flex: 1;
       padding: 8px 12px;
-      border: 1px solid #e5e5e5;
-      border-radius: 8px;
+      border: 1px solid #3a3a3a;
+      border-radius: 20px;
+      background: #2d2d2d;
+      color: white;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .chat-input input:focus {
+      border-color: #f97316;
     }
 
     .chat-input button {
-      padding: 8px 16px;
+      padding: 8px 14px;
       background: #f97316;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 20px;
       cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
     }
 
     .toggle-chat {
       position: fixed;
-      bottom: 80px;
+      bottom: 82px;
       right: 20px;
       background: #f97316;
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 15;
+      z-index: 20;
+      box-shadow: 0 4px 14px rgba(249,115,22,0.4);
     }
 
-    .chat-sidebar.open ~ .toggle-chat,
-    .toggle-chat.hidden {
-      display: none;
-    }
+    .toggle-chat i { color: white; font-size: 18px; }
+
+    .toggle-chat.hidden { display: none; }
 
     .chat-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 19;
+      background: rgba(0,0,0,0.5);
+      z-index: 29;
     }
 
-    .chat-overlay.active {
-      display: block;
-    }
+    .chat-overlay.active { display: block; }
 
+    /* .student-count-badge folded into .viewer-counter inside .room-info */
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .videos-grid {
-        grid-template-columns: 1fr;
-        padding: 10px;
-      }
-      
-      .controls-bar {
-        padding: 12px;
-        gap: 8px;
-      }
-      
-      .control-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-      }
+      .student-bubble { width: 64px; height: 64px; }
+      .student-tray { top: 12px; right: 10px; gap: 8px; }
+      .controls-bar { padding: 10px 14px; gap: 8px; }
+      .control-btn { width: 42px; height: 42px; font-size: 16px; }
     }
   </style>
 </head>
 <body>
 
 <div class="live-container">
-  <div class="room-info">
-    <i class="fa-solid fa-video"></i> {{ session.title }} | 
-    <i class="fa-solid fa-user"></i> <span id="participant-count">1</span>
-  </div>
 
-  <div class="videos-grid" id="videos-grid">
-    <!-- Videos will be added dynamically -->
-  </div>
+  <!-- ── HOST STAGE ── -->
+  <div class="host-stage" id="host-stage">
 
+    <!-- The big host video -->
+    <video id="host-video-element" autoplay playsinline muted></video>
+
+    <!-- Shown when host cam is off -->
+    <div class="host-avatar-placeholder" id="host-placeholder">
+      <div class="avatar-circle"><i class="fa-solid fa-user"></i></div>
+      <span id="host-placeholder-name">Host</span>
+    </div>
+
+    <!-- Room info top-left: LIVE dot + viewer count + session title -->
+    <div class="room-info">
+      <span class="live-badge">
+        <span class="live-badge-dot"></span>
+        LIVE
+      </span>
+      <div class="viewer-counter">
+        <i class="fa-solid fa-eye"></i>
+        <span class="vc-count" id="participant-count">1</span>
+        <span class="vc-label">watching</span>
+      </div>
+      <span class="session-title-pill">
+        <i class="fa-solid fa-chalkboard-teacher" style="margin-right:4px;opacity:0.7;font-size:11px;"></i>{{ session.title }}
+      </span>
+    </div>
+
+    <!-- Host name badge bottom-left -->
+    <div class="host-name-badge" id="host-name-badge">
+      <div class="host-live-dot"></div>
+      <span id="host-display-name">{{ user.username }}</span>
+      <small style="opacity:0.6;">(Host)</small>
+    </div>
+
+    <!-- Student bubbles tray top-right -->
+    <div class="student-tray" id="student-tray">
+      <!-- Student bubble wrappers injected here by JS -->
+    </div>
+
+  </div><!-- /host-stage -->
+
+  <!-- ── CONTROLS BAR ── -->
   <div class="controls-bar">
-    <button class="control-btn" id="toggle-video" title="Toggle Video">
-      <i class="fa-solid fa-video"></i>
-    </button>
-    <button class="control-btn" id="toggle-audio" title="Toggle Audio">
-      <i class="fa-solid fa-microphone"></i>
-    </button>
-    <button class="control-btn" id="toggle-screen" title="Share Screen">
-      <i class="fa-solid fa-desktop"></i>
-    </button>
-    <button class="control-btn leave-btn" id="leave-room">
-      <i class="fa-solid fa-phone-slash"></i> Leave
-    </button>
+
+    <div class="control-group">
+      <button class="control-btn" id="toggle-video" title="Toggle Camera">
+        <i class="fa-solid fa-video"></i>
+      </button>
+      <span>Camera</span>
+    </div>
+
+    <div class="control-group">
+      <button class="control-btn" id="toggle-audio" title="Toggle Mic">
+        <i class="fa-solid fa-microphone"></i>
+      </button>
+      <span>Mic</span>
+    </div>
+
+    <!-- Camera flip — mobile only, host only -->
+    <div class="control-group" id="flip-camera-group" style="display:none;">
+      <button class="control-btn" id="flip-camera" title="Flip Camera">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+      <span>Flip</span>
+    </div>
+
+    <div class="control-group">
+      <button class="control-btn" id="toggle-screen" title="Share Screen">
+        <i class="fa-solid fa-desktop"></i>
+      </button>
+      <span>Screen</span>
+    </div>
+
+    <div class="control-group">
+      <button class="control-btn leave-btn" id="leave-room">
+        <i class="fa-solid fa-phone-slash"></i> Leave
+      </button>
+    </div>
+
   </div>
 
+  <!-- ── CHAT OVERLAY + TOGGLE ── -->
   <div class="chat-overlay" id="chat-overlay"></div>
-
   <div class="toggle-chat" id="toggle-chat">
     <i class="fa-regular fa-comment-dots"></i>
   </div>
 
+  <!-- ── CHAT SIDEBAR ── -->
   <div class="chat-sidebar" id="chat-sidebar">
     <div class="chat-header">
       <span><i class="fa-regular fa-comment-dots"></i> Live Chat</span>
-      <i class="fa-solid fa-xmark" id="close-chat" style="cursor: pointer;"></i>
+      <i class="fa-solid fa-xmark" id="close-chat" style="cursor:pointer;"></i>
     </div>
     <div class="chat-messages" id="chat-messages">
       <div class="chat-message">
@@ -315,27 +594,28 @@
       </div>
     </div>
     <div class="chat-input">
-      <input type="text" id="chat-input" placeholder="Type a message...">
+      <input type="text" id="chat-input" placeholder="Type a message…">
       <button id="send-chat">Send</button>
     </div>
   </div>
-</div>
+
+</div><!-- /live-container -->
 
 <script>
-  const roomName = '{{ room_name }}';
-  const userName = '{{ user.username }}';
-  const userId = {{ user.id }};
-  
+  const roomName   = '{{ room_name }}';
+  const userName   = '{{ user.username }}';
+  const userId     = {{ user.id }};
+  const isHost     = {{ is_creator|yesno:"true,false" }};
+
   let localStream;
   let peerConnections = {};
   let socket;
-  let localVideoElement;
-  let isVideoEnabled = true;
-  let isAudioEnabled = true;
-  let isScreenSharing = false;
+  let isVideoEnabled   = true;
+  let isAudioEnabled   = true;
+  let isScreenSharing  = false;
   let screenStream;
+  let currentFacingMode = 'user'; // 'user' = front, 'environment' = back
 
-  // Configuration for STUN servers
   const configuration = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
@@ -344,287 +624,300 @@
     ]
   };
 
-  // Initialize WebSocket connection
-  function initWebSocket() {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/live/${roomName}/`;
-    socket = new WebSocket(wsUrl);
+  // ─────────────────────────────────────────────────────
+  // LAYOUT HELPERS
+  // ─────────────────────────────────────────────────────
 
-    socket.onopen = () => {
-      console.log('WebSocket connected');
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      handleSignalingData(data);
-    };
-
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+  /**
+   * Attach a stream to the big host stage video element.
+   */
+  function setHostVideo(stream) {
+    const v = document.getElementById('host-video-element');
+    const ph = document.getElementById('host-placeholder');
+    v.srcObject = stream;
+    v.style.display = 'block';
+    ph.style.display = 'none';
   }
 
-  // Handle signaling data
+  /**
+   * Show host avatar placeholder (cam off).
+   */
+  function showHostPlaceholder(name) {
+    const v  = document.getElementById('host-video-element');
+    const ph = document.getElementById('host-placeholder');
+    v.style.display = 'none';
+    ph.style.display = 'flex';
+    document.getElementById('host-placeholder-name').textContent = name || 'Host';
+  }
+
+  /**
+   * Add a circular student bubble for a remote participant.
+   * (Only called for non-host participants from the host's perspective,
+   *  or for the host when the current user is a student.)
+   */
+  function addStudentBubble(username, uid) {
+    if (document.getElementById(`bubble-wrapper-${uid}`)) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'student-bubble-wrapper';
+    wrapper.id = `bubble-wrapper-${uid}`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'student-bubble';
+    bubble.id = `video-${uid}`;
+    bubble.title = username;
+
+    const video = document.createElement('video');
+    video.autoplay = true;
+    video.playsInline = true;
+    video.id = `video-element-${uid}`;
+    video.style.borderRadius = '50%';
+
+    // Avatar fallback
+    const avatar = document.createElement('div');
+    avatar.className = 'bubble-avatar';
+    avatar.innerHTML = '<i class="fa-solid fa-user"></i>';
+    avatar.id = `bubble-avatar-${uid}`;
+
+    // Muted indicator
+    const mutedIcon = document.createElement('div');
+    mutedIcon.className = 'bubble-muted-icon';
+    mutedIcon.id = `bubble-muted-${uid}`;
+    mutedIcon.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
+
+    // Name label
+    const nameLabel = document.createElement('div');
+    nameLabel.className = 'bubble-name';
+    nameLabel.textContent = username;
+
+    bubble.appendChild(video);
+    bubble.appendChild(avatar);
+    bubble.appendChild(mutedIcon);
+    wrapper.appendChild(bubble);
+    wrapper.appendChild(nameLabel);
+
+    document.getElementById('student-tray').appendChild(wrapper);
+  }
+
+  function removeStudentBubble(uid) {
+    const wrapper = document.getElementById(`bubble-wrapper-${uid}`);
+    if (wrapper) wrapper.remove();
+    if (peerConnections[uid]) {
+      peerConnections[uid].close();
+      delete peerConnections[uid];
+    }
+  }
+
+  // ─────────────────────────────────────────────────────
+  // WEBSOCKET
+  // ─────────────────────────────────────────────────────
+  function initWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    socket = new WebSocket(`${protocol}//${window.location.host}/ws/live/${roomName}/`);
+
+    socket.onopen  = () => console.log('WebSocket connected');
+    socket.onmessage = (e) => handleSignalingData(JSON.parse(e.data));
+    socket.onerror   = (e) => console.error('WebSocket error:', e);
+  }
+
   function handleSignalingData(data) {
     switch (data.type) {
       case 'user_joined':
         if (data.user_id != userId) {
-          addUserVideo(data.user, data.user_id);
+          addStudentBubble(data.user, data.user_id);
           createOffer(data.user_id);
-          addChatMessage('System', `${data.user} joined the session`);
+          addChatMessage('System', `${data.user} joined`);
           updateParticipantCount();
         }
         break;
-        
       case 'user_left':
-        removeUserVideo(data.user_id);
-        addChatMessage('System', `${data.user} left the session`);
+        removeStudentBubble(data.user_id);
+        addChatMessage('System', `${data.user} left`);
         updateParticipantCount();
         break;
-        
       case 'offer':
-        if (data.user_id != userId) {
-          handleOffer(data);
-        }
+        if (data.user_id != userId) handleOffer(data);
         break;
-        
       case 'answer':
-        if (data.user_id != userId) {
-          handleAnswer(data);
-        }
+        if (data.user_id != userId) handleAnswer(data);
         break;
-        
       case 'ice_candidate':
-        if (data.user_id != userId) {
-          handleIceCandidate(data);
-        }
+        if (data.user_id != userId) handleIceCandidate(data);
         break;
-        
       case 'video_toggle':
-        if (data.user_id != userId) {
-          updateVideoStatus(data.user_id, data.enabled);
-        }
+        if (data.user_id != userId) updateRemoteVideoStatus(data.user_id, data.enabled);
         break;
-        
       case 'audio_toggle':
-        if (data.user_id != userId) {
-          updateAudioStatus(data.user_id, data.enabled);
-        }
+        if (data.user_id != userId) updateRemoteMuteStatus(data.user_id, data.enabled);
         break;
-        
       case 'chat_message':
         addChatMessage(data.user, data.message);
         break;
     }
   }
 
-  // Create video element for user
-  function addUserVideo(username, userId) {
-    if (document.getElementById(`video-${userId}`)) return;
-    
-    const videoCard = document.createElement('div');
-    videoCard.className = 'video-card';
-    videoCard.id = `video-${userId}`;
-    
-    const video = document.createElement('video');
-    video.autoplay = true;
-    video.playsInline = true;
-    video.id = `video-element-${userId}`;
-    
-    const label = document.createElement('div');
-    label.className = 'video-label';
-    label.innerHTML = `<i class="fa-solid fa-user"></i> ${username}`;
-    
-    const status = document.createElement('div');
-    status.className = 'video-status';
-    status.id = `status-${userId}`;
-    status.innerHTML = '<i class="fa-solid fa-video"></i> <i class="fa-solid fa-microphone"></i>';
-    
-    videoCard.appendChild(video);
-    videoCard.appendChild(label);
-    videoCard.appendChild(status);
-    
-    document.getElementById('videos-grid').appendChild(videoCard);
-  }
-
-  function removeUserVideo(userId) {
-    const videoCard = document.getElementById(`video-${userId}`);
-    if (videoCard) videoCard.remove();
-    
-    if (peerConnections[userId]) {
-      peerConnections[userId].close();
-      delete peerConnections[userId];
-    }
-  }
-
-  // Create offer for new peer
+  // ─────────────────────────────────────────────────────
+  // WEBRTC
+  // ─────────────────────────────────────────────────────
   async function createOffer(remoteUserId) {
-    const peerConnection = new RTCPeerConnection(configuration);
-    peerConnections[remoteUserId] = peerConnection;
-    
-    // Add local tracks
-    localStream.getTracks().forEach(track => {
-      peerConnection.addTrack(track, localStream);
-    });
-    
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        socket.send(JSON.stringify({
-          type: 'ice_candidate',
-          candidate: event.candidate,
-          user_id: remoteUserId
-        }));
+    const pc = new RTCPeerConnection(configuration);
+    peerConnections[remoteUserId] = pc;
+
+    localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+
+    pc.onicecandidate = (e) => {
+      if (e.candidate) socket.send(JSON.stringify({ type:'ice_candidate', candidate:e.candidate, user_id:remoteUserId }));
+    };
+
+    pc.ontrack = (e) => {
+      const v = document.getElementById(`video-element-${remoteUserId}`);
+      if (v && e.streams[0]) {
+        v.srcObject = e.streams[0];
+        // Hide avatar placeholder on the bubble
+        const av = document.getElementById(`bubble-avatar-${remoteUserId}`);
+        if (av) av.style.display = 'none';
       }
     };
-    
-    peerConnection.ontrack = (event) => {
-      const videoElement = document.getElementById(`video-element-${remoteUserId}`);
-      if (videoElement && event.streams[0]) {
-        videoElement.srcObject = event.streams[0];
-      }
-    };
-    
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-    
-    socket.send(JSON.stringify({
-      type: 'offer',
-      offer: offer,
-      user_id: remoteUserId
-    }));
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    socket.send(JSON.stringify({ type:'offer', offer, user_id:remoteUserId }));
   }
 
   async function handleOffer(data) {
-    const peerConnection = new RTCPeerConnection(configuration);
-    peerConnections[data.user_id] = peerConnection;
-    
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        socket.send(JSON.stringify({
-          type: 'ice_candidate',
-          candidate: event.candidate,
-          user_id: data.user_id
-        }));
+    const pc = new RTCPeerConnection(configuration);
+    peerConnections[data.user_id] = pc;
+
+    pc.onicecandidate = (e) => {
+      if (e.candidate) socket.send(JSON.stringify({ type:'ice_candidate', candidate:e.candidate, user_id:data.user_id }));
+    };
+
+    pc.ontrack = (e) => {
+      const v = document.getElementById(`video-element-${data.user_id}`);
+      if (v && e.streams[0]) {
+        v.srcObject = e.streams[0];
+        const av = document.getElementById(`bubble-avatar-${data.user_id}`);
+        if (av) av.style.display = 'none';
       }
     };
-    
-    peerConnection.ontrack = (event) => {
-      const videoElement = document.getElementById(`video-element-${data.user_id}`);
-      if (videoElement && event.streams[0]) {
-        videoElement.srcObject = event.streams[0];
-      }
-    };
-    
-    localStream.getTracks().forEach(track => {
-      peerConnection.addTrack(track, localStream);
-    });
-    
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-    
-    socket.send(JSON.stringify({
-      type: 'answer',
-      answer: answer,
-      user_id: data.user_id
-    }));
+
+    localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+    await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    socket.send(JSON.stringify({ type:'answer', answer, user_id:data.user_id }));
   }
 
   async function handleAnswer(data) {
-    const peerConnection = peerConnections[data.user_id];
-    if (peerConnection) {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-    }
+    const pc = peerConnections[data.user_id];
+    if (pc) await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
   }
 
   async function handleIceCandidate(data) {
-    const peerConnection = peerConnections[data.user_id];
-    if (peerConnection && data.candidate) {
-      await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-    }
+    const pc = peerConnections[data.user_id];
+    if (pc && data.candidate) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
   }
 
-  // Initialize local media
+  // ─────────────────────────────────────────────────────
+  // LOCAL MEDIA INIT
+  // ─────────────────────────────────────────────────────
   async function initLocalStream() {
     try {
-      localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      
-      // Create local video element
-      addUserVideo(`${userName} (You)`, userId);
-      const localVideo = document.getElementById(`video-element-${userId}`);
-      if (localVideo) {
-        localVideo.srcObject = localStream;
-        document.getElementById(`video-${userId}`).classList.add('local-video');
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: currentFacingMode },
+        audio: true
+      });
+
+      if (isHost) {
+        setHostVideo(localStream);
+      } else {
+        // Student sees themselves as a bubble; host's video comes via WebRTC
+        addStudentBubble(`${userName} (You)`, userId);
+        const v = document.getElementById(`video-element-${userId}`);
+        if (v) {
+          v.srcObject = localStream;
+          const av = document.getElementById(`bubble-avatar-${userId}`);
+          if (av) av.style.display = 'none';
+        }
       }
-      
-      // Update status
-      updateVideoStatus(userId, true);
-      updateAudioStatus(userId, true);
-      
-    } catch (error) {
-      console.error('Error accessing media devices:', error);
-      addChatMessage('System', 'Could not access camera/microphone. Please check permissions.');
+    } catch (err) {
+      console.error('Media error:', err);
+      addChatMessage('System', 'Could not access camera/mic. Check permissions.');
     }
   }
 
-  function updateVideoStatus(userId, enabled) {
-    const status = document.getElementById(`status-${userId}`);
-    if (status) {
-      const icons = status.querySelectorAll('i');
-      if (icons[0]) {
-        icons[0].style.color = enabled ? 'white' : '#ef4444';
-      }
+  // ─────────────────────────────────────────────────────
+  // CAMERA FLIP (front ↔ back)
+  // ─────────────────────────────────────────────────────
+  async function flipCamera() {
+    currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+
+    // Stop old video tracks
+    localStream.getVideoTracks().forEach(t => t.stop());
+
+    try {
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: currentFacingMode },
+        audio: false
+      });
+
+      const newVideoTrack = newStream.getVideoTracks()[0];
+
+      // Replace track in all peer connections
+      Object.values(peerConnections).forEach(pc => {
+        const sender = pc.getSenders().find(s => s.track?.kind === 'video');
+        if (sender) sender.replaceTrack(newVideoTrack);
+      });
+
+      // Swap track in localStream
+      localStream.removeTrack(localStream.getVideoTracks()[0]);
+      localStream.addTrack(newVideoTrack);
+
+      // Update host stage video
+      if (isHost) setHostVideo(localStream);
+
+      // Animate the flip button
+      const btn = document.getElementById('flip-camera');
+      btn.style.transform = 'scale(0.8) rotate(180deg)';
+      setTimeout(() => btn.style.transform = '', 300);
+
+    } catch (err) {
+      console.error('Camera flip failed:', err);
+      // Revert
+      currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
     }
   }
 
-  function updateAudioStatus(userId, enabled) {
-    const status = document.getElementById(`status-${userId}`);
-    if (status) {
-      const icons = status.querySelectorAll('i');
-      if (icons[1]) {
-        icons[1].style.color = enabled ? 'white' : '#ef4444';
-      }
-    }
-  }
-
-  function updateParticipantCount() {
-    const count = Object.keys(peerConnections).length + 1;
-    document.getElementById('participant-count').innerText = count;
-  }
-
-  // Toggle video
+  // ─────────────────────────────────────────────────────
+  // TOGGLE VIDEO
+  // ─────────────────────────────────────────────────────
   async function toggleVideo() {
     isVideoEnabled = !isVideoEnabled;
     const videoTrack = localStream.getVideoTracks()[0];
-    if (videoTrack) {
-      videoTrack.enabled = isVideoEnabled;
-    }
-    
+    if (videoTrack) videoTrack.enabled = isVideoEnabled;
+
     const btn = document.getElementById('toggle-video');
     if (isVideoEnabled) {
       btn.innerHTML = '<i class="fa-solid fa-video"></i>';
       btn.classList.remove('danger');
+      if (isHost) setHostVideo(localStream);
     } else {
       btn.innerHTML = '<i class="fa-solid fa-video-slash"></i>';
       btn.classList.add('danger');
+      if (isHost) showHostPlaceholder(userName);
     }
-    
-    updateVideoStatus(userId, isVideoEnabled);
-    
-    socket.send(JSON.stringify({
-      type: 'toggle_video',
-      enabled: isVideoEnabled
-    }));
+
+    socket.send(JSON.stringify({ type:'toggle_video', enabled:isVideoEnabled }));
   }
 
-  // Toggle audio
+  // ─────────────────────────────────────────────────────
+  // TOGGLE AUDIO
+  // ─────────────────────────────────────────────────────
   function toggleAudio() {
     isAudioEnabled = !isAudioEnabled;
     const audioTrack = localStream.getAudioTracks()[0];
-    if (audioTrack) {
-      audioTrack.enabled = isAudioEnabled;
-    }
-    
+    if (audioTrack) audioTrack.enabled = isAudioEnabled;
+
     const btn = document.getElementById('toggle-audio');
     if (isAudioEnabled) {
       btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
@@ -633,168 +926,169 @@
       btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
       btn.classList.add('danger');
     }
-    
-    updateAudioStatus(userId, isAudioEnabled);
-    
-    socket.send(JSON.stringify({
-      type: 'toggle_audio',
-      enabled: isAudioEnabled
-    }));
+
+    socket.send(JSON.stringify({ type:'toggle_audio', enabled:isAudioEnabled }));
   }
 
-  // Share screen
+  // ─────────────────────────────────────────────────────
+  // SCREEN SHARE
+  // ─────────────────────────────────────────────────────
   async function toggleScreenShare() {
     if (!isScreenSharing) {
       try {
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-        const videoTrack = screenStream.getVideoTracks()[0];
-        
-        // Replace video track for all peers
-        Object.values(peerConnections).forEach(peerConnection => {
-          const senders = peerConnection.getSenders();
-          const videoSender = senders.find(sender => sender.track?.kind === 'video');
-          if (videoSender) {
-            videoSender.replaceTrack(videoTrack);
-          }
+        const screenTrack = screenStream.getVideoTracks()[0];
+
+        Object.values(peerConnections).forEach(pc => {
+          const sender = pc.getSenders().find(s => s.track?.kind === 'video');
+          if (sender) sender.replaceTrack(screenTrack);
         });
-        
-        // Update local video
-        const localVideo = document.getElementById(`video-element-${userId}`);
-        if (localVideo) {
-          localVideo.srcObject = screenStream;
+
+        if (isHost) {
+          const hostVid = document.getElementById('host-video-element');
+          hostVid.srcObject = screenStream;
         }
-        
-        videoTrack.onended = () => {
-          stopScreenShare();
-        };
-        
+
+        screenTrack.onended = stopScreenShare;
         isScreenSharing = true;
         document.getElementById('toggle-screen').classList.add('active');
-        
-        socket.send(JSON.stringify({
-          type: 'screen_share',
-          enabled: true
-        }));
-        
-      } catch (error) {
-        console.error('Error sharing screen:', error);
-      }
+        socket.send(JSON.stringify({ type:'screen_share', enabled:true }));
+
+      } catch (e) { console.error('Screen share error:', e); }
     } else {
       stopScreenShare();
     }
   }
 
   function stopScreenShare() {
-    if (screenStream) {
-      screenStream.getTracks().forEach(track => track.stop());
-      
-      // Restore camera track
-      const videoTrack = localStream.getVideoTracks()[0];
-      Object.values(peerConnections).forEach(peerConnection => {
-        const senders = peerConnection.getSenders();
-        const videoSender = senders.find(sender => sender.track?.kind === 'video');
-        if (videoSender) {
-          videoSender.replaceTrack(videoTrack);
-        }
-      });
-      
-      // Restore local video
-      const localVideo = document.getElementById(`video-element-${userId}`);
-      if (localVideo) {
-        localVideo.srcObject = localStream;
-      }
-      
-      isScreenSharing = false;
-      document.getElementById('toggle-screen').classList.remove('active');
-      
-      socket.send(JSON.stringify({
-        type: 'screen_share',
-        enabled: false
-      }));
+    if (!screenStream) return;
+    screenStream.getTracks().forEach(t => t.stop());
+
+    const videoTrack = localStream.getVideoTracks()[0];
+    Object.values(peerConnections).forEach(pc => {
+      const sender = pc.getSenders().find(s => s.track?.kind === 'video');
+      if (sender) sender.replaceTrack(videoTrack);
+    });
+
+    if (isHost) setHostVideo(localStream);
+
+    isScreenSharing = false;
+    document.getElementById('toggle-screen').classList.remove('active');
+    socket.send(JSON.stringify({ type:'screen_share', enabled:false }));
+  }
+
+  // ─────────────────────────────────────────────────────
+  // REMOTE STATUS
+  // ─────────────────────────────────────────────────────
+  function updateRemoteVideoStatus(uid, enabled) {
+    // For host's big video, could show overlay — bubbles handle it implicitly
+  }
+
+  function updateRemoteMuteStatus(uid, enabled) {
+    const icon = document.getElementById(`bubble-muted-${uid}`);
+    if (icon) icon.style.display = enabled ? 'none' : 'flex';
+  }
+
+  // ─────────────────────────────────────────────────────
+  // PARTICIPANT COUNT
+  // ─────────────────────────────────────────────────────
+  function updateParticipantCount() {
+    const count = Object.keys(peerConnections).length + 1;
+    const el = document.getElementById('participant-count');
+    const prev = parseInt(el.textContent, 10);
+    el.textContent = count;
+    // Pop animation only when count actually changes
+    if (count !== prev) {
+      el.classList.remove('popping');
+      void el.offsetWidth; // reflow to restart animation
+      el.classList.add('popping');
+      setTimeout(() => el.classList.remove('popping'), 400);
     }
   }
 
+  // ─────────────────────────────────────────────────────
+  // CHAT
+  // ─────────────────────────────────────────────────────
   function addChatMessage(sender, message) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'chat-message';
-    messageDiv.innerHTML = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(message)}`;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    const list = document.getElementById('chat-messages');
+    const div  = document.createElement('div');
+    div.className = 'chat-message';
+    div.innerHTML  = `<strong>${escapeHtml(sender)}:</strong> ${escapeHtml(message)}`;
+    list.appendChild(div);
+    list.scrollTop = list.scrollHeight;
   }
-  
+
   function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
   }
 
   function sendChatMessage() {
-    const input = document.getElementById('chat-input');
+    const input   = document.getElementById('chat-input');
     const message = input.value.trim();
     if (message) {
-      socket.send(JSON.stringify({
-        type: 'chat_message',
-        message: message
-      }));
+      socket.send(JSON.stringify({ type:'chat_message', message }));
       input.value = '';
     }
   }
 
+  // ─────────────────────────────────────────────────────
+  // LEAVE
+  // ─────────────────────────────────────────────────────
   function leaveRoom() {
-    if (localStream) {
-      localStream.getTracks().forEach(track => track.stop());
-    }
-    if (screenStream) {
-      screenStream.getTracks().forEach(track => track.stop());
-    }
-    if (socket) {
-      socket.close();
-    }
+    if (localStream) localStream.getTracks().forEach(t => t.stop());
+    if (screenStream) screenStream.getTracks().forEach(t => t.stop());
+    if (socket) socket.close();
     window.location.href = "{% url 'live_room_list' %}";
   }
 
-  // Event listeners
+  // ─────────────────────────────────────────────────────
+  // DETECT MOBILE (for flip button)
+  // ─────────────────────────────────────────────────────
+  function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  // ─────────────────────────────────────────────────────
+  // INIT
+  // ─────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', async () => {
     await initLocalStream();
     initWebSocket();
-    
+
+    // Show flip button only for host on mobile
+    if (isHost && isMobileDevice()) {
+      document.getElementById('flip-camera-group').style.display = 'flex';
+      document.getElementById('flip-camera').style.display = 'flex';
+    }
+
+    // Set host display name
+    document.getElementById('host-display-name').textContent = userName;
+
+    // Control listeners
     document.getElementById('toggle-video').addEventListener('click', toggleVideo);
     document.getElementById('toggle-audio').addEventListener('click', toggleAudio);
     document.getElementById('toggle-screen').addEventListener('click', toggleScreenShare);
     document.getElementById('leave-room').addEventListener('click', leaveRoom);
-    
-    // Chat functionality
-    const toggleChat = document.getElementById('toggle-chat');
-    const chatSidebar = document.getElementById('chat-sidebar');
-    const closeChat = document.getElementById('close-chat');
-    const sendChat = document.getElementById('send-chat');
-    const chatInput = document.getElementById('chat-input');
-    const chatOverlay = document.getElementById('chat-overlay');
+    document.getElementById('flip-camera').addEventListener('click', flipCamera);
 
-    function openChat() {
-      chatSidebar.classList.add('open');
-      chatOverlay.classList.add('active');
-      toggleChat.classList.add('hidden');
-    }
+    // Chat
+    const toggleChatBtn = document.getElementById('toggle-chat');
+    const chatSidebar   = document.getElementById('chat-sidebar');
+    const closeChatBtn  = document.getElementById('close-chat');
+    const sendChatBtn   = document.getElementById('send-chat');
+    const chatInput     = document.getElementById('chat-input');
+    const chatOverlay   = document.getElementById('chat-overlay');
 
-    function closeChat_() {
-      chatSidebar.classList.remove('open');
-      chatOverlay.classList.remove('active');
-      toggleChat.classList.remove('hidden');
-    }
+    function openChat()  { chatSidebar.classList.add('open'); chatOverlay.classList.add('active'); toggleChatBtn.classList.add('hidden'); }
+    function closeChat() { chatSidebar.classList.remove('open'); chatOverlay.classList.remove('active'); toggleChatBtn.classList.remove('hidden'); }
 
-    toggleChat.addEventListener('click', openChat);
-    closeChat.addEventListener('click', closeChat_);
-    chatOverlay.addEventListener('click', closeChat_);
-    
-    sendChat.addEventListener('click', sendChatMessage);
-    
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendChatMessage();
-      }
-    });
+    toggleChatBtn.addEventListener('click', openChat);
+    closeChatBtn.addEventListener('click', closeChat);
+    chatOverlay.addEventListener('click', closeChat);
+    sendChatBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
   });
 </script>
 
