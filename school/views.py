@@ -243,7 +243,7 @@ def user_logout(request):
     return redirect('/')
 
 
-# ── Live Video Views (unchanged) ─────────────────────────────────
+# ── Live Video Views ──────────────────────────────────────────────
 
 @login_required
 def live_room_list(request):
@@ -280,6 +280,7 @@ def live_room(request, room_name):
         'room_name':  room_name,
         'user':       request.user,
         'is_creator': session.created_by == request.user,
+        'host_id':    session.created_by.id,   # ← used in template to route host stream to big stage
     }
     return render(request, 'live_room.html', context)
 
