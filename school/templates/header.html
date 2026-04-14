@@ -5,9 +5,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f97316'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-weight='bold'%3EA%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f97316'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-weight='bold'%3EA%3C/text%3E%3C/svg%3E">
 <style>
   /* ===== awaClass Design Tokens ===== */
   :root {
@@ -29,7 +27,6 @@
     font-family: var(--ac-font);
     background-color: var(--ac-bg);
     margin: 0;
-    padding-top: 58px;
     padding-bottom: 64px;
     color: var(--ac-text);
     min-height: 100vh;
@@ -47,7 +44,14 @@
     justify-content: space-between;
     padding: 0 18px;
     z-index: 1000;
-    box-shadow: var(--ac-shadow);
+    /*box-shadow: var(--ac-shadow); */
+  }
+
+  /* Header spacer — pushes every page's content below the fixed header */
+  .ac-header-spacer {
+    height: 58px;
+    width: 100%;
+    flex-shrink: 0;
   }
 
   /* Logo wordmark */
@@ -117,6 +121,19 @@
     line-height: 1;
   }
   .ac-notif-badge:empty { display: none; }
+
+  /* Profile avatar */
+  .ac-header-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--ac-border);
+    transition: border-color 0.15s;
+    display: block;
+  }
+  .ac-header-icon-btn:hover .ac-header-avatar {
+    border-color: var(--ac-primary);
+  }
 </style>
 
 <header class="ac-header">
@@ -132,9 +149,11 @@
       <span class="ac-notif-badge">{{ notifications.count }}</span>
       {% endif %}
     </a>
-    <a href="" class="ac-header-icon-btn" title="Messages">
-      <i class="fa-regular fa-paper-plane"></i>
+    <a href="{% url 'profile' user.username %}" class="ac-header-icon-btn" title="Profile">
+      <img src="{{ user.profile.picture.url }}" alt="Profile" class="ac-header-avatar">
     </a>
-  </div> 
-  <br><br><br><br>
+  </div>
 </header>
+
+<!-- Spacer so page content always starts below the fixed header -->
+<div class="ac-header-spacer"></div>
