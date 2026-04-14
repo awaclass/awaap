@@ -140,10 +140,11 @@
        LIVE CLASS BANNER
     ══════════════════════════════════════════════════ */
     .awaClass-live-banner {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 14px;
@@ -151,10 +152,11 @@
     }
 
     .awaClass-live-banner-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -163,10 +165,9 @@
     }
 
     .awaClass-live-banner-icon img {
-      width: 28px;
-      height: 28px;
+      width: 22px;
+      height: 22px;
       object-fit: contain;
-      filter: brightness(0) invert(1);
     }
 
     .awaClass-live-banner-body {
@@ -175,15 +176,15 @@
     }
 
     .awaClass-live-banner-body h3 {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
-      color: white;
-      margin: 0 0 4px;
+      color: #0f0f0f;
+      margin: 0 0 3px;
     }
 
     .awaClass-live-banner-body p {
-      font-size: 13px;
-      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      color: #606060;
       margin: 0;
       line-height: 1.4;
     }
@@ -192,87 +193,63 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 18px;
-      background: white;
-      color: #667eea;
+      padding: 8px 16px;
+      background: #0f0f0f;
+      color: #ffffff;
       border: none;
-      border-radius: 100px;
+      border-radius: 8px;
       font-size: 13px;
       font-weight: 600;
       font-family: inherit;
       text-decoration: none;
       white-space: nowrap;
       cursor: pointer;
-      transition: transform 0.15s;
+      transition: opacity 0.15s;
     }
 
     .awaClass-btn-live:hover {
-      transform: translateY(-2px);
-      color: #667eea;
+      opacity: 0.85;
+      color: #ffffff;
     }
 
     /* ══════════════════════════════════════════════════
-       CBT EXAM BANNER  ← NEW
+       CBT EXAM BANNER
     ══════════════════════════════════════════════════ */
     .awaClass-cbt-banner {
-      background: linear-gradient(135deg, #0f2942 0%, #1a3a5c 50%, #0d2137 100%);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: 16px;
-      padding: 20px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 16px 18px;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 14px;
       flex-wrap: wrap;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* subtle animated glow */
-    .awaClass-cbt-banner::before {
-      content: '';
-      position: absolute;
-      top: -40px; right: -40px;
-      width: 130px; height: 130px;
-      background: radial-gradient(circle, rgba(59,130,246,.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .awaClass-cbt-banner::after {
-      content: '';
-      position: absolute;
-      bottom: -30px; left: 60px;
-      width: 100px; height: 100px;
-      background: radial-gradient(circle, rgba(6,182,212,.12) 0%, transparent 70%);
-      pointer-events: none;
     }
 
     .awaClass-cbt-banner-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(59, 130, 246, 0.35);
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 20px;
-      position: relative;
-      z-index: 1;
+      font-size: 18px;
     }
 
     .awaClass-cbt-banner-body {
       flex: 1;
       min-width: 0;
-      position: relative;
-      z-index: 1;
     }
 
     .awaClass-cbt-banner-body h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #e2e8f0;
-      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0 0 3px;
       display: flex;
       align-items: center;
       gap: 7px;
@@ -283,16 +260,16 @@
       font-weight: 700;
       letter-spacing: .06em;
       text-transform: uppercase;
-      background: rgba(59,130,246,.2);
-      border: 1px solid rgba(59,130,246,.4);
-      color: #93c5fd;
-      padding: 2px 7px;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      color: #606060;
+      padding: 2px 6px;
       border-radius: 4px;
     }
 
     .awaClass-cbt-banner-body p {
-      font-size: 13px;
-      color: rgba(226, 232, 240, 0.7);
+      font-size: 12px;
+      color: #606060;
       margin: 0;
       line-height: 1.4;
     }
@@ -301,25 +278,21 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 9px 18px;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      padding: 8px 16px;
+      background: #0f0f0f;
       color: #fff;
       border: none;
-      border-radius: 100px;
+      border-radius: 8px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       font-family: inherit;
       text-decoration: none;
       white-space: nowrap;
       cursor: pointer;
-      transition: all 0.15s;
-      box-shadow: 0 4px 14px rgba(59,130,246,.35);
-      position: relative;
-      z-index: 1;
+      transition: opacity 0.15s;
     }
     .awaClass-btn-cbt:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(59,130,246,.45);
+      opacity: 0.85;
       color: #fff;
     }
 
@@ -397,7 +370,7 @@
       <img src="{% static 'images/video-call.png' %}" alt="Live">
     </div>
     <div class="awaClass-live-banner-body">
-      <h3><i class="fa-solid fa-circle" style="font-size: 10px; color: #ef4444;"></i> Live Interactive Classes</h3>
+      <h3><i class="fa-solid fa-circle" style="font-size:9px; color:#ef4444;"></i> Live Interactive Classes</h3>
       <p>Join real-time video sessions with your teachers and classmates</p>
     </div>
     <a href="{% url 'live_room_list' %}" class="awaClass-btn-live">

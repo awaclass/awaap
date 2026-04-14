@@ -1,484 +1,733 @@
-{% load humanize %}
+{% load static humanize %}
+{% include 'header.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{user.username}} Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        :root {
-            --primary-blue: #3897f0;
-            --secondary-gray: #dbdbdb;
-            --text-gray-900: #1f2937;
-            --text-gray-800: #374151;
-            --text-gray-700: #4b5563;
-            --text-gray-600: #4b5563;
-            --text-gray-500: #6b7280;
-            --bg-light: #f7f7f7;
-            --border-gray-200: #e5e7eb;
-            --bg-gray-100: #f3f4f6;
-            --bg-green-100: #d1fae5;
-            --text-green-700: #047857;
-            --border-green-200: #a7f3d0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ user.username }} — awaClass</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-light);
-            padding-top: 56px;
-            padding-bottom: 56px;
-            margin: 0;
-            line-height: 1.5;
-        }
+  <style>
 
-        .main-content {
-            max-width: 640px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 1rem;
-            padding-top: 2rem;
-        }
+    /* ══════════════════════════════════════════════════
+       BASE
+    ══════════════════════════════════════════════════ */
+    body {
+      background-color: #ffffff;
+    }
 
-        .profile-pic-lg {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #fff;
-            box-shadow: 0 0 0 2px var(--border-gray-200);
-            flex-shrink: 0;
-            margin-right: 1.5rem;
-        }
+    .awaClass-home-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
 
-        .info-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-gray-500);
-        }
+    .awaClass-divider {
+      border: none;
+      border-top: 1px solid var(--awaClass-border, #e5e5e5);
+      margin: 24px 0;
+    }
 
-        .post-grid-item-container { position: relative; aspect-ratio: 1/1; cursor: pointer; }
-        .post-grid-item { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .post-grid-no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-            background-color: #d1d5db; color: var(--text-gray-600); font-size: 0.75rem; padding: 0.5rem; }
+    .awaClass-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .awaClass-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--awaClass-border, #e5e5e5);
+      margin-left: 4px;
+    }
 
-        .post-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,.3); opacity: 0;
-            transition: opacity 150ms; display: flex; align-items: center; justify-content: center;
-            gap: 1rem; color: white; cursor: pointer; }
-        .post-grid-item-container:hover .post-overlay { opacity: 1; }
-        .post-overlay span { display: flex; align-items: center; font-weight: 700; font-size: 1.125rem; }
-        .post-overlay span i { margin-right: 0.25rem; }
+    /* ══════════════════════════════════════════════════
+       ALERT
+    ══════════════════════════════════════════════════ */
+    .awaClass-alert {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #15803d;
+    }
 
-        .header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: white;
-            border-bottom: 1px solid var(--border-gray-200); display: flex; justify-content: space-between;
-            align-items: center; padding: 0 1rem; z-index: 20; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
-        .header h1 { font-size: 1.25rem; font-weight: 600; color: var(--text-gray-800); }
-        .header-icon { font-size: 1.25rem; color: var(--text-gray-700); cursor: pointer; transition: color 150ms; }
-        .header-icon:hover { color: var(--text-gray-900); }
-        .header-actions { display: flex; gap: 1rem; }
+    /* ══════════════════════════════════════════════════
+       PROFILE HEADER CARD
+    ══════════════════════════════════════════════════ */
+    .awaClass-profile-card {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 20px 18px;
+      margin-bottom: 14px;
+    }
 
-        .alert-message { padding: 0.75rem; background-color: var(--bg-green-100); color: var(--text-green-700);
-            border: 1px solid var(--border-green-200); border-radius: 0.5rem; margin-bottom: 1rem; }
-        .alert-message p { font-size: 0.875rem; }
+    .awaClass-profile-top {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
 
-        .profile-summary { display: flex; align-items: center; margin-bottom: 1.5rem; }
-        .stats-container { display: flex; flex: 1; justify-content: space-around; text-align: center; }
-        .stat-item { display: flex; flex-direction: column; align-items: center; }
-        .stat-item span:first-child { font-size: 1.25rem; font-weight: 700; color: var(--text-gray-900); }
-        .stat-item span:last-child { font-size: 0.875rem; color: var(--text-gray-500); }
+    .awaClass-profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e5e5e5;
+      flex-shrink: 0;
+    }
 
-        .profile-details { margin-bottom: 1.5rem; }
-        .profile-details h3 { font-size: 1.125rem; font-weight: 700; color: var(--text-gray-800); }
-        .profile-details p { color: var(--text-gray-700); margin-top: 0.25rem; }
-        .secondary-details { display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-gray-500); }
-        .secondary-details span { display: flex; align-items: center; }
-        .secondary-details span i { margin-right: 0.25rem; }
-        .contact-details { margin-top: 0.75rem; padding-top: 0.75rem;
-            border-top: 1px solid #f3f4f6; font-size: 0.875rem; color: var(--text-gray-600); }
-        .contact-details > div { margin-bottom: 0.25rem; }
-        .contact-details .info-label span { color: var(--text-gray-800); font-weight: 400; }
+    .awaClass-profile-stats {
+      display: flex;
+      flex: 1;
+      justify-content: space-around;
+      text-align: center;
+    }
 
-        .action-buttons { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .action-button { flex: 1; text-align: center; padding: 0.5rem; font-weight: 600;
-            border-radius: 0.5rem; transition: background-color 150ms; cursor: pointer;
-            text-decoration: none; border: none; font-size: .9rem; }
-        .btn-secondary { background-color: var(--secondary-gray); color: var(--text-gray-900); }
-        .btn-secondary:hover { background-color: #d1d5db; }
-        .btn-primary { background-color: var(--primary-blue); color: white; }
-        .btn-primary:hover { background-color: #2579ce; }
-        .action-buttons .btn-gear { width: 25%; flex: none; }
-        .action-buttons form { flex: 1; }
-        .action-buttons form button { width: 100%; }
+    .awaClass-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
 
-        /* ── CBT SCORE SECTION ── */
-        .cbt-section {
-            background: #fff;
-            border: 1px solid var(--border-gray-200);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 18px;
-        }
+    .awaClass-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f0f0f;
+      line-height: 1;
+    }
 
-        .cbt-section-title {
-            font-size: .93rem;
-            font-weight: 700;
-            color: var(--text-gray-800);
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
+    .awaClass-stat-label {
+      font-size: 11px;
+      color: #606060;
+    }
 
-        .cbt-stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 9px;
-            margin-bottom: 14px;
-        }
+    /* name + bio */
+    .awaClass-profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 4px;
+    }
 
-        @media(max-width: 420px) { .cbt-stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .awaClass-profile-bio {
+      font-size: 13px;
+      color: #3d3d3d;
+      margin: 0 0 8px;
+      line-height: 1.5;
+    }
 
-        .cbt-stat {
-            background: var(--bg-gray-100);
-            border-radius: 10px;
-            padding: 10px 8px;
-            text-align: center;
-        }
+    .awaClass-profile-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: #606060;
+      margin-bottom: 10px;
+    }
 
-        .cbt-stat .csv {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-gray-900);
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            line-height: 1;
-        }
+    .awaClass-profile-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-        .cbt-stat .csl {
-            font-size: .68rem;
-            color: var(--text-gray-500);
-            margin-top: 3px;
-        }
+    .awaClass-profile-contact {
+      font-size: 12px;
+      color: #606060;
+      border-top: 1px solid #f3f4f6;
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
 
-        .cbt-stat.pts .csv { color: #d97706; }
-        .cbt-stat.best .csv { color: #3897f0; }
-        .cbt-stat.att .csv { color: #059669; }
+    .awaClass-profile-contact strong {
+      color: #0f0f0f;
+    }
 
-        /* points badge */
-        .points-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border: 1px solid #f59e0b;
-            border-radius: 999px;
-            padding: 5px 14px;
-            font-size: .78rem;
-            font-weight: 700;
-            color: #92400e;
-            margin-bottom: 14px;
-        }
+    /* ══════════════════════════════════════════════════
+       ACTION BUTTONS
+    ══════════════════════════════════════════════════ */
+    .awaClass-action-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
 
-        /* recent exams */
-        .recent-exams-title {
-            font-size: .8rem;
-            font-weight: 600;
-            color: var(--text-gray-500);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-        }
+    .awaClass-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
 
-        .exam-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 9px 0;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: .84rem;
-        }
+    .awaClass-btn-primary {
+      background: #0f0f0f;
+      color: #ffffff;
+      flex: 1;
+    }
+    .awaClass-btn-primary:hover { opacity: 0.85; color: #ffffff; }
 
-        .exam-row:last-child { border-bottom: none; }
+    .awaClass-btn-secondary {
+      background: #f5f5f5;
+      color: #0f0f0f;
+      border: 1px solid #e5e5e5;
+      flex: 1;
+    }
+    .awaClass-btn-secondary:hover { background: #ebebeb; }
 
-        .exam-subj {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-gray-700);
-            font-weight: 500;
-        }
+    .awaClass-btn-icon {
+      background: #f5f5f5;
+      color: #0f0f0f;
+      border: 1px solid #e5e5e5;
+      padding: 9px 13px;
+      flex: none;
+    }
+    .awaClass-btn-icon:hover { background: #ebebeb; }
 
-        .exam-subj i { color: var(--primary-blue); width: 16px; text-align: center; }
+    /* ══════════════════════════════════════════════════
+       CBT SCORE SECTION
+    ══════════════════════════════════════════════════ */
+    .awaClass-cbt-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
 
-        .exam-meta { color: var(--text-gray-500); font-size: .78rem; }
+    .awaClass-cbt-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
 
-        .exam-score {
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: .85rem;
-            padding: 3px 9px;
-            border-radius: 6px;
-        }
+    /* points badge */
+    .awaClass-points-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1px solid #f59e0b;
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 14px;
+    }
 
-        .exam-score.grade-distinction { background: #d1fae5; color: #065f46; }
-        .exam-score.grade-credit      { background: #dbeafe; color: #1e40af; }
-        .exam-score.grade-pass        { background: #ede9fe; color: #5b21b6; }
-        .exam-score.grade-nearly      { background: #fef3c7; color: #92400e; }
-        .exam-score.grade-fail        { background: #fee2e2; color: #991b1b; }
+    /* 4-stat grid */
+    .awaClass-cbt-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 400px) {
+      .awaClass-cbt-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
 
-        .no-exams-msg {
-            text-align: center;
-            padding: 16px;
-            color: var(--text-gray-500);
-            font-size: .85rem;
-        }
+    .awaClass-cbt-stat-box {
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
 
-        .take-cbt-btn {
-            display: block;
-            text-align: center;
-            margin-top: 12px;
-            padding: 9px;
-            background: var(--primary-blue);
-            color: white;
-            border-radius: 9px;
-            font-size: .85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background .15s;
-        }
-        .take-cbt-btn:hover { background: #2579ce; }
+    .awaClass-cbt-stat-box .val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f0f0f;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      line-height: 1;
+    }
+    .awaClass-cbt-stat-box .lbl {
+      font-size: 10px;
+      color: #606060;
+      margin-top: 3px;
+    }
+    .awaClass-cbt-stat-box.pts  .val { color: #d97706; }
+    .awaClass-cbt-stat-box.best .val { color: #2563eb; }
+    .awaClass-cbt-stat-box.att  .val { color: #059669; }
 
-        /* grid tab */
-        .grid-tab-nav { border-top: 1px solid var(--border-gray-200); }
-        .grid-tab-icon-container { display: flex; justify-content: center; color: var(--text-gray-500);
-            padding: 0.75rem; border-top: 2px solid var(--primary-blue);
-            margin: 0 auto; width: 25%; }
-        .grid-tab-icon-container i { font-size: 1.25rem; color: var(--primary-blue); }
+    /* recent exams table */
+    .awaClass-recent-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
 
-        /* videos grid */
-        .videos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-        .video-card { display: flex; flex-direction: column; overflow: hidden; cursor: pointer; transition: transform .2s; }
-        .video-card:hover { transform: translateY(-2px); }
-        .video-card video { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
-        .video-details { display: flex; align-items: flex-start; padding-right: 24px; }
-        .channel-picture { flex-shrink: 0; margin-right: 12px; }
-        .metadata { display: flex; flex-direction: column; min-width: 0; }
-        .video-title { font-size: 1rem; font-weight: 500; line-height: 1.4; max-height: 15px; overflow: hidden;
-            text-overflow: ellipsis; display: -webkit-box; -webkit-box-orient: vertical; margin: 0 0 4px; }
-        .channel-name { font-size: .85rem; color: #606060; margin-bottom: 2px; }
-        .video-stats { font-size: .85rem; color: #606060; }
+    .awaClass-exam-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+    }
+    .awaClass-exam-row:last-child { border-bottom: none; }
 
-        .no-posts-message { text-align: center; padding: 2.5rem; background-color: white;
-            border-radius: 0.75rem; margin-top: 1.5rem; border: 1px solid var(--border-gray-200); }
-        .no-posts-message h3 { font-size: 1.25rem; font-weight: 600; color: var(--text-gray-600); }
-        .no-posts-message p { color: var(--text-gray-500); margin-top: 0.5rem; }
+    .awaClass-exam-subj {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #3d3d3d;
+      font-weight: 500;
+    }
+    .awaClass-exam-subj i { color: #2563eb; width: 15px; text-align: center; font-size: 12px; }
 
-        /* bottom nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 56px; background-color: white;
-            border-top: 1px solid var(--border-gray-200); display: flex; justify-content: space-around;
-            align-items: center; z-index: 20; box-shadow: 0 -1px 3px rgba(0,0,0,.1); }
-        .nav-icon { color: var(--text-gray-700); transition: color 150ms; text-decoration: none; }
-        .nav-icon:hover { color: #3b82f6; }
-        .nav-icon i { font-size: 1.5rem; }
-        .nav-icon-active { color: var(--primary-blue); }
-        .nav-icon-post i { font-size: 1.875rem; color: var(--primary-blue); }
-        .nav-icon-post:hover { color: #2579ce; }
-    </style>
+    .awaClass-exam-when { font-size: 11px; color: #9ca3af; }
+
+    .awaClass-exam-grade {
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+    .awaClass-exam-grade.grade-distinction { background: #d1fae5; color: #065f46; }
+    .awaClass-exam-grade.grade-credit      { background: #dbeafe; color: #1e40af; }
+    .awaClass-exam-grade.grade-pass        { background: #ede9fe; color: #5b21b6; }
+    .awaClass-exam-grade.grade-nearly      { background: #fef3c7; color: #92400e; }
+    .awaClass-exam-grade.grade-fail        { background: #fee2e2; color: #991b1b; }
+
+    .awaClass-no-exams {
+      text-align: center;
+      padding: 18px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+    .awaClass-no-exams i {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #d1d5db;
+    }
+
+    /* take exam CTA */
+    .awaClass-cbt-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 12px;
+      padding: 10px;
+      background: #0f0f0f;
+      color: #fff;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .awaClass-cbt-cta:hover { opacity: 0.85; color: #fff; }
+
+    /* ══════════════════════════════════════════════════
+       POSTS GRID
+    ══════════════════════════════════════════════════ */
+    .awaClass-posts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 480px) {
+      .awaClass-posts-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .awaClass-post-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 14px 13px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s;
+    }
+    .awaClass-post-card:hover { border-color: #b0b0b0; }
+
+    .awaClass-post-subject-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      color: #606060;
+      padding: 3px 8px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .awaClass-post-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f0f0f;
+      margin: 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .awaClass-post-about {
+      font-size: 12px;
+      color: #606060;
+      margin: 0;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .awaClass-post-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .awaClass-post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .awaClass-post-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .awaClass-post-arrow {
+      font-size: 11px;
+      color: #9ca3af;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.15s;
+    }
+    .awaClass-post-card:hover .awaClass-post-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* no posts */
+    .awaClass-no-posts {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 36px 20px;
+      text-align: center;
+    }
+    .awaClass-no-posts i {
+      display: block;
+      font-size: 28px;
+      color: #d1d5db;
+      margin-bottom: 10px;
+    }
+    .awaClass-no-posts h3 { font-size: 14px; font-weight: 600; color: #3d3d3d; margin: 0 0 4px; }
+    .awaClass-no-posts p  { font-size: 12px; color: #9ca3af; margin: 0; }
+
+  </style>
 </head>
 <body>
 
-<header class="header">
-    <a href="/" class="header-icon"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1>{{user.username}}</h1>
-    <div class="header-actions">
-        <i class="fa-solid fa-gear header-icon"></i>
+{% include 'sidebar.html' %}
+
+<main class="awaClass-home-page">
+
+  <!-- ── flash messages ── -->
+  {% if messages %}
+  <div class="awaClass-alert">
+    {% for message in messages %}{{ message }}{% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════
+       PROFILE HEADER CARD
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-profile-card">
+
+    <div class="awaClass-profile-top">
+      <!-- avatar -->
+      <a href="{{ user.profile.get_picture_url }}" target="_blank" rel="noopener">
+        <img src="{{ user.profile.get_picture_url }}"
+             alt="{{ user.username }}"
+             class="awaClass-profile-avatar">
+      </a>
+
+      <!-- follower / post / view stats -->
+      <div class="awaClass-profile-stats">
+        <div class="awaClass-stat-item">
+          <span class="awaClass-stat-value">{{ videos|length }}</span>
+          <span class="awaClass-stat-label">Posts</span>
+        </div>
+        <div class="awaClass-stat-item">
+          <span class="awaClass-stat-value">{{ profile.follow.count }}</span>
+          <span class="awaClass-stat-label">Followers</span>
+        </div>
+        <div class="awaClass-stat-item">
+          <span class="awaClass-stat-value">{{ total_view|intcomma }}</span>
+          <span class="awaClass-stat-label">Views</span>
+        </div>
+      </div>
     </div>
-</header>
 
-<main class="main-content">
+    <!-- name + bio -->
+    <p class="awaClass-profile-name">{{ user.first_name }} {{ user.last_name }}</p>
+    {% if profile.bio %}
+    <p class="awaClass-profile-bio">{{ profile.bio }}</p>
+    {% endif %}
 
-    {% if messages %}
-    <div class="alert-message">
-        {% for message in messages %}<p>{{message}}</p>{% endfor %}
+    <!-- location / address -->
+    {% if profile.location or profile.address %}
+    <div class="awaClass-profile-meta">
+      {% if profile.location %}
+      <span><i class="fa-solid fa-map-marker-alt"></i> {{ profile.location }}</span>
+      {% endif %}
+      {% if profile.address %}
+      <span><i class="fa-solid fa-location-dot"></i> {{ profile.address }}</span>
+      {% endif %}
     </div>
     {% endif %}
 
-    <!-- profile summary -->
-    <div class="profile-summary">
-        <div class="profile-pic-container">
-            <a href="{{user.profile.get_picture_url}}">
-                <img src="{{user.profile.get_picture_url}}" alt="{{user.username}}" class="profile-pic-lg">
-            </a>
-        </div>
-        <div class="stats-container">
-            <div class="stat-item">
-                <span>{{videos|length}}</span>
-                <span>Posts</span>
-            </div>
-            <div class="stat-item">
-                <span>{{profile.follow.count}}</span>
-                <span>Followers</span>
-            </div>
-            <div class="stat-item">
-                <span>{{total_view}}</span>
-                <span>Views</span>
-            </div>
-        </div>
+    <!-- email / phone -->
+    <div class="awaClass-profile-contact">
+      <div><strong>Email:</strong> {{ user.email }}</div>
+      {% if profile.phone %}
+      <div><strong>Phone:</strong> {{ profile.phone }}</div>
+      {% endif %}
     </div>
 
-    <!-- bio / details -->
-    <div class="profile-details">
-        <h3>{{user.first_name}} {{user.last_name}}</h3>
-        {% if profile.bio %}<p>{{profile.bio}}</p>{% endif %}
-        {% if profile.location or profile.address %}
-        <div class="secondary-details">
-            {% if profile.location %}<span><i class="fa-solid fa-map-marker-alt"></i> {{profile.location}}</span>{% endif %}
-            {% if profile.address %}<span><i class="fa-solid fa-location-dot"></i> {{profile.address}}</span>{% endif %}
-        </div>
-        {% endif %}
-        <div class="contact-details">
-            <div class="info-label">Email: <span>{{user.email}}</span></div>
-            {% if user.profile.phone %}<div class="info-label">Phone: <span>{{user.profile.phone}}</span></div>{% endif %}
-        </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ACTION BUTTONS
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-action-row">
+    {% if request.user == user %}
+      <a href="{% url 'update_profile' user.username %}" class="awaClass-btn awaClass-btn-secondary">
+        <i class="fa-solid fa-pen"></i> Edit Profile
+      </a>
+      <a href="{% url 'cbt_subjects' %}" class="awaClass-btn awaClass-btn-primary">
+        <i class="fa-solid fa-graduation-cap"></i> Take Exam
+      </a>
+    {% else %}
+      {% if request.user in profile.follow.all %}
+        <form action="{% url 'follow' user.username %}" method="post" style="flex:1;">
+          {% csrf_token %}
+          <button type="submit" class="awaClass-btn awaClass-btn-secondary" style="width:100%;">
+            <i class="fa-solid fa-user-check"></i> Following
+          </button>
+        </form>
+      {% else %}
+        <form action="{% url 'follow' user.username %}" method="post" style="flex:1;">
+          {% csrf_token %}
+          <button type="submit" class="awaClass-btn awaClass-btn-primary" style="width:100%;">
+            <i class="fa-solid fa-user-plus"></i> Follow
+          </button>
+        </form>
+      {% endif %}
+      <a href="" class="awaClass-btn awaClass-btn-secondary">
+        <i class="fa-solid fa-comment"></i> Message
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CBT EXAM PERFORMANCE
+  ══════════════════════════════════════════ -->
+  <div class="awaClass-cbt-section">
+
+    <div class="awaClass-cbt-section-title">
+      <i class="fa-solid fa-graduation-cap" style="color:#2563eb;"></i>
+      CBT Exam Performance
     </div>
 
-    <!-- action buttons -->
-    <div class="action-buttons">
+    {% if cbt_score.total_attempts > 0 %}
+
+      <!-- points badge -->
+      <span class="awaClass-points-badge">
+        <i class="fa-solid fa-trophy"></i>
+        {{ cbt_score.points }} Points
+      </span>
+
+      <!-- 4-stat grid -->
+      <div class="awaClass-cbt-stats-grid">
+        <div class="awaClass-cbt-stat-box pts">
+          <div class="val">{{ cbt_score.points }}</div>
+          <div class="lbl">Total Points</div>
+        </div>
+        <div class="awaClass-cbt-stat-box best">
+          <div class="val">{{ cbt_score.best_score }}%</div>
+          <div class="lbl">Best Score</div>
+        </div>
+        <div class="awaClass-cbt-stat-box att">
+          <div class="val">{{ cbt_score.total_attempts }}</div>
+          <div class="lbl">Exams Taken</div>
+        </div>
+        <div class="awaClass-cbt-stat-box">
+          <div class="val">
+            {% if cbt_score.total_questions > 0 %}
+              {% widthratio cbt_score.total_correct cbt_score.total_questions 100 %}%
+            {% else %}0%{% endif %}
+          </div>
+          <div class="lbl">Accuracy</div>
+        </div>
+      </div>
+
+      <!-- recent exams -->
+      {% if recent_exams %}
+      <div class="awaClass-recent-label">Recent Exams</div>
+      {% for exam in recent_exams %}
+      <div class="awaClass-exam-row">
+        <div class="awaClass-exam-subj">
+          {% if exam.subject == 'mathematics' %}
+            <i class="fa-solid fa-square-root-variable"></i>
+          {% elif exam.subject == 'physics' %}
+            <i class="fa-solid fa-atom"></i>
+          {% elif exam.subject == 'english' %}
+            <i class="fa-solid fa-book-open"></i>
+          {% elif exam.subject == 'chemistry' %}
+            <i class="fa-solid fa-flask"></i>
+          {% else %}
+            <i class="fa-solid fa-pen-to-square"></i>
+          {% endif %}
+          {{ exam.get_subject_display }}
+        </div>
+        <div class="awaClass-exam-when">{{ exam.taken_at|naturaltime }}</div>
+        <span class="awaClass-exam-grade grade-{{ exam.grade }}">
+          {{ exam.score }}/{{ exam.total }} · {{ exam.percentage }}%
+        </span>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+    {% else %}
+
+      <div class="awaClass-no-exams">
+        <i class="fa-solid fa-pen-to-square"></i>
         {% if request.user == user %}
-        <a href="{% url 'update_profile' user.username %}" class="action-button btn-secondary">Edit Profile</a>
-        <button class="action-button btn-secondary btn-gear"><i class="fa-solid fa-user-gear"></i></button>
+          No CBT exams taken yet. Try one now!
         {% else %}
-        {% if request.user in profile.follow.all %}
-            <form action="{% url 'follow' user.username %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="action-button btn-secondary">Following</button>
-            </form>
-        {% else %}
-            <form action="{% url 'follow' user.username %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="action-button btn-primary">Follow</button>
-            </form>
+          {{ user.username }} hasn't taken any CBT exams yet.
         {% endif %}
-        <a href="" class="action-button btn-secondary">Message</a>
-        {% endif %}
-    </div>
+      </div>
 
-    <!-- ══════════════════════════════════════
-         CBT SCORE CARD
-    ══════════════════════════════════════ -->
-    <div class="cbt-section">
-        <div class="cbt-section-title">
-            <i class="fa-solid fa-graduation-cap" style="color:#3897f0;"></i>
-            CBT Exam Performance
+    {% endif %}
+
+    {% if request.user == user %}
+    <a href="{% url 'cbt_subjects' %}" class="awaClass-cbt-cta">
+      <i class="fa-solid fa-play"></i>
+      {% if cbt_score.total_attempts > 0 %}Retake an Exam{% else %}Start a CBT Exam{% endif %}
+    </a>
+    {% endif %}
+
+  </div>
+
+  <hr class="awaClass-divider">
+
+  <!-- ══════════════════════════════════════════
+       POSTS
+  ══════════════════════════════════════════ -->
+  <h2 class="awaClass-section-title">
+    <i class="fa-solid fa-table-cells" style="font-size:11px;"></i>
+    Posts
+  </h2>
+
+  {% if videos %}
+  <div class="awaClass-posts-grid">
+    {% for post in videos %}
+    <a href="{% url 'post_detail' post.post_id %}" class="awaClass-post-card">
+
+      {% if post.subject %}
+      <span class="awaClass-post-subject-badge">
+        {% if post.subject|lower == 'mathematics' %}📐
+        {% elif post.subject|lower == 'physics' %}⚡
+        {% elif post.subject|lower == 'english' %}📝
+        {% elif post.subject|lower == 'chemistry' %}🧪
+        {% else %}<i class="fa-solid fa-book"></i>{% endif %}
+        {{ post.subject }}
+      </span>
+      {% endif %}
+
+      <p class="awaClass-post-title">{{ post.title }}</p>
+
+      {% if post.about %}
+      <p class="awaClass-post-about">{{ post.about }}</p>
+      {% endif %}
+
+      <div class="awaClass-post-footer">
+        <div class="awaClass-post-meta">
+          <span><i class="fa-solid fa-heart"></i> {{ post.like.count|intcomma }}</span>
+          <span><i class="fa-solid fa-eye"></i> {{ post.view|intcomma }}</span>
+          <span>{{ post.created_at|naturaltime }}</span>
         </div>
+        <i class="fa-solid fa-arrow-right awaClass-post-arrow"></i>
+      </div>
 
-        {% if cbt_score.total_attempts > 0 %}
+    </a>
+    {% endfor %}
+  </div>
 
-        <!-- points badge -->
-        <div>
-            <span class="points-badge">
-                <i class="fa-solid fa-trophy"></i>
-                {{ cbt_score.points }} Points
-            </span>
-        </div>
+  {% else %}
 
-        <!-- 4-stat row -->
-        <div class="cbt-stats-row">
-            <div class="cbt-stat pts">
-                <div class="csv">{{ cbt_score.points }}</div>
-                <div class="csl">Total Points</div>
-            </div>
-            <div class="cbt-stat best">
-                <div class="csv">{{ cbt_score.best_score }}%</div>
-                <div class="csl">Best Score</div>
-            </div>
-            <div class="cbt-stat att">
-                <div class="csv">{{ cbt_score.total_attempts }}</div>
-                <div class="csl">Exams Taken</div>
-            </div>
-            <div class="cbt-stat">
-                <div class="csv">
-                    {% if cbt_score.total_questions > 0 %}
-                        {% widthratio cbt_score.total_correct cbt_score.total_questions 100 %}%
-                    {% else %}0%{% endif %}
-                </div>
-                <div class="csl">Overall Accuracy</div>
-            </div>
-        </div>
+  <div class="awaClass-no-posts">
+    <i class="fa-solid fa-inbox"></i>
+    <h3>No posts yet</h3>
+    <p>
+      {% if request.user == user %}
+        You haven't created any posts yet.
+      {% else %}
+        {{ user.username }} hasn't posted anything yet.
+      {% endif %}
+    </p>
+  </div>
 
-        <!-- recent exams -->
-        {% if recent_exams %}
-        <div class="recent-exams-title">Recent Exams</div>
-        {% for exam in recent_exams %}
-        <div class="exam-row">
-            <div class="exam-subj">
-                <i class="fa-solid fa-square-root-variable"></i>
-                {{ exam.get_subject_display }}
-            </div>
-            <div class="exam-meta">{{ exam.taken_at|naturaltime }}</div>
-            <span class="exam-score grade-{{ exam.grade }}">
-                {{ exam.score }}/{{ exam.total }} · {{ exam.percentage }}%
-            </span>
-        </div>
-        {% endfor %}
-        {% endif %}
-
-        {% else %}
-        <!-- no exams yet -->
-        <div class="no-exams-msg">
-            <i class="fa-solid fa-pen-to-square" style="font-size:1.6rem;color:#d1d5db;display:block;margin-bottom:8px;"></i>
-            {% if request.user == user %}
-                No CBT exams taken yet. Try one now!
-            {% else %}
-                {{ user.username }} hasn't taken any CBT exams yet.
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% if request.user == user %}
-        <a href="{% url 'cbt_exam' %}" class="take-cbt-btn">
-            <i class="fa-solid fa-play"></i>
-            {% if cbt_score.total_attempts > 0 %}Retake Mathematics CBT{% else %}Take Mathematics CBT{% endif %}
-        </a>
-        {% endif %}
-    </div>
-    <!-- ══ end CBT section ══ -->
-
-    <div class="grid-tab-nav">
-        <div class="grid-tab-icon-container">
-            <i class="fa-solid fa-table-cells"></i>
-        </div>
-    </div>
+  {% endif %}
 
 </main>
-
-<div class="videos-grid">
-    {% for video in videos %}
-    <div class="video-card">
-        <a href="{% url 'post_detail' video.post_id %}" style="text-decoration:none;color:#606060;">
-            <video controls>
-                <source src="{{video.get_video_url}}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="video-details">
-                <div class="metadata">
-                    <p class="video-title">{{video.title}}</p>
-                    <p class="channel-name">
-                        {{video.author}} &bull; {{video.like.count|intcomma}} likes
-                        &bull; {{video.view|intcomma}} views
-                        &bull; {{video.created_at|naturaltime}}
-                    </p>
-                </div>
-            </div>
-        </a>
-    </div>
-    {% empty %}
-    </div>
-    <div class="no-posts-message">
-        <h3>No videos yet</h3>
-        <p>No videos posted yet. Be the first!</p>
-    </div>
-    {% endfor %}
-</div>
 
 {% include 'footer.html' %}
 </body>
