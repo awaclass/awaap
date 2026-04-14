@@ -68,8 +68,49 @@ def register(request):
     return render(request, 'register.html')
 
 
+def _get_student_level(points):
+    """
+    Returns (level_name, level_number) for a given points total.
+    Thresholds: Beginner → Bronze → Silver → Gold → Platinum → Champion
+    """
+    if points >= 2000:
+        return ('Champion', 6)
+    elif points >= 1000:
+        return ('Platinum', 5)
+    elif points >= 500:
+        return ('Gold', 4)
+    elif points >= 200:
+        return ('Silver', 3)
+    elif points >= 50:
+        return ('Bronze', 2)
+    else:
+        return ('Beginner', 1)
+
+
 def home(request):
-    return render(request, 'home.html')
+    # ── Top-5 students by CBT points ──────────────────────────────
+    top_scores = (
+        CBTScore.objects
+        .select_related('user', 'user__profile')
+        .filter(points__gt=0)
+        .order_by('-points')[:5]
+    )
+
+    top_students = []
+    for position, score in enumerate(top_scores, start=1):
+        level_name, level_num = _get_student_level(score.points)
+        top_students.append({
+            'position':   position,
+            'user':       score.user,
+            'profile':    score.user.profile,
+            'points':     score.points,
+            'attempts':   score.total_attempts,
+            'best_score': score.best_score,
+            'level_name': level_name,
+            'level_num':  level_num,
+        })
+
+    return render(request, 'home.html', {'top_students': top_students})
 
 
 def profile(request, username):
@@ -280,7 +321,7 @@ def live_room(request, room_name):
         'room_name':  room_name,
         'user':       request.user,
         'is_creator': session.created_by == request.user,
-        'host_id':    session.created_by.id,   # ← used in template to route host stream to big stage
+        'host_id':    session.created_by.id,
     }
     return render(request, 'live_room.html', context)
 
@@ -306,14 +347,12 @@ def cbt_subjects(request):
 def cbt_exam(request):
     """Render the CBT exam page."""
     return render(request, 'cbt_exam.html')
-    
 
 
 @login_required
 def cbt_physics(request):
     """Render the Physics CBT exam page."""
     return render(request, 'cbt_physics.html')
-
 
 
 @login_required
@@ -326,7 +365,6 @@ def cbt_english(request):
 def cbt_chemistry(request):
     """Render the Chemistry CBT exam page."""
     return render(request, 'cbt_chemistry.html')
-
 
 
 @login_required

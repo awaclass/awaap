@@ -255,9 +255,9 @@
 
   @media (min-width: 900px) {
     :root {
-      --cbt-nav-width: clamp(200px, 17vw, 300px);
-      --cbt-dot-sz:    clamp(26px, 2vw, 34px);
-      --cbt-dot-fz:    clamp(9px, 0.72vw, 12px);
+      --cbt-nav-width: clamp(220px, 20vw, 340px);
+      --cbt-dot-sz:    clamp(28px, 2.2vw, 36px);
+      --cbt-dot-fz:    clamp(10px, 0.78vw, 13px);
       --ac-sidebar-w:  220px;
     }
 
@@ -299,9 +299,9 @@
       aspect-ratio: 1;
     }
 
-    /* Center content tightly in corridor between sidebar and nav panel */
+    /* Stretch question card to fill corridor between sidebar and nav panel */
     .awaClass-cbt-page {
-      max-width: min(680px, calc(100vw - var(--ac-sidebar-w) - var(--cbt-nav-width) - 48px));
+      max-width: calc(100vw - var(--ac-sidebar-w) - var(--cbt-nav-width) - 48px);
       margin-left: auto;
       margin-right: calc(var(--cbt-nav-width) + 24px);
     }
@@ -309,29 +309,25 @@
     body.awaClass-exam-active .awaClass-cbt-dots { display: grid; }
 
     body.awaClass-exam-active .awaClass-cbt-page {
-      margin-left: calc(
-        var(--ac-sidebar-w) + max(0px,
-          (100vw - var(--ac-sidebar-w) - var(--cbt-nav-width) - 32px
-           - min(680px, calc(100vw - var(--ac-sidebar-w) - var(--cbt-nav-width) - 48px))
-          ) / 2
-        )
-      );
+      margin-left: calc(var(--ac-sidebar-w) + 16px);
+      margin-right: calc(var(--cbt-nav-width) + 24px);
+      max-width: calc(100vw - var(--ac-sidebar-w) - var(--cbt-nav-width) - 56px);
     }
   }
 
   /* 1280px+ — wider panel, more columns */
   @media (min-width: 1280px) {
     :root {
-      --cbt-nav-width: clamp(240px, 17vw, 320px);
-      --cbt-dot-sz:    clamp(28px, 2.1vw, 36px);
+      --cbt-nav-width: clamp(260px, 20vw, 360px);
+      --cbt-dot-sz:    clamp(30px, 2.3vw, 38px);
     }
   }
 
   /* 1600px+ — largest screens */
   @media (min-width: 1600px) {
     :root {
-      --cbt-nav-width: clamp(280px, 18vw, 360px);
-      --cbt-dot-sz:    clamp(30px, 2.2vw, 38px);
+      --cbt-nav-width: clamp(300px, 21vw, 400px);
+      --cbt-dot-sz:    clamp(32px, 2.4vw, 42px);
     }
   }
 
