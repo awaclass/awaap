@@ -1,11 +1,11 @@
 from pathlib import Path
 import os
 import dj_database_url
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 import cloudinary
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-#load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.getenv("SECRET_KEY") 
 DEBUG = os.getenv("DEBUG", 'False') == 'True'  # Convert string to boolean
@@ -99,10 +99,10 @@ else:
 # Database
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv("DATABASE"),  
+        default=os.getenv("DATABASE_URL"),  
         conn_max_age=600,
-        conn_health_checks=True,  # Better connection handling
-        env='DATABASE_URL'
+        conn_health_checks=True,
+        ssl_require=True
     )
 }
 
@@ -151,12 +151,6 @@ if USE_CLOUDINARY:
     
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     
-    cloudinary.config(
-        cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-        api_key=os.getenv("CLOUDINARY_API_KEY"),
-        api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-        secure=True,
-    )
 else:
     # Local file storage for development
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
