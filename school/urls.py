@@ -19,6 +19,7 @@ urlpatterns = [
     path('follow/<str:username>', views.follow, name='follow'),
     path('like/<uuid:post_id>', views.like, name='like'),
     path('<uuid:post_id>', views.post_detail, name='post_detail'),
+    path('student-scores/<str:username>/', views.student_scores_modal, name='student_scores_modal'),
     path('?/<str:username>', views.update_profile, name='update_profile'),
 
     # ── CBT Exam ──────────────────────────────────────────────────

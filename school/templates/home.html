@@ -27,6 +27,12 @@
       padding: 20px 16px 48px;
     }
 
+    @media (min-width: 768px) {
+      .awaClass-home-wrapper {
+        margin-left: 50px;
+      }
+    }
+
     /* desktop two-column layout */
     @media (min-width: 960px) {
       .awaClass-home-wrapper {
@@ -475,6 +481,251 @@
     }
     .awaClass-lb-footer a:hover { text-decoration: underline; }
 
+    /* ══════════════════════════════════════════════════
+       STUDENT SCORE MODAL
+    ══════════════════════════════════════════════════ */
+    .aw-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .aw-modal-backdrop.open { display: flex; }
+
+    .aw-modal {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(0,0,0,.18);
+      animation: aw-modal-in .18s ease;
+    }
+    @keyframes aw-modal-in {
+      from { opacity: 0; transform: translateY(10px) scale(.97); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* close btn */
+    .aw-modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #f5f5f5;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: #606060;
+      transition: background .12s;
+      z-index: 2;
+    }
+    .aw-modal-close:hover { background: #ebebeb; }
+
+    /* header */
+    .aw-modal-header {
+      padding: 22px 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .aw-modal-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e5e5e5;
+      flex-shrink: 0;
+    }
+    .aw-modal-student-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 3px;
+    }
+    .aw-modal-student-meta {
+      font-size: 12px;
+      color: #606060;
+      margin: 0 0 6px;
+      line-height: 1.4;
+    }
+    .aw-modal-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .aw-modal-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+      border: 1px solid #e5e5e5;
+      background: #f5f5f5;
+      color: #606060;
+    }
+    .aw-modal-badge.level-1 { background: #f5f5f5; color: #606060; }
+    .aw-modal-badge.level-2 { background: #fdf2e9; color: #a86232; border-color: #f3d5b0; }
+    .aw-modal-badge.level-3 { background: #f2f4f8; color: #5c6b8a; border-color: #c8d0e0; }
+    .aw-modal-badge.level-4 { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+    .aw-modal-badge.level-5 { background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; }
+    .aw-modal-badge.level-6 { background: #fff0f0; color: #dc2626; border-color: #fecaca; }
+
+    /* stats row */
+    .aw-modal-stats {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .aw-modal-stat {
+      flex: 1;
+      text-align: center;
+      padding: 14px 8px;
+      border-right: 1px solid #f5f5f5;
+    }
+    .aw-modal-stat:last-child { border-right: none; }
+    .aw-modal-stat-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f0f0f;
+      display: block;
+    }
+    .aw-modal-stat-val.accent { color: var(--awaClass-primary, #f97316); }
+    .aw-modal-stat-lbl {
+      font-size: 10px;
+      font-weight: 500;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* body */
+    .aw-modal-body { padding: 18px 20px; }
+
+    .aw-modal-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #909090;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin: 0 0 10px;
+    }
+
+    /* subject card */
+    .aw-subject-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .aw-subject-card {
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .aw-subject-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .aw-subject-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f0f0f;
+    }
+    .aw-subject-grade-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 100px;
+      color: #fff;
+    }
+    .aw-subject-bar-wrap {
+      background: #f5f5f5;
+      border-radius: 100px;
+      height: 6px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .aw-subject-bar {
+      height: 100%;
+      border-radius: 100px;
+      background: var(--awaClass-primary, #f97316);
+      transition: width .6s ease;
+    }
+    .aw-subject-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .aw-subject-meta span {
+      font-size: 11px;
+      color: #606060;
+    }
+    .aw-subject-meta strong { color: #0f0f0f; }
+
+    /* recent exams table */
+    .aw-recent-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .aw-recent-table th {
+      font-size: 10px;
+      font-weight: 700;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding: 0 8px 8px 0;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .aw-recent-table td {
+      padding: 9px 8px 9px 0;
+      border-bottom: 1px solid #f7f7f7;
+      color: #0f0f0f;
+      vertical-align: middle;
+    }
+    .aw-recent-table tr:last-child td { border-bottom: none; }
+    .aw-recent-grade {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      color: #606060;
+    }
+
+    /* loading / empty */
+    .aw-modal-loading {
+      padding: 40px 20px;
+      text-align: center;
+      color: #aaa;
+      font-size: 14px;
+    }
+    .aw-modal-spinner {
+      width: 28px; height: 28px;
+      border: 3px solid #f0f0f0;
+      border-top-color: var(--awaClass-primary, #f97316);
+      border-radius: 50%;
+      animation: aw-spin .7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes aw-spin { to { transform: rotate(360deg); } }
+
+    /* make leaderboard items look clickable */
+    .awaClass-lb-item[data-username] {
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
@@ -625,6 +876,273 @@
   </aside>
 
 </div><!-- /.awaClass-home-wrapper -->
+
+<!-- ══════════════════════════════════════════
+     STUDENT SCORES MODAL
+══════════════════════════════════════════ -->
+<div class="aw-modal-backdrop" id="awStudentModal" role="dialog" aria-modal="true" aria-labelledby="awModalName">
+
+  <div class="aw-modal">
+    <button class="aw-modal-close" id="awModalClose" aria-label="Close">&#x2715;</button>
+
+    <!-- Loading state (shown while fetching) -->
+    <div class="aw-modal-loading" id="awModalLoading">
+      <div class="aw-modal-spinner"></div>
+      Loading student data…
+    </div>
+
+    <!-- Content (hidden until data arrives) -->
+    <div id="awModalContent" style="display:none;">
+
+      <!-- Header -->
+      <div class="aw-modal-header">
+        <img src="" alt="Avatar" class="aw-modal-avatar" id="awModalAvatar">
+        <div>
+          <p class="aw-modal-student-name" id="awModalName"></p>
+          <p class="aw-modal-student-meta" id="awModalMeta"></p>
+          <div class="aw-modal-badges" id="awModalBadges"></div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="aw-modal-stats">
+        <div class="aw-modal-stat">
+          <span class="aw-modal-stat-val accent" id="awStatPoints"></span>
+          <span class="aw-modal-stat-lbl">Points</span>
+        </div>
+        <div class="aw-modal-stat">
+          <span class="aw-modal-stat-val" id="awStatAttempts"></span>
+          <span class="aw-modal-stat-lbl">Exams Taken</span>
+        </div>
+        <div class="aw-modal-stat">
+          <span class="aw-modal-stat-val" id="awStatBest"></span>
+          <span class="aw-modal-stat-lbl">Best Score</span>
+        </div>
+        <div class="aw-modal-stat">
+          <span class="aw-modal-stat-val" id="awStatAccuracy"></span>
+          <span class="aw-modal-stat-lbl">Accuracy</span>
+        </div>
+        <div class="aw-modal-stat">
+          <span class="aw-modal-stat-val accent" id="awStatRating"></span>
+          <span class="aw-modal-stat-lbl">Rating</span>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="aw-modal-body">
+
+        <!-- Per-subject breakdown -->
+        <p class="aw-modal-section-title">Subject Performance</p>
+        <div class="aw-subject-cards" id="awSubjectCards"></div>
+
+        <!-- Recent exams -->
+        <p class="aw-modal-section-title">Recent Exams</p>
+        <table class="aw-recent-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Rating</th>
+              <th>Time</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="awRecentBody"></tbody>
+        </table>
+
+      </div>
+    </div><!-- /#awModalContent -->
+
+  </div><!-- /.aw-modal -->
+</div><!-- /.aw-modal-backdrop -->
+
+<script>
+(function () {
+  'use strict';
+
+  const backdrop  = document.getElementById('awStudentModal');
+  const closeBtn  = document.getElementById('awModalClose');
+  const loading   = document.getElementById('awModalLoading');
+  const content   = document.getElementById('awModalContent');
+
+  // ── helpers ────────────────────────────────────────────────────
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  function openModal() {
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function showLoading() {
+    loading.style.display  = 'block';
+    content.style.display  = 'none';
+  }
+
+  function showContent() {
+    loading.style.display  = 'none';
+    content.style.display  = 'block';
+  }
+
+  // ── build grade pill colour ─────────────────────────────────────
+  function gradeColor(grade) {
+    const map = {
+      'distinction': '#16a34a',
+      'credit':      '#2563eb',
+      'pass':        '#d97706',
+      'nearly':      '#ea580c',
+      'fail':        '#dc2626',
+    };
+    return map[grade.toLowerCase()] || '#606060';
+  }
+
+  // ── populate modal with fetched data ────────────────────────────
+  function populateModal(data) {
+    const s = data.student;
+
+    // header
+    document.getElementById('awModalAvatar').src = s.picture_url;
+    setText('awModalName', s.full_name || s.username);
+
+    const metaParts = [];
+    if (s.grade)           metaParts.push(s.grade);
+    if (s.specialization)  metaParts.push(s.specialization);
+    if (s.school_type)     metaParts.push(s.school_type);
+    setText('awModalMeta', metaParts.join(' · ') || '@' + s.username);
+
+    // badges
+    const badgesEl = document.getElementById('awModalBadges');
+    badgesEl.innerHTML = '';
+    const levelBadge = document.createElement('span');
+    levelBadge.className = 'aw-modal-badge level-' + s.level_num;
+    levelBadge.textContent = '⭐ ' + s.level_name;
+    badgesEl.appendChild(levelBadge);
+
+    const uBadge = document.createElement('span');
+    uBadge.className = 'aw-modal-badge';
+    uBadge.textContent = '@' + s.username;
+    badgesEl.appendChild(uBadge);
+
+    // stats
+    setText('awStatPoints',   s.points.toLocaleString());
+    setText('awStatAttempts', s.total_attempts);
+    setText('awStatBest',     s.best_score + '%');
+    const accuracy = s.total_questions > 0
+      ? Math.round((s.total_correct / s.total_questions) * 100) + '%'
+      : '—';
+    setText('awStatAccuracy', accuracy);
+    setText('awStatRating',   s.overall_rating + '/100');
+
+    // per-subject cards
+    const cardsEl = document.getElementById('awSubjectCards');
+    cardsEl.innerHTML = '';
+
+    if (!data.subjects.length) {
+      cardsEl.innerHTML = '<p style="font-size:13px;color:#aaa;margin:0;">No exams taken yet.</p>';
+    } else {
+      data.subjects.forEach(function (sub) {
+        const card = document.createElement('div');
+        card.className = 'aw-subject-card';
+        card.innerHTML =
+          '<div class="aw-subject-card-top">' +
+            '<span class="aw-subject-card-name">' + sub.subject + '</span>' +
+            '<span class="aw-subject-grade-pill" style="background:' + sub.grade_color + '">' + sub.best_grade + '</span>' +
+          '</div>' +
+          '<div class="aw-subject-bar-wrap"><div class="aw-subject-bar" style="width:' + sub.best_pct + '%"></div></div>' +
+          '<div class="aw-subject-meta">' +
+            '<span>Best: <strong>' + sub.best_score + '/' + sub.best_total + ' (' + sub.best_pct + '%)</strong></span>' +
+            '<span>Avg: <strong>' + sub.avg_pct + '%</strong></span>' +
+            '<span>Rating: <strong>' + sub.subject_rating + '/100</strong></span>' +
+            '<span>Time eff: <strong>' + sub.best_time_eff + '%</strong></span>' +
+            '<span>Attempts: <strong>' + sub.attempts + '</strong></span>' +
+            '<span>Best time: <strong>' + sub.time_display + '</strong></span>' +
+            '<span>Last: <strong>' + sub.last_taken + '</strong></span>' +
+          '</div>';
+        cardsEl.appendChild(card);
+      });
+    }
+
+    // recent exams table
+    const tbody = document.getElementById('awRecentBody');
+    tbody.innerHTML = '';
+
+    if (!data.recent_exams.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#aaa;padding:12px 0;">No recent exams.</td></tr>';
+    } else {
+      data.recent_exams.forEach(function (ex) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + ex.subject + '</td>' +
+          '<td><strong>' + ex.score + '/' + ex.total + '</strong> <span style="color:#aaa">(' + ex.percentage + '%)</span></td>' +
+          '<td><span class="aw-recent-grade">' + ex.grade + '</span></td>' +
+          '<td><strong>' + ex.rating + '</strong><span style="color:#aaa">/100</span></td>' +
+          '<td>' + ex.time_display + '</td>' +
+          '<td style="color:#909090">' + ex.taken_at + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    showContent();
+  }
+
+  // ── fetch and show ───────────────────────────────────────────────
+  function loadStudentModal(username) {
+    openModal();
+    showLoading();
+
+    const url = '/student-scores/' + username + '/';
+
+    fetch(url, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + r.statusText);
+      return r.json();
+    })
+    .then(function (data) {
+      if (data.ok) {
+        populateModal(data);
+      } else {
+        console.error('student_scores_modal error:', data);
+        loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Failed to load data.</p>';
+      }
+    })
+    .catch(function (err) {
+      console.error('student_scores_modal fetch failed:', err);
+      loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Error: ' + err.message + '</p>';
+    });
+  }
+
+  // ── event delegation for leaderboard items ───────────────────────
+  document.addEventListener('click', function (e) {
+    const item = e.target.closest('.awaClass-lb-item[data-username]');
+    if (item) {
+      e.preventDefault();
+      const username = item.dataset.username;
+      if (!username || username.trim() === '') return;
+      loadStudentModal(username.trim());
+    }
+  });
+
+  // ── close handlers ───────────────────────────────────────────────
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+})();
+</script>
 
 {% include "footer.html" %}
 </body>

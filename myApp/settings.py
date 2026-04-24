@@ -97,14 +97,24 @@ else:
     }
 
 # Database
-DATABASES = {
+if USE_CLOUDINARY:
+    DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv("DATABASE_URL"),  
         conn_max_age=600,
         conn_health_checks=True,
         ssl_require=True
     )
-}
+    }
+else:
+    DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE"),  
+        conn_max_age=600,
+        env='DATABASE_URL'
+    )
+    }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

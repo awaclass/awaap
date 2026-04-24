@@ -1,44 +1,50 @@
-{# templates/snippet/leaderboard_card.html #}
+{% comment %}
+  snippet/leaderboard_card.html
+  Leaderboard card — clicking a student row opens the score-details modal
+  instead of navigating to the profile page.
+  Requires: top_students context variable (set in home view).
+{% endcomment %}
+
 <div class="awaClass-leaderboard-card">
 
   <!-- Header -->
   <div class="awaClass-lb-header">
     <div class="awaClass-lb-header-left">
-      <div class="awaClass-lb-icon">🏆</div>
-      <h3>Top Students</h3>
+      <span class="awaClass-lb-icon">🏆</span>
+      <h3>Leaderboard</h3>
     </div>
-    <span class="awaClass-lb-subtitle">CBT Leaderboard</span>
+    <span class="awaClass-lb-subtitle">Top students</span>
   </div>
 
   <!-- List -->
-  {% if top_students %}
   <ul class="awaClass-lb-list">
-    {% for student in top_students %}
-    <li>
-      <a href="{% url 'profile' student.user.username %}" class="awaClass-lb-item">
 
-        <!-- Position -->
+    {% if top_students %}
+      {% for student in top_students %}
+      {# Each row is a <li> with data-username; JS picks it up and shows the modal #}
+      <li class="awaClass-lb-item"
+          data-username="{{ student.user.username }}"
+          role="button"
+          tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+
+        <!-- Position badge -->
         <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
 
         <!-- Avatar -->
         <img
-          class="awaClass-lb-avatar"
           src="{{ student.profile.get_picture_url }}"
           alt="{{ student.user.username }}"
-          loading="lazy"
-        >
+          class="awaClass-lb-avatar"
+          loading="lazy">
 
         <!-- Name + Level -->
         <div class="awaClass-lb-info">
-          <div class="awaClass-lb-name">
-            {% if student.user.first_name %}
-              {{ student.user.first_name }} {{ student.user.last_name }}
-            {% else %}
-              {{ student.user.username }}
-            {% endif %}
-          </div>
+          <p class="awaClass-lb-name">
+            {{ student.user.get_full_name|default:student.user.username }}
+          </p>
           <span class="awaClass-lb-level lvl-{{ student.level_num }}">
-            {% if student.level_num == 1 %}⚪{% elif student.level_num == 2 %}🟤{% elif student.level_num == 3 %}⚙️{% elif student.level_num == 4 %}🌟{% elif student.level_num == 5 %}💎{% else %}🔥{% endif %}
             {{ student.level_name }}
           </span>
         </div>
@@ -49,20 +55,18 @@
           <span class="awaClass-lb-pts-label">pts</span>
         </div>
 
-      </a>
-    </li>
-    {% endfor %}
+      </li>
+      {% endfor %}
+
+    {% else %}
+      <li class="awaClass-lb-empty">No students yet. Be the first!</li>
+    {% endif %}
+
   </ul>
-  {% else %}
-  <p class="awaClass-lb-empty">
-    <i class="fa-regular fa-face-smile" style="display:block;font-size:24px;margin-bottom:6px;"></i>
-    No scores yet. Be the first to take a CBT exam!
-  </p>
-  {% endif %}
 
   <!-- Footer -->
   <div class="awaClass-lb-footer">
-    <a href="{% url 'cbt_subjects' %}">Take an Exam &rarr;</a>
+    <a href="{% url 'cbt_subjects' %}">Take an Exam →</a>
   </div>
 
 </div>
