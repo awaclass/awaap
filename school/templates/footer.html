@@ -1,136 +1,192 @@
-<style>
-  /* ===== Bottom Nav ===== */
-  .ac-bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 62px;
-    background: var(--ac-white);
-    border-top: 1.5px solid var(--ac-border);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 8px;
-    z-index: 1000;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
-  }
+{% load static %}
+{% load pwa %}
+<html lang="en">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  {% progressive_web_app_meta %}
+  <script src="{% static 'js/pwa-install.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <style>  
+    :root {
+      --ac-white: #ffffff;
+      --ac-border: #e5e7eb;
+      --ac-text-light: #6b7280;
+      --ac-primary: #f97316;
+      --ac-primary-dk: #ea580c;
+      --ac-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --nav-bg: rgba(255, 255, 255, 0.97);
+      --nav-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+      --nav-icon-color: #6b7280;
+      --nav-icon-active: #f97316;
+      --badge-color: #f97316;
+      --nav-border: #e5e7eb;
+    }
 
-  /* ── Hide bottom nav on desktop ── */
-  @media (min-width: 768px) {
-    .ac-bottom-nav { display: none !important; }
-  }
+    body { 
+      font-family: var(--ac-font); 
+      margin: 0; 
+      padding-bottom: 70px;
+    }  
+    
+    /* === FLOATING PILL NAVIGATION === */
+    .bottom-nav { 
+      position: fixed; 
+      bottom: 20px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      width: 92%; 
+      max-width: 420px; 
+      height: 65px; 
+      
+      background: var(--nav-bg); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px);
+      
+      border-radius: 35px; 
+      box-shadow: var(--nav-shadow); 
+      border: 1px solid var(--nav-border);
+      
+      display: flex; 
+      align-items: center; 
+      justify-content: space-evenly;
+      padding: 0 5px;
+      z-index: 1000; 
+    }
+    
+    /* === NAV ITEMS (all icons including center) === */
+    .nav-item { 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      width: 58px;
+      height: 54px;
+      color: var(--nav-icon-color); 
+      font-size: 20px; 
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s, transform 0.1s;
+      border-radius: 16px;
+    }
+    
+    .nav-item .nav-label {
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: inherit;
+    }
 
-  .ac-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    text-decoration: none;
-    color: var(--ac-text-light);
-    min-width: 48px;
-    padding: 6px 4px;
-    border-radius: 12px;
-    transition: color 0.15s, background 0.15s;
-    position: relative;
-  }
-  .ac-nav-item:hover,
-  .ac-nav-item.active {
-    color: var(--ac-primary);
-  }
-  .ac-nav-item svg {
-    width: 24px; height: 24px;
-    stroke: currentColor;
-    fill: none;
-    flex-shrink: 0;
-    transition: stroke 0.15s;
-  }
-  .ac-nav-item span {
-    font-size: 10px;
-    font-weight: 600;
-    font-family: var(--ac-font);
-    line-height: 1;
-  }
+    .nav-item.active { 
+      color: var(--nav-icon-active); 
+    }
+    
+    .nav-item:active {
+      transform: scale(0.9);
+    }
 
-  /* Center "+" add button */
-  .ac-nav-add {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px; height: 46px;
-    background: var(--ac-primary);
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(249,115,22,0.35);
-    color: #fff;
-    text-decoration: none;
-    transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-    flex-shrink: 0;
-  }
-  .ac-nav-add:hover {
-    background: var(--ac-primary-dk);
-    box-shadow: 0 6px 18px rgba(249,115,22,0.42);
-    transform: translateY(-2px);
-  }
-  .ac-nav-add svg {
-    width: 22px; height: 22px;
-    stroke: #fff; fill: none;
-  }
+    /* Hide bottom nav on desktop */
+    @media (min-width: 768px) {
+      .bottom-nav { display: none !important; }
+    }
 
-  /* Profile avatar */
-  .ac-nav-avatar {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid transparent;
-    transition: border-color 0.15s;
-  }
-  .ac-nav-item:hover .ac-nav-avatar,
-  .ac-nav-item.active .ac-nav-avatar {
-    border-color: var(--ac-primary);
-  }
-</style>
+    /* === BADGES === */
+    .nav-badge-count {
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      background: var(--badge-color);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      min-width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+      pointer-events: none;
+    }
+    
+    .hidden-badge { display: none !important; }
 
-<nav class="ac-bottom-nav">
+    @media (max-width: 360px) {
+      .bottom-nav { width: 96%; height: 60px; }
+      .nav-item { font-size: 18px; width: 50px; }
+      .nav-item .nav-label { font-size: 8px; }
+    }
+  </style>  
+</head>  
+<body>  
 
-  <!-- Home -->
-  <a href="{% url 'home' %}" class="ac-nav-item active" title="Home">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12l9-9 9 9"/>
-      <path d="M4 10v10h5v-5h6v5h5V10"/>
-    </svg>
-    <span>Home</span>
-  </a>
+<!-- Navigation Bar -->
+<nav class="bottom-nav" id="bottomNav">
+    
+    <!-- 1. Home -->
+    <a href="{% url 'home' %}" 
+       class="nav-item {% if request.path == '/' or 'home' in request.path %}active{% endif %}" 
+       title="Home">
+        <i class="fas fa-home"></i>
+        <span class="nav-label">Home</span>
+    </a>
+    
+    <!-- 2. Search -->
+    <a href="{% url 'search' %}" 
+       class="nav-item {% if '/search' in request.path %}active{% endif %}" 
+       title="Search">
+        <i class="fas fa-search"></i>
+        <span class="nav-label">Search</span>
+    </a>
+    
+    <!-- 3. Live Class (Center) -->
+    <a href="{% url 'live_room_list' %}" 
+       class="nav-item {% if '/live' in request.path %}active{% endif %}" 
+       title="Live Class">
+        <i class="fas fa-video"></i>
+        <span class="nav-label">Live</span>
+    </a>
+    
+    <!-- 4. CBT Exam -->
+    <a href="{% url 'cbt_subjects' %}" 
+       class="nav-item {% if '/cbt' in request.path %}active{% endif %}" 
+       title="CBT Exam">
+        <i class="fas fa-file-alt"></i>
+        <span class="nav-label">CBT</span>
+    </a>
+    
+    <!-- 5. Subjects -->
+    <a href="{% url 'cbt_subjects' %}" 
+       class="nav-item {% if '/cbt' in request.path %}active{% endif %}" 
+       title="Subjects">
+        <i class="fas fa-book"></i>
+        <span class="nav-label">Subjects</span>
+    </a>
 
-  <!-- Search -->
-  <a href="{% url 'search' %}" class="ac-nav-item" title="Search">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="7"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <span>Search</span>
-  </a>
+</nav>  
 
-  <!-- Add Post (centre CTA) -->
-  <a href="{% url 'post' %}" class="ac-nav-add" title="Create">
-    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"/>
-      <line x1="5" y1="12" x2="19" y2="12"/>
-    </svg>
-  </a>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Tap animation only - no scroll hide/show
+    var navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach(function(item) {
+      item.addEventListener('click', function(e) {
+        // Allow the click to go through, just add a small visual feedback
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = '';
+        }, 150);
+      });
+    });
+  });
+</script>
 
-  <!-- Profile -->
-  <a href="{% url 'profile' user.username %}" class="ac-nav-item" title="Profile">
-    <img src="{{user.profile.picture.url}}" alt="Profile" class="ac-nav-avatar">
-    <span>Profile</span>
-  </a>
 
-  <!-- Logout -->
-  <a href="{% url 'logout' %}" class="ac-nav-item" title="Logout">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-      <polyline points="16 17 21 12 16 7"/>
-      <line x1="21" y1="12" x2="9" y2="12"/>
-    </svg>
-    <span>Logout</span>
-  </a>
 
-</nav>
+</body>  
+</html>
