@@ -145,8 +145,8 @@
   <div class="ac-header-icons">
     <a href="{% url 'notifications' %}" class="ac-header-icon-btn" title="Notifications">
       <i class="fa-regular fa-bell"></i>
-      {% if notifications.count %}
-      <span class="ac-notif-badge">{{ notifications.count }}</span>
+      {% if unread_count %}
+      <span class="ac-notif-badge">{{ unread_count }}</span>
       {% endif %}
     </a>
     <a href="{% url 'profile' user.username %}" class="ac-header-icon-btn" title="Profile">

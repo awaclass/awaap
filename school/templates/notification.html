@@ -99,6 +99,15 @@
       background: #fafafa;
     }
 
+    /* Read notifications appear dimmed */
+    .aw-notif-item:not(.unread) .aw-notif-message {
+      color: #606060;
+      font-weight: 400;
+    }
+    .aw-notif-item:not(.unread) .aw-notif-avatar {
+      opacity: 0.6;
+    }
+
     /* Unread indicator dot */
     .aw-notif-item.unread::before {
       content: '';
@@ -233,8 +242,8 @@
     <h1 class="aw-notif-page-title">
       <span class="aw-notif-icon">🔔</span>
       Notifications
-      {% if notifications %}
-        <span class="aw-notif-count-badge">{{ notifications|length }}</span>
+      {% if unread_count %}
+        <span class="aw-notif-count-badge">{{ unread_count }}</span>
       {% endif %}
     </h1>
   </div>
@@ -244,7 +253,7 @@
 
     {% for n in notifications %}
 
-      <a href="{% url 'open_notify' n.id %}" class="aw-notif-item unread">
+      <a href="{% url 'open_notify' n.id %}" class="aw-notif-item{% if not n.is_read %} unread{% endif %}">
 
         <!-- Avatar -->
         <div class="aw-notif-avatar-wrap">
