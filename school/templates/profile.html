@@ -1,687 +1,1950 @@
-{% load static humanize %}
-{% include 'header.html' %}
+{% load humanize %}
+{% load static %}
+{% load pwa %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ user.username }} — awaClass</title>
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <meta charset="UTF-8">
+   
+    <script src="{% static 'js/pwa-install.js' %}"></script>
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="shortcut icon" href="{% static 'images/logo.jpg' %}" type="image/x-icon">
+    <title>{% if profile.full_name %}{{ profile.full_name }}{% else %}{{ user.username }}{% endif %} · awaClass</title>
 
-  <style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    /* ══════════════════════════════════════════════════
-       BASE
-    ══════════════════════════════════════════════════ */
-    body {
-      background-color: #ffffff;
-    }
+    <style>
+        :root {
+            --awaClass-bg: #ffffff;
+            --awaClass-white:        #ffffff;
+            --awaClass-border:       #e5e5e5;
+            --awaClass-border-light: #f0f0f0;
+            --awaClass-text:         #0f0f0f;
+            --awaClass-text-muted:   #606060;
+            --awaClass-text-light:   #606060;
+            --awaClass-gray:         #606060;
+            --awaClass-gray-light:   #aaaaaa;
+            --awaClass-primary:      #f97316;
+            --awaClass-primary-dk:   #ea6c0a;
+            --awaClass-primary-hover:#ea6c0a;
+            --awaClass-primary-lt:   #fff7ed;
+            --awaClass-accent:       #f97316;
+            --awaClass-danger:       #dc2626;
+            --awaClass-modal-overlay:rgba(0,0,0,0.5);
+            --awaClass-btn-bg:       #f97316;
+            --awaClass-btn-color:    #ffffff;
+            --radius-sm:   6px;
+            --radius-md:   12px;
+            --radius-lg:   20px;
+            --radius-full: 9999px;
+        }
 
-    .awaClass-home-page {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 20px 16px 48px;
-    }
-    
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-    .awaClass-divider {
-      border: none;
-      border-top: 1px solid var(--awaClass-border, #e5e5e5);
-      margin: 24px 0;
-    }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--awaClass-bg);
+            color: var(--awaClass-text);
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
+        }
 
-    .awaClass-section-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--awaClass-text, #0f0f0f);
-      margin: 0 0 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .awaClass-section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--awaClass-border, #e5e5e5);
-      margin-left: 4px;
-    }
+        /* ── Desktop layout ── */
+        .awaClass-profile-layout {
+            display: flex;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 56px 24px 0;
+            gap: 24px;
+        }
 
-    /* ══════════════════════════════════════════════════
-       ALERT
-    ══════════════════════════════════════════════════ */
-    .awaClass-alert {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 18px;
-      font-size: 13px;
-      color: #15803d;
-    }
+        @media (min-width: 768px) {
+            .awaClass-profile-layout {
+                margin-left: 50px;
+            }
+        }
 
-    /* ══════════════════════════════════════════════════
-       PROFILE HEADER CARD
-    ══════════════════════════════════════════════════ */
-    .awaClass-profile-card {
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 20px 18px;
-      margin-bottom: 14px;
-    }
+        
 
-    .awaClass-profile-top {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 14px;
-    }
+        /* ── Score bar ── */
+        .awa-score-track {
+            height: 4px;
+            background: var(--awaClass-border-light);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
 
-    .awaClass-profile-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #e5e5e5;
-      flex-shrink: 0;
-    }
+        .awa-score-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.8s cubic-bezier(.4,0,.2,1);
+        }
 
-    .awaClass-profile-stats {
-      display: flex;
-      flex: 1;
-      justify-content: space-around;
-      text-align: center;
-    }
+        /* ── Main profile area ── */
+        .awaClass-profile-main {
+            flex: 1;
+            min-width: 0;
+            max-width: 640px;
+        }
 
-    .awaClass-stat-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
+        /* ── Fixed top header ── */
+        .awaClass-profile-header {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--awaClass-border);
+        }
 
-    .awaClass-stat-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0f0f0f;
-      line-height: 1;
-    }
+        .awaClass-profile-header-inner {
+            display: flex;
+            align-items: center;
+            height: 52px;
+            padding: 0 16px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
 
-    .awaClass-stat-label {
-      font-size: 11px;
-      color: #606060;
-    }
+        .awaClass-profile-header-back {
+            margin-right: 20px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
 
-    /* name + bio */
-    .awaClass-profile-name {
-      font-size: 15px;
-      font-weight: 700;
-      color: #0f0f0f;
-      margin: 0 0 4px;
-    }
+        .awaClass-profile-header-back:hover { background: var(--awaClass-border-light); }
+        .awaClass-profile-header-back i { font-size: 16px; color: var(--awaClass-text); }
 
-    .awaClass-profile-bio {
-      font-size: 13px;
-      color: #3d3d3d;
-      margin: 0 0 8px;
-      line-height: 1.5;
-    }
+        .awaClass-profile-header-info { flex: 1; }
 
-    .awaClass-profile-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      font-size: 12px;
-      color: #606060;
-      margin-bottom: 10px;
-    }
+        .awaClass-profile-header-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 1.2;
+            color: var(--awaClass-text);
+        }
 
-    .awaClass-profile-meta span {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+        .awaClass-profile-header-sub {
+            font-size: 11.5px;
+            color: var(--awaClass-gray-light);
+            letter-spacing: 0.02em;
+        }
 
-    .awaClass-profile-contact {
-      font-size: 12px;
-      color: #606060;
-      border-top: 1px solid #f3f4f6;
-      padding-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
+        /* ── Cover ── */
+        .awaClass-profile-cover {
+            height: 220px;
+            background-color: #e5e7eb;
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            position: relative;
+        }
 
-    .awaClass-profile-contact strong {
-      color: #0f0f0f;
-    }
+        .awaClass-profile-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.18) 100%);
+        }
 
-    /* Additional details section */
-    .awaClass-profile-details-section {
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 14px;
-    }
+        /* ── Profile info ── */
+        .awaClass-profile-info {
+            background: var(--awaClass-white);
+            padding: 0 20px 0;
+            border-bottom: 1px solid var(--awaClass-border);
+        }
 
-    .awaClass-profile-details-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #0f0f0f;
-      margin: 0 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+        .awaClass-profile-avatar-container {
+            display: flex;
+            justify-content: center;
+            margin-top: -48px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 2;
+        }
 
-    .awaClass-profile-details-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+        .awaClass-profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--awaClass-white);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            background: var(--awaClass-white);
+        }
 
-    .awaClass-detail-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 13px;
-      line-height: 1.4;
-    }
+        .awaClass-profile-avatar-wrapper { position: relative; display: inline-block; }
 
-    .awaClass-detail-icon {
-      width: 28px;
-      color: #606060;
-      text-align: center;
-      flex-shrink: 0;
-    }
+        .awaClass-profile-details {
+            text-align: center;
+            padding-bottom: 16px;
+        }
 
-    .awaClass-detail-label {
-      font-weight: 600;
-      color: #0f0f0f;
-      min-width: 70px;
-      flex-shrink: 0;
-    }
+        .awaClass-profile-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--awaClass-text);
+            line-height: 1.25;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
 
-    .awaClass-detail-value {
-      color: #3d3d3d;
-      word-break: break-word;
-    }
+        .awaClass-profile-username {
+            font-size: 13.5px;
+            color: var(--awaClass-gray);
+            margin-bottom: 10px;
+            letter-spacing: 0.01em;
+        }
 
-    .awaClass-detail-value.empty {
-      color: #9ca3af;
-      font-style: italic;
-    }
+        .awaClass-profile-bio {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--awaClass-text);
+            max-width: 360px;
+            margin: 0 auto 14px;
+            font-weight: 300;
+        }
 
-    /* ══════════════════════════════════════════════════
-       ACTION BUTTONS
-    ══════════════════════════════════════════════════ */
-    .awaClass-action-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
+        /* ── Profile meta ── */
+        .awaClass-profile-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 20px;
+            margin-bottom: 14px;
+            color: var(--awaClass-gray);
+            font-size: 13px;
+        }
 
-    .awaClass-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s, background 0.15s;
-      white-space: nowrap;
-    }
+        .awaClass-profile-meta-item { display: flex; align-items: center; gap: 5px; }
+        .awaClass-profile-meta-item i { font-size: 13px; opacity: 0.7; }
+        .awaClass-profile-meta-item a { color: var(--awaClass-accent); text-decoration: none; }
+        .awaClass-profile-meta-item a:hover { text-decoration: underline; }
 
-    .awaClass-btn-primary {
-      background: #0f0f0f;
-      color: #ffffff;
-      flex: 1;
-    }
-    .awaClass-btn-primary:hover { opacity: 0.85; color: #ffffff; }
+        /* ── Rank badge ── */
+        .awa-rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 14px;
+            padding: 7px 14px;
+            border-radius: var(--radius-full);
+            border: 1.5px solid var(--awaClass-border);
+            background: var(--awaClass-white);
+            font-size: 12.5px;
+            color: var(--awaClass-text-muted);
+        }
 
-    .awaClass-btn-secondary {
-      background: #f5f5f5;
-      color: #0f0f0f;
-      border: 1px solid #e5e5e5;
-      flex: 1;
-    }
-    .awaClass-btn-secondary:hover { background: #ebebeb; }
+        .awa-rank-badge .rank-icon { font-size: 15px; flex-shrink: 0; }
+        .awa-rank-badge strong { color: var(--awaClass-text); }
 
-    .awaClass-btn-icon {
-      background: #f5f5f5;
-      color: #0f0f0f;
-      border: 1px solid #e5e5e5;
-      padding: 9px 13px;
-      flex: none;
-    }
-    .awaClass-btn-icon:hover { background: #ebebeb; }
+        /* ── Follow stats pill ── */
+        .awaClass-profile-stats-pill {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 16px;
+            background: var(--awaClass-border-light);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid var(--awaClass-border);
+        }
 
-    /* ══════════════════════════════════════════════════
-       CBT SCORE SECTION
-    ══════════════════════════════════════════════════ */
-    .awaClass-cbt-section {
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 18px;
-    }
+        .awaClass-profile-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 20px;
+            color: var(--awaClass-gray);
+            font-size: 12px;
+            text-decoration: none;
+            transition: background 0.15s;
+            cursor: pointer;
+            position: relative;
+        }
 
-    .awaClass-cbt-section-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #0f0f0f;
-      margin: 0 0 14px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
+        .awaClass-profile-stat:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: var(--awaClass-border);
+        }
 
-    /* points badge */
-    .awaClass-points-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, #fef3c7, #fde68a);
-      border: 1px solid #f59e0b;
-      border-radius: 999px;
-      padding: 5px 14px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #92400e;
-      margin-bottom: 14px;
-    }
+        .awaClass-profile-stat:hover { background: var(--awaClass-border); }
 
-    /* 4-stat grid */
-    .awaClass-cbt-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    @media (max-width: 400px) {
-      .awaClass-cbt-stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
+        .awaClass-profile-stat-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px;
+            color: var(--awaClass-text);
+            line-height: 1.2;
+        }
 
-    .awaClass-cbt-stat-box {
-      background: #f5f5f5;
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
-      padding: 10px 8px;
-      text-align: center;
-    }
+        /* ── Action buttons ── */
+        .awaClass-profile-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
 
-    .awaClass-cbt-stat-box .val {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0f0f0f;
-      font-family: 'JetBrains Mono', 'Courier New', monospace;
-      line-height: 1;
-    }
-    .awaClass-cbt-stat-box .lbl {
-      font-size: 10px;
-      color: #606060;
-      margin-top: 3px;
-    }
-    .awaClass-cbt-stat-box.pts  .val { color: #d97706; }
-    .awaClass-cbt-stat-box.best .val { color: #2563eb; }
-    .awaClass-cbt-stat-box.att  .val { color: #059669; }
+        .awaClass-profile-btn {
+            padding: 7px 18px;
+            border-radius: var(--radius-full);
+            font-size: 13.5px;
+            font-weight: 500;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1.5px solid var(--awaClass-border);
+            background: var(--awaClass-white);
+            color: var(--awaClass-text);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            -webkit-user-select: none;
+            user-select: none;
+        }
 
-    /* recent exams table */
-    .awaClass-recent-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      margin-bottom: 8px;
-    }
+        .awaClass-profile-btn:hover {
+            border-color: var(--awaClass-gray);
+            background: var(--awaClass-border-light);
+        }
 
-    .awaClass-exam-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 0;
-      border-bottom: 1px solid #f3f4f6;
-      font-size: 13px;
-    }
-    .awaClass-exam-row:last-child { border-bottom: none; }
+        .awaClass-profile-btn-primary {
+            background: var(--awaClass-btn-bg);
+            color: var(--awaClass-btn-color);
+            border-color: var(--awaClass-btn-bg);
+        }
 
-    .awaClass-exam-subj {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #3d3d3d;
-      font-weight: 500;
-    }
-    .awaClass-exam-subj i { color: #2563eb; width: 15px; text-align: center; font-size: 12px; }
+        .awaClass-profile-btn-primary:hover {
+            background: var(--awaClass-primary-hover);
+            border-color: var(--awaClass-primary-hover);
+        }
 
-    .awaClass-exam-when { font-size: 11px; color: #9ca3af; }
+        .awaClass-profile-more-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--awaClass-border);
+            background: var(--awaClass-white);
+            color: var(--awaClass-text);
+            cursor: pointer;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
 
-    .awaClass-exam-grade {
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      padding: 3px 9px;
-      border-radius: 6px;
-    }
-    .awaClass-exam-grade.grade-distinction { background: #d1fae5; color: #065f46; }
-    .awaClass-exam-grade.grade-credit      { background: #dbeafe; color: #1e40af; }
-    .awaClass-exam-grade.grade-pass        { background: #ede9fe; color: #5b21b6; }
-    .awaClass-exam-grade.grade-nearly      { background: #fef3c7; color: #92400e; }
-    .awaClass-exam-grade.grade-fail        { background: #fee2e2; color: #991b1b; }
+        .awaClass-profile-more-btn:hover { background: var(--awaClass-border-light); border-color: var(--awaClass-gray); }
 
-    .awaClass-no-exams {
-      text-align: center;
-      padding: 18px;
-      color: #9ca3af;
-      font-size: 13px;
-    }
-    .awaClass-no-exams i {
-      display: block;
-      font-size: 24px;
-      margin-bottom: 8px;
-      color: #d1d5db;
-    }
+        /* ── Tabs ── */
+        .awaClass-profile-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--awaClass-border);
+            background: var(--awaClass-white);
+            width: 100%;
+        }
 
-    /* take exam CTA */
-    .awaClass-cbt-cta {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      margin-top: 12px;
-      padding: 10px;
-      background: #0f0f0f;
-      color: #fff;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: opacity 0.15s;
-    }
-    .awaClass-cbt-cta:hover { opacity: 0.85; color: #fff; }
+        .awaClass-profile-tab {
+            flex: 1;
+            text-align: center;
+            padding: 13px 8px;
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--awaClass-gray);
+            text-decoration: none;
+            transition: color 0.15s;
+            position: relative;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
 
-  </style>
+        .awaClass-profile-tab:hover { color: var(--awaClass-text); }
+        .awaClass-profile-tab-active { color: var(--awaClass-primary); }
+
+        .awaClass-profile-tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 2px;
+            background: var(--awaClass-primary);
+            border-radius: var(--radius-full);
+        }
+
+        /* ── Exam history feed ── */
+        .awa-exam-feed {
+            display: flex;
+            flex-direction: column;
+            background: var(--awaClass-white);
+            min-height: 200px;
+        }
+
+        .awa-exam-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--awaClass-border-light);
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .awa-exam-item:hover { background: var(--awaClass-bg); }
+        .awa-exam-item:last-child { border-bottom: none; }
+
+        .awa-exam-subject-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .awa-exam-info { flex: 1; min-width: 0; }
+
+        .awa-exam-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--awaClass-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .awa-exam-meta {
+            font-size: 12px;
+            color: var(--awaClass-gray);
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .awa-exam-score-badge {
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .awa-exam-score-sub {
+            font-size: 10.5px;
+            color: var(--awaClass-gray);
+            text-align: right;
+            margin-top: 1px;
+        }
+
+        /* Score colours */
+        .score-high   { color: #16a34a; }
+        .score-mid    { color: #d97706; }
+        .score-low    { color: #dc2626; }
+        .fill-high    { background: #16a34a; }
+        .fill-mid     { background: #d97706; }
+        .fill-low     { background: #dc2626; }
+
+        /* Subject icon colours */
+        .subj-math    { background: #eff6ff; color: #1d4ed8; }
+        .subj-english { background: #fdf4ff; color: #7e22ce; }
+        .subj-physics { background: #fff7ed; color: #c2410c; }
+        .subj-chem    { background: #f0fdf4; color: #15803d; }
+        .subj-bio     { background: #fef2f2; color: #b91c1c; }
+        .subj-govt    { background: #f0f9ff; color: #0369a1; }
+        .subj-default { background: var(--awaClass-border-light); color: var(--awaClass-gray); }
+
+        /* ── Empty state ── */
+        .awa-empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--awaClass-gray);
+        }
+
+        .awa-empty-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+        .awa-empty h3   { font-size: 18px; font-weight: 600; margin: 0 0 6px; color: var(--awaClass-text); }
+        .awa-empty p    { font-size: 14px; margin: 0; }
+
+        /* ── Verified badge ── */
+        .awaClass-profile-verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 17px;
+            height: 17px;
+        }
+
+        .awaClass-profile-verified-badge img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ── Tab icons mobile only ── */
+        .awaClass-profile-tab-icon { display: none; }
+
+        /* ── Bottom nav ── */
+        .awaClass-profile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--awaClass-border);
+            z-index: 500;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 4px;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .awaClass-profile-awaClass-profile-bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 100%;
+            text-decoration: none;
+            color: var(--awaClass-gray);
+            font-size: 10px;
+            gap: 3px;
+            transition: color 0.15s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            position: relative;
+        }
+
+        .awaClass-profile-awaClass-profile-bottom-nav-item.active { color: var(--awaClass-primary); }
+        .awaClass-profile-awaClass-profile-bottom-nav-item i { font-size: 20px; }
+
+        /* ── Mobile sticky scroll header ── */
+        .awaClass-profile-scroll-header { display: none; }
+
+        /* ── Mobile bottom sheet ── */
+        .awaClass-profile-sheet-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 5000;
+        }
+        .awaClass-profile-sheet-overlay.active { display: block; }
+
+        .awaClass-profile-sheet {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 5001;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            padding: 0 0 calc(env(safe-area-inset-bottom) + 12px);
+            transform: translateY(100%);
+            transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .awaClass-profile-sheet.active { transform: translateY(0); }
+
+        .awaClass-profile-sheet-handle {
+            width: 38px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 99px;
+            margin: 12px auto 4px;
+        }
+
+        .awaClass-profile-sheet-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px 10px;
+            border-bottom: 1px solid #f2f2f2;
+        }
+
+        .awaClass-profile-sheet-avatar {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f97316;
+            flex-shrink: 0;
+        }
+
+        .awaClass-profile-sheet-name { font-size: 15px; font-weight: 700; color: #111; line-height: 1.2; }
+        .awaClass-profile-sheet-username { font-size: 12.5px; color: #888; margin-top: 1px; }
+
+        .awaClass-profile-sheet-items { padding: 8px 0; }
+
+        .awaClass-profile-sheet-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 14px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #111;
+            transition: background 0.12s;
+            text-decoration: none;
+        }
+
+        .awaClass-profile-sheet-item:hover, .awaClass-profile-sheet-item:active { background: #f7f7f7; }
+
+        .awaClass-profile-sheet-icon {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: #f2f2f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #444;
+            flex-shrink: 0;
+        }
+
+        .awaClass-profile-sheet-label { flex: 1; }
+        .awaClass-profile-sheet-arrow { font-size: 11px; color: #ccc; }
+        .awaClass-profile-sheet-item-danger { color: #ef4444; }
+        .awaClass-profile-sheet-icon-danger { background: #fef2f2; color: #ef4444; }
+
+        .awaClass-profile-sheet-divider { height: 1px; background: #f2f2f2; margin: 4px 20px; }
+
+        .awaClass-profile-sheet-cancel {
+            display: block;
+            width: calc(100% - 32px);
+            margin: 8px 16px 4px;
+            padding: 14px;
+            background: #f2f2f2;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #111;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background 0.12s;
+        }
+        .awaClass-profile-sheet-cancel:hover { background: #e8e8e8; }
+
+        /* ── Edit Profile Modal ── */
+        .awaClass-profile-edit-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--awaClass-modal-overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 16px;
+        }
+        .awaClass-profile-edit-overlay.active { display: flex; }
+
+        .awaClass-profile-edit-modal {
+            background: var(--awaClass-white);
+            border-radius: var(--radius-md);
+            width: 100%;
+            max-width: 540px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+        }
+
+        .awaClass-profile-edit-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--awaClass-border-light);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .awaClass-profile-edit-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--awaClass-text);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .awaClass-profile-edit-close {
+            background: none;
+            border: none;
+            width: 30px; height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--awaClass-text);
+            font-size: 16px;
+            border-radius: 50%;
+            transition: background 0.15s;
+            z-index: 1;
+        }
+        .awaClass-profile-edit-close:hover { background: var(--awaClass-border-light); }
+
+        .awaClass-profile-edit-next {
+            background: none;
+            border: none;
+            color: var(--awaClass-accent);
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            opacity: 0.4;
+            pointer-events: none;
+            transition: opacity 0.15s;
+        }
+        .awaClass-profile-edit-next.active { opacity: 1; pointer-events: all; }
+
+        .awaClass-profile-edit-body {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .awaClass-profile-edit-pic-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 24px 20px;
+        }
+
+        .awaClass-profile-edit-pic-container {
+            position: relative;
+            width: 88px; height: 88px;
+            cursor: pointer;
+        }
+
+        .awaClass-profile-edit-pic {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--awaClass-border);
+        }
+
+        .awaClass-profile-edit-change-photo {
+            position: absolute;
+            bottom: -3px; right: -3px;
+            width: 26px; height: 26px;
+            background: var(--awaClass-btn-bg);
+            border: 2px solid var(--awaClass-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .awaClass-profile-edit-form { padding: 0 24px 24px; }
+        .awaClass-profile-edit-form-group { margin-bottom: 14px; }
+
+        .awaClass-profile-edit-form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--awaClass-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+
+        .awaClass-profile-edit-form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--awaClass-border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--awaClass-white);
+            transition: border-color 0.15s;
+            -webkit-appearance: none;
+        }
+        .awaClass-profile-edit-form-input:focus { outline: none; border-color: var(--awaClass-primary); }
+
+        .awaClass-profile-edit-form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--awaClass-border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--awaClass-white);
+            min-height: 90px;
+            resize: vertical;
+            transition: border-color 0.15s;
+            line-height: 1.5;
+        }
+        .awaClass-profile-edit-form-textarea:focus { outline: none; border-color: var(--awaClass-primary); }
+
+        .awaClass-profile-edit-form-help { font-size: 11.5px; color: var(--awaClass-gray-light); margin-top: 4px; display: block; }
+
+        .awaClass-profile-edit-footer {
+            display: flex;
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid var(--awaClass-border-light);
+            flex-shrink: 0;
+        }
+
+        .awaClass-profile-edit-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius-full);
+            font-size: 13.5px;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            border: 1.5px solid var(--awaClass-border);
+            transition: all 0.15s;
+        }
+        .awaClass-profile-edit-btn-cancel { background: var(--awaClass-white); color: var(--awaClass-text); }
+        .awaClass-profile-edit-btn-cancel:hover { background: var(--awaClass-border-light); }
+        .awaClass-profile-edit-btn-save { background: var(--awaClass-btn-bg); color: white; border-color: var(--awaClass-btn-bg); }
+        .awaClass-profile-edit-btn-save:hover:not(:disabled) { background: var(--awaClass-primary-hover); border-color: var(--awaClass-primary-hover); }
+        .awaClass-profile-edit-btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .awaClass-profile-edit-username-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: var(--awaClass-border-light);
+            border-radius: var(--radius-sm);
+        }
+        .awaClass-profile-edit-username-label { font-size: 12px; color: var(--awaClass-gray); }
+        .awaClass-profile-edit-username-value { font-size: 14px; font-weight: 600; color: var(--awaClass-text); }
+
+        .awaClass-profile-edit-messages { padding: 0 16px; }
+        .awaClass-profile-edit-alert {
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .awaClass-profile-alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .awaClass-profile-alert-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+        .awaClass-profile-edit-loading {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.85);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+        }
+        .awaClass-profile-edit-loading.active { display: flex; }
+        .awaClass-profile-edit-spinner {
+            width: 32px; height: 32px;
+            border: 3px solid var(--awaClass-border);
+            border-radius: 50%;
+            border-top-color: var(--awaClass-primary);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes awaClass-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes awaClass-modal-slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Container ── */
+        .awaClass-profile-container { display: block; }
+        .awaClass-profile-content { width: 100%; }
+        .awaClass-profile-desktop-only { display: none; }
+        .awaClass-profile-mobile-only  { display: block; }
+
+        /* ─────────────── MOBILE ─────────────── */
+        @media (max-width: 767px) {
+            .awaClass-profile-layout { display: block; padding: 0; }
+            .awaClass-profile-main { max-width: 100%; }
+            .awaClass-profile-desktop-only { display: none !important; }
+            .awaClass-profile-bottom-nav { display: flex !important; }
+
+            /* Mobile hero */
+            .awaClass-profile-cover { display: none !important; }
+            .awaClass-profile-header { display: none !important; }
+            .awaClass-profile-avatar-container { display: none !important; }
+            .awaClass-profile-details { display: none !important; }
+            .awaClass-profile-mobile-hero { display: block; }
+
+            .awaClass-profile-hero-card {
+                position: relative;
+                width: 100%;
+                height: 100svh;
+                max-height: 520px;
+                overflow: hidden;
+                background: #111;
+            }
+
+            .awaClass-profile-hero-bg {
+                position: absolute;
+                inset: 0;
+                background-size: cover;
+                background-position: center top;
+                filter: brightness(0.75);
+            }
+
+            .awaClass-profile-hero-topbar {
+                position: absolute;
+                top: 0; left: 0; right: 0;
+                padding: 14px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                z-index: 10;
+            }
+
+            .awaClass-profile-hero-icon-btn {
+                width: 38px; height: 38px;
+                border-radius: 50%;
+                background: rgba(0,0,0,0.35);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-size: 15px;
+                cursor: pointer;
+                text-decoration: none;
+                transition: background 0.15s;
+                flex-shrink: 0;
+            }
+            .awaClass-profile-hero-icon-btn:hover { background: rgba(0,0,0,0.55); }
+
+            .awaClass-profile-hero-topbar-right { display: flex; gap: 10px; }
+
+            .awaClass-profile-hero-overlay {
+                position: absolute;
+                bottom: 0; left: 0; right: 0;
+                padding: 28px 18px 20px;
+                background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 55%, transparent 100%);
+                z-index: 10;
+            }
+
+            .awaClass-profile-hero-avatar-row {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 10px;
+            }
+
+            .awaClass-profile-hero-avatar {
+                width: 72px; height: 72px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #fff;
+                box-shadow: 0 0 0 3px #f97316, 0 0 0 5.5px rgba(249,115,22,0.3);
+                flex-shrink: 0;
+            }
+
+            .awaClass-profile-hero-user-info { flex: 1; min-width: 0; }
+
+            .awaClass-profile-hero-name {
+                font-size: 21px;
+                font-weight: 700;
+                color: #fff;
+                line-height: 1.2;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .awaClass-profile-hero-username {
+                font-size: 13px;
+                color: rgba(255,255,255,0.7);
+                margin-top: 2px;
+            }
+
+            .awaClass-profile-hero-stats-row {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 4px 0;
+                margin-bottom: 14px;
+                font-size: 13px;
+                color: rgba(255,255,255,0.85);
+            }
+
+            .awaClass-profile-hero-stat { display: flex; align-items: center; }
+            .awaClass-profile-hero-stat-num { font-weight: 700; color: #fff; margin-right: 3px; }
+            .awaClass-profile-hero-stat-dot { margin: 0 6px; opacity: 0.5; }
+
+            .awaClass-profile-hero-actions {
+                display: flex;
+                gap: 10px;
+            }
+
+            .awaClass-profile-hero-primary-btn {
+                flex: 1;
+                padding: 9px 16px;
+                border-radius: var(--radius-full);
+                background: #f97316;
+                color: #fff;
+                font-size: 13.5px;
+                font-weight: 600;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .awaClass-profile-hero-secondary-btn {
+                flex: 1;
+                padding: 9px 16px;
+                border-radius: var(--radius-full);
+                background: rgba(255,255,255,0.18);
+                backdrop-filter: blur(8px);
+                color: #fff;
+                font-size: 13.5px;
+                font-weight: 600;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                border: 1.5px solid rgba(255,255,255,0.4);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                text-decoration: none;
+            }
+
+            /* Mobile scroll header */
+            .awaClass-profile-scroll-header {
+                display: flex;
+                position: fixed;
+                top: 0; left: 0; right: 0;
+                z-index: 200;
+                height: 56px;
+                align-items: center;
+                padding: 0 14px;
+                gap: 12px;
+                background: rgba(255,255,255,0.97);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border-bottom: 1px solid rgba(0,0,0,0.08);
+                box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+                opacity: 0;
+                transform: translateY(-100%);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                pointer-events: none;
+            }
+            .awaClass-profile-scroll-header.visible {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: all;
+            }
+            .awaClass-profile-scroll-back {
+                width: 34px; height: 34px;
+                border-radius: 50%;
+                background: #f2f2f2;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                color: #111;
+                cursor: pointer;
+                flex-shrink: 0;
+            }
+            .awaClass-profile-scroll-identity {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+                min-width: 0;
+            }
+            .awaClass-profile-scroll-avatar {
+                width: 34px; height: 34px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #f97316;
+                flex-shrink: 0;
+            }
+            .awaClass-profile-scroll-info { display: flex; flex-direction: column; min-width: 0; }
+            .awaClass-profile-scroll-name {
+                font-size: 15px; font-weight: 700; color: #111;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+            .awaClass-profile-scroll-username {
+                font-size: 11.5px; color: #888;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+            .awaClass-profile-scroll-actions { display: flex; gap: 8px; flex-shrink: 0; }
+            .awaClass-profile-scroll-btn {
+                width: 34px; height: 34px;
+                border-radius: 50%;
+                background: #f2f2f2;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                color: #111;
+                cursor: pointer;
+            }
+
+            /* Mobile details section */
+            .awaClass-profile-mobile-details {
+                padding: 14px 16px 4px;
+                background: var(--awaClass-white);
+                border-bottom: 1px solid var(--awaClass-border-light);
+            }
+
+            .awaClass-profile-mobile-bio {
+                font-size: 14px;
+                line-height: 1.6;
+                color: var(--awaClass-text);
+                margin-bottom: 10px;
+                font-weight: 300;
+            }
+
+            .awaClass-profile-mobile-meta {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 4px 0;
+                margin-bottom: 10px;
+                font-size: 13px;
+                color: var(--awaClass-gray);
+            }
+
+            .awaClass-profile-meta-inline-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 12.5px;
+                font-weight: 600;
+                color: var(--awaClass-text);
+                white-space: nowrap;
+            }
+            .awaClass-profile-meta-dot { color: var(--awaClass-gray); font-size: 13px; padding: 0 4px; }
+
+            .awaClass-profile-tab-icon { display: inline-block; margin-right: 4px; font-size: 12px; }
+
+            /* Exam item on mobile */
+            .awa-exam-title { font-size: 13.5px; }
+        }
+
+        /* ─────────────── DESKTOP ─────────────── */
+        @media (min-width: 768px) {
+            .awaClass-profile-desktop-only { display: flex !important; }
+            .awaClass-profile-mobile-hero  { display: none !important; }
+            .awaClass-profile-mobile-details { display: none !important; }
+            .awaClass-profile-scroll-header { display: none !important; }
+            .awaClass-profile-container { display: flex; gap: 24px; }
+            .awaClass-profile-content { flex: 1; }
+        }
+    </style>
 </head>
+
 <body>
 
 {% include 'sidebar.html' %}
 
-<main class="awaClass-home-page">
-
-  <!-- ── flash messages ── -->
-  {% if messages %}
-  <div class="awaClass-alert">
-    {% for message in messages %}{{ message }}{% endfor %}
-  </div>
-  {% endif %}
-
-  <!-- ══════════════════════════════════════════
-       PROFILE HEADER CARD
-  ══════════════════════════════════════════ -->
-  <div class="awaClass-profile-card">
-
-    <div class="awaClass-profile-top">
-      <!-- avatar -->
-      <a href="{{ user.profile.get_picture_url }}" target="_blank" rel="noopener">
-        <img src="{{ user.profile.get_picture_url }}"
-             alt="{{ user.username }}"
-             class="awaClass-profile-avatar">
-      </a>
-
-      <!-- follower / post / view stats -->
-      <div class="awaClass-profile-stats">
-        <div class="awaClass-stat-item">
-          <span class="awaClass-stat-value">{{ profile.follow.count }}</span>
-          <span class="awaClass-stat-label">Followers</span>
+<!-- ══ MOBILE STICKY SCROLL HEADER ══ -->
+<div class="awaClass-profile-scroll-header" id="awaClassProfileScrollHeader">
+    <button class="awaClass-profile-scroll-back" onclick="history.back()">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <div class="awaClass-profile-scroll-identity">
+        <img src="{{ user.profile.picture.url }}" alt="{{ user.username }}" class="awaClass-profile-scroll-avatar">
+        <div class="awaClass-profile-scroll-info">
+            <span class="awaClass-profile-scroll-name">{{ user.first_name|default:user.username }} {{ user.last_name }}</span>
+            <span class="awaClass-profile-scroll-username">@{{ user.username }}</span>
         </div>
-        <div class="awaClass-stat-item">
-          <span class="awaClass-stat-value">{{ total_view|intcomma }}</span>
-          <span class="awaClass-stat-label">Views</span>
-        </div>
-      </div>
     </div>
+    <div class="awaClass-profile-scroll-actions">
+        <button class="awaClass-profile-scroll-btn" onclick="shareProfile()">
+            <i class="fas fa-share-alt"></i>
+        </button>
+    </div>
+</div>
 
-    <!-- name + bio -->
-    <p class="awaClass-profile-name">{{ user.first_name }} {{ user.last_name }}</p>
+<!-- ══ MOBILE HERO CARD ══ -->
+<div class="awaClass-profile-mobile-hero">
+    <div class="awaClass-profile-hero-card">
+        <div class="awaClass-profile-hero-bg" style="background-image: url('{{ user.profile.picture.url }}');"></div>
+
+        <div class="awaClass-profile-hero-topbar">
+            <button class="awaClass-profile-hero-icon-btn" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="awaClass-profile-hero-topbar-right">
+                <button class="awaClass-profile-hero-icon-btn" id="awaClassProfileMoreBtnMob">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="awaClass-profile-hero-overlay">
+            <div class="awaClass-profile-hero-avatar-row">
+                <img src="{{ user.profile.picture.url }}"
+                     alt="{{ user.username }}"
+                     class="awaClass-profile-hero-avatar">
+                <div class="awaClass-profile-hero-user-info">
+                    <div class="awaClass-profile-hero-name">
+                        {{ user.first_name|default:user.username }} {{ user.last_name }}
+                        {% if user.profile.is_verify %}
+                        <img src="{% static 'images/verify1.jpg' %}" style="width:18px;height:18px;" alt="Verified">
+                        {% endif %}
+                    </div>
+                    <div class="awaClass-profile-hero-username">@{{ user.username }}</div>
+                </div>
+            </div>
+
+            <div class="awaClass-profile-hero-stats-row">
+                <span class="awaClass-profile-hero-stat">
+                    <span class="awaClass-profile-hero-stat-num">{{ total_exams_taken|default:"0" }}</span>&nbsp;Exams
+                </span>
+                <span class="awaClass-profile-hero-stat-dot">·</span>
+                <span class="awaClass-profile-hero-stat">
+                    <span class="awaClass-profile-hero-stat-num">{{ avg_score|default:"0" }}%</span>&nbsp;Avg Score
+                </span>
+                {% if best_rank %}
+                <span class="awaClass-profile-hero-stat-dot">·</span>
+                <span class="awaClass-profile-hero-stat">
+                    <span class="awaClass-profile-hero-stat-num">#{{ best_rank }}</span>&nbsp;Best Rank
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="awaClass-profile-hero-actions">
+                {% if request.user == user %}
+                <button class="awaClass-profile-hero-primary-btn" id="awaClassProfileOpenEditBtnMob">
+                    <i class="fas fa-pen" style="font-size:13px;"></i> Edit Profile
+                </button>
+                <button class="awaClass-profile-hero-secondary-btn" onclick="shareProfile()">
+                    <i class="fas fa-share-alt" style="font-size:13px;"></i> Share
+                </button>
+                {% else %}
+                <a href="{% url 'cbt_subjects' %}" class="awaClass-profile-hero-primary-btn">
+                    <i class="fas fa-play" style="font-size:13px;"></i> Take Exam
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ MOBILE DETAILS ══ -->
+<div class="awaClass-profile-mobile-details">
     {% if profile.bio %}
-    <p class="awaClass-profile-bio">{{ profile.bio }}</p>
+    <div class="awaClass-profile-mobile-bio">{{ profile.bio }}</div>
     {% endif %}
 
-    <!-- location / address -->
-    {% if profile.location or profile.address %}
-    <div class="awaClass-profile-meta">
-      {% if profile.location %}
-      <span><i class="fa-solid fa-map-marker-alt"></i> {{ profile.location }}</span>
-      {% endif %}
-      {% if profile.address %}
-      <span><i class="fa-solid fa-location-dot"></i> {{ profile.address }}</span>
-      {% endif %}
-    </div>
-    {% endif %}
-
-    <!-- email / phone -->
-    <div class="awaClass-profile-contact">
-      <div><strong>Email:</strong> {{ user.email }}</div>
-      {% if profile.phone %}
-      <div><strong>Phone:</strong> {{ profile.phone }}</div>
-      {% endif %}
-    </div>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════
-       ADDITIONAL PROFILE DETAILS (About, Gender, etc.)
-  ══════════════════════════════════════════ -->
-  {% if profile.about or profile.gender or profile.bio or profile.phone or profile.location or profile.address %}
-  <div class="awaClass-profile-details-section">
-    <div class="awaClass-profile-details-title">
-      <i class="fa-solid fa-address-card"></i>
-      More about {{ user.first_name|default:user.username }}
-    </div>
-    <div class="awaClass-profile-details-grid">
-      {% if profile.about %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-regular fa-note-sticky"></i></div>
-        <div class="awaClass-detail-label">About</div>
-        <div class="awaClass-detail-value">{{ profile.about }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.gender %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-regular fa-user"></i></div>
-        <div class="awaClass-detail-label">Gender</div>
-        <div class="awaClass-detail-value">{{ profile.get_gender_display|default:profile.gender|capfirst }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.bio %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-regular fa-message"></i></div>
-        <div class="awaClass-detail-label">Bio</div>
-        <div class="awaClass-detail-value">{{ profile.bio }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.location %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-solid fa-location-dot"></i></div>
-        <div class="awaClass-detail-label">Location</div>
-        <div class="awaClass-detail-value">{{ profile.location }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.address %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-solid fa-house"></i></div>
-        <div class="awaClass-detail-label">Address</div>
-        <div class="awaClass-detail-value">{{ profile.address }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.phone %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-solid fa-phone"></i></div>
-        <div class="awaClass-detail-label">Phone</div>
-        <div class="awaClass-detail-value">{{ profile.phone }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.gender == 'other' and profile.gender %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-regular fa-circle"></i></div>
-        <div class="awaClass-detail-label">Gender</div>
-        <div class="awaClass-detail-value">{{ profile.gender }}</div>
-      </div>
-      {% endif %}
-      
-      {% if profile.created_at %}
-      <div class="awaClass-detail-item">
-        <div class="awaClass-detail-icon"><i class="fa-regular fa-calendar"></i></div>
-        <div class="awaClass-detail-label">Joined</div>
-        <div class="awaClass-detail-value">{{ profile.created_at|date:"F j, Y" }}</div>
-      </div>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- ══════════════════════════════════════════
-       ACTION BUTTONS
-  ══════════════════════════════════════════ -->
-  <div class="awaClass-action-row">
-    {% if request.user == user %}
-      <a href="{% url 'update_profile' user.username %}" class="awaClass-btn awaClass-btn-secondary">
-        <i class="fa-solid fa-pen"></i> Edit Profile
-      </a>
-      <a href="{% url 'cbt_subjects' %}" class="awaClass-btn awaClass-btn-primary">
-        <i class="fa-solid fa-graduation-cap"></i> Take Exam
-      </a>
-    {% else %}
-      {% if request.user in profile.follow.all %}
-        <form action="{% url 'follow' user.username %}" method="post" style="flex:1;">
-          {% csrf_token %}
-          <button type="submit" class="awaClass-btn awaClass-btn-secondary" style="width:100%;">
-            <i class="fa-solid fa-user-check"></i> Following
-          </button>
-        </form>
-      {% else %}
-        <form action="{% url 'follow' user.username %}" method="post" style="flex:1;">
-          {% csrf_token %}
-          <button type="submit" class="awaClass-btn awaClass-btn-primary" style="width:100%;">
-            <i class="fa-solid fa-user-plus"></i> Follow
-          </button>
-        </form>
-      {% endif %}
-      <a href="" class="awaClass-btn awaClass-btn-secondary">
-        <i class="fa-solid fa-comment"></i> Message
-      </a>
-    {% endif %}
-  </div>
-
-  <!-- ══════════════════════════════════════════
-       CBT EXAM PERFORMANCE
-  ══════════════════════════════════════════ -->
-  <div class="awaClass-cbt-section">
-
-    <div class="awaClass-cbt-section-title">
-      <i class="fa-solid fa-graduation-cap" style="color:#2563eb;"></i>
-      CBT Exam Performance
-    </div>
-
-    {% if cbt_score.total_attempts > 0 %}
-
-      <!-- points badge -->
-      <span class="awaClass-points-badge">
-        <i class="fa-solid fa-trophy"></i>
-        {{ cbt_score.points }} Points
-      </span>
-
-      <!-- 4-stat grid -->
-      <div class="awaClass-cbt-stats-grid">
-        <div class="awaClass-cbt-stat-box pts">
-          <div class="val">{{ cbt_score.points }}</div>
-          <div class="lbl">Total Points</div>
-        </div>
-        <div class="awaClass-cbt-stat-box best">
-          <div class="val">{{ cbt_score.best_score }}%</div>
-          <div class="lbl">Best Score</div>
-        </div>
-        <div class="awaClass-cbt-stat-box att">
-          <div class="val">{{ cbt_score.total_attempts }}</div>
-          <div class="lbl">Exams Taken</div>
-        </div>
-        <div class="awaClass-cbt-stat-box">
-          <div class="val">
-            {% if cbt_score.total_questions > 0 %}
-              {% widthratio cbt_score.total_correct cbt_score.total_questions 100 %}%
-            {% else %}0%{% endif %}
-          </div>
-          <div class="lbl">Accuracy</div>
-        </div>
-      </div>
-
-      <!-- recent exams -->
-      {% if recent_exams %}
-      <div class="awaClass-recent-label">Recent Exams</div>
-      {% for exam in recent_exams %}
-      <div class="awaClass-exam-row">
-        <div class="awaClass-exam-subj">
-          {% if exam.subject == 'mathematics' %}
-            <i class="fa-solid fa-square-root-variable"></i>
-          {% elif exam.subject == 'physics' %}
-            <i class="fa-solid fa-atom"></i>
-          {% elif exam.subject == 'english' %}
-            <i class="fa-solid fa-book-open"></i>
-          {% elif exam.subject == 'chemistry' %}
-            <i class="fa-solid fa-flask"></i>
-          {% else %}
-            <i class="fa-solid fa-pen-to-square"></i>
-          {% endif %}
-          {{ exam.get_subject_display }}
-        </div>
-        <div class="awaClass-exam-when">{{ exam.taken_at|naturaltime }}</div>
-        <span class="awaClass-exam-grade grade-{{ exam.grade }}">
-          {{ exam.score }}/{{ exam.total }} · {{ exam.percentage }}%
+    <div class="awaClass-profile-mobile-meta">
+        {% if profile.location %}
+        <span class="awaClass-profile-meta-inline-item">
+            <i class="fas fa-map-marker-alt"></i><span>{{ profile.location }}</span>
         </span>
-      </div>
-      {% endfor %}
-      {% endif %}
-
-    {% else %}
-
-      <div class="awaClass-no-exams">
-        <i class="fa-solid fa-pen-to-square"></i>
-        {% if request.user == user %}
-          No CBT exams taken yet. Try one now!
-        {% else %}
-          {{ user.username }} hasn't taken any CBT exams yet.
+        <span class="awaClass-profile-meta-dot">·</span>
         {% endif %}
-      </div>
+        {% if profile.school %}
+        <span class="awaClass-profile-meta-inline-item">
+            <i class="fas fa-graduation-cap"></i><span>{{ profile.school }}</span>
+        </span>
+        <span class="awaClass-profile-meta-dot">·</span>
+        {% endif %}
+        {% if profile.class_level %}
+        <span class="awaClass-profile-meta-inline-item">
+            <i class="fas fa-layer-group"></i><span>{{ profile.class_level }}</span>
+        </span>
+        <span class="awaClass-profile-meta-dot">·</span>
+        {% endif %}
+        {% if profile.specialization %}
+        <span class="awaClass-profile-meta-inline-item">
+            <i class="fas fa-flask"></i><span>{{ profile.specialization }}</span>
+        </span>
+        <span class="awaClass-profile-meta-dot">·</span>
+        {% endif %}
+        <span class="awaClass-profile-meta-inline-item" style="font-weight:400; color:var(--awaClass-gray);">
+            <i class="far fa-calendar-alt"></i><span>Joined {{ profile.created_at|date:"F Y" }}</span>
+        </span>
+    </div>
+</div>
 
-    {% endif %}
+<!-- ══ MOBILE BOTTOM SHEET ══ -->
+<div class="awaClass-profile-sheet-overlay" id="awaClassProfileSheetOverlay" onclick="awaClassCloseMobileSheet()"></div>
+<div class="awaClass-profile-sheet" id="awaClassProfileSheet">
+    <div class="awaClass-profile-sheet-handle"></div>
 
     {% if request.user == user %}
-    <a href="{% url 'cbt_subjects' %}" class="awaClass-cbt-cta">
-      <i class="fa-solid fa-play"></i>
-      {% if cbt_score.total_attempts > 0 %}Retake an Exam{% else %}Start a CBT Exam{% endif %}
-    </a>
+    <div class="awaClass-profile-sheet-header">
+        <img src="{{ user.profile.picture.url }}" class="awaClass-profile-sheet-avatar" alt="">
+        <div>
+            <div class="awaClass-profile-sheet-name">{{ user.first_name|default:user.username }} {{ user.last_name }}</div>
+            <div class="awaClass-profile-sheet-username">@{{ user.username }}</div>
+        </div>
+    </div>
+    <div class="awaClass-profile-sheet-items">
+        <button class="awaClass-profile-sheet-item" onclick="shareProfile(); awaClassCloseMobileSheet();">
+            <span class="awaClass-profile-sheet-icon"><i class="fas fa-share-alt"></i></span>
+            <span class="awaClass-profile-sheet-label">Share Profile</span>
+            <i class="fas fa-chevron-right awaClass-profile-sheet-arrow"></i>
+        </button>
+        <button class="awaClass-profile-sheet-item" onclick="awaClassCloseMobileSheet(); setTimeout(function(){ document.getElementById('awaClassProfileEditModal').classList.add('active'); }, 200);">
+            <span class="awaClass-profile-sheet-icon"><i class="fas fa-pen"></i></span>
+            <span class="awaClass-profile-sheet-label">Edit Profile</span>
+            <i class="fas fa-chevron-right awaClass-profile-sheet-arrow"></i>
+        </button>
+        <div class="awaClass-profile-sheet-divider"></div>
+        <a href="{% url 'logout' %}" class="awaClass-profile-sheet-item awaClass-profile-sheet-item-danger">
+            <span class="awaClass-profile-sheet-icon awaClass-profile-sheet-icon-danger"><i class="fas fa-sign-out-alt"></i></span>
+            <span class="awaClass-profile-sheet-label">Log Out</span>
+            <i class="fas fa-chevron-right awaClass-profile-sheet-arrow"></i>
+        </a>
+    </div>
     {% endif %}
+    <button class="awaClass-profile-sheet-cancel" onclick="awaClassCloseMobileSheet()">Cancel</button>
+</div>
 
-  </div>
+<!-- ══ DESKTOP LAYOUT ══ -->
+<div class="awaClass-profile-layout">
 
-</main>
+    
+
+    <!-- Main Profile Column -->
+    <div class="awaClass-profile-main">
+        <div class="awaClass-profile-container">
+            <main class="awaClass-profile-content">
+
+                <!-- Fixed top header (desktop) -->
+                <header class="awaClass-profile-header">
+                    <div class="awaClass-profile-header-inner">
+                        <div class="awaClass-profile-header-back" onclick="history.back()" id="awaClassProfileBackBtn">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        <div class="awaClass-profile-header-info">
+                            <div class="awaClass-profile-header-name">{{ user.first_name|default:user.username }}</div>
+                            <div class="awaClass-profile-header-sub">{{ total_exams_taken|default:"0" }} exams taken</div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Cover -->
+                <div class="awaClass-profile-cover" style="background-image:url('{{ user.profile.picture.url }}');"></div>
+
+                <!-- Profile info card -->
+                <section class="awaClass-profile-info">
+
+                    <!-- Avatar -->
+                    <div class="awaClass-profile-avatar-container">
+                        <div class="awaClass-profile-avatar-wrapper">
+                            <img src="{{ user.profile.picture.url }}"
+                                 alt="{{ user.username }}"
+                                 class="awaClass-profile-avatar"
+                                 loading="lazy"
+                                 id="awaClassProfileMainPic">
+                        </div>
+                    </div>
+
+                    <!-- Profile details -->
+                    <div class="awaClass-profile-details">
+                        <h1 class="awaClass-profile-name" id="awaClassProfileMainName">
+                            {{ user.first_name }} {{ user.last_name }}
+                            {% if user.profile.is_verify %}
+                            <span class="awaClass-profile-verified-badge">
+                                <img src="{% static 'images/verify1.jpg' %}" alt="Verified" loading="lazy">
+                            </span>
+                            {% endif %}
+                        </h1>
+
+                        <div class="awaClass-profile-username">@{{ user.username }}</div>
+
+                        {% if profile.bio %}
+                        <div class="awaClass-profile-bio" id="awaClassProfileMainBio">{{ profile.bio }}</div>
+                        {% endif %}
+
+                        <!-- Best rank badge -->
+                        {% if best_rank %}
+                        <div class="awa-rank-badge">
+                            <span class="rank-icon">🏆</span>
+                            Leaderboard rank <strong>#{{ best_rank }}</strong>
+                            {% if best_rank_subject %} in {{ best_rank_subject }}{% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Meta row -->
+                        <div class="awaClass-profile-meta">
+                            {% if profile.location %}
+                            <div class="awaClass-profile-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ profile.location }}</span>
+                            </div>
+                            {% endif %}
+                            {% if profile.school %}
+                            <div class="awaClass-profile-meta-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>{{ profile.school }}</span>
+                            </div>
+                            {% endif %}
+                            {% if profile.class_level %}
+                            <div class="awaClass-profile-meta-item">
+                                <i class="fas fa-layer-group"></i>
+                                <span>{{ profile.class_level }}</span>
+                            </div>
+                            {% endif %}
+                            {% if profile.specialization %}
+                            <div class="awaClass-profile-meta-item">
+                                <i class="fas fa-flask"></i>
+                                <span>{{ profile.specialization }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="awaClass-profile-meta-item">
+                                <i class="far fa-calendar"></i>
+                                <span>Joined {{ profile.created_at|date:"F Y" }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Score stats pill -->
+                        <div class="awaClass-profile-stats-pill">
+                            <div class="awaClass-profile-stat">
+                                <span class="awaClass-profile-stat-number">{{ total_exams_taken|default:"0" }}</span>
+                                <span>Exams</span>
+                            </div>
+                            <div class="awaClass-profile-stat">
+                                <span class="awaClass-profile-stat-number">{{ avg_score|default:"0" }}%</span>
+                                <span>Avg Score</span>
+                            </div>
+                            <div class="awaClass-profile-stat">
+                                <span class="awaClass-profile-stat-number">{{ total_points|default:"0" }}</span>
+                                <span>Points</span>
+                            </div>
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="awaClass-profile-actions">
+                            {% if request.user == user %}
+                            <button class="awaClass-profile-btn" id="awaClassProfileOpenEditBtn">
+                                <i class="fas fa-pen" style="font-size:11px;"></i> Edit profile
+                            </button>
+                            <button class="awaClass-profile-more-btn" id="awaClassProfileMoreBtn">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            {% else %}
+                            <a href="{% url 'cbt_subjects' %}" class="awaClass-profile-btn awaClass-profile-btn-primary">
+                                <i class="fas fa-play" style="font-size:11px;"></i> Take Exam
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- Tabs -->
+                <nav class="awaClass-profile-tabs">
+                    <button data-tab="exams" class="awaClass-profile-tab awaClass-profile-tab-active" onclick="switchTab('exams', this)">
+                        <i class="fas fa-file-alt awaClass-profile-tab-icon"></i><span>Exams</span>
+                    </button>
+                    <button data-tab="subjects" class="awaClass-profile-tab" onclick="switchTab('subjects', this)">
+                        <i class="fas fa-book awaClass-profile-tab-icon"></i><span>Subjects</span>
+                    </button>
+                    <button data-tab="about" class="awaClass-profile-tab" onclick="switchTab('about', this)">
+                        <i class="fas fa-user awaClass-profile-tab-icon"></i><span>About</span>
+                    </button>
+                </nav>
+
+                <!-- ── Exams Tab ── -->
+                <div id="tab-exams" class="awa-exam-feed">
+                    {% if scores %}
+                        {% for score in scores %}
+                        {% with pct=score.percentage|default:0 %}
+                        <div class="awa-exam-item">
+                            <div class="awa-exam-subject-icon {% if score.subject.name == 'Mathematics' %}subj-math{% elif score.subject.name == 'English' %}subj-english{% elif score.subject.name == 'Physics' %}subj-physics{% elif score.subject.name == 'Chemistry' %}subj-chem{% elif score.subject.name == 'Biology' %}subj-bio{% elif score.subject.name == 'Government' %}subj-govt{% else %}subj-default{% endif %}">
+                                {% if score.subject.name == 'Mathematics' %}➕
+                                {% elif score.subject.name == 'English' %}📝
+                                {% elif score.subject.name == 'Physics' %}⚡
+                                {% elif score.subject.name == 'Chemistry' %}🧪
+                                {% elif score.subject.name == 'Biology' %}🧬
+                                {% elif score.subject.name == 'Government' %}⚖️
+                                {% else %}📚{% endif %}
+                            </div>
+                            <div class="awa-exam-info">
+                                <div class="awa-exam-title">{{ score.exam.title|default:score.subject.name }}</div>
+                                <div class="awa-exam-meta">
+                                    <span>{{ score.subject.name }}</span>
+                                    <span>·</span>
+                                    <span>{{ score.created_at|timesince }} ago</span>
+                                    <span>·</span>
+                                    <span>{{ score.total_questions }} Qs</span>
+                                </div>
+                                <div class="awa-score-track" style="margin-top:6px;">
+                                    <div class="awa-score-fill {% if pct >= 70 %}fill-high{% elif pct >= 50 %}fill-mid{% else %}fill-low{% endif %}"
+                                         style="width:{{ pct }}%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="awa-exam-score-badge {% if pct >= 70 %}score-high{% elif pct >= 50 %}score-mid{% else %}score-low{% endif %}">
+                                    {{ score.score }}/{{ score.total_questions }}
+                                </div>
+                                <div class="awa-exam-score-sub">{{ pct }}%</div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                        {% endfor %}
+                    {% else %}
+                    <div class="awa-empty">
+                        <span class="awa-empty-icon">📋</span>
+                        <h3>No exams yet</h3>
+                        <p>Exam results will appear here once taken.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- ── Subjects Tab ── -->
+                <div id="tab-subjects" style="display:none; background:var(--awaClass-white); min-height:200px;">
+                    {% if subject_summaries %}
+                    <div style="padding:12px 16px;">
+                        {% for s in subject_summaries %}
+                        {% with best=s.best_score total=s.total_questions %}
+                        <div style="margin-bottom:16px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <div class="awa-exam-subject-icon {% if s.name == 'Mathematics' %}subj-math{% elif s.name == 'English' %}subj-english{% elif s.name == 'Physics' %}subj-physics{% elif s.name == 'Chemistry' %}subj-chem{% elif s.name == 'Biology' %}subj-bio{% else %}subj-default{% endif %}">
+                                        {% if s.name == 'Mathematics' %}➕{% elif s.name == 'English' %}📝{% elif s.name == 'Physics' %}⚡{% elif s.name == 'Chemistry' %}🧪{% elif s.name == 'Biology' %}🧬{% else %}📚{% endif %}
+                                    </div>
+                                    <div>
+                                        <div style="font-size:14px;font-weight:600;color:var(--awaClass-text);">{{ s.name }}</div>
+                                        <div style="font-size:11.5px;color:var(--awaClass-gray);">{{ s.exams_taken }} exam{{ s.exams_taken|pluralize }}</div>
+                                    </div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:16px;font-weight:700;{% if s.avg_pct >= 70 %}color:#16a34a;{% elif s.avg_pct >= 50 %}color:#d97706;{% else %}color:#dc2626;{% endif %}">{{ s.avg_pct }}%</div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);">avg score</div>
+                                </div>
+                            </div>
+                            <div class="awa-score-track">
+                                <div class="awa-score-fill {% if s.avg_pct >= 70 %}fill-high{% elif s.avg_pct >= 50 %}fill-mid{% else %}fill-low{% endif %}"
+                                     style="width:{{ s.avg_pct }}%;"></div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="awa-empty">
+                        <span class="awa-empty-icon">📚</span>
+                        <h3>No subject data</h3>
+                        <p>Subject performance will appear once you take exams.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- ── About Tab ── -->
+                <div id="tab-about" style="display:none; background:var(--awaClass-white); min-height:200px; padding:20px 16px;">
+                    <div style="max-width:420px; margin:0 auto;">
+                        {% if profile.bio %}
+                        <div style="margin-bottom:20px;">
+                            <div style="font-size:11px;font-weight:700;color:var(--awaClass-gray);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Bio</div>
+                            <p style="font-size:14px;color:var(--awaClass-text);line-height:1.6;font-weight:300;">{{ profile.bio }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div style="display:flex;flex-direction:column;gap:14px;">
+                            {% if profile.location %}
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:var(--awaClass-border-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fas fa-map-marker-alt" style="color:var(--awaClass-gray);font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Location</div>
+                                    <div style="font-size:14px;font-weight:500;color:var(--awaClass-text);margin-top:1px;">{{ profile.location }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile.school %}
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fas fa-graduation-cap" style="color:#1d4ed8;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">School</div>
+                                    <div style="font-size:14px;font-weight:500;color:var(--awaClass-text);margin-top:1px;">{{ profile.school }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile.class_level %}
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#fdf4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fas fa-layer-group" style="color:#7e22ce;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Class</div>
+                                    <div style="font-size:14px;font-weight:500;color:var(--awaClass-text);margin-top:1px;">{{ profile.class_level }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile.specialization %}
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fas fa-flask" style="color:#15803d;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Specialization</div>
+                                    <div style="font-size:14px;font-weight:500;color:var(--awaClass-text);margin-top:1px;">{{ profile.specialization }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if profile.date_of_birth %}
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:#fff7ed;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fas fa-birthday-cake" style="color:#c2410c;font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Birthday</div>
+                                    <div style="font-size:14px;font-weight:500;color:var(--awaClass-text);margin-top:1px;">{{ profile.date_of_birth|date:"F j, Y" }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:36px;height:36px;border-radius:10px;background:var(--awaClass-border-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="far fa-calendar-alt" style="color:var(--awaClass-gray);font-size:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--awaClass-gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Member Since</div>
+                                    <div style="font-size:14px;font-weight:500;color:var(--awaClass-text);margin-top:1px;">{{ profile.created_at|date:"F Y" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+
+
+</div>
+
+<!-- ══ EDIT PROFILE MODAL ══ -->
+<div class="awaClass-profile-edit-overlay" id="awaClassProfileEditModal">
+    <div class="awaClass-profile-edit-modal">
+        <div class="awaClass-profile-edit-loading" id="awaClassProfileEditLoading">
+            <div class="awaClass-profile-edit-spinner"></div>
+        </div>
+
+        <div class="awaClass-profile-edit-header">
+            <button class="awaClass-profile-edit-close" id="awaClassProfileCloseEdit">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="awaClass-profile-edit-title">Edit Profile</h3>
+            <button class="awaClass-profile-edit-next active" id="awaClassProfileNextEditBtn">Done</button>
+        </div>
+
+        <div class="awaClass-profile-edit-body" id="awaClassProfileEditModalBody">
+            <div class="awaClass-profile-edit-messages" id="awaClassProfileEditMessages"></div>
+
+            <div class="awaClass-profile-edit-pic-section">
+                <div class="awaClass-profile-edit-pic-container" id="awaClassProfileEditPicContainer">
+                    <img src="{{ user.profile.picture.url }}"
+                         alt="Profile Picture"
+                         class="awaClass-profile-edit-pic"
+                         id="awaClassProfileEditPicture">
+                    <div class="awaClass-profile-edit-change-photo" id="editChangePhotoBtn">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <input type="file" name="image" id="awaClassProfileEditImageInput" style="display:none;" accept="image/*">
+            </div>
+
+            <form id="awaClassProfileEditForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="awaClass-profile-edit-form">
+
+                    <div class="awaClass-profile-edit-username-display">
+                        <span class="awaClass-profile-edit-username-label">Username</span>
+                        <span class="awaClass-profile-edit-username-value">@{{ user.username }}</span>
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editFirstName">First Name</label>
+                        <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditFirstName" name="fname"
+                               value="{{ user.first_name|default:'' }}" placeholder="First name" maxlength="50">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editLastName">Last Name</label>
+                        <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditLastName" name="lname"
+                               value="{{ user.last_name|default:'' }}" placeholder="Last name" maxlength="50">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editBio">Bio</label>
+                        <textarea class="awaClass-profile-edit-form-textarea" id="awaClassProfileEditBio" name="bio"
+                                  placeholder="Tell something about yourself" maxlength="300">{{ profile.bio|default:'' }}</textarea>
+                        <div style="font-size:11px;color:var(--awaClass-gray);text-align:right;margin-top:3px;" id="awaClassProfileBioCounter">0/300</div>
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editLocation">Location</label>
+                        <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditLocation" name="location"
+                               value="{{ profile.location|default:'' }}" placeholder="City, Country" maxlength="200">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editSchool">School / Institution</label>
+                        <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditSchool" name="school"
+                               value="{{ profile.school|default:'' }}" placeholder="Your school or institution" maxlength="200">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editClassLevel">Class / Level</label>
+                        <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditClassLevel" name="class_level"
+                               value="{{ profile.class_level|default:'' }}" placeholder="e.g. SS3, Year 12" maxlength="50">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editSpecialization">Specialization</label>
+                        <select class="awaClass-profile-edit-form-input" id="awaClassProfileEditSpecialization" name="specialization">
+                            <option value="">— Select —</option>
+                            <option value="Science"    {% if profile.specialization == 'Science'    %}selected{% endif %}>Science</option>
+                            <option value="Arts"       {% if profile.specialization == 'Arts'       %}selected{% endif %}>Arts</option>
+                            <option value="Commercial" {% if profile.specialization == 'Commercial' %}selected{% endif %}>Commercial</option>
+                        </select>
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editDob">Date of Birth</label>
+                        <input type="date" class="awaClass-profile-edit-form-input" id="awaClassProfileEditDob" name="date_of_birth"
+                               value="{{ profile.date_of_birth|date:'Y-m-d'|default:'' }}">
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="awaClass-profile-edit-footer">
+            <button type="button" class="awaClass-profile-edit-btn awaClass-profile-edit-btn-cancel" id="awaClassProfileCancelEditBtn">Cancel</button>
+            <button type="button" class="awaClass-profile-edit-btn awaClass-profile-edit-btn-save" id="awaClassProfileSaveEditBtn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ── Tab switching ── */
+function switchTab(name, btn) {
+    document.querySelectorAll('.awaClass-profile-tab').forEach(t => t.classList.remove('awaClass-profile-tab-active'));
+    btn.classList.add('awaClass-profile-tab-active');
+    ['exams','subjects','about'].forEach(t => {
+        var el = document.getElementById('tab-' + t);
+        if (el) el.style.display = (t === name) ? '' : 'none';
+    });
+}
+
+/* ── Mobile sheet ── */
+function awaClassCloseMobileSheet() {
+    document.getElementById('awaClassProfileSheetOverlay').classList.remove('active');
+    document.getElementById('awaClassProfileSheet').classList.remove('active');
+}
+function awaClassOpenMobileSheet() {
+    document.getElementById('awaClassProfileSheetOverlay').classList.add('active');
+    document.getElementById('awaClassProfileSheet').classList.add('active');
+}
+var moreBtn = document.getElementById('awaClassProfileMoreBtnMob');
+if (moreBtn) moreBtn.addEventListener('click', awaClassOpenMobileSheet);
+var moreBtnD = document.getElementById('awaClassProfileMoreBtn');
+if (moreBtnD) moreBtnD.addEventListener('click', awaClassOpenMobileSheet);
+
+/* ── Back button ── */
+var backBtn = document.getElementById('awaClassProfileBackBtn');
+if (backBtn) backBtn.addEventListener('click', function() { history.back(); });
+
+/* ── Scroll header ── */
+(function () {
+    var hdr = document.getElementById('awaClassProfileScrollHeader');
+    if (!hdr || window.innerWidth >= 768) return;
+    var hero = document.querySelector('.awaClass-profile-hero-card');
+    if (!hero) return;
+    window.addEventListener('scroll', function () {
+        var heroBottom = hero.getBoundingClientRect().bottom;
+        if (heroBottom <= 60) {
+            hdr.classList.add('visible');
+        } else {
+            hdr.classList.remove('visible');
+        }
+    }, { passive: true });
+})();
+
+/* ── Edit profile modal ── */
+(function () {
+    var overlay      = document.getElementById('awaClassProfileEditModal');
+    var closeBtn     = document.getElementById('awaClassProfileCloseEdit');
+    var cancelBtn    = document.getElementById('awaClassProfileCancelEditBtn');
+    var saveBtn      = document.getElementById('awaClassProfileSaveEditBtn');
+    var nextBtn      = document.getElementById('awaClassProfileNextEditBtn');
+    var openBtn      = document.getElementById('awaClassProfileOpenEditBtn');
+    var openBtnMob   = document.getElementById('awaClassProfileOpenEditBtnMob');
+    var picContainer = document.getElementById('awaClassProfileEditPicContainer');
+    var picInput     = document.getElementById('awaClassProfileEditImageInput');
+    var picImg       = document.getElementById('awaClassProfileEditPicture');
+    var bioInput     = document.getElementById('awaClassProfileEditBio');
+    var bioCounter   = document.getElementById('awaClassProfileBioCounter');
+    var messages     = document.getElementById('awaClassProfileEditMessages');
+
+    function openModal() {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (bioInput) updateBioCounter();
+    }
+    function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        if (messages) messages.innerHTML = '';
+    }
+    function updateBioCounter() {
+        if (bioInput && bioCounter) bioCounter.textContent = bioInput.value.length + '/300';
+    }
+
+    if (openBtn)    openBtn.addEventListener('click', openModal);
+    if (openBtnMob) openBtnMob.addEventListener('click', openModal);
+    if (closeBtn)   closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn)  cancelBtn.addEventListener('click', closeModal);
+    if (nextBtn)    nextBtn.addEventListener('click', saveProfile);
+    if (saveBtn)    saveBtn.addEventListener('click', saveProfile);
+    if (overlay)    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+    if (bioInput)   bioInput.addEventListener('input', updateBioCounter);
+
+    if (picContainer) picContainer.addEventListener('click', function() { if (picInput) picInput.click(); });
+    if (picInput) {
+        picInput.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(ev) { picImg.src = ev.target.result; };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function saveProfile() {
+        var form = document.getElementById('awaClassProfileEditForm');
+        if (!form) return;
+        var loading = document.getElementById('awaClassProfileEditLoading');
+        if (loading) loading.classList.add('active');
+        var fd = new FormData(form);
+        if (picInput && picInput.files[0]) fd.append('image', picInput.files[0]);
+
+        fetch('{% url "awa_edit_profile" %}', {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            if (loading) loading.classList.remove('active');
+            if (data.success) {
+                showMsg('Profile updated!', 'success');
+                setTimeout(function(){ closeModal(); location.reload(); }, 900);
+            } else {
+                showMsg(data.error || 'Could not save changes.', 'error');
+            }
+        })
+        .catch(function(){
+            if (loading) loading.classList.remove('active');
+            showMsg('Something went wrong. Please try again.', 'error');
+        });
+    }
+
+    function showMsg(text, type) {
+        if (!messages) return;
+        messages.innerHTML = '<div class="awaClass-profile-edit-alert awaClass-profile-alert-' + type + '">' + text + '</div>';
+    }
+})();
+
+/* ── Share profile ── */
+function shareProfile() {
+    var url = window.location.href;
+    var name = '{{ user.first_name|default:user.username }} {{ user.last_name }}'.trim();
+    if (navigator.share) {
+        navigator.share({ title: name + ' · awaClass', url: url });
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function() {
+            alert('Profile link copied!');
+        });
+    }
+}
+
+/* ── Score bar animation on load ── */
+window.addEventListener('load', function () {
+    document.querySelectorAll('.awa-score-fill').forEach(function(el) {
+        var w = el.style.width;
+        el.style.width = '0%';
+        setTimeout(function() { el.style.width = w; }, 200);
+    });
+});
+</script>
 
 {% include 'footer.html' %}
 </body>

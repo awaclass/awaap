@@ -174,22 +174,89 @@ def home(request):
 
 
 def profile(request, username):
-    user    = get_object_or_404(User, username=username)
-    profile = Profile.objects.get(user=user)
-    posts   = Post.objects.filter(author=user)
-    total_view = sum(p.view for p in posts)
+    from django.db.models import Max, Avg, Count, Sum
 
-    # ── CBT data for the profile page ──
+    user    = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    # ── CBT aggregates ────────────────────────────────────────────
     cbt_score, _ = CBTScore.objects.get_or_create(user=user)
-    recent_exams  = CBTExam.objects.filter(student=user)[:5]
+    all_exams     = CBTExam.objects.filter(student=user).order_by('-taken_at')
+
+    totals = all_exams.aggregate(
+        total_exams=Count('exam_id'),
+        avg_score=Avg('percentage'),
+        total_correct=Sum('score'),
+        total_questions=Sum('total'),
+        highest_score=Max('percentage'),
+    )
+
+    total_exams_taken  = totals['total_exams']  or 0
+    avg_score          = round(totals['avg_score'] or 0)
+    highest_score      = round(totals['highest_score'] or 0)
+    total_points       = cbt_score.points
+    subjects_attempted = all_exams.values('subject').distinct().count()
+
+    # ── Per-subject summary for the Subjects tab & sidebar ───────
+    subject_names = all_exams.values_list('subject', flat=True).distinct()
+    subject_summaries = []
+    for subj in subject_names:
+        subj_qs = all_exams.filter(subject=subj)
+        agg     = subj_qs.aggregate(
+            avg_pct=Avg('percentage'),
+            best_pct=Max('percentage'),
+            exams_taken=Count('exam_id'),
+        )
+        subject_summaries.append({
+            'name':        subj.capitalize(),
+            'avg_pct':     round(agg['avg_pct']  or 0),
+            'best_pct':    round(agg['best_pct'] or 0),
+            'exams_taken': agg['exams_taken'] or 0,
+        })
+    subject_summaries.sort(key=lambda x: x['avg_pct'], reverse=True)
+
+    # ── Leaderboard rank (overall points) ────────────────────────
+    best_rank = None
+    best_rank_subject = None
+    if total_points > 0:
+        higher = CBTScore.objects.filter(points__gt=total_points).count()
+        best_rank = higher + 1
+
+    # ── Recent exams for the Exams tab ───────────────────────────
+    scores = []
+    for ex in all_exams[:20]:
+        scores.append({
+            'subject':         type('_S', (), {'name': ex.subject.capitalize()})(),
+            'exam':            type('_E', (), {'title': f'{ex.subject.capitalize()} — {ex.score}/{ex.total}'})(),
+            'score':           ex.score,
+            'total_questions': ex.total,
+            'percentage':      ex.percentage,
+            'created_at':      ex.taken_at,
+            'grade':           ex.grade,
+        })
+
+    level_name, _ = _get_student_level(total_points)
 
     context = {
-        'user':         user,
-        'profile':      profile,
-        'videos':       posts,
-        'total_view':   total_view,
-        'cbt_score':    cbt_score,
-        'recent_exams': recent_exams,
+        'user':               user,
+        'profile':            profile,
+        # stats
+        'total_exams_taken':  total_exams_taken,
+        'avg_score':          avg_score,
+        'highest_score':      highest_score,
+        'total_points':       total_points,
+        'subjects_attempted': subjects_attempted,
+        # rank
+        'best_rank':          best_rank,
+        'best_rank_subject':  best_rank_subject,
+        # tabs
+        'scores':             scores,
+        'subject_summaries':  subject_summaries,
+        # level
+        'level_name':         level_name,
+        # legacy (keep existing templates happy)
+        'cbt_score':          cbt_score,
+        'recent_exams':       list(all_exams[:5]),
     }
     return render(request, 'profile.html', context)
 
@@ -202,20 +269,92 @@ def update_profile(request, username):
         lname   = request.POST.get('lname')
         bio     = request.POST.get('bio')
         phone   = request.POST.get('phone')
-        address = request.POST.get('address')
-        image   = request.FILES.get('image')
+        address        = request.POST.get('address')
+        location       = request.POST.get('location', '').strip()
+        school         = request.POST.get('school', '').strip()
+        class_level    = request.POST.get('class_level', '').strip()
+        specialization = request.POST.get('specialization', '').strip()
+        dob            = request.POST.get('date_of_birth', '').strip()
+        image          = request.FILES.get('image')
         if fname and lname:
             user.first_name = fname
             user.last_name  = lname
             user.save()
-        if bio:     profile.bio     = bio
-        if phone:   profile.phone   = phone
-        if address: profile.address = address
-        if image:   profile.picture = image
+        if bio:            profile.bio            = bio
+        if phone:          profile.phone          = phone
+        if address:        profile.address        = address
+        if location:       profile.location       = location
+        if school:         profile.school         = school
+        if class_level:    profile.class_level    = class_level
+        if specialization: profile.specialization = specialization
+        if image:          profile.picture        = image
+        if dob:
+            from datetime import date as date_type
+            try:
+                y, m, d = dob.split('-')
+                profile.date_of_birth = date_type(int(y), int(m), int(d))
+            except (ValueError, AttributeError):
+                pass
         profile.save()
         messages.info(request, 'Profile Updated')
         return redirect('profile', username=username)
     return render(request, 'updateprofile.html', {'profile': profile})
+
+
+@login_required
+@require_POST
+def edit_profile(request):
+    """
+    AJAX endpoint for the new profile page Edit Profile modal.
+    Accepts multipart/form-data: fname, lname, bio, location, school,
+    class_level, date_of_birth, image (file).
+    Returns JSON { success: true } or { success: false, error: '...' }.
+    """
+    user    = request.user
+    profile = user.profile
+
+    fname       = request.POST.get('fname', '').strip()
+    lname       = request.POST.get('lname', '').strip()
+    bio         = request.POST.get('bio', '').strip()
+    location    = request.POST.get('location', '').strip()
+    school         = request.POST.get('school', '').strip()
+    class_level    = request.POST.get('class_level', '').strip()
+    specialization = request.POST.get('specialization', '').strip()
+    dob            = request.POST.get('date_of_birth', '').strip()
+    image       = request.FILES.get('image')
+
+    try:
+        if fname:
+            user.first_name = fname
+        if lname:
+            user.last_name = lname
+        user.save()
+
+        if bio:
+            profile.bio = bio
+        if location:
+            profile.location = location
+        if image:
+            profile.picture = image
+
+        # Gracefully set optional fields only if they exist on the model
+        for attr, val in [('school', school), ('class_level', class_level), ('specialization', specialization)]:
+            if val and hasattr(profile, attr):
+                setattr(profile, attr, val)
+
+        if dob and hasattr(profile, 'date_of_birth'):
+            from datetime import date as date_type
+            try:
+                y, m, d = dob.split('-')
+                profile.date_of_birth = date_type(int(y), int(m), int(d))
+            except (ValueError, AttributeError):
+                pass
+
+        profile.save()
+        return JsonResponse({'success': True})
+
+    except Exception as exc:
+        return JsonResponse({'success': False, 'error': str(exc)}, status=400)
 
 
 def follow(request, username):

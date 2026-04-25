@@ -122,7 +122,9 @@
   <a href="{% url 'home' %}" class="ac-sidebar-brand">awaClass</a>
 
   <!-- Home -->
-  <a href="{% url 'home' %}" class="ac-sidebar-item active" title="Home">
+  <a href="{% url 'home' %}"
+     class="ac-sidebar-item{% if request.path == '/' %} active{% endif %}"
+     title="Home">
     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 12l9-9 9 9"/>
       <path d="M4 10v10h5v-5h6v5h5V10"/>
@@ -131,12 +133,41 @@
   </a>
 
   <!-- Search -->
-  <a href="{% url 'search' %}" class="ac-sidebar-item" title="Search">
+  <a href="{% url 'search' %}"
+     class="ac-sidebar-item{% if request.path == '/search/' %} active{% endif %}"
+     title="Search">
     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="11" cy="11" r="7"/>
       <line x1="21" y1="21" x2="16.65" y2="16.65"/>
     </svg>
     Search
+  </a>
+
+  <!-- Live Interactive Classes -->
+  <a href="{% url 'live_room_list' %}"
+     class="ac-sidebar-item{% if request.path == '/live-classes/' %} active{% endif %}"
+     title="Live Interactive Classes">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/>
+      <path d="M8 21h8M12 17v4"/>
+      <circle cx="17" cy="8" r="1.5" fill="currentColor" stroke="none"/>
+      <path d="M14.5 6.5C15.3 7.3 15.3 8.7 14.5 9.5"/>
+      <path d="M13 5C14.7 6.7 14.7 9.3 13 11"/>
+    </svg>
+    Live Classes
+  </a>
+
+  <!-- CBT Practice Exams -->
+  <a href="{% url 'cbt_subjects' %}"
+     class="ac-sidebar-item{% if request.path == '/cbt/' %} active{% endif %}"
+     title="CBT Practice Exams">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M8 9h8M8 13h5"/>
+      <circle cx="17" cy="14" r="2.5"/>
+      <path d="M19 16l1.5 1.5"/>
+    </svg>
+    CBT Practice Exams
   </a>
 
   <!-- Create -->
@@ -149,7 +180,9 @@
   </a>
 
   <!-- Profile -->
-  <a href="{% url 'profile' user.username %}" class="ac-sidebar-item" title="Profile">
+  <a href="{% url 'profile' user.username %}"
+     class="ac-sidebar-item{% if request.path == '/profile/' or '/profile/' in request.path %} active{% endif %}"
+     title="Profile">
     <img src="{{ user.profile.picture.url }}" alt="Profile" class="ac-sidebar-avatar">
     Profile
   </a>

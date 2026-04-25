@@ -23,6 +23,15 @@ class Profile(models.Model):
     address = models.CharField(max_length=200, blank=True)
     about = models.CharField(max_length=300, blank=True)
     location = models.CharField(max_length=300, blank=True)
+    school = models.CharField(max_length=200, blank=True)
+    class_level = models.CharField(max_length=50, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    SPECIALIZATION_CHOICES = [
+        ('Science',    'Science'),
+        ('Arts',       'Arts'),
+        ('Commercial', 'Commercial'),
+    ]
+    specialization = models.CharField(max_length=20, choices=SPECIALIZATION_CHOICES, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -38,6 +47,10 @@ class Profile(models.Model):
             self.address = self.address.title()
         if self.location:
             self.location = self.location.title()
+        if self.school:
+            self.school = self.school.title()
+        if self.class_level:
+            self.class_level = self.class_level.upper()
         self.user.save()
         super().save(*args, **kwargs)
 
