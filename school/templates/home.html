@@ -1121,6 +1121,21 @@
     });
   }
 
+  // ── leaderboard subject dropdown (handles both mobile + desktop cards) ──
+  document.querySelectorAll('.awaClass-leaderboard-card').forEach(function (card) {
+    var select = card.querySelector('[data-lb-select]');
+    if (!select) return;
+
+    select.addEventListener('change', function () {
+      var tab = this.value;
+      card.querySelectorAll('.awaClass-lb-panel').forEach(function (p) {
+        p.classList.remove('active');
+      });
+      var panel = card.querySelector('[data-lb-panel="' + tab + '"]');
+      if (panel) panel.classList.add('active');
+    });
+  });
+
   // ── event delegation for leaderboard items ───────────────────────
   document.addEventListener('click', function (e) {
     const item = e.target.closest('.awaClass-lb-item[data-username]');

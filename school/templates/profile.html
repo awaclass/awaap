@@ -158,6 +158,63 @@
       color: #0f0f0f;
     }
 
+    /* Additional details section */
+    .awaClass-profile-details-section {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .awaClass-profile-details-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .awaClass-profile-details-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .awaClass-detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .awaClass-detail-icon {
+      width: 28px;
+      color: #606060;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .awaClass-detail-label {
+      font-weight: 600;
+      color: #0f0f0f;
+      min-width: 70px;
+      flex-shrink: 0;
+    }
+
+    .awaClass-detail-value {
+      color: #3d3d3d;
+      word-break: break-word;
+    }
+
+    .awaClass-detail-value.empty {
+      color: #9ca3af;
+      font-style: italic;
+    }
+
     /* ══════════════════════════════════════════════════
        ACTION BUTTONS
     ══════════════════════════════════════════════════ */
@@ -354,122 +411,6 @@
     }
     .awaClass-cbt-cta:hover { opacity: 0.85; color: #fff; }
 
-    /* ══════════════════════════════════════════════════
-       POSTS GRID
-    ══════════════════════════════════════════════════ */
-    .awaClass-posts-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 480px) {
-      .awaClass-posts-grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    .awaClass-post-card {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
-      padding: 14px 13px;
-      text-decoration: none;
-      color: inherit;
-      transition: border-color 0.15s;
-    }
-    .awaClass-post-card:hover { border-color: #b0b0b0; }
-
-    .awaClass-post-subject-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      background: #f5f5f5;
-      border: 1px solid #e5e5e5;
-      color: #606060;
-      padding: 3px 8px;
-      border-radius: 4px;
-      width: fit-content;
-    }
-
-    .awaClass-post-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #0f0f0f;
-      margin: 0;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .awaClass-post-about {
-      font-size: 12px;
-      color: #606060;
-      margin: 0;
-      line-height: 1.5;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .awaClass-post-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: auto;
-      padding-top: 8px;
-      border-top: 1px solid #f3f4f6;
-    }
-
-    .awaClass-post-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 11px;
-      color: #9ca3af;
-    }
-    .awaClass-post-meta span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .awaClass-post-arrow {
-      font-size: 11px;
-      color: #9ca3af;
-      opacity: 0;
-      transform: translateX(-4px);
-      transition: all 0.15s;
-    }
-    .awaClass-post-card:hover .awaClass-post-arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* no posts */
-    .awaClass-no-posts {
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
-      padding: 36px 20px;
-      text-align: center;
-    }
-    .awaClass-no-posts i {
-      display: block;
-      font-size: 28px;
-      color: #d1d5db;
-      margin-bottom: 10px;
-    }
-    .awaClass-no-posts h3 { font-size: 14px; font-weight: 600; color: #3d3d3d; margin: 0 0 4px; }
-    .awaClass-no-posts p  { font-size: 12px; color: #9ca3af; margin: 0; }
-
   </style>
 </head>
 <body>
@@ -500,10 +441,6 @@
 
       <!-- follower / post / view stats -->
       <div class="awaClass-profile-stats">
-        <div class="awaClass-stat-item">
-          <span class="awaClass-stat-value">{{ videos|length }}</span>
-          <span class="awaClass-stat-label">Posts</span>
-        </div>
         <div class="awaClass-stat-item">
           <span class="awaClass-stat-value">{{ profile.follow.count }}</span>
           <span class="awaClass-stat-label">Followers</span>
@@ -542,6 +479,83 @@
     </div>
 
   </div>
+
+  <!-- ══════════════════════════════════════════
+       ADDITIONAL PROFILE DETAILS (About, Gender, etc.)
+  ══════════════════════════════════════════ -->
+  {% if profile.about or profile.gender or profile.bio or profile.phone or profile.location or profile.address %}
+  <div class="awaClass-profile-details-section">
+    <div class="awaClass-profile-details-title">
+      <i class="fa-solid fa-address-card"></i>
+      More about {{ user.first_name|default:user.username }}
+    </div>
+    <div class="awaClass-profile-details-grid">
+      {% if profile.about %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-regular fa-note-sticky"></i></div>
+        <div class="awaClass-detail-label">About</div>
+        <div class="awaClass-detail-value">{{ profile.about }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.gender %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-regular fa-user"></i></div>
+        <div class="awaClass-detail-label">Gender</div>
+        <div class="awaClass-detail-value">{{ profile.get_gender_display|default:profile.gender|capfirst }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.bio %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-regular fa-message"></i></div>
+        <div class="awaClass-detail-label">Bio</div>
+        <div class="awaClass-detail-value">{{ profile.bio }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.location %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="awaClass-detail-label">Location</div>
+        <div class="awaClass-detail-value">{{ profile.location }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.address %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-solid fa-house"></i></div>
+        <div class="awaClass-detail-label">Address</div>
+        <div class="awaClass-detail-value">{{ profile.address }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.phone %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-solid fa-phone"></i></div>
+        <div class="awaClass-detail-label">Phone</div>
+        <div class="awaClass-detail-value">{{ profile.phone }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.gender == 'other' and profile.gender %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-regular fa-circle"></i></div>
+        <div class="awaClass-detail-label">Gender</div>
+        <div class="awaClass-detail-value">{{ profile.gender }}</div>
+      </div>
+      {% endif %}
+      
+      {% if profile.created_at %}
+      <div class="awaClass-detail-item">
+        <div class="awaClass-detail-icon"><i class="fa-regular fa-calendar"></i></div>
+        <div class="awaClass-detail-label">Joined</div>
+        <div class="awaClass-detail-value">{{ profile.created_at|date:"F j, Y" }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
 
   <!-- ══════════════════════════════════════════
        ACTION BUTTONS
@@ -666,67 +680,6 @@
     {% endif %}
 
   </div>
-
-  <hr class="awaClass-divider">
-
-  <!-- ══════════════════════════════════════════
-       POSTS
-  ══════════════════════════════════════════ -->
-  <h2 class="awaClass-section-title">
-    <i class="fa-solid fa-table-cells" style="font-size:11px;"></i>
-    Posts
-  </h2>
-
-  {% if videos %}
-  <div class="awaClass-posts-grid">
-    {% for post in videos %}
-    <a href="{% url 'post_detail' post.post_id %}" class="awaClass-post-card">
-
-      {% if post.subject %}
-      <span class="awaClass-post-subject-badge">
-        {% if post.subject|lower == 'mathematics' %}📐
-        {% elif post.subject|lower == 'physics' %}⚡
-        {% elif post.subject|lower == 'english' %}📝
-        {% elif post.subject|lower == 'chemistry' %}🧪
-        {% else %}<i class="fa-solid fa-book"></i>{% endif %}
-        {{ post.subject }}
-      </span>
-      {% endif %}
-
-      <p class="awaClass-post-title">{{ post.title }}</p>
-
-      {% if post.about %}
-      <p class="awaClass-post-about">{{ post.about }}</p>
-      {% endif %}
-
-      <div class="awaClass-post-footer">
-        <div class="awaClass-post-meta">
-          <span><i class="fa-solid fa-heart"></i> {{ post.like.count|intcomma }}</span>
-          <span><i class="fa-solid fa-eye"></i> {{ post.view|intcomma }}</span>
-          <span>{{ post.created_at|naturaltime }}</span>
-        </div>
-        <i class="fa-solid fa-arrow-right awaClass-post-arrow"></i>
-      </div>
-
-    </a>
-    {% endfor %}
-  </div>
-
-  {% else %}
-
-  <div class="awaClass-no-posts">
-    <i class="fa-solid fa-inbox"></i>
-    <h3>No posts yet</h3>
-    <p>
-      {% if request.user == user %}
-        You haven't created any posts yet.
-      {% else %}
-        {{ user.username }} hasn't posted anything yet.
-      {% endif %}
-    </p>
-  </div>
-
-  {% endif %}
 
 </main>
 

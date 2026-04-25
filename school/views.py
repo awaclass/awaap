@@ -87,30 +87,90 @@ def _get_student_level(points):
         return ('Beginner', 1)
 
 
-def home(request):
-    # ── Top-5 students by CBT points ──────────────────────────────
+def _build_top_students_overall():
+    """Return top-5 students ranked by overall CBT points."""
     top_scores = (
         CBTScore.objects
         .select_related('user', 'user__profile')
         .filter(points__gt=0)
         .order_by('-points')[:5]
     )
-
-    top_students = []
+    result = []
     for position, score in enumerate(top_scores, start=1):
         level_name, level_num = _get_student_level(score.points)
-        top_students.append({
+        result.append({
             'position':   position,
             'user':       score.user,
             'profile':    score.user.profile,
             'points':     score.points,
-            'attempts':   score.total_attempts,
-            'best_score': score.best_score,
+            'stat_val':   score.points,
+            'stat_label': 'pts',
             'level_name': level_name,
             'level_num':  level_num,
         })
+    return result
 
-    return render(request, 'home.html', {'top_students': top_students})
+
+def _build_top_students_subject(subject):
+    """Return top-5 students for a specific subject ranked by best percentage."""
+    from django.db.models import Max
+    top_exams = (
+        CBTExam.objects
+        .filter(subject=subject)
+        .values('student')
+        .annotate(best_pct=Max('percentage'))
+        .order_by('-best_pct')[:5]
+    )
+    result = []
+    for position, entry in enumerate(top_exams, start=1):
+        try:
+            user    = User.objects.select_related('profile').get(pk=entry['student'])
+            profile = user.profile
+        except (User.DoesNotExist, Profile.DoesNotExist):
+            continue
+        try:
+            cbt_score = CBTScore.objects.get(user=user)
+            points    = cbt_score.points
+        except CBTScore.DoesNotExist:
+            points = 0
+        level_name, level_num = _get_student_level(points)
+        result.append({
+            'position':   position,
+            'user':       user,
+            'profile':    profile,
+            'points':     points,
+            'stat_val':   entry['best_pct'],
+            'stat_label': '%',
+            'level_name': level_name,
+            'level_num':  level_num,
+        })
+    return result
+
+
+def home(request):
+    top_students    = _build_top_students_overall()
+    top_mathematics = _build_top_students_subject('mathematics')
+    top_physics     = _build_top_students_subject('physics')
+    top_english     = _build_top_students_subject('english')
+    top_chemistry   = _build_top_students_subject('chemistry')
+    top_biology     = _build_top_students_subject('biology')
+    top_economics   = _build_top_students_subject('economics')
+    top_government  = _build_top_students_subject('government')
+    top_accounting  = _build_top_students_subject('accounting')
+    top_geography   = _build_top_students_subject('geography')
+
+    return render(request, 'home.html', {
+        'top_students':    top_students,
+        'top_mathematics': top_mathematics,
+        'top_physics':     top_physics,
+        'top_english':     top_english,
+        'top_chemistry':   top_chemistry,
+        'top_biology':     top_biology,
+        'top_economics':   top_economics,
+        'top_government':  top_government,
+        'top_accounting':  top_accounting,
+        'top_geography':   top_geography,
+    })
 
 
 def profile(request, username):

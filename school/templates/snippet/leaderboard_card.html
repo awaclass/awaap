@@ -1,72 +1,303 @@
 {% comment %}
   snippet/leaderboard_card.html
-  Leaderboard card — clicking a student row opens the score-details modal
-  instead of navigating to the profile page.
-  Requires: top_students context variable (set in home view).
+  Leaderboard with dropdown for Overall + 9 subjects.
+  Context vars: top_students, top_mathematics, top_physics, top_english,
+                top_chemistry, top_biology, top_economics, top_government,
+                top_accounting, top_geography
 {% endcomment %}
+
+{% comment %}-- macro: renders one panel's student list --{% endcomment %}
+{% with empty_msg="No results yet." %}
+
+<style>
+.awaClass-lb-filter { display: flex; align-items: center; }
+.awaClass-lb-select {
+  font-size: 11px; font-weight: 600; color: #606060;
+  background: #f5f5f5; border: 1px solid #e5e5e5; border-radius: 6px;
+  padding: 4px 22px 4px 8px; cursor: pointer; outline: none;
+  font-family: inherit; transition: border-color 0.15s;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23909090' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 7px center;
+}
+.awaClass-lb-select:focus { border-color: #f97316; }
+.awaClass-lb-panel { display: none; }
+.awaClass-lb-panel.active { display: block; }
+</style>
 
 <div class="awaClass-leaderboard-card">
 
-  <!-- Header -->
   <div class="awaClass-lb-header">
     <div class="awaClass-lb-header-left">
       <span class="awaClass-lb-icon">🏆</span>
       <h3>Leaderboard</h3>
     </div>
-    <span class="awaClass-lb-subtitle">Top students</span>
+    <div class="awaClass-lb-filter">
+      <select class="awaClass-lb-select" data-lb-select>
+        <option value="overall">Overall</option>
+        <optgroup label="Core">
+          <option value="mathematics">Mathematics</option>
+          <option value="physics">Physics</option>
+          <option value="english">English</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="biology">Biology</option>
+          <option value="economics">Economics</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option value="government">Government</option>
+          <option value="accounting">Accounting</option>
+          <option value="geography">Geography</option>
+        </optgroup>
+      </select>
+    </div>
   </div>
 
-  <!-- List -->
-  <ul class="awaClass-lb-list">
+  {% comment %}-- helper template tag for a single row --{% endcomment %}
 
-    {% if top_students %}
+  <!-- OVERALL -->
+  <div class="awaClass-lb-panel active" data-lb-panel="overall">
+    <ul class="awaClass-lb-list">
       {% for student in top_students %}
-      {# Each row is a <li> with data-username; JS picks it up and shows the modal #}
-      <li class="awaClass-lb-item"
-          data-username="{{ student.user.username }}"
-          role="button"
-          tabindex="0"
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
           title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
           onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
-
-        <!-- Position badge -->
         <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
-
-        <!-- Avatar -->
-        <img
-          src="{{ student.profile.get_picture_url }}"
-          alt="{{ student.user.username }}"
-          class="awaClass-lb-avatar"
-          loading="lazy">
-
-        <!-- Name + Level -->
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
         <div class="awaClass-lb-info">
-          <p class="awaClass-lb-name">
-            {{ student.user.get_full_name|default:student.user.username }}
-          </p>
-          <span class="awaClass-lb-level lvl-{{ student.level_num }}">
-            {{ student.level_name }}
-          </span>
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
         </div>
-
-        <!-- Points -->
         <div class="awaClass-lb-points">
-          <span class="awaClass-lb-pts-val">{{ student.points }}</span>
-          <span class="awaClass-lb-pts-label">pts</span>
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
         </div>
-
       </li>
-      {% endfor %}
-
-    {% else %}
+      {% empty %}
       <li class="awaClass-lb-empty">No students yet. Be the first!</li>
-    {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
 
-  </ul>
+  <!-- MATHEMATICS -->
+  <div class="awaClass-lb-panel" data-lb-panel="mathematics">
+    <ul class="awaClass-lb-list">
+      {% for student in top_mathematics %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Mathematics results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
 
-  <!-- Footer -->
+  <!-- PHYSICS -->
+  <div class="awaClass-lb-panel" data-lb-panel="physics">
+    <ul class="awaClass-lb-list">
+      {% for student in top_physics %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Physics results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- ENGLISH -->
+  <div class="awaClass-lb-panel" data-lb-panel="english">
+    <ul class="awaClass-lb-list">
+      {% for student in top_english %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No English results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- CHEMISTRY -->
+  <div class="awaClass-lb-panel" data-lb-panel="chemistry">
+    <ul class="awaClass-lb-list">
+      {% for student in top_chemistry %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Chemistry results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- BIOLOGY -->
+  <div class="awaClass-lb-panel" data-lb-panel="biology">
+    <ul class="awaClass-lb-list">
+      {% for student in top_biology %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Biology results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- ECONOMICS -->
+  <div class="awaClass-lb-panel" data-lb-panel="economics">
+    <ul class="awaClass-lb-list">
+      {% for student in top_economics %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Economics results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- GOVERNMENT -->
+  <div class="awaClass-lb-panel" data-lb-panel="government">
+    <ul class="awaClass-lb-list">
+      {% for student in top_government %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Government results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- ACCOUNTING -->
+  <div class="awaClass-lb-panel" data-lb-panel="accounting">
+    <ul class="awaClass-lb-list">
+      {% for student in top_accounting %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Accounting results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- GEOGRAPHY -->
+  <div class="awaClass-lb-panel" data-lb-panel="geography">
+    <ul class="awaClass-lb-list">
+      {% for student in top_geography %}
+      <li class="awaClass-lb-item" data-username="{{ student.user.username }}" role="button" tabindex="0"
+          title="View {{ student.user.get_full_name|default:student.user.username }}'s scores"
+          onkeydown="if(event.key==='Enter'||event.key===' '){this.click();}">
+        <span class="awaClass-lb-pos pos-{{ student.position }}">{{ student.position }}</span>
+        <img src="{{ student.profile.get_picture_url }}" alt="{{ student.user.username }}" class="awaClass-lb-avatar" loading="lazy">
+        <div class="awaClass-lb-info">
+          <p class="awaClass-lb-name">{{ student.user.get_full_name|default:student.user.username }}</p>
+          <span class="awaClass-lb-level lvl-{{ student.level_num }}">{{ student.level_name }}</span>
+        </div>
+        <div class="awaClass-lb-points">
+          <span class="awaClass-lb-pts-val">{{ student.stat_val }}</span>
+          <span class="awaClass-lb-pts-label">{{ student.stat_label }}</span>
+        </div>
+      </li>
+      {% empty %}
+      <li class="awaClass-lb-empty">No Geography results yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
   <div class="awaClass-lb-footer">
     <a href="{% url 'cbt_subjects' %}">Take an Exam →</a>
   </div>
 
 </div>
+
+{% endwith %}
