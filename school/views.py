@@ -487,25 +487,64 @@ def user_logout(request):
 
 @login_required
 def live_room_list(request):
-    active_sessions = LiveSession.objects.filter(is_active=True).order_by('-created_at')
-    return render(request, 'live_room_list.html', {'sessions': active_sessions})
+    from django.utils import timezone as tz
+    active_sessions   = LiveSession.objects.filter(is_active=True).order_by('-created_at')
+    upcoming_sessions = LiveSession.objects.filter(is_active=False, scheduled_at__gt=tz.now()).order_by('scheduled_at')
+    return render(request, 'live_room_list.html', {
+        'sessions':  active_sessions,
+        'upcoming':  upcoming_sessions,
+    })
 
 
 @login_required
 def create_live_room(request):
     if request.method == 'POST':
-        title     = request.POST.get('title')
-        room_name = str(uuid.uuid4())[:8]
-        if title:
-            session = LiveSession.objects.create(
-                room_name=room_name, title=title,
-                created_by=request.user, is_active=True
-            )
-            messages.success(request, f'Live room "{title}" created successfully!')
-            return redirect('live_room', room_name=room_name)
-        else:
+        from django.utils import timezone as tz
+        from django.utils.dateparse import parse_datetime
+
+        title       = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        scheduled   = request.POST.get('scheduled_at', '').strip()
+        room_name   = str(uuid.uuid4())[:8]
+        is_ajax     = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+        if not title:
+            if is_ajax:
+                return JsonResponse({'ok': False, 'error': 'Please provide a title.'}, status=400)
             messages.error(request, 'Please provide a title for your live session')
-    return render(request, 'create_live_room.html')
+            return redirect('live_room_list')
+
+        scheduled_dt = None
+        if scheduled:
+            scheduled_dt = parse_datetime(scheduled)
+            if scheduled_dt and scheduled_dt.tzinfo is None:
+                scheduled_dt = tz.make_aware(scheduled_dt)
+
+        is_immediate = scheduled_dt is None or scheduled_dt <= tz.now()
+
+        session = LiveSession.objects.create(
+            room_name=room_name,
+            title=title,
+            description=description,
+            created_by=request.user,
+            is_active=is_immediate,
+            scheduled_at=scheduled_dt if not is_immediate else None,
+        )
+
+        if is_ajax:
+            if is_immediate:
+                return JsonResponse({'ok': True, 'redirect': f'/live/{room_name}/'})
+            return JsonResponse({'ok': True, 'scheduled': True,
+                                 'title': session.title,
+                                 'scheduled_at': scheduled_dt.strftime('%d %b %Y, %I:%M %p')})
+
+        if is_immediate:
+            messages.success(request, f'Live room "{title}" created!')
+            return redirect('live_room', room_name=room_name)
+        messages.success(request, f'"{title}" scheduled for {scheduled_dt.strftime("%d %b %Y, %I:%M %p")}.')
+        return redirect('live_room_list')
+
+    return redirect('live_room_list')
 
 
 @login_required
@@ -532,6 +571,18 @@ def end_live_room(request, room_name):
     session.save()
     messages.success(request, 'Live session ended successfully')
     return redirect('live_room_list')
+
+
+@login_required
+def start_live_room(request, room_name):
+    """Host manually activates a scheduled session."""
+    session = get_object_or_404(LiveSession, room_name=room_name, created_by=request.user)
+    if not session.is_active:
+        session.is_active    = True
+        session.scheduled_at = None
+        session.save()
+        messages.success(request, f'"{session.title}" is now live!')
+    return redirect('live_room', room_name=room_name)
 
 
 # ── CBT Exam Views ───────────────────────────────────────────────

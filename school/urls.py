@@ -36,6 +36,7 @@ urlpatterns = [
     path('live/create/', views.create_live_room, name='create_live_room'),
     path('live/<str:room_name>/', views.live_room, name='live_room'),
     path('live/<str:room_name>/end/', views.end_live_room, name='end_live_room'),
+    path('live/<str:room_name>/start/', views.start_live_room, name='start_live_room'),
 
     # profile must stay LAST – catches any remaining <str:username>
     path('edit-profile/', views.edit_profile, name='awa_edit_profile'),

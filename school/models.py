@@ -191,8 +191,10 @@ class LiveSession(models.Model):
     session_id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     room_name = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=300)
+    description = models.CharField(max_length=500, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_sessions')
     created_at = models.DateTimeField(auto_now_add=True)
+    scheduled_at = models.DateTimeField(null=True, blank=True)  # None = start immediately
     is_active = models.BooleanField(default=True)
     max_participants = models.IntegerField(default=50)
 
@@ -206,6 +208,11 @@ class LiveSession(models.Model):
     def host(self):
         """Alias so templates can use {{ session.host }} interchangeably with created_by."""
         return self.created_by
+
+    @property
+    def is_scheduled(self):
+        """True when the session was created for a future date/time."""
+        return self.scheduled_at is not None
 
 
 class LiveParticipant(models.Model):

@@ -1,11 +1,11 @@
 from pathlib import Path
 import os
 import dj_database_url
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 import cloudinary
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-#load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.getenv("SECRET_KEY") 
 DEBUG = os.getenv("DEBUG", 'False') == 'True'  # Convert string to boolean

@@ -46,8 +46,7 @@
       font-size: 32px;
       font-weight: 800;
       color: white;
-      margin-bottom: 32px;
-      box-shadow: 0 8px 24px rgba(249,115,22,0.25);
+      margin: 0 auto 32px;
     }
     /* ══════════════════════════════════════════════════
        TWO-PANEL LAYOUT
@@ -90,7 +89,6 @@
       border-radius: 18px;
       object-fit: cover;
       margin-bottom: 32px;
-      box-shadow: 0 8px 24px rgba(249,115,22,0.20);
     }
 
     .awaClass-hero-tag {
@@ -193,7 +191,6 @@
       margin-bottom: 4px;
       text-align: center;
     }
-    @media (min-width: 860px) { .awaClass-form-title { text-align: left; } }
 
     .awaClass-form-subtitle {
       font-size: 14px;
@@ -201,7 +198,6 @@
       margin-bottom: 32px;
       text-align: center;
     }
-    @media (min-width: 860px) { .awaClass-form-subtitle { text-align: left; } }
 
     /* ── Messages ── */
     .awaClass-messages { margin-bottom: 20px; }
@@ -237,13 +233,12 @@
       border: 1.5px solid var(--awaClass-border);
       border-radius: 10px;
       color: var(--awaClass-text);
-      transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+      transition: border-color 0.18s, background 0.18s;
     }
     .awaClass-input:focus {
       outline: none;
       border-color: var(--awaClass-primary);
       background: var(--awaClass-bg);
-      box-shadow: 0 0 0 3px rgba(249,115,22,0.10);
     }
     .awaClass-input::placeholder { color: #a8a29e; }
 
@@ -273,17 +268,15 @@
       font-family: inherit;
       cursor: pointer;
       margin-top: 6px;
-      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
-      box-shadow: 0 4px 14px rgba(249,115,22,0.28);
+      transition: background 0.18s, transform 0.12s;
       letter-spacing: 0.01em;
     }
     .awaClass-btn-primary:hover {
       background: var(--awaClass-primary-dk);
-      box-shadow: 0 6px 20px rgba(249,115,22,0.36);
       transform: translateY(-1px);
     }
     .awaClass-btn-primary:active { transform: translateY(0); }
-    .awaClass-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .awaClass-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
     /* ── Forgot ── */
     .awaClass-forgot {
