@@ -53,6 +53,129 @@
     }
 
     /* ══════════════════════════════════════════════════
+       FEATURE CARDS ROW
+    ══════════════════════════════════════════════════ */
+    .awaClass-feature-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .awaClass-feature-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 18px 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+      overflow: hidden;
+    }
+    .awaClass-feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.08;
+      transition: opacity 0.18s;
+      pointer-events: none;
+    }
+    .awaClass-feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    }
+    .awaClass-feature-card:hover::before { opacity: 0.14; }
+
+    /* Syllabus card */
+    .awaClass-feature-card--syllabus {
+      background: #fff8f0;
+      border-color: #fed7aa;
+    }
+    .awaClass-feature-card--syllabus::before {
+      background: radial-gradient(circle at top right, #f97316, transparent 70%);
+    }
+    .awaClass-feature-card--syllabus:hover { border-color: #f97316; }
+
+    /* CBT card */
+    .awaClass-feature-card--cbt {
+      background: #f0f7ff;
+      border-color: #bfdbfe;
+      text-decoration: none;
+      color: inherit;
+    }
+    .awaClass-feature-card--cbt::before {
+      background: radial-gradient(circle at top right, #3b82f6, transparent 70%);
+    }
+    .awaClass-feature-card--cbt:hover { border-color: #3b82f6; }
+
+    /* Group chat card */
+    .awaClass-feature-card--chat {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      text-decoration: none;
+      color: inherit;
+    }
+    .awaClass-feature-card--chat::before {
+      background: radial-gradient(circle at top right, #22c55e, transparent 70%);
+    }
+    .awaClass-feature-card--chat:hover { border-color: #22c55e; }
+
+    .awaClass-feature-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .awaClass-feature-card--syllabus .awaClass-feature-icon { background: #ffedd5; }
+    .awaClass-feature-card--cbt      .awaClass-feature-icon { background: #dbeafe; }
+    .awaClass-feature-card--chat     .awaClass-feature-icon { background: #dcfce7; }
+
+    .awaClass-feature-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 2px;
+      line-height: 1.3;
+    }
+    .awaClass-feature-sub {
+      font-size: 12px;
+      color: var(--awaClass-text-light, #606060);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .awaClass-feature-arrow {
+      margin-top: auto;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .awaClass-feature-card--syllabus .awaClass-feature-arrow { color: #f97316; }
+    .awaClass-feature-card--cbt      .awaClass-feature-arrow { color: #3b82f6; }
+    .awaClass-feature-card--chat     .awaClass-feature-arrow { color: #22c55e; }
+
+    /* ══════════════════════════════════════════════════
+       SECTION DIVIDER
+    ══════════════════════════════════════════════════ */
+    .awaClass-section-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--awaClass-text-light, #606060);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+
+    /* ══════════════════════════════════════════════════
        VIDEO GRID
     ══════════════════════════════════════════════════ */
     .awaClass-videos-grid {
@@ -177,12 +300,282 @@
     }
 
     /* ══════════════════════════════════════════════════
+       SYLLABUS MODAL
+    ══════════════════════════════════════════════════ */
+    .awaClass-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s;
+    }
+    .awaClass-modal-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (min-width: 640px) {
+      .awaClass-modal-backdrop {
+        align-items: center;
+      }
+    }
+
+    .awaClass-modal {
+      background: #fff;
+      width: 100%;
+      max-width: 680px;
+      max-height: 92vh;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(40px);
+      transition: transform 0.26s cubic-bezier(0.34, 1.1, 0.64, 1);
+    }
+    @media (min-width: 640px) {
+      .awaClass-modal {
+        border-radius: 20px;
+        max-height: 86vh;
+        transform: translateY(20px) scale(0.97);
+      }
+    }
+    .awaClass-modal-backdrop.is-open .awaClass-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .awaClass-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      flex-shrink: 0;
+    }
+    .awaClass-modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .awaClass-modal-title-icon {
+      width: 36px; height: 36px;
+      background: #ffedd5;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .awaClass-modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 1px;
+    }
+    .awaClass-modal-subtitle {
+      font-size: 12px;
+      color: #606060;
+      margin: 0;
+    }
+    .awaClass-modal-close {
+      width: 32px; height: 32px;
+      border: none; background: #f5f5f5;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      color: #606060;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .awaClass-modal-close:hover { background: #e5e5e5; }
+
+    .awaClass-modal-body {
+      overflow-y: auto;
+      padding: 20px;
+      flex: 1;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Topic tabs */
+    .awaClass-syl-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .awaClass-syl-tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid #e5e5e5;
+      background: #fafafa;
+      cursor: pointer;
+      color: #606060;
+      transition: all 0.15s;
+    }
+    .awaClass-syl-tab.active, .awaClass-syl-tab:hover {
+      background: #f97316;
+      border-color: #f97316;
+      color: #fff;
+    }
+
+    /* Topic sections */
+    .awaClass-syl-section { display: none; }
+    .awaClass-syl-section.active { display: block; }
+
+    .awaClass-syl-topic {
+      margin-bottom: 18px;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .awaClass-syl-topic-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #fafafa;
+      cursor: pointer;
+      user-select: none;
+    }
+    .awaClass-syl-topic-num {
+      width: 26px; height: 26px;
+      background: #f97316;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .awaClass-syl-topic-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f0f0f;
+      flex: 1;
+    }
+    .awaClass-syl-topic-chevron {
+      font-size: 12px;
+      color: #909090;
+      transition: transform 0.2s;
+    }
+    .awaClass-syl-topic.open .awaClass-syl-topic-chevron {
+      transform: rotate(180deg);
+    }
+    .awaClass-syl-topic-body {
+      display: none;
+      padding: 10px 14px 14px 50px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .awaClass-syl-topic.open .awaClass-syl-topic-body { display: block; }
+    .awaClass-syl-topic-body ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .awaClass-syl-topic-body li {
+      font-size: 13px;
+      color: #404040;
+      padding: 5px 0;
+      border-bottom: 1px solid #f5f5f5;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      line-height: 1.45;
+    }
+    .awaClass-syl-topic-body li:last-child { border-bottom: none; }
+    .awaClass-syl-topic-body li::before {
+      content: '◆';
+      font-size: 7px;
+      color: #f97316;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    /* Objective callout pill inside topic body */
+    .awaClass-syl-objective {
+      font-size: 12px;
+      color: #7c3a00;
+      background: #fff7ed;
+      border-left: 3px solid #f97316;
+      border-radius: 0 8px 8px 0;
+      padding: 7px 10px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    /* Recommended texts section */
+    .awaClass-syl-texts {
+      margin-top: 4px;
+    }
+    .awaClass-syl-texts-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .awaClass-syl-texts ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .awaClass-syl-texts li {
+      font-size: 12.5px;
+      color: #404040;
+      padding: 4px 0;
+      line-height: 1.5;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .awaClass-syl-texts li:last-child { border-bottom: none; }
+
+    .awaClass-modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid #f0f0f0;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .awaClass-modal-footer-note {
+      font-size: 12px;
+      color: #909090;
+    }
+    .awaClass-modal-cta {
+      padding: 9px 18px;
+      background: #f97316;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .awaClass-modal-cta:hover { background: #ea6c0a; }
+
+    /* ══════════════════════════════════════════════════
        MOBILE  ≤ 640px  →  HORIZONTAL LIST LAYOUT
     ══════════════════════════════════════════════════ */
     @media (max-width: 640px) {
 
       .awaClass-feed-page {
         padding: 12px 12px 48px;
+      }
+
+      .awaClass-feature-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
       }
 
       /* Switch grid → single-column flex list */
@@ -229,16 +622,14 @@
         flex: 1;
         min-width: 0;
         padding-right: 4px;
-        /* Remove the avatar — inline with thumb layout */
         align-items: flex-start;
       }
 
-      /* Hide avatar on mobile (thumbnail is the visual anchor) */
+      /* Hide avatar on mobile */
       .awaClass-card-avatar {
         display: none;
       }
 
-      /* Meta takes full width of the info col */
       .awaClass-card-meta {
         width: 100%;
       }
@@ -258,7 +649,6 @@
         flex-wrap: wrap;
       }
 
-      /* Serial number badge (added via counter) */
       .awaClass-videos-grid {
         counter-reset: video-item;
       }
@@ -295,6 +685,44 @@
       <p>Watch lessons, practice problems and more</p>
     </div>
   </div>
+
+  <!-- ── Feature cards row ── -->
+  <div class="awaClass-feature-row">
+
+    <!-- Syllabus card -->
+    <button class="awaClass-feature-card awaClass-feature-card--syllabus" onclick="openSyllabusModal()" aria-label="View Syllabus">
+      <div class="awaClass-feature-icon">📋</div>
+      <div>
+        <p class="awaClass-feature-label">Syllabus</p>
+        <p class="awaClass-feature-sub">JAMB UTME 2026 curriculum</p>
+      </div>
+      <span class="awaClass-feature-arrow">View <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </button>
+
+    <!-- CBT Exam card -->
+    <a href="{% url 'cbt_exam' %}" class="awaClass-feature-card awaClass-feature-card--cbt">
+      <div class="awaClass-feature-icon">🎯</div>
+      <div>
+        <p class="awaClass-feature-label">CBT Exam</p>
+        <p class="awaClass-feature-sub">Practice past questions</p>
+      </div>
+      <span class="awaClass-feature-arrow">Start <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </a>
+
+    <!-- Group Chat card -->
+    <a href="{% url 'live_room_list' %}" class="awaClass-feature-card awaClass-feature-card--chat">
+      <div class="awaClass-feature-icon">💬</div>
+      <div>
+        <p class="awaClass-feature-label">Group Chat</p>
+        <p class="awaClass-feature-sub">Study with classmates</p>
+      </div>
+      <span class="awaClass-feature-arrow">Join <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </a>
+
+  </div>
+
+  <!-- Videos section label -->
+  <p class="awaClass-section-label">Video Lessons</p>
 
   <!-- Videos grid -->
   <div class="awaClass-videos-grid">
@@ -344,6 +772,516 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════
+     SYLLABUS MODAL
+══════════════════════════════════════════════════ -->
+<div class="awaClass-modal-backdrop" id="awaClass-syllabus-modal" role="dialog" aria-modal="true" aria-label="Mathematics Syllabus">
+  <div class="awaClass-modal">
+
+    <!-- Header -->
+    <div class="awaClass-modal-header">
+      <div class="awaClass-modal-title-wrap">
+        <div class="awaClass-modal-title-icon">📋</div>
+        <div>
+          <p class="awaClass-modal-title">Mathematics Syllabus</p>
+          <p class="awaClass-modal-subtitle">JAMB UTME 2026 · Nigeria</p>
+        </div>
+      </div>
+      <button class="awaClass-modal-close" onclick="closeSyllabusModal()" aria-label="Close">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div class="awaClass-modal-body">
+
+      <!-- Tabs -->
+      <div class="awaClass-syl-tabs">
+        <button class="awaClass-syl-tab active" onclick="switchSylTab(this,'syl-number')">Number &amp; Numeration</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this,'syl-algebra')">Algebra</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this,'syl-geometry')">Geometry / Trig</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this,'syl-calculus')">Calculus</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this,'syl-statistics')">Statistics</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this,'syl-texts')">📚 Texts</button>
+      </div>
+
+      <!-- ── Number & Numeration ── -->
+      <div class="awaClass-syl-section active" id="syl-number">
+
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Number Bases</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Perform four basic operations (×, +, −, ÷); convert one base to another.</div>
+            <ul>
+              <li>Operations in different number bases from 2 to 10</li>
+              <li>Conversion from one base to another including fractional parts</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Fractions, Decimals, Approximations &amp; Percentages</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Perform basic operations on fractions and decimals; express to specified significant figures/decimal places; calculate simple interest, profit/loss percent, ratio, proportion and rate; solve problems involving shares and VAT.</div>
+            <ul>
+              <li>Fractions and decimals</li>
+              <li>Significant figures and decimal places</li>
+              <li>Percentage errors</li>
+              <li>Simple interest; profit and loss percent</li>
+              <li>Ratio, proportion and rate</li>
+              <li>Shares and Value Added Tax (VAT)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Indices, Logarithms &amp; Surds</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Apply laws of indices; establish the relationship between indices and logarithms; solve problems in different bases in logarithms; simplify and rationalize surds; perform basic operations on surds.</div>
+            <ul>
+              <li>Laws of indices</li>
+              <li>Standard form (scientific notation)</li>
+              <li>Laws of logarithm</li>
+              <li>Logarithm of any positive number to a given base</li>
+              <li>Change of bases in logarithm and applications</li>
+              <li>Relationship between indices and logarithm</li>
+              <li>Surds — simplification, rationalization and basic operations</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Sets</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify types of sets; solve problems involving cardinality; solve set problems using symbols; use Venn diagrams for not more than 3 sets.</div>
+            <ul>
+              <li>Types of sets: empty, universal, complements, subsets, finite, infinite and disjoint sets</li>
+              <li>Algebra of sets — union, intersection, complement</li>
+              <li>Cardinality of sets</li>
+              <li>Venn diagrams and their applications (up to 3 sets)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-number -->
+
+      <!-- ── Algebra ── -->
+      <div class="awaClass-syl-section" id="syl-algebra">
+
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Polynomials</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Find subject of formula; apply factor and remainder theorems; multiply and divide polynomials (degree ≤ 3); factorize by regrouping, difference of two squares, perfect squares and cubics; solve simultaneous equations (one linear, one quadratic); interpret graphs of polynomials including maxima and minima.</div>
+            <ul>
+              <li>Change of subject of formula</li>
+              <li>Factor and remainder theorems</li>
+              <li>Factorisation of polynomials of degree not exceeding 3</li>
+              <li>Multiplication and division of polynomials</li>
+              <li>Roots of polynomials not exceeding degree 3</li>
+              <li>Simultaneous equations — one linear, one quadratic</li>
+              <li>Graphs of polynomials of degree not greater than 3</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Variation</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving direct, inverse, joint and partial variations; solve problems on percentage increase and decrease in variation.</div>
+            <ul>
+              <li>Direct variation</li>
+              <li>Inverse variation</li>
+              <li>Joint variation</li>
+              <li>Partial variation</li>
+              <li>Percentage increase and decrease</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Inequalities</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems on linear and quadratic inequalities; interpret graphs of inequalities.</div>
+            <ul>
+              <li>Analytical and graphical solutions of linear inequalities</li>
+              <li>Quadratic inequalities with integral roots only</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Progression (AP &amp; GP)</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine the nth term of a progression; compute the sum of AP and GP; find sum to infinity of a given GP.</div>
+            <ul>
+              <li>nth term of a progression</li>
+              <li>Sum of Arithmetic Progression (AP)</li>
+              <li>Sum of Geometric Progression (GP) and sum to infinity</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">5</span>
+            <span class="awaClass-syl-topic-name">Binary Operations</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving closure, commutativity, associativity and distributivity; solve problems involving identity and inverse elements.</div>
+            <ul>
+              <li>Properties of closure, commutativity, associativity and distributivity</li>
+              <li>Identity and inverse elements (simple cases only)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">6</span>
+            <span class="awaClass-syl-topic-name">Matrices &amp; Determinants</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Perform basic operations (×, +, −, ÷) on matrices; calculate determinants; compute inverses of 2×2 matrices.</div>
+            <ul>
+              <li>Algebra of matrices not exceeding 3×3</li>
+              <li>Determinants of matrices not exceeding 3×3</li>
+              <li>Inverses of 2×2 matrices (excluding quadratic and higher degree equations)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-algebra -->
+
+      <!-- ── Geometry ── -->
+      <div class="awaClass-syl-section" id="syl-geometry">
+
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Euclidean Geometry</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify various types of lines and angles; solve problems involving polygons; calculate angles using circle theorems; identify construction procedures of special angles (30°, 45°, 60°, 75°, 90°, etc.).</div>
+            <ul>
+              <li>Properties of angles and lines</li>
+              <li>Polygons: triangles, quadrilaterals and general polygons</li>
+              <li>Circles: angle properties, cyclic quadrilaterals and intersecting chords</li>
+              <li>Construction of special angles</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Mensuration</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate perimeters and areas of triangles, quadrilaterals, circles and composites; find arc length, chord, perimeters and areas of sectors/segments; calculate total surface areas and volumes of cuboids, cylinders, cones, pyramids, prisms, spheres and composites; determine distance between two points on Earth's surface.</div>
+            <ul>
+              <li>Lengths and areas of plane geometrical figures</li>
+              <li>Lengths of arcs and chords of a circle</li>
+              <li>Perimeters and areas of sectors and segments of circles</li>
+              <li>Surface areas and volumes of simple solids and composite figures</li>
+              <li>The earth as a sphere — longitudes and latitudes</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Loci</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify and interpret loci relating to parallel lines, perpendicular bisectors, angle bisectors and circles.</div>
+            <ul>
+              <li>Locus in 2 dimensions based on geometric principles relating to lines and curves</li>
+              <li>Loci for parallel lines, perpendicular bisectors, angle bisectors and circles</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Coordinate Geometry</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine midpoint and gradient of a line segment; find distance between two points; identify conditions for parallelism and perpendicularity; find equation of a line in two-point form, point-slope form, slope-intercept form and general form.</div>
+            <ul>
+              <li>Midpoint and gradient of a line segment</li>
+              <li>Distance between two points</li>
+              <li>Parallel and perpendicular lines</li>
+              <li>Equations of straight lines (all forms)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">5</span>
+            <span class="awaClass-syl-topic-name">Trigonometry</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate sin, cos and tan for angles −360° ≤ θ ≤ 360°; apply special angles (30°, 45°, 60°, 75°, 90°, 105°, 135°); solve problems on elevation, depression and bearings; apply trig formulae to find areas of triangles; solve problems involving sine and cosine graphs.</div>
+            <ul>
+              <li>Trigonometrical ratios of angles (−360° to 360°)</li>
+              <li>Angles of elevation and depression</li>
+              <li>Bearings</li>
+              <li>Areas and solutions of triangles</li>
+              <li>Graphs of sine and cosine</li>
+              <li>Sine rule and cosine formula</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-geometry -->
+
+      <!-- ── Statistics & Probability ── -->
+      <div class="awaClass-syl-section" id="syl-statistics">
+
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Representation of Data</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify and interpret frequency distribution tables; interpret information on histogram, bar chart and pie chart.</div>
+            <ul>
+              <li>Frequency distribution (grouped and ungrouped)</li>
+              <li>Histogram, bar chart and pie chart</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Measures of Location</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> i. Calculate the mean, mode and median of ungrouped and grouped data (simple cases only); ii. use ogive to find the median, quartiles and percentiles.</div>
+            <ul>
+              <li>Mean, mode and median of ungrouped and grouped data (simple cases only)</li>
+              <li>Cumulative frequency</li>
+              <li>Use of ogive to find median, quartiles and percentiles</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Measures of Dispersion</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate the range, mean deviation, variance and standard deviation of ungrouped and grouped data.</div>
+            <ul>
+              <li>Range</li>
+              <li>Mean deviation</li>
+              <li>Variance</li>
+              <li>Standard deviation</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Permutation &amp; Combination</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve simple problems involving permutation and combination.</div>
+            <ul>
+              <li>Linear and circular arrangements</li>
+              <li>Arrangements involving repeated objects</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">5</span>
+            <span class="awaClass-syl-topic-name">Probability</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve simple problems in probability (including addition and multiplication).</div>
+            <ul>
+              <li>Experimental probability (tossing of coin, throwing of a dice, etc.)</li>
+              <li>Addition and multiplication of probabilities (mutual and independent cases)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-statistics -->
+
+      <!-- ── Introductory Calculus ── -->
+      <div class="awaClass-syl-section" id="syl-calculus">
+
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Differentiation</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Find the limit of a function; differentiate explicit algebraic and simple trigonometrical functions.</div>
+            <ul>
+              <li>Limit of a function</li>
+              <li>Differentiation of explicit algebraic functions</li>
+              <li>Differentiation of simple trigonometrical functions (sin x, cos x)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Application of Differentiation</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving applications of rate of change, maxima and minima.</div>
+            <ul>
+              <li>Rate of change</li>
+              <li>Maxima and minima</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Integration</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems of integration involving algebraic and simple trigonometric functions; calculate area under the curve (simple cases only).</div>
+            <ul>
+              <li>Integration of explicit algebraic functions</li>
+              <li>Integration of simple trigonometrical functions</li>
+              <li>Area under the curve (simple cases only)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-calculus -->
+
+      <!-- ── Recommended Texts ── -->
+      <div class="awaClass-syl-texts" id="syl-texts" style="display:none;">
+        <p class="awaClass-syl-texts-title">📚 Recommended Texts</p>
+        <ol>
+          <li>Adelodun A. A (2000) <em>Distinction in Mathematics: Comprehensive Revision Text</em>, (3rd Edition) Ado-Ekiti: FNPL.</li>
+          <li>Anyebe, J. A. B (1998) <em>Basic Mathematics for Senior Secondary Schools and Remedial Students in Higher/ institutions</em>, Lagos: Kenny Moore.</li>
+          <li>Channon, J. B. Smith, A. M (2001) <em>New General Mathematics for West Africa SSS 1 to 3</em>, Lagos: Longman.</li>
+          <li>David-Osuagwu, M. et al (2000) <em>New School Mathematics for Senior Secondary Schools</em>, Onitsha: Africana-FIRST Publishers.</li>
+          <li>Egbe, E. et al (2000) <em>Further Mathematics</em>, Onitsha: Africana-FIRST Publishers.</li>
+          <li>Ibude, S. O. et al (2003) <em>Algebra and Calculus for Schools and Colleges</em>: LINCEL Publishers.</li>
+          <li>Tuttuh-Adegun M. R. et al (1997), <em>Further Mathematics Project Books 1 to 3</em>, Ibadan: NPS Educational.</li>
+          <li><em>Wisdomline Pass at Once JAMB.</em></li>
+        </ol>
+      </div>
+
+    </div><!-- /modal-body -->
+
+    <!-- Footer -->
+    <div class="awaClass-modal-footer">
+      <p class="awaClass-modal-footer-note">Based on JAMB UTME 2026 Mathematics Syllabus</p>
+      <a href="{% url 'cbt_exam' %}" class="awaClass-modal-cta">
+        <i class="fa-solid fa-bolt fa-xs"></i> Start CBT Practice
+      </a>
+    </div>
+
+  </div>
+</div>
+
 {% include 'footer.html' %}
+
+<script>
+  /* ── Syllabus modal ── */
+  function openSyllabusModal() {
+    document.getElementById('awaClass-syllabus-modal').classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSyllabusModal() {
+    document.getElementById('awaClass-syllabus-modal').classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+  // Close on backdrop click
+  document.getElementById('awaClass-syllabus-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeSyllabusModal();
+  });
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSyllabusModal();
+  });
+
+  /* ── Tab switching ── */
+  function switchSylTab(btn, sectionId) {
+    document.querySelectorAll('.awaClass-syl-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.awaClass-syl-section').forEach(s => s.classList.remove('active'));
+    // Hide the texts panel (uses display style, not class)
+    var textsEl = document.getElementById('syl-texts');
+    if (textsEl) textsEl.style.display = 'none';
+    btn.classList.add('active');
+    var target = document.getElementById(sectionId);
+    if (target) {
+      if (sectionId === 'syl-texts') {
+        target.style.display = 'block';
+      } else {
+        target.classList.add('active');
+      }
+    }
+  }
+
+  /* ── Accordion toggle ── */
+  function toggleTopic(headEl) {
+    headEl.closest('.awaClass-syl-topic').classList.toggle('open');
+  }
+</script>
+
 </body>
 </html>

@@ -20,11 +20,11 @@
       margin: 0 auto;
       padding: 20px 16px 48px;
     }
-     @media (min-width: 768px) {
+    @media (min-width: 768px) {
       .awaClass-feed-page {
-      margin-left: 50px;
+        margin-left: 50px;
+      }
     }
-  }
 
     /* ── Page header ── */
     .awaClass-page-header {
@@ -35,21 +35,76 @@
       padding-bottom: 16px;
       border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
     }
-    .awaClass-page-header-icon {
-      font-size: 28px;
-      line-height: 1;
-    }
+    .awaClass-page-header-icon { font-size: 28px; line-height: 1; }
     .awaClass-page-header h1 {
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 20px; font-weight: 700;
       color: var(--awaClass-text, #0f0f0f);
-      margin: 0 0 2px;
-      letter-spacing: -0.2px;
+      margin: 0 0 2px; letter-spacing: -0.2px;
     }
     .awaClass-page-header p {
-      font-size: 13px;
+      font-size: 13px; color: var(--awaClass-text-light, #606060); margin: 0;
+    }
+
+    /* ══════════════════════════════════════════════════
+       FEATURE CARDS ROW
+    ══════════════════════════════════════════════════ */
+    .awaClass-feature-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .awaClass-feature-card {
+      position: relative;
+      display: flex; flex-direction: column; align-items: flex-start;
+      gap: 10px; padding: 18px 16px; border-radius: 14px;
+      cursor: pointer; text-decoration: none;
+      border: 1.5px solid transparent;
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+      overflow: hidden;
+    }
+    .awaClass-feature-card::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: 0.08; transition: opacity 0.18s; pointer-events: none;
+    }
+    .awaClass-feature-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.10); }
+    .awaClass-feature-card:hover::before { opacity: 0.14; }
+
+    .awaClass-feature-card--syllabus { background: #fff8f0; border-color: #fed7aa; }
+    .awaClass-feature-card--syllabus::before { background: radial-gradient(circle at top right, #f97316, transparent 70%); }
+    .awaClass-feature-card--syllabus:hover { border-color: #f97316; }
+
+    .awaClass-feature-card--cbt { background: #f0f7ff; border-color: #bfdbfe; text-decoration: none; color: inherit; }
+    .awaClass-feature-card--cbt::before { background: radial-gradient(circle at top right, #3b82f6, transparent 70%); }
+    .awaClass-feature-card--cbt:hover { border-color: #3b82f6; }
+
+    .awaClass-feature-card--chat { background: #f0fdf4; border-color: #bbf7d0; text-decoration: none; color: inherit; }
+    .awaClass-feature-card--chat::before { background: radial-gradient(circle at top right, #22c55e, transparent 70%); }
+    .awaClass-feature-card--chat:hover { border-color: #22c55e; }
+
+    .awaClass-feature-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .awaClass-feature-card--syllabus .awaClass-feature-icon { background: #ffedd5; }
+    .awaClass-feature-card--cbt      .awaClass-feature-icon { background: #dbeafe; }
+    .awaClass-feature-card--chat     .awaClass-feature-icon { background: #dcfce7; }
+
+    .awaClass-feature-label { font-size: 14px; font-weight: 700; color: var(--awaClass-text, #0f0f0f); margin: 0 0 2px; line-height: 1.3; }
+    .awaClass-feature-sub   { font-size: 12px; color: var(--awaClass-text-light, #606060); margin: 0; line-height: 1.4; }
+    .awaClass-feature-arrow { margin-top: auto; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .awaClass-feature-card--syllabus .awaClass-feature-arrow { color: #f97316; }
+    .awaClass-feature-card--cbt      .awaClass-feature-arrow { color: #3b82f6; }
+    .awaClass-feature-card--chat     .awaClass-feature-arrow { color: #22c55e; }
+
+    /* ══════════════════════════════════════════════════
+       SECTION DIVIDER
+    ══════════════════════════════════════════════════ */
+    .awaClass-section-label {
+      font-size: 13px; font-weight: 700;
       color: var(--awaClass-text-light, #606060);
-      margin: 0;
+      letter-spacing: 0.6px; text-transform: uppercase; margin: 0 0 14px;
     }
 
     /* ══════════════════════════════════════════════════
@@ -60,223 +115,175 @@
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px 16px;
     }
-
-    /* ── Single video card ── */
     .awaClass-video-card {
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
+      display: flex; flex-direction: column;
+      cursor: pointer; text-decoration: none; color: inherit;
     }
-
-    /* Thumbnail */
     .awaClass-thumb-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #0d0d0d;
-      overflow: hidden;
-      margin-bottom: 10px;
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      background: #0d0d0d; overflow: hidden; margin-bottom: 10px;
     }
     .awaClass-thumb-wrap video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      pointer-events: none;
+      width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;
     }
-
-    /* Play overlay on hover */
     .awaClass-play-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.20);
-      opacity: 0;
-      transition: opacity 0.18s;
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.20); opacity: 0; transition: opacity 0.18s;
     }
     .awaClass-video-card:hover .awaClass-play-overlay { opacity: 1; }
     .awaClass-play-circle {
       width: 48px; height: 48px;
       background: var(--awaClass-primary, #f97316);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
     }
-    .awaClass-play-circle svg {
-      width: 20px; height: 20px;
-      fill: #fff;
-      margin-left: 3px;
-    }
-
-    /* ── Card info row ── */
-    .awaClass-card-info {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      padding-right: 8px;
-    }
-
-    .awaClass-card-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .awaClass-card-meta { flex: 1; min-width: 0; }
-
+    .awaClass-play-circle svg { width: 20px; height: 20px; fill: #fff; margin-left: 3px; }
+    .awaClass-card-info { display: flex; gap: 10px; align-items: flex-start; padding-right: 8px; }
+    .awaClass-card-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px; }
+    .awaClass-card-meta  { flex: 1; min-width: 0; }
     .awaClass-card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--awaClass-text, #0f0f0f);
-      line-height: 1.4;
-      margin: 0 0 3px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: 14px; font-weight: 600; color: var(--awaClass-text, #0f0f0f);
+      line-height: 1.4; margin: 0 0 3px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-
     .awaClass-card-author {
-      font-size: 13px;
-      color: var(--awaClass-text-light, #606060);
-      font-weight: 400;
-      margin: 0 0 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 13px; color: var(--awaClass-text-light, #606060);
+      font-weight: 400; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
     .awaClass-card-stats {
-      font-size: 12px;
-      color: var(--awaClass-text-light, #606060);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      margin: 0;
+      font-size: 12px; color: var(--awaClass-text-light, #606060);
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0;
     }
     .awaClass-card-stats i { margin-right: 3px; }
-
-    /* ── Empty state ── */
     .awaClass-empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 56px 20px;
-      font-size: 15px;
-      color: var(--awaClass-text-light, #606060);
+      grid-column: 1 / -1; text-align: center; padding: 56px 20px;
+      font-size: 15px; color: var(--awaClass-text-light, #606060);
     }
-    .awaClass-empty span {
-      display: block;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
+    .awaClass-empty span { display: block; font-size: 36px; margin-bottom: 10px; }
 
     /* ══════════════════════════════════════════════════
-       MOBILE  ≤ 640px  →  HORIZONTAL LIST LAYOUT
+       SYLLABUS MODAL
+    ══════════════════════════════════════════════════ */
+    .awaClass-modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.22s;
+    }
+    .awaClass-modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+    @media (min-width: 640px) { .awaClass-modal-backdrop { align-items: center; } }
+
+    .awaClass-modal {
+      background: #fff; width: 100%; max-width: 680px; max-height: 92vh;
+      border-radius: 20px 20px 0 0; display: flex; flex-direction: column;
+      overflow: hidden; transform: translateY(40px);
+      transition: transform 0.26s cubic-bezier(0.34, 1.1, 0.64, 1);
+    }
+    @media (min-width: 640px) {
+      .awaClass-modal { border-radius: 20px; max-height: 86vh; transform: translateY(20px) scale(0.97); }
+    }
+    .awaClass-modal-backdrop.is-open .awaClass-modal { transform: translateY(0) scale(1); }
+
+    .awaClass-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0;
+    }
+    .awaClass-modal-title-wrap { display: flex; align-items: center; gap: 10px; }
+    .awaClass-modal-title-icon {
+      width: 36px; height: 36px; background: #ffedd5; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .awaClass-modal-title { font-size: 16px; font-weight: 700; color: #0f0f0f; margin: 0 0 1px; }
+    .awaClass-modal-subtitle { font-size: 12px; color: #606060; margin: 0; }
+    .awaClass-modal-close {
+      width: 32px; height: 32px; border: none; background: #f5f5f5;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 16px; color: #606060;
+      transition: background 0.15s; flex-shrink: 0;
+    }
+    .awaClass-modal-close:hover { background: #e5e5e5; }
+    .awaClass-modal-body { overflow-y: auto; padding: 20px; flex: 1; -webkit-overflow-scrolling: touch; }
+
+    /* Tabs */
+    .awaClass-syl-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .awaClass-syl-tab {
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      border: 1.5px solid #e5e5e5; background: #fafafa; cursor: pointer; color: #606060;
+      transition: all 0.15s;
+    }
+    .awaClass-syl-tab.active, .awaClass-syl-tab:hover { background: #f97316; border-color: #f97316; color: #fff; }
+
+    /* Sections + accordion */
+    .awaClass-syl-section { display: none; }
+    .awaClass-syl-section.active { display: block; }
+    .awaClass-syl-topic { margin-bottom: 18px; border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden; }
+    .awaClass-syl-topic-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; background: #fafafa; cursor: pointer; user-select: none;
+    }
+    .awaClass-syl-topic-num {
+      width: 26px; height: 26px; background: #f97316; color: #fff;
+      border-radius: 50%; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .awaClass-syl-topic-name { font-size: 14px; font-weight: 600; color: #0f0f0f; flex: 1; }
+    .awaClass-syl-topic-chevron { font-size: 12px; color: #909090; transition: transform 0.2s; }
+    .awaClass-syl-topic.open .awaClass-syl-topic-chevron { transform: rotate(180deg); }
+    .awaClass-syl-topic-body { display: none; padding: 10px 14px 14px 50px; border-top: 1px solid #f0f0f0; }
+    .awaClass-syl-topic.open .awaClass-syl-topic-body { display: block; }
+    .awaClass-syl-topic-body ul { margin: 0; padding: 0; list-style: none; }
+    .awaClass-syl-topic-body li {
+      font-size: 13px; color: #404040; padding: 5px 0;
+      border-bottom: 1px solid #f5f5f5;
+      display: flex; align-items: flex-start; gap: 7px; line-height: 1.45;
+    }
+    .awaClass-syl-topic-body li:last-child { border-bottom: none; }
+    .awaClass-syl-topic-body li::before { content: '◆'; font-size: 7px; color: #f97316; margin-top: 4px; flex-shrink: 0; }
+    .awaClass-syl-objective {
+      font-size: 12px; color: #7c3a00; background: #fff7ed;
+      border-left: 3px solid #f97316; border-radius: 0 8px 8px 0;
+      padding: 7px 10px; margin-bottom: 10px; line-height: 1.5;
+    }
+
+    /* Recommended texts */
+    .awaClass-syl-texts { margin-top: 4px; }
+    .awaClass-syl-texts-title { font-size: 13px; font-weight: 700; color: #0f0f0f; margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+    .awaClass-syl-texts ol { margin: 0; padding-left: 18px; }
+    .awaClass-syl-texts li { font-size: 12.5px; color: #404040; padding: 4px 0; line-height: 1.5; border-bottom: 1px solid #f5f5f5; }
+    .awaClass-syl-texts li:last-child { border-bottom: none; }
+
+    .awaClass-modal-footer {
+      padding: 14px 20px; border-top: 1px solid #f0f0f0; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .awaClass-modal-footer-note { font-size: 12px; color: #909090; }
+    .awaClass-modal-cta {
+      padding: 9px 18px; background: #f97316; color: #fff; border: none;
+      border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap; transition: background 0.15s;
+    }
+    .awaClass-modal-cta:hover { background: #ea6c0a; }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE ≤ 640px
     ══════════════════════════════════════════════════ */
     @media (max-width: 640px) {
-
-      .awaClass-feed-page {
-        padding: 12px 12px 48px;
-      }
-
-      /* Switch grid → single-column flex list */
-      .awaClass-videos-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
-
-      /* Each card becomes a horizontal row */
-      .awaClass-video-card {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
-      }
-      .awaClass-video-card:last-child {
-        border-bottom: none;
-      }
-
-      /* Thumbnail: fixed width, no bottom margin */
-      .awaClass-thumb-wrap {
-        flex-shrink: 0;
-        width: 120px;
-        aspect-ratio: 16 / 9;
-        border-radius: 6px;
-        margin-bottom: 0;
-        overflow: hidden;
-      }
-
-      /* Play overlay circle smaller on mobile */
-      .awaClass-play-circle {
-        width: 32px;
-        height: 32px;
-      }
-      .awaClass-play-circle svg {
-        width: 14px;
-        height: 14px;
-      }
-
-      /* Info sits beside the thumbnail */
-      .awaClass-card-info {
-        flex: 1;
-        min-width: 0;
-        padding-right: 4px;
-        /* Remove the avatar — inline with thumb layout */
-        align-items: flex-start;
-      }
-
-      /* Hide avatar on mobile (thumbnail is the visual anchor) */
-      .awaClass-card-avatar {
-        display: none;
-      }
-
-      /* Meta takes full width of the info col */
-      .awaClass-card-meta {
-        width: 100%;
-      }
-
-      .awaClass-card-title {
-        font-size: 13px;
-        -webkit-line-clamp: 3;
-      }
-
-      .awaClass-card-author {
-        font-size: 12px;
-      }
-
-      .awaClass-card-stats {
-        font-size: 11px;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-
-      /* Serial number badge (added via counter) */
-      .awaClass-videos-grid {
-        counter-reset: video-item;
-      }
-      .awaClass-video-card {
-        counter-increment: video-item;
-        position: relative;
-      }
-      .awaClass-video-card::before {
-        content: counter(video-item) ".";
-        position: absolute;
-        top: 10px;
-        right: 2px;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--awaClass-text-light, #606060);
-        line-height: 1;
-      }
-
+      .awaClass-feed-page { padding: 12px 12px 48px; }
+      .awaClass-feature-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .awaClass-videos-grid { display: flex; flex-direction: column; gap: 0; }
+      .awaClass-video-card { flex-direction: row; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--awaClass-border, #e5e5e5); }
+      .awaClass-video-card:last-child { border-bottom: none; }
+      .awaClass-thumb-wrap { flex-shrink: 0; width: 120px; aspect-ratio: 16 / 9; border-radius: 6px; margin-bottom: 0; overflow: hidden; }
+      .awaClass-play-circle { width: 32px; height: 32px; }
+      .awaClass-play-circle svg { width: 14px; height: 14px; }
+      .awaClass-card-info { flex: 1; min-width: 0; padding-right: 4px; align-items: flex-start; }
+      .awaClass-card-avatar { display: none; }
+      .awaClass-card-meta { width: 100%; }
+      .awaClass-card-title { font-size: 13px; -webkit-line-clamp: 3; }
+      .awaClass-card-author { font-size: 12px; }
+      .awaClass-card-stats { font-size: 11px; gap: 6px; flex-wrap: wrap; }
+      .awaClass-videos-grid { counter-reset: video-item; }
+      .awaClass-video-card { counter-increment: video-item; position: relative; }
+      .awaClass-video-card::before { content: counter(video-item) "."; position: absolute; top: 10px; right: 2px; font-size: 11px; font-weight: 700; color: var(--awaClass-text-light, #606060); line-height: 1; }
     }
 
   </style>
@@ -289,12 +296,47 @@
 
   <!-- Page header -->
   <div class="awaClass-page-header">
-    <div class="awaClass-page-header-icon">📐</div>
+    <div class="awaClass-page-header-icon">⚛️</div>
     <div>
       <h1>Physics</h1>
       <p>Watch lessons, practice problems and more</p>
     </div>
   </div>
+
+  <!-- ── Feature cards row ── -->
+  <div class="awaClass-feature-row">
+
+    <button class="awaClass-feature-card awaClass-feature-card--syllabus" onclick="openSyllabusModal()" aria-label="View Syllabus">
+      <div class="awaClass-feature-icon">📋</div>
+      <div>
+        <p class="awaClass-feature-label">Syllabus</p>
+        <p class="awaClass-feature-sub">JAMB UTME 2026 curriculum</p>
+      </div>
+      <span class="awaClass-feature-arrow">View <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </button>
+
+    <a href="{% url 'cbt_exam' %}" class="awaClass-feature-card awaClass-feature-card--cbt">
+      <div class="awaClass-feature-icon">🎯</div>
+      <div>
+        <p class="awaClass-feature-label">CBT Exam</p>
+        <p class="awaClass-feature-sub">Practice past questions</p>
+      </div>
+      <span class="awaClass-feature-arrow">Start <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </a>
+
+    <a href="{% url 'live_room_list' %}" class="awaClass-feature-card awaClass-feature-card--chat">
+      <div class="awaClass-feature-icon">💬</div>
+      <div>
+        <p class="awaClass-feature-label">Group Chat</p>
+        <p class="awaClass-feature-sub">Study with classmates</p>
+      </div>
+      <span class="awaClass-feature-arrow">Join <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </a>
+
+  </div>
+
+  <!-- Videos section label -->
+  <p class="awaClass-section-label">Video Lessons</p>
 
   <!-- Videos grid -->
   <div class="awaClass-videos-grid">
@@ -302,7 +344,6 @@
     {% for video in videos %}
     <a href="{% url 'post_detail' video.post_id %}" class="awaClass-video-card">
 
-      <!-- Thumbnail -->
       <div class="awaClass-thumb-wrap">
         <video preload="metadata" muted playsinline>
           <source src="{{ video.video.url }}#t=0.5" type="video/mp4">
@@ -314,12 +355,8 @@
         </div>
       </div>
 
-      <!-- Info row -->
       <div class="awaClass-card-info">
-        <img
-          src="{{ video.author.profile.picture.url }}"
-          alt="{{ video.author }}"
-          class="awaClass-card-avatar">
+        <img src="{{ video.author.profile.picture.url }}" alt="{{ video.author }}" class="awaClass-card-avatar">
         <div class="awaClass-card-meta">
           <p class="awaClass-card-title">{{ video.title }}</p>
           <p class="awaClass-card-author">{{ video.author }}</p>
@@ -333,17 +370,466 @@
 
     </a>
     {% empty %}
-
     <div class="awaClass-empty">
       <span>🎬</span>
       No Physics videos yet. Be the first to post!
     </div>
-
     {% endfor %}
 
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════
+     SYLLABUS MODAL
+══════════════════════════════════════════════════ -->
+<div class="awaClass-modal-backdrop" id="awaClass-syllabus-modal" role="dialog" aria-modal="true" aria-label="Physics Syllabus">
+  <div class="awaClass-modal">
+
+    <!-- Header -->
+    <div class="awaClass-modal-header">
+      <div class="awaClass-modal-title-wrap">
+        <div class="awaClass-modal-title-icon">⚛️</div>
+        <div>
+          <p class="awaClass-modal-title">Physics Syllabus</p>
+          <p class="awaClass-modal-subtitle">JAMB UTME 2026 · 22 Topic Areas</p>
+        </div>
+      </div>
+      <button class="awaClass-modal-close" onclick="closeSyllabusModal()" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div class="awaClass-modal-body">
+
+      <!-- Tabs -->
+      <div class="awaClass-syl-tabs">
+        <button class="awaClass-syl-tab active" onclick="switchSylTab(this, 'syl-mechanics')">Mechanics</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-pressure')">Pressure &amp; Fluids</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-heat')">Heat &amp; Thermo</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-matter')">Matter &amp; Waves</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-texts')">📚 Texts</button>
+      </div>
+
+      <!-- ══ TAB 1: Mechanics ══ -->
+      <div class="awaClass-syl-section active" id="syl-mechanics">
+
+        <!-- 1. Measurements and Units -->
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Measurements and Units</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Use measuring instruments; determine lengths, areas and volumes; deduce units of derived quantities; determine dimensions; estimate errors; express measurements in standard form; use coordinate systems and plot graphs.</div>
+            <ul>
+              <li>Length, area and volume — metre rule, Vernier calipers, micrometer screw-gauge, measuring cylinder</li>
+              <li>Mass — unit of mass, simple beam balance (e.g. Buchhart's balance)</li>
+              <li>Time — unit and time-measuring devices</li>
+              <li>Fundamental and derived physical quantities with their units</li>
+              <li>Dimensions — definition and simple examples; testing homogeneity of equations</li>
+              <li>Limitations of experimental measurements — accuracy, estimation of errors, significant figures, standard form</li>
+              <li>Displacement — distinction from distance; concept of position and coordinates; frame of reference</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 2. Scalars and Vectors -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Scalars and Vectors</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish between scalar and vector quantities; determine resultants; find relative velocity; resolve vectors into perpendicular components; use graphical methods.</div>
+            <ul>
+              <li>Definition and examples of scalar and vector quantities</li>
+              <li>Relative velocity</li>
+              <li>Resolution of vectors into two perpendicular directions</li>
+              <li>Graphical methods of vector solution</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 3. Motion -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Motion</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify types of motion; solve problems on linear motion, projectiles, Newton's laws, circular motion and SHM; interpret graphs; analyse energy changes in SHM.</div>
+            <ul>
+              <li>Types of motion — translational, oscillatory, rotational, spin, random</li>
+              <li>Linear motion — speed, velocity, acceleration; equations of uniformly accelerated motion; motion under gravity; distance-time and velocity-time graphs</li>
+              <li>Projectiles — range, maximum height, time of flight; applications</li>
+              <li>Newton's laws — inertia, mass, force; impulse and momentum; force-time graph; conservation of linear momentum</li>
+              <li>Circular motion — angular velocity, angular acceleration, centripetal and centrifugal forces</li>
+              <li>Simple Harmonic Motion (SHM) — definition, period, frequency, amplitude; velocity and acceleration; energy changes; forced vibration and resonance</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 4. Gravitational Field -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Gravitational Field</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Apply Newton's law of universal gravitation; deduce gravitational potential; differentiate mass from weight; determine escape velocity; describe parking orbit and weightlessness.</div>
+            <ul>
+              <li>Newton's law of universal gravitation</li>
+              <li>Gravitational potential</li>
+              <li>Conservative and non-conservative fields</li>
+              <li>Acceleration due to gravity (g) and its variation on the Earth's surface</li>
+              <li>Mass vs. weight; escape velocity</li>
+              <li>Parking orbit and weightlessness</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 5. Equilibrium of Forces -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">5</span>
+            <span class="awaClass-syl-topic-name">Equilibrium of Forces</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Apply conditions for equilibrium of coplanar and rigid-body forces; use triangle/polygon of forces and Lami's theorem; determine moments, resultants and equilibrants; differentiate types of equilibrium.</div>
+            <ul>
+              <li>Equilibrium of particles — coplanar forces; triangle and polygon of forces; Lami's theorem</li>
+              <li>Principles of moments — moment of a force; couple (torque) and applications</li>
+              <li>Equilibrium of rigid bodies — resolution and composition of forces; resultant and equilibrant</li>
+              <li>Centre of gravity — stable, unstable and neutral equilibrium</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-mechanics -->
+
+      <!-- ══ TAB 2: Pressure & Fluids ══ -->
+      <div class="awaClass-syl-section" id="syl-pressure">
+
+        <!-- Pressure -->
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Pressure</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Recognise S.I. units of pressure (Pa); identify pressure-measuring instruments; relate pressure to height; use a barometer as an altimeter; apply Pascal's principle.</div>
+            <ul>
+              <li>Atmospheric pressure — definition, S.I. units (Pa)</li>
+              <li>Pressure measurement — simple mercury barometer, aneroid barometer and manometer</li>
+              <li>Variation of atmospheric pressure with height; barometer as altimeter</li>
+              <li>Pressure in liquids — P = ρgh; transmission of pressure (Pascal's Principle) and applications</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Liquids at Rest -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Liquids at Rest</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish density from relative density; determine upthrust; apply Archimedes' principle and the law of floatation.</div>
+            <ul>
+              <li>Density of solids and liquids; relative density</li>
+              <li>Upthrust on a body immersed in a liquid</li>
+              <li>Archimedes' principle and law of floatation — applications (ships, hydrometers)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-pressure -->
+
+      <!-- ══ TAB 3: Heat & Thermodynamics ══ -->
+      <div class="awaClass-syl-section" id="syl-heat">
+
+        <!-- Temperature -->
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Temperature and Its Measurement</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify thermometric properties; calibrate thermometers; differentiate temperature scales; convert between Celsius and Kelvin.</div>
+            <ul>
+              <li>Concept of temperature and thermometric properties</li>
+              <li>Calibration of thermometers</li>
+              <li>Temperature scales — Celsius and Kelvin; conversion between scales</li>
+              <li>Types of thermometers</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Thermal Expansion -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Thermal Expansion</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine linear and volume expansivities; assess effects and applications; determine volume, apparent and real expansivities of liquids; analyse anomalous expansion of water.</div>
+            <ul>
+              <li>Solids — linear, volume and area expansivities; effects (e.g. railway lines, building strips); relationships between expansivities</li>
+              <li>Liquids — volume expansivity; real and apparent expansivities; anomalous expansion of water</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Gas Laws -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Gas Laws</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Interpret gas laws and use them to solve numerical problems; interpret the Van der Waals equation for a real gas.</div>
+            <ul>
+              <li>Boyle's law (isothermal process)</li>
+              <li>Charles' law (isobaric process)</li>
+              <li>Pressure law (volumetric process)</li>
+              <li>Absolute zero of temperature</li>
+              <li>General gas equation: PV/T = constant</li>
+              <li>Ideal gas equation: PV = nRT</li>
+              <li>Van der Waals gas (real gas treatment)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Quantity of Heat -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Quantity of Heat</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate heat capacity from specific heat capacity; determine both using simple methods; solve numerical problems.</div>
+            <ul>
+              <li>Heat as a form of energy</li>
+              <li>Heat capacity and specific heat capacity of solids and liquids</li>
+              <li>Determination by method of mixtures, electrical method and Newton's law of cooling</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Change of State -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">5</span>
+            <span class="awaClass-syl-topic-name">Change of State</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate latent heat types; distinguish melting, evaporation and boiling; examine effects of pressure and dissolved substances on boiling/melting points; solve numerical problems.</div>
+            <ul>
+              <li>Latent heat; specific latent heats of fusion and vaporisation</li>
+              <li>Melting, evaporation and boiling — distinctions</li>
+              <li>Influence of pressure and dissolved substances on boiling and melting points</li>
+              <li>Applications in appliances</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Vapours -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">6</span>
+            <span class="awaClass-syl-topic-name">Vapours</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish saturated from unsaturated vapours; relate SVP to boiling point; determine SVP by barometer tube; differentiate dew point, humidity and relative humidity; estimate atmospheric humidity.</div>
+            <ul>
+              <li>Unsaturated and saturated vapours</li>
+              <li>Saturated vapour pressure (SVP) and its relation to boiling; determination by barometer tube method</li>
+              <li>Formation of dew, mist, fog and rain</li>
+              <li>Dew point, humidity and relative humidity</li>
+              <li>Hygrometry — wet and dry bulb hygrometers</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Heat Transfer -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">7</span>
+            <span class="awaClass-syl-topic-name">Heat Transfer</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate conduction, convection and radiation; solve problems on thermal conductivity and heat flux; compare conductivities; relate thermos flask components; differentiate land and sea breeze; analyse engine principles.</div>
+            <ul>
+              <li>Conduction, convection and radiation — modes of heat transfer</li>
+              <li>Temperature gradient, thermal conductivity and heat flux</li>
+              <li>Effect of surface nature on energy radiated and absorbed</li>
+              <li>Conductivities of common materials</li>
+              <li>The thermos flask</li>
+              <li>Land and sea breeze</li>
+              <li>Engines — internal combustion, jet engines and rockets</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-heat -->
+
+      <!-- ══ TAB 4: Matter & Waves ══ -->
+      <div class="awaClass-syl-section" id="syl-matter">
+
+        <!-- Structure of Matter -->
+        <div class="awaClass-syl-topic open">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">1</span>
+            <span class="awaClass-syl-topic-name">Structure of Matter and Kinetic Theory</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate atoms and molecules; use molecular theory to explain Brownian motion, diffusion, surface tension, capillarity, adhesion, cohesion and contact angle; examine assumptions of kinetic theory and use it to explain gas behaviour.</div>
+            <ul>
+              <li>Molecular nature of matter — atoms and molecules</li>
+              <li>Molecular theory — Brownian motion, diffusion, surface tension, capillarity, adhesion, cohesion, angles of contact</li>
+              <li>Kinetic theory — assumptions; explaining gas pressure, Boyle's law, Charles' law, melting, boiling, vaporisation, evaporation and temperature change</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Waves -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">2</span>
+            <span class="awaClass-syl-topic-name">Waves</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Interpret wave motion; relate frequency, wavelength and wave velocity; compute wave parameters using progressive wave equation; distinguish wave types; differentiate wave properties; analyse superposition, beats and Doppler effect.</div>
+            <ul>
+              <li>Production and propagation — wave motion; vibrating systems; waves as energy transfer; V = fλ; phase difference, wave number and wave vector; progressive wave equation Y = A sin 2π/λ (vt ± x)</li>
+              <li>Classification — mechanical vs. electromagnetic; longitudinal vs. transverse; stationary vs. progressive; examples from springs, ropes, stretched strings and ripple tanks</li>
+              <li>Properties — reflection, refraction, diffraction and plane polarisation; superposition and interference; beats and beat frequency; Doppler effect (qualitative)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Propagation of Sound Waves -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">3</span>
+            <span class="awaClass-syl-topic-name">Propagation of Sound Waves</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine the need for a material medium; compare speed of sound in solids, liquids and air; relate temperature and pressure to speed of sound; solve problems on echoes, reverberation and speed; compare advantages and disadvantages of echoes.</div>
+            <ul>
+              <li>Necessity for a material medium in sound propagation</li>
+              <li>Speed of sound in solids, liquids and air; effect of temperature and pressure</li>
+              <li>Reflection of sound — echoes and reverberation; applications</li>
+              <li>Disadvantages (and advantages) of echoes and reverberation</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Characteristics of Sound Waves -->
+        <div class="awaClass-syl-topic">
+          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
+            <span class="awaClass-syl-topic-num">4</span>
+            <span class="awaClass-syl-topic-name">Characteristics of Sound Waves</span>
+            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
+          </div>
+          <div class="awaClass-syl-topic-body">
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate noise from musical notes; analyse quality, pitch, intensity and loudness; evaluate their application in musical instruments; identify overtones from vibrating strings and air columns; itemise acoustic examples of resonance; determine frequencies of notes in open and closed pipes.</div>
+            <ul>
+              <li>Noise and musical notes — distinctions</li>
+              <li>Quality, pitch, intensity and loudness — definitions and applications in musical instruments</li>
+              <li>Overtones produced by vibrating strings and air columns: F₀ = (1/2L)√(T/μ), where μ = m/L</li>
+              <li>Acoustic examples of resonance</li>
+              <li>Frequency of notes emitted by air columns in closed and open pipes in relation to their lengths</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /syl-matter -->
+
+      <!-- ══ Recommended Texts ══ -->
+      <div class="awaClass-syl-texts" id="syl-texts" style="display:none;">
+        <p class="awaClass-syl-texts-title">📚 Recommended Texts</p>
+        <ol>
+          <li>Anyakoha, M. W. <em>New School Physics for Senior Secondary Schools</em>, Onitsha: Africana-FIRST Publishers.</li>
+          <li>Olumuyiwa, A. &amp; Ogunkoya, O. O. <em>Comprehensive Certificate Physics</em>, Ibadan: University Press Plc.</li>
+          <li>Nelson, M. &amp; Parker, J. <em>Advanced Level Physics</em>, London: Heinemann.</li>
+          <li>Abbott, A. F. <em>Ordinary Level Physics</em>, London: Heinemann.</li>
+          <li>Awe, O. &amp; Okunola, O. O. <em>Comprehensive Physics</em>, Ibadan: University Press Plc.</li>
+          <li>Nelkon, M. <em>Principles of Physics</em>, London: Hart-Davis Educational.</li>
+          <li><em>Wisdomline Pass at Once JAMB.</em></li>
+        </ol>
+      </div>
+
+    </div><!-- /modal-body -->
+
+    <!-- Footer -->
+    <div class="awaClass-modal-footer">
+      <p class="awaClass-modal-footer-note">Based on JAMB UTME 2026 Physics Syllabus</p>
+      <a href="{% url 'cbt_exam' %}" class="awaClass-modal-cta">
+        <i class="fa-solid fa-bolt fa-xs"></i> Start CBT Practice
+      </a>
+    </div>
+
+  </div>
+</div>
+
 {% include 'footer.html' %}
+
+<script>
+  /* ── Syllabus modal ── */
+  function openSyllabusModal() {
+    document.getElementById('awaClass-syllabus-modal').classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSyllabusModal() {
+    document.getElementById('awaClass-syllabus-modal').classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('awaClass-syllabus-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeSyllabusModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSyllabusModal();
+  });
+
+  /* ── Tab switching ── */
+  function switchSylTab(btn, sectionId) {
+    document.querySelectorAll('.awaClass-syl-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.awaClass-syl-section').forEach(s => s.classList.remove('active'));
+    var textsEl = document.getElementById('syl-texts');
+    if (textsEl) textsEl.style.display = 'none';
+    btn.classList.add('active');
+    var target = document.getElementById(sectionId);
+    if (target) {
+      if (sectionId === 'syl-texts') {
+        target.style.display = 'block';
+      } else {
+        target.classList.add('active');
+      }
+    }
+  }
+
+  /* ── Accordion toggle ── */
+  function toggleTopic(headEl) {
+    headEl.closest('.awaClass-syl-topic').classList.toggle('open');
+  }
+</script>
+
 </body>
 </html>
