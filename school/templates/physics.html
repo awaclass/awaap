@@ -1,3 +1,4 @@
+
 {% load humanize %}
 {% load time %}
 {% load static %}
@@ -161,7 +162,7 @@
     .awaClass-empty span { display: block; font-size: 36px; margin-bottom: 10px; }
 
     /* ══════════════════════════════════════════════════
-       SYLLABUS MODAL
+       SYLLABUS MODAL (UPDATED FOR 39 TOPICS)
     ══════════════════════════════════════════════════ */
     .awaClass-modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.55);
@@ -172,7 +173,7 @@
     @media (min-width: 640px) { .awaClass-modal-backdrop { align-items: center; } }
 
     .awaClass-modal {
-      background: #fff; width: 100%; max-width: 680px; max-height: 92vh;
+      background: #fff; width: 100%; max-width: 860px; max-height: 92vh;
       border-radius: 20px 20px 0 0; display: flex; flex-direction: column;
       overflow: hidden; transform: translateY(40px);
       transition: transform 0.26s cubic-bezier(0.34, 1.1, 0.64, 1);
@@ -202,23 +203,30 @@
     .awaClass-modal-close:hover { background: #e5e5e5; }
     .awaClass-modal-body { overflow-y: auto; padding: 20px; flex: 1; -webkit-overflow-scrolling: touch; }
 
-    /* Tabs */
-    .awaClass-syl-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    /* Tabs (scrollable on mobile) */
+    .awaClass-syl-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+      border-bottom: 1px solid #eee; padding-bottom: 10px;
+    }
     .awaClass-syl-tab {
       padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
       border: 1.5px solid #e5e5e5; background: #fafafa; cursor: pointer; color: #606060;
-      transition: all 0.15s;
+      transition: all 0.15s; white-space: nowrap;
     }
     .awaClass-syl-tab.active, .awaClass-syl-tab:hover { background: #f97316; border-color: #f97316; color: #fff; }
 
     /* Sections + accordion */
     .awaClass-syl-section { display: none; }
     .awaClass-syl-section.active { display: block; }
-    .awaClass-syl-topic { margin-bottom: 18px; border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden; }
+    .awaClass-syl-topic {
+      margin-bottom: 18px; border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden;
+    }
     .awaClass-syl-topic-head {
       display: flex; align-items: center; gap: 10px;
       padding: 12px 14px; background: #fafafa; cursor: pointer; user-select: none;
+      transition: background 0.15s;
     }
+    .awaClass-syl-topic-head:hover { background: #f5f5f5; }
     .awaClass-syl-topic-num {
       width: 26px; height: 26px; background: #f97316; color: #fff;
       border-radius: 50%; font-size: 12px; font-weight: 700;
@@ -263,9 +271,6 @@
     }
     .awaClass-modal-cta:hover { background: #ea6c0a; }
 
-    /* ══════════════════════════════════════════════════
-       MOBILE ≤ 640px
-    ══════════════════════════════════════════════════ */
     @media (max-width: 640px) {
       .awaClass-feed-page { padding: 12px 12px 48px; }
       .awaClass-feature-row { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -285,7 +290,6 @@
       .awaClass-video-card { counter-increment: video-item; position: relative; }
       .awaClass-video-card::before { content: counter(video-item) "."; position: absolute; top: 10px; right: 2px; font-size: 11px; font-weight: 700; color: var(--awaClass-text-light, #606060); line-height: 1; }
     }
-
   </style>
 </head>
 <body>
@@ -294,7 +298,6 @@
 
 <div class="awaClass-feed-page">
 
-  <!-- Page header -->
   <div class="awaClass-page-header">
     <div class="awaClass-page-header-icon">⚛️</div>
     <div>
@@ -303,9 +306,7 @@
     </div>
   </div>
 
-  <!-- ── Feature cards row ── -->
   <div class="awaClass-feature-row">
-
     <button class="awaClass-feature-card awaClass-feature-card--syllabus" onclick="openSyllabusModal()" aria-label="View Syllabus">
       <div class="awaClass-feature-icon">📋</div>
       <div>
@@ -332,18 +333,12 @@
       </div>
       <span class="awaClass-feature-arrow">Join <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </a>
-
   </div>
 
-  <!-- Videos section label -->
   <p class="awaClass-section-label">Video Lessons</p>
-
-  <!-- Videos grid -->
   <div class="awaClass-videos-grid">
-
     {% for video in videos %}
     <a href="{% url 'post_detail' video.post_id %}" class="awaClass-video-card">
-
       <div class="awaClass-thumb-wrap">
         <video preload="metadata" muted playsinline>
           <source src="{{ video.video.url }}#t=0.5" type="video/mp4">
@@ -354,7 +349,6 @@
           </div>
         </div>
       </div>
-
       <div class="awaClass-card-info">
         <img src="{{ video.author.profile.picture.url }}" alt="{{ video.author }}" class="awaClass-card-avatar">
         <div class="awaClass-card-meta">
@@ -367,7 +361,6 @@
           </div>
         </div>
       </div>
-
     </a>
     {% empty %}
     <div class="awaClass-empty">
@@ -375,424 +368,128 @@
       No Physics videos yet. Be the first to post!
     </div>
     {% endfor %}
-
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════
-     SYLLABUS MODAL
+     COMPLETE SYLLABUS MODAL (JAMB 2026, 39 TOPIC AREAS)
 ══════════════════════════════════════════════════ -->
 <div class="awaClass-modal-backdrop" id="awaClass-syllabus-modal" role="dialog" aria-modal="true" aria-label="Physics Syllabus">
   <div class="awaClass-modal">
-
-    <!-- Header -->
     <div class="awaClass-modal-header">
       <div class="awaClass-modal-title-wrap">
         <div class="awaClass-modal-title-icon">⚛️</div>
         <div>
           <p class="awaClass-modal-title">Physics Syllabus</p>
-          <p class="awaClass-modal-subtitle">JAMB UTME 2026 · 22 Topic Areas</p>
+          <p class="awaClass-modal-subtitle">JAMB UTME 2026 · 39 Topic Areas</p>
         </div>
       </div>
       <button class="awaClass-modal-close" onclick="closeSyllabusModal()" aria-label="Close">✕</button>
     </div>
 
-    <!-- Body -->
     <div class="awaClass-modal-body">
-
-      <!-- Tabs -->
       <div class="awaClass-syl-tabs">
         <button class="awaClass-syl-tab active" onclick="switchSylTab(this, 'syl-mechanics')">Mechanics</button>
-        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-pressure')">Pressure &amp; Fluids</button>
-        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-heat')">Heat &amp; Thermo</button>
-        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-matter')">Matter &amp; Waves</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-pressure')">Pressure & Fluids</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-heat')">Heat & Thermo</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-matter-waves')">Matter & Waves</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-optics')">Optics</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-electricity')">Electricity & Mag</button>
+        <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-modern')">Modern & Electronics</button>
         <button class="awaClass-syl-tab" onclick="switchSylTab(this, 'syl-texts')">📚 Texts</button>
       </div>
 
-      <!-- ══ TAB 1: Mechanics ══ -->
+      <!-- ========= TAB 1: MECHANICS (Topics 1-5) ========= -->
       <div class="awaClass-syl-section active" id="syl-mechanics">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">1</span><span class="awaClass-syl-topic-name">Measurements and Units</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Use measuring instruments; determine dimensions; estimate errors; plot graphs.</div><ul><li>Length, area, volume — metre rule, Vernier calipers, micrometer, measuring cylinder</li><li>Mass, time, fundamental & derived quantities</li><li>Dimensions, homogeneity of equations, estimation of errors, significant figures</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">2</span><span class="awaClass-syl-topic-name">Scalars and Vectors</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish scalars/vectors; resolve vectors; relative velocity.</div><ul><li>Definition and examples, relative velocity, resolution into components, graphical methods</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">3</span><span class="awaClass-syl-topic-name">Motion</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Linear motion, projectiles, Newton's laws, circular motion, SHM.</div><ul><li>Types: translational, oscillatory, rotational</li><li>Linear motion equations, motion under gravity, graphs</li><li>Projectiles (range, max height, time of flight)</li><li>Newton's laws, impulse, momentum, conservation</li><li>Circular motion (angular velocity, centripetal force)</li><li>SHM: period, frequency, energy, resonance</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">4</span><span class="awaClass-syl-topic-name">Gravitational Field</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Newton's law, gravitational potential, escape velocity, weightlessness.</div><ul><li>Universal gravitation, gravitational potential, g variation, mass vs weight, escape velocity, parking orbit</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">5</span><span class="awaClass-syl-topic-name">Equilibrium of Forces</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Conditions for equilibrium, moments, Lami's theorem, centre of gravity.</div><ul><li>Equilibrium of particles, triangle/polygon of forces, Lami's theorem</li><li>Moments, couples, rigid body equilibrium, centre of gravity (stable/unstable/neutral)</li></ul></div></div>
+      </div>
 
-        <!-- 1. Measurements and Units -->
-        <div class="awaClass-syl-topic open">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">1</span>
-            <span class="awaClass-syl-topic-name">Measurements and Units</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Use measuring instruments; determine lengths, areas and volumes; deduce units of derived quantities; determine dimensions; estimate errors; express measurements in standard form; use coordinate systems and plot graphs.</div>
-            <ul>
-              <li>Length, area and volume — metre rule, Vernier calipers, micrometer screw-gauge, measuring cylinder</li>
-              <li>Mass — unit of mass, simple beam balance (e.g. Buchhart's balance)</li>
-              <li>Time — unit and time-measuring devices</li>
-              <li>Fundamental and derived physical quantities with their units</li>
-              <li>Dimensions — definition and simple examples; testing homogeneity of equations</li>
-              <li>Limitations of experimental measurements — accuracy, estimation of errors, significant figures, standard form</li>
-              <li>Displacement — distinction from distance; concept of position and coordinates; frame of reference</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- 2. Scalars and Vectors -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">2</span>
-            <span class="awaClass-syl-topic-name">Scalars and Vectors</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish between scalar and vector quantities; determine resultants; find relative velocity; resolve vectors into perpendicular components; use graphical methods.</div>
-            <ul>
-              <li>Definition and examples of scalar and vector quantities</li>
-              <li>Relative velocity</li>
-              <li>Resolution of vectors into two perpendicular directions</li>
-              <li>Graphical methods of vector solution</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- 3. Motion -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">3</span>
-            <span class="awaClass-syl-topic-name">Motion</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify types of motion; solve problems on linear motion, projectiles, Newton's laws, circular motion and SHM; interpret graphs; analyse energy changes in SHM.</div>
-            <ul>
-              <li>Types of motion — translational, oscillatory, rotational, spin, random</li>
-              <li>Linear motion — speed, velocity, acceleration; equations of uniformly accelerated motion; motion under gravity; distance-time and velocity-time graphs</li>
-              <li>Projectiles — range, maximum height, time of flight; applications</li>
-              <li>Newton's laws — inertia, mass, force; impulse and momentum; force-time graph; conservation of linear momentum</li>
-              <li>Circular motion — angular velocity, angular acceleration, centripetal and centrifugal forces</li>
-              <li>Simple Harmonic Motion (SHM) — definition, period, frequency, amplitude; velocity and acceleration; energy changes; forced vibration and resonance</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- 4. Gravitational Field -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">4</span>
-            <span class="awaClass-syl-topic-name">Gravitational Field</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Apply Newton's law of universal gravitation; deduce gravitational potential; differentiate mass from weight; determine escape velocity; describe parking orbit and weightlessness.</div>
-            <ul>
-              <li>Newton's law of universal gravitation</li>
-              <li>Gravitational potential</li>
-              <li>Conservative and non-conservative fields</li>
-              <li>Acceleration due to gravity (g) and its variation on the Earth's surface</li>
-              <li>Mass vs. weight; escape velocity</li>
-              <li>Parking orbit and weightlessness</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- 5. Equilibrium of Forces -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">5</span>
-            <span class="awaClass-syl-topic-name">Equilibrium of Forces</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Apply conditions for equilibrium of coplanar and rigid-body forces; use triangle/polygon of forces and Lami's theorem; determine moments, resultants and equilibrants; differentiate types of equilibrium.</div>
-            <ul>
-              <li>Equilibrium of particles — coplanar forces; triangle and polygon of forces; Lami's theorem</li>
-              <li>Principles of moments — moment of a force; couple (torque) and applications</li>
-              <li>Equilibrium of rigid bodies — resolution and composition of forces; resultant and equilibrant</li>
-              <li>Centre of gravity — stable, unstable and neutral equilibrium</li>
-            </ul>
-          </div>
-        </div>
-
-      </div><!-- /syl-mechanics -->
-
-      <!-- ══ TAB 2: Pressure & Fluids ══ -->
+      <!-- TAB 2: PRESSURE & FLUIDS (Topics 6-7) -->
       <div class="awaClass-syl-section" id="syl-pressure">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">6</span><span class="awaClass-syl-topic-name">Pressure</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> S.I. units, pressure instruments, P = ρgh, Pascal's principle.</div><ul><li>Atmospheric pressure, barometers, manometers, variation with height, Pascal's principle applications</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">7</span><span class="awaClass-syl-topic-name">Liquids at Rest</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Density, upthrust, Archimedes' principle, law of floatation.</div><ul><li>Density, relative density, upthrust, Archimedes' principle, applications (ships, hydrometers)</li></ul></div></div>
+      </div>
 
-        <!-- Pressure -->
-        <div class="awaClass-syl-topic open">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">1</span>
-            <span class="awaClass-syl-topic-name">Pressure</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Recognise S.I. units of pressure (Pa); identify pressure-measuring instruments; relate pressure to height; use a barometer as an altimeter; apply Pascal's principle.</div>
-            <ul>
-              <li>Atmospheric pressure — definition, S.I. units (Pa)</li>
-              <li>Pressure measurement — simple mercury barometer, aneroid barometer and manometer</li>
-              <li>Variation of atmospheric pressure with height; barometer as altimeter</li>
-              <li>Pressure in liquids — P = ρgh; transmission of pressure (Pascal's Principle) and applications</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Liquids at Rest -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">2</span>
-            <span class="awaClass-syl-topic-name">Liquids at Rest</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish density from relative density; determine upthrust; apply Archimedes' principle and the law of floatation.</div>
-            <ul>
-              <li>Density of solids and liquids; relative density</li>
-              <li>Upthrust on a body immersed in a liquid</li>
-              <li>Archimedes' principle and law of floatation — applications (ships, hydrometers)</li>
-            </ul>
-          </div>
-        </div>
-
-      </div><!-- /syl-pressure -->
-
-      <!-- ══ TAB 3: Heat & Thermodynamics ══ -->
+      <!-- TAB 3: HEAT & THERMODYNAMICS (Topics 8-14) -->
       <div class="awaClass-syl-section" id="syl-heat">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">8</span><span class="awaClass-syl-topic-name">Temperature & Its Measurement</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Thermometric properties, scales, Celsius/Kelvin conversion.</div><ul><li>Concept of temperature, calibration, Celsius & Kelvin, types of thermometers</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">9</span><span class="awaClass-syl-topic-name">Thermal Expansion</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Linear/volume expansivities, anomalous expansion of water.</div><ul><li>Solids: linear, area, volume expansivities; liquids: real/apparent expansivity, anomalous expansion</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">10</span><span class="awaClass-syl-topic-name">Gas Laws</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Boyle's, Charles', pressure law, ideal gas equation, Van der Waals.</div><ul><li>Boyle, Charles, Pressure law, absolute zero, general gas equation, PV=nRT, Van der Waals</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">11</span><span class="awaClass-syl-topic-name">Quantity of Heat</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Heat capacity, specific heat capacity, methods of mixtures.</div><ul><li>Heat capacity, specific heat capacity, method of mixtures, electrical method, Newton's law of cooling</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">12</span><span class="awaClass-syl-topic-name">Change of State</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Latent heats, melting, evaporation, boiling, pressure effects.</div><ul><li>Latent heat of fusion/vaporisation, melting/evaporation/boiling distinctions, pressure & dissolved substances effects</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">13</span><span class="awaClass-syl-topic-name">Vapours</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Saturated/unsaturated vapours, SVP, dew point, humidity.</div><ul><li>SVP, relation to boiling, dew point, relative humidity, hygrometers</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">14</span><span class="awaClass-syl-topic-name">Heat Transfer</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Conduction, convection, radiation, thermal conductivity, engines.</div><ul><li>Modes: conduction, convection, radiation; thermal conductivity, thermos flask, land/sea breeze, engines</li></ul></div></div>
+      </div>
 
-        <!-- Temperature -->
-        <div class="awaClass-syl-topic open">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">1</span>
-            <span class="awaClass-syl-topic-name">Temperature and Its Measurement</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify thermometric properties; calibrate thermometers; differentiate temperature scales; convert between Celsius and Kelvin.</div>
-            <ul>
-              <li>Concept of temperature and thermometric properties</li>
-              <li>Calibration of thermometers</li>
-              <li>Temperature scales — Celsius and Kelvin; conversion between scales</li>
-              <li>Types of thermometers</li>
-            </ul>
-          </div>
-        </div>
+      <!-- TAB 4: MATTER & WAVES (Topics 15-18) -->
+      <div class="awaClass-syl-section" id="syl-matter-waves">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">15</span><span class="awaClass-syl-topic-name">Structure of Matter & Kinetic Theory</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Molecular theory, Brownian motion, diffusion, surface tension, kinetic theory assumptions.</div><ul><li>Atoms, molecules, Brownian motion, diffusion, surface tension, capillarity, adhesion/cohesion, kinetic theory</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">16</span><span class="awaClass-syl-topic-name">Waves</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Wave motion, V=fλ, progressive equation, classification, properties (reflection, refraction, diffraction, polarisation, superposition, beats, Doppler).</div><ul><li>Production & propagation, V=fλ, phase difference, progressive wave equation Y = A sin 2π/λ (vt ± x)</li><li>Mechanical/EM, longitudinal/transverse, stationary/progressive</li><li>Reflection, refraction, diffraction, polarisation, interference, beats, Doppler effect</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">17</span><span class="awaClass-syl-topic-name">Propagation of Sound Waves</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Need for medium, speed of sound in solids/liquids/air, echoes, reverberation.</div><ul><li>Material medium necessity, speed in different media, effect of temp/pressure, echoes, reverberation</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">18</span><span class="awaClass-syl-topic-name">Characteristics of Sound Waves</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Noise vs musical notes, quality/pitch/intensity, overtones, resonance in pipes.</div><ul><li>Noise vs musical notes, quality, pitch, intensity, loudness, overtones (strings & air columns), resonance, frequencies in closed/open pipes</li></ul></div></div>
+      </div>
 
-        <!-- Thermal Expansion -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">2</span>
-            <span class="awaClass-syl-topic-name">Thermal Expansion</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine linear and volume expansivities; assess effects and applications; determine volume, apparent and real expansivities of liquids; analyse anomalous expansion of water.</div>
-            <ul>
-              <li>Solids — linear, volume and area expansivities; effects (e.g. railway lines, building strips); relationships between expansivities</li>
-              <li>Liquids — volume expansivity; real and apparent expansivities; anomalous expansion of water</li>
-            </ul>
-          </div>
-        </div>
+      <!-- TAB 5: OPTICS (Topics 19-23: Light Energy, Reflection, Refraction, Optical Instruments, Dispersion & EM Spectrum) -->
+      <div class="awaClass-syl-section" id="syl-optics">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">19</span><span class="awaClass-syl-topic-name">Light Energy</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Compare natural/artificial sources; luminous/non-luminous; speed/freq/wavelength; shadows, eclipses; pin-hole camera.</div><ul><li>Sources: natural & artificial, luminous & non-luminous objects</li><li>Propagation: speed, frequency, wavelength; shadows & eclipse formation</li><li>Pin-hole camera principle and problems</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">20</span><span class="awaClass-syl-topic-name">Reflection at Plane & Curved Surfaces</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Laws of reflection; images by plane, concave, convex mirrors; mirror formula 1/f = 1/u + 1/v; linear magnification; applications (periscope, kaleidoscope, sextant).</div><ul><li>Laws of reflection, image formation (plane, concave, convex), ray diagrams</li><li>Mirror formula, linear magnification, applications</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">21</span><span class="awaClass-syl-topic-name">Refraction Through Plane & Curved Surfaces</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Snell's law, refractive index, real & apparent depth, critical angle, TIR, prism formula n = sin[(A+D)/2] / sin(A/2), lens formula 1/f = 1/u + 1/v, Newton's formula, magnification.</div><ul><li>Refraction (velocity change), laws, refractive index (Snell's law), real/apparent depth, lateral displacement</li><li>Critical angle & total internal reflection (TIR), applications (mirage, optical fibre)</li><li>Glass prism: minimum deviation formula, types of lenses, lens formula, Newton's formula, magnification</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">22</span><span class="awaClass-syl-topic-name">Optical Instruments</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Microscope, telescope, projector, camera, human eye; power of lens, angular magnification, near/far points, sight defects & corrections.</div><ul><li>Principles of microscopes, telescopes, projectors, cameras, human eye (no physiological details)</li><li>Power of lens (P = 1/f), angular magnification, near & far points</li><li>Defects: myopia, hypermetropia, astigmatism & corrections</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">23</span><span class="awaClass-syl-topic-name">Dispersion & Electromagnetic Spectrum</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Dispersion by prism, pure spectrum, colour mixing (additive/subtractive), colour filters, rainbow; EM spectrum sources & uses.</div><ul><li>Dispersion of white light, pure spectrum production, primary/secondary colours, colour of objects & filters, rainbow formation</li><li>EM spectrum: radio, microwave, IR, visible, UV, X-rays, gamma rays — sources, detection, applications</li></ul></div></div>
+      </div>
 
-        <!-- Gas Laws -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">3</span>
-            <span class="awaClass-syl-topic-name">Gas Laws</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Interpret gas laws and use them to solve numerical problems; interpret the Van der Waals equation for a real gas.</div>
-            <ul>
-              <li>Boyle's law (isothermal process)</li>
-              <li>Charles' law (isobaric process)</li>
-              <li>Pressure law (volumetric process)</li>
-              <li>Absolute zero of temperature</li>
-              <li>General gas equation: PV/T = constant</li>
-              <li>Ideal gas equation: PV = nRT</li>
-              <li>Van der Waals gas (real gas treatment)</li>
-            </ul>
-          </div>
-        </div>
+      <!-- TAB 6: ELECTRICITY & MAGNETISM (Topics 24-33) -->
+      <div class="awaClass-syl-section" id="syl-electricity">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">24</span><span class="awaClass-syl-topic-name">Electrostatics</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Charges, charging methods, electroscope, Coulomb's law, electric field, potential, lightning conductors.</div><ul><li>Positive/negative charges, charging (friction, contact, induction), electroscope, Coulomb's inverse square law, E field & potential, discharge, lightning</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">25</span><span class="awaClass-syl-topic-name">Capacitors</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Types, parallel plate, C = εA/d, series/parallel combinations, energy stored.</div><ul><li>Types & functions, parallel plate capacitor, capacitance, factors affecting C (area, separation, dielectric), series/parallel, energy stored (½CV²)</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">26</span><span class="awaClass-syl-topic-name">Electric Cells</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Simple voltaic cell defects, Daniel, Leclanché, accumulators, arrangement of cells, efficiency.</div><ul><li>Simple voltaic cell defects & correction, Daniel, Leclanché (wet/dry), lead-acid, NiFe, Li-ion, maintenance, series/parallel arrangement, efficiency</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">27</span><span class="awaClass-syl-topic-name">Current Electricity</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> emf, p.d., current, internal resistance, Ohm's law, meter bridge, potentiometer, Kirchhoff's laws.</div><ul><li>emf, p.d., current, internal resistance, lost volt; Ohm's law; resistance measurement, meter bridge; series/parallel combinations; potentiometer (emf, current, internal resistance); Kirchhoff's laws</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">28</span><span class="awaClass-syl-topic-name">Electrical Energy & Power</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Energy, power, commercial unit, transmission, heating effect, house wiring, fuses.</div><ul><li>Energy & power expressions, commercial unit (kWh), power transmission, heating effect, house wiring (parallel advantages), fuse rating</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">29</span><span class="awaClass-syl-topic-name">Magnets & Magnetic Fields</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Natural/artificial magnets, soft iron vs steel, making/demagnetizing, field patterns, Earth's magnetic field, flux, navigation.</div><ul><li>Natural/artificial magnets, magnetic properties of soft iron/steel, making & demagnetizing methods, field patterns (permanent, straight wire, solenoid), Earth's field (dip, declination), flux & flux density, applications (navigation, mineral exploration)</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">30</span><span class="awaClass-syl-topic-name">Force on Conductor in Magnetic Field</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Fleming's left-hand rule, force between conductors, charge in B-field, DC motor, galvanometer conversion.</div><ul><li>Force on current-carrying conductor, force between parallel conductors, force on moving charge, DC motor, electromagnets, moving coil/iron instruments, galvanometer to ammeter/voltmeter (shunt/multiplier), sensitivity</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">31</span><span class="awaClass-syl-topic-name">Electromagnetic Induction</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Faraday's laws, Lenz's law, AC/DC generators, transformers, inductance, eddy currents.</div><ul><li>Faraday's laws, factors affecting induced emf, Lenz's law (energy conservation), AC/DC generators, transformers, induction coil, inductance (unit, energy stored = ½LI²), eddy currents (reduction & applications)</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">32</span><span class="awaClass-syl-topic-name">Simple AC Circuits</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> AC vs DC, peak/rms values, R, C, L circuits, RC, RL, RLC series, phasors, resonance f₀ = 1/(2π√LC), power factor.</div><ul><li>AC current/voltage, peak & rms, resistor in AC, capacitive reactance, inductive reactance, series RLC, vector diagrams, phase angle, impedance, resonance frequency, instantaneous/average power, power factor</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">33</span><span class="awaClass-syl-topic-name">Conduction Through Liquids & Gases</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Electrolytes vs non-electrolytes, electrolysis, Faraday's laws, discharge through gases.</div><ul><li>Liquids: electrolytes, electrolysis, Faraday's laws, applications (electroplating, ammeter calibration)</li><li>Gases: discharge through gases (qualitative), applications</li></ul></div></div>
+      </div>
 
-        <!-- Quantity of Heat -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">4</span>
-            <span class="awaClass-syl-topic-name">Quantity of Heat</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate heat capacity from specific heat capacity; determine both using simple methods; solve numerical problems.</div>
-            <ul>
-              <li>Heat as a form of energy</li>
-              <li>Heat capacity and specific heat capacity of solids and liquids</li>
-              <li>Determination by method of mixtures, electrical method and Newton's law of cooling</li>
-            </ul>
-          </div>
-        </div>
+      <!-- TAB 7: MODERN PHYSICS & ELECTRONICS (Topics 34-39) -->
+      <div class="awaClass-syl-section" id="syl-modern">
+        <div class="awaClass-syl-topic open"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">34</span><span class="awaClass-syl-topic-name">Elementary Modern Physics</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Atomic models, energy levels, photoelectric effect (Einstein, stopping potential), X-rays, radioactivity (α,β,γ), half-life, decay constant, fusion/fission, mass-energy equivalence (ΔE=Δmc²), wave-particle duality, uncertainty principle.</div><ul><li>Models of atom (limitations), atomic structure, energy levels & spectra, thermionic & photoelectric emission, Einstein's equation, stopping potential, X-ray production & properties</li><li>Radioactivity: α, β, γ rays, half-life, decay constant, isotopes</li><li>Nuclear energy: fusion, fission, binding energy, mass defect, Einstein's equation</li><li>Wave-particle duality, electron diffraction, uncertainty principle</li></ul></div></div>
+        <div class="awaClass-syl-topic"><div class="awaClass-syl-topic-head" onclick="toggleTopic(this)"><span class="awaClass-syl-topic-num">35</span><span class="awaClass-syl-topic-name">Introductory Electronics</span><i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i></div><div class="awaClass-syl-topic-body"><div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Metals/semiconductors/insulators (band gap), intrinsic/extrinsic, n-type/p-type, diodes (rectification), transistors (amplification).</div><ul><li>Distinction: metals, semiconductors, insulators (band gap concept); intrinsic & extrinsic semiconductors; electron & hole carriers; n-type & p-type; diodes & transistors; rectification & amplification</li></ul></div></div>
+      </div>
 
-        <!-- Change of State -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">5</span>
-            <span class="awaClass-syl-topic-name">Change of State</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate latent heat types; distinguish melting, evaporation and boiling; examine effects of pressure and dissolved substances on boiling/melting points; solve numerical problems.</div>
-            <ul>
-              <li>Latent heat; specific latent heats of fusion and vaporisation</li>
-              <li>Melting, evaporation and boiling — distinctions</li>
-              <li>Influence of pressure and dissolved substances on boiling and melting points</li>
-              <li>Applications in appliances</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Vapours -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">6</span>
-            <span class="awaClass-syl-topic-name">Vapours</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Distinguish saturated from unsaturated vapours; relate SVP to boiling point; determine SVP by barometer tube; differentiate dew point, humidity and relative humidity; estimate atmospheric humidity.</div>
-            <ul>
-              <li>Unsaturated and saturated vapours</li>
-              <li>Saturated vapour pressure (SVP) and its relation to boiling; determination by barometer tube method</li>
-              <li>Formation of dew, mist, fog and rain</li>
-              <li>Dew point, humidity and relative humidity</li>
-              <li>Hygrometry — wet and dry bulb hygrometers</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Heat Transfer -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">7</span>
-            <span class="awaClass-syl-topic-name">Heat Transfer</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate conduction, convection and radiation; solve problems on thermal conductivity and heat flux; compare conductivities; relate thermos flask components; differentiate land and sea breeze; analyse engine principles.</div>
-            <ul>
-              <li>Conduction, convection and radiation — modes of heat transfer</li>
-              <li>Temperature gradient, thermal conductivity and heat flux</li>
-              <li>Effect of surface nature on energy radiated and absorbed</li>
-              <li>Conductivities of common materials</li>
-              <li>The thermos flask</li>
-              <li>Land and sea breeze</li>
-              <li>Engines — internal combustion, jet engines and rockets</li>
-            </ul>
-          </div>
-        </div>
-
-      </div><!-- /syl-heat -->
-
-      <!-- ══ TAB 4: Matter & Waves ══ -->
-      <div class="awaClass-syl-section" id="syl-matter">
-
-        <!-- Structure of Matter -->
-        <div class="awaClass-syl-topic open">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">1</span>
-            <span class="awaClass-syl-topic-name">Structure of Matter and Kinetic Theory</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate atoms and molecules; use molecular theory to explain Brownian motion, diffusion, surface tension, capillarity, adhesion, cohesion and contact angle; examine assumptions of kinetic theory and use it to explain gas behaviour.</div>
-            <ul>
-              <li>Molecular nature of matter — atoms and molecules</li>
-              <li>Molecular theory — Brownian motion, diffusion, surface tension, capillarity, adhesion, cohesion, angles of contact</li>
-              <li>Kinetic theory — assumptions; explaining gas pressure, Boyle's law, Charles' law, melting, boiling, vaporisation, evaporation and temperature change</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Waves -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">2</span>
-            <span class="awaClass-syl-topic-name">Waves</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Interpret wave motion; relate frequency, wavelength and wave velocity; compute wave parameters using progressive wave equation; distinguish wave types; differentiate wave properties; analyse superposition, beats and Doppler effect.</div>
-            <ul>
-              <li>Production and propagation — wave motion; vibrating systems; waves as energy transfer; V = fλ; phase difference, wave number and wave vector; progressive wave equation Y = A sin 2π/λ (vt ± x)</li>
-              <li>Classification — mechanical vs. electromagnetic; longitudinal vs. transverse; stationary vs. progressive; examples from springs, ropes, stretched strings and ripple tanks</li>
-              <li>Properties — reflection, refraction, diffraction and plane polarisation; superposition and interference; beats and beat frequency; Doppler effect (qualitative)</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Propagation of Sound Waves -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">3</span>
-            <span class="awaClass-syl-topic-name">Propagation of Sound Waves</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine the need for a material medium; compare speed of sound in solids, liquids and air; relate temperature and pressure to speed of sound; solve problems on echoes, reverberation and speed; compare advantages and disadvantages of echoes.</div>
-            <ul>
-              <li>Necessity for a material medium in sound propagation</li>
-              <li>Speed of sound in solids, liquids and air; effect of temperature and pressure</li>
-              <li>Reflection of sound — echoes and reverberation; applications</li>
-              <li>Disadvantages (and advantages) of echoes and reverberation</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Characteristics of Sound Waves -->
-        <div class="awaClass-syl-topic">
-          <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
-            <span class="awaClass-syl-topic-num">4</span>
-            <span class="awaClass-syl-topic-name">Characteristics of Sound Waves</span>
-            <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
-          </div>
-          <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Differentiate noise from musical notes; analyse quality, pitch, intensity and loudness; evaluate their application in musical instruments; identify overtones from vibrating strings and air columns; itemise acoustic examples of resonance; determine frequencies of notes in open and closed pipes.</div>
-            <ul>
-              <li>Noise and musical notes — distinctions</li>
-              <li>Quality, pitch, intensity and loudness — definitions and applications in musical instruments</li>
-              <li>Overtones produced by vibrating strings and air columns: F₀ = (1/2L)√(T/μ), where μ = m/L</li>
-              <li>Acoustic examples of resonance</li>
-              <li>Frequency of notes emitted by air columns in closed and open pipes in relation to their lengths</li>
-            </ul>
-          </div>
-        </div>
-
-      </div><!-- /syl-matter -->
-
-      <!-- ══ Recommended Texts ══ -->
+      <!-- TAB: RECOMMENDED TEXTS (updated) -->
       <div class="awaClass-syl-texts" id="syl-texts" style="display:none;">
-        <p class="awaClass-syl-texts-title">📚 Recommended Texts</p>
+        <p class="awaClass-syl-texts-title">📚 Recommended Texts (JAMB Physics 2026)</p>
         <ol>
+          <li>Ike E.E (2014) <em>Essential Principles of Physics</em>, Jos ENIC publishers</li>
+          <li>Ike E.E (2014) <em>Numerical Problems and Solutions in Physics</em>, Jos ENIC publishers</li>
+          <li>Nelson M. (1977) <em>Fundamentals of Physics</em>, Great Britain, Hart Davis Education</li>
+          <li>Nelson M. and Parker (1989) <em>Advanced Level Physics</em> (Sixth Edition) Heinemann</li>
+          <li>Okeke P.N and Anyakoha M.W. (2000) <em>Senior Secondary School Physics</em>, Lagos, Pacific Printers</li>
+          <li>Olumuyiwa A. and Ogunkoya O. O (1992) <em>Comprehensive Certificate Physics</em>, Ibadan: University Press Plc.</li>
           <li>Anyakoha, M. W. <em>New School Physics for Senior Secondary Schools</em>, Onitsha: Africana-FIRST Publishers.</li>
-          <li>Olumuyiwa, A. &amp; Ogunkoya, O. O. <em>Comprehensive Certificate Physics</em>, Ibadan: University Press Plc.</li>
-          <li>Nelson, M. &amp; Parker, J. <em>Advanced Level Physics</em>, London: Heinemann.</li>
-          <li>Abbott, A. F. <em>Ordinary Level Physics</em>, London: Heinemann.</li>
-          <li>Awe, O. &amp; Okunola, O. O. <em>Comprehensive Physics</em>, Ibadan: University Press Plc.</li>
-          <li>Nelkon, M. <em>Principles of Physics</em>, London: Hart-Davis Educational.</li>
           <li><em>Wisdomline Pass at Once JAMB.</em></li>
         </ol>
       </div>
+    </div>
 
-    </div><!-- /modal-body -->
-
-    <!-- Footer -->
     <div class="awaClass-modal-footer">
-      <p class="awaClass-modal-footer-note">Based on JAMB UTME 2026 Physics Syllabus</p>
+      <p class="awaClass-modal-footer-note">Based on JAMB UTME 2026 Physics Syllabus (39 topics)</p>
       <a href="{% url 'cbt_exam' %}" class="awaClass-modal-cta">
         <i class="fa-solid fa-bolt fa-xs"></i> Start CBT Practice
       </a>
     </div>
-
   </div>
 </div>
 
 {% include 'footer.html' %}
 
 <script>
-  /* ── Syllabus modal ── */
   function openSyllabusModal() {
     document.getElementById('awaClass-syllabus-modal').classList.add('is-open');
     document.body.style.overflow = 'hidden';
@@ -808,7 +505,6 @@
     if (e.key === 'Escape') closeSyllabusModal();
   });
 
-  /* ── Tab switching ── */
   function switchSylTab(btn, sectionId) {
     document.querySelectorAll('.awaClass-syl-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.awaClass-syl-section').forEach(s => s.classList.remove('active'));
@@ -825,11 +521,9 @@
     }
   }
 
-  /* ── Accordion toggle ── */
   function toggleTopic(headEl) {
     headEl.closest('.awaClass-syl-topic').classList.toggle('open');
   }
 </script>
-
 </body>
 </html>
