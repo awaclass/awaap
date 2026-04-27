@@ -1,0 +1,596 @@
+{% load humanize %}
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>awaClass | {{ post.title|truncatechars:50 }}</title>
+    <style>
+        /* ============================================
+           POST DETAIL STYLES
+        ============================================ */
+        .awaClass-post-detail-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 48px;
+        }
+
+        @media (min-width: 768px) {
+            .awaClass-post-detail-container {
+                margin-left: 50px;
+            }
+        }
+
+        /* Back Button */
+        .awaClass-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: #f97316;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .awaClass-back-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Main Post Card */
+        .awaClass-main-post {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .awaClass-post-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .awaClass-post-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .awaClass-post-author-info {
+            flex: 1;
+        }
+
+        .awaClass-post-author-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #0f0f0f;
+            margin: 0 0 4px;
+        }
+
+        .awaClass-post-meta {
+            font-size: 13px;
+            color: #909090;
+        }
+
+        .awaClass-resolved-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        .badge-resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-unresolved {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .awaClass-post-title {
+            padding: 20px 24px 16px;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f0f0f;
+        }
+
+        .awaClass-post-content {
+            padding: 0 24px 20px;
+            font-size: 16px;
+            color: #404040;
+            line-height: 1.6;
+        }
+
+        .awaClass-post-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .awaClass-post-stats {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #606060;
+        }
+
+        .awaClass-post-actions {
+            padding: 16px 24px;
+            display: flex;
+            gap: 24px;
+        }
+
+        .awaClass-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            color: #606060;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .awaClass-action-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .awaClass-action-btn.liked {
+            color: #f97316;
+        }
+
+        /* Resolve Button */
+        .awaClass-resolve-btn {
+            background: #f97316;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .awaClass-resolve-btn.resolved {
+            background: #10b981;
+        }
+
+        /* Comments Section */
+        .awaClass-comments-section {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .awaClass-comments-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .awaClass-comment-form {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 16px;
+        }
+
+        .awaClass-comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .awaClass-comment-input-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+        }
+
+        .awaClass-comment-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e5e5e5;
+            border-radius: 24px;
+            resize: none;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .awaClass-comment-input:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+
+        .awaClass-comment-submit {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .awaClass-comments-list {
+            padding: 0;
+        }
+
+        .awaClass-comment-item {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 16px;
+        }
+
+        .awaClass-comment-avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .awaClass-comment-content {
+            flex: 1;
+        }
+
+        .awaClass-comment-author {
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f0f0f;
+            margin: 0 0 4px;
+        }
+
+        .awaClass-comment-text {
+            font-size: 14px;
+            color: #404040;
+            line-height: 1.5;
+            margin: 0 0 8px;
+        }
+
+        .awaClass-comment-meta {
+            font-size: 12px;
+            color: #909090;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .awaClass-comment-like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #909090;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .awaClass-comment-like-btn.liked {
+            color: #f97316;
+        }
+
+        .awaClass-empty-comments {
+            text-align: center;
+            padding: 60px 20px;
+            color: #909090;
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+            .awaClass-post-title {
+                font-size: 22px;
+            }
+            
+            .awaClass-comment-form {
+                flex-direction: column;
+            }
+            
+            .awaClass-comment-avatar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="awaClass-post-detail-container">
+    <!-- Back Button -->
+    <a href="{% url 'chat_room' %}" class="awaClass-back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Discussion Room
+    </a>
+
+    <!-- Main Post -->
+    <div class="awaClass-main-post">
+        <div class="awaClass-post-header">
+            <img src="{{ post.author.profile.get_picture_url }}" alt="{{ post.author.username }}" class="awaClass-post-avatar">
+            <div class="awaClass-post-author-info">
+                <div class="awaClass-post-author-name">
+                    {{ post.author.get_full_name|default:post.author.username }}
+                    {% if post.is_resolved %}
+                    <span class="awaClass-resolved-badge badge-resolved"><i class="fa-solid fa-check"></i> Resolved</span>
+                    {% else %}
+                    <span class="awaClass-resolved-badge badge-unresolved"><i class="fa-solid fa-question"></i> Unresolved</span>
+                    {% endif %}
+                </div>
+                <div class="awaClass-post-meta">
+                    <i class="fa-regular fa-clock"></i> {{ post.created_at|date:"F j, Y, g:i a" }}
+                    {% if post.subject %}
+                    • <i class="fa-regular fa-folder"></i> {{ post.subject }}
+                    {% endif %}
+                </div>
+            </div>
+            {% if request.user == post.author %}
+            <button class="awaClass-resolve-btn {% if post.is_resolved %}resolved{% endif %}" onclick="toggleResolved('{{ post.post_id }}')">
+                {% if post.is_resolved %}<i class="fa-solid fa-check"></i> Resolved{% else %}<i class="fa-solid fa-check-circle"></i> Mark Resolved{% endif %}
+            </button>
+            {% endif %}
+        </div>
+        
+        <h1 class="awaClass-post-title">{{ post.title }}</h1>
+        
+        <div class="awaClass-post-content">
+            {{ post.content|linebreaks }}
+            {% if post.image %}
+            <div>
+                <img src="{{ post.image.url }}" alt="Question image" class="awaClass-post-image">
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="awaClass-post-stats">
+            <span><i class="fa-regular fa-heart"></i> <span id="likeCount">{{ post.total_likes }}</span> likes</span>
+            <span><i class="fa-regular fa-comment"></i> {{ total_comments }} replies</span>
+            <span><i class="fa-regular fa-eye"></i> {{ post.view }} views</span>
+        </div>
+        
+        <div class="awaClass-post-actions">
+            <button class="awaClass-action-btn like-btn" onclick="likePost('{{ post.post_id }}')">
+                <i class="{% if request.user in post.like.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                Like
+            </button>
+            <button class="awaClass-action-btn" onclick="scrollToCommentForm()">
+                <i class="fa-regular fa-comment"></i> Reply
+            </button>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="awaClass-comments-section">
+        <div class="awaClass-comments-header">
+            <i class="fa-regular fa-comments"></i> {{ total_comments }} Replies
+        </div>
+        
+        <!-- Comment Form -->
+        <form id="commentForm" method="POST" action="{% url 'chat_post_comment' post.post_id %}">
+            {% csrf_token %}
+            <div class="awaClass-comment-form">
+                <img src="{{ request.user.profile.get_picture_url }}" alt="{{ request.user.username }}" class="awaClass-comment-avatar">
+                <div class="awaClass-comment-input-wrapper">
+                    <textarea name="comment" class="awaClass-comment-input" placeholder="Write your reply..." rows="2" required></textarea>
+                    <button type="submit" class="awaClass-comment-submit">Post</button>
+                </div>
+            </div>
+        </form>
+        
+        <!-- Comments List -->
+        <div class="awaClass-comments-list" id="commentsList">
+            {% for comment in comments %}
+            <div class="awaClass-comment-item" id="comment-{{ comment.comment_id }}">
+                <img src="{{ comment.commentator.profile.get_picture_url }}" alt="{{ comment.commentator.username }}" class="awaClass-comment-avatar-small">
+                <div class="awaClass-comment-content">
+                    <div class="awaClass-comment-author">{{ comment.commentator.get_full_name|default:comment.commentator.username }}</div>
+                    <div class="awaClass-comment-text">{{ comment.comment }}</div>
+                    <div class="awaClass-comment-meta">
+                        <span><i class="fa-regular fa-clock"></i> {{ comment.created_at|timesince }} ago</span>
+                        <button class="awaClass-comment-like-btn comment-like-btn-{{ comment.comment_id }}" onclick="likeComment('{{ comment.comment_id }}')">
+                            <i class="{% if request.user in comment.like.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                            <span class="comment-like-count-{{ comment.comment_id }}">{{ comment.total_likes }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="awaClass-empty-comments">
+                <i class="fa-regular fa-message" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                <p>No replies yet. Be the first to answer!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // CSRF Token helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Like post
+    function likePost(postId) {
+        fetch(`/chat/post/${postId}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const likeBtn = document.querySelector('.like-btn');
+                const icon = likeBtn.querySelector('i');
+                const likeCount = document.getElementById('likeCount');
+                
+                if (data.liked) {
+                    icon.className = 'fa-solid fa-heart';
+                    likeBtn.classList.add('liked');
+                } else {
+                    icon.className = 'fa-regular fa-heart';
+                    likeBtn.classList.remove('liked');
+                }
+                
+                likeCount.textContent = data.total_likes;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    // Like comment
+    function likeComment(commentId) {
+        fetch(`/chat/comment/${commentId}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const likeBtn = document.querySelector(`.comment-like-btn-${commentId}`);
+                const icon = likeBtn.querySelector('i');
+                const likeCountSpan = document.querySelector(`.comment-like-count-${commentId}`);
+                
+                if (data.liked) {
+                    icon.className = 'fa-solid fa-heart';
+                    likeBtn.classList.add('liked');
+                } else {
+                    icon.className = 'fa-regular fa-heart';
+                    likeBtn.classList.remove('liked');
+                }
+                
+                likeCountSpan.textContent = data.total_likes;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    // Toggle resolved status
+    function toggleResolved(postId) {
+        fetch(`/chat/post/${postId}/resolve/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    // Scroll to comment form
+    function scrollToCommentForm() {
+        document.querySelector('.awaClass-comment-input').focus();
+        document.querySelector('.awaClass-comment-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    
+    // Handle comment form submission with AJAX
+    document.getElementById('commentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add new comment to the list
+                const commentsList = document.getElementById('commentsList');
+                const emptyDiv = commentsList.querySelector('.awaClass-empty-comments');
+                if (emptyDiv) emptyDiv.remove();
+                
+                const newComment = `
+                    <div class="awaClass-comment-item" id="comment-${data.comment_id}">
+                        <img src="${data.avatar_url}" alt="${data.username}" class="awaClass-comment-avatar-small">
+                        <div class="awaClass-comment-content">
+                            <div class="awaClass-comment-author">${escapeHtml(data.username)}</div>
+                            <div class="awaClass-comment-text">${escapeHtml(data.comment)}</div>
+                            <div class="awaClass-comment-meta">
+                                <span><i class="fa-regular fa-clock"></i> ${data.created_at}</span>
+                                <button class="awaClass-comment-like-btn comment-like-btn-${data.comment_id}" onclick="likeComment('${data.comment_id}')">
+                                    <i class="fa-regular fa-heart"></i>
+                                    <span class="comment-like-count-${data.comment_id}">0</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                commentsList.insertAdjacentHTML('afterbegin', newComment);
+                
+                // Clear form
+                document.querySelector('.awaClass-comment-input').value = '';
+                
+                // Update comment count
+                const commentCountSpan = document.querySelector('.awaClass-comments-header');
+                const currentCount = parseInt(commentCountSpan.textContent.match(/\d+/)[0]) || 0;
+                commentCountSpan.innerHTML = `<i class="fa-regular fa-comments"></i> ${currentCount + 1} Replies`;
+            }
+        })
+        .catch(error => {
+            this.submit();
+        });
+    });
+    
+    // Escape HTML for safety
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+{% include 'footer.html' %}
+</body>
+</html>

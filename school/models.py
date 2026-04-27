@@ -310,3 +310,61 @@ class CBTScore(models.Model):
         distinction_count = exams.filter(grade='distinction').count()
         self.points = (self.total_correct * 5) + (distinction_count * 20)
         self.save()
+
+
+# ── Chat Room / Class Discussion Models ─────────────────────────────
+
+class ClassPost(models.Model):
+    """Model for text/image questions posted by students in the chat room"""
+    post_id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='class_posts')
+    title = models.CharField(max_length=300)
+    content = models.TextField()
+    image = models.ImageField(upload_to='class_posts/', blank=True, null=True)
+    subject = models.CharField(max_length=100, blank=True, default='General')
+    like = models.ManyToManyField(User, related_name='class_posts_like', blank=True)
+    view = models.IntegerField(default=0)
+    is_resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title[:50]} by {self.author.username}"
+
+    @property
+    def total_comments(self):
+        return self.class_comments.count()
+
+    @property
+    def total_likes(self):
+        return self.like.count()
+
+    @property
+    def last_activity(self):
+        latest_comment = self.class_comments.order_by('-created_at').first()
+        if latest_comment:
+            return latest_comment.created_at
+        return self.created_at
+
+
+class ClassPostComment(models.Model):
+    """Comments/replies for ClassPost - same structure as PostComment"""
+    comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    commentator = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(ClassPost, on_delete=models.CASCADE, related_name='class_comments')
+    comment = models.TextField()
+    like = models.ManyToManyField(User, related_name='class_comment_likes', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Comment by {self.commentator.username} on {self.post.title[:30]}"
+
+    @property
+    def total_likes(self):
+        return self.like.count()

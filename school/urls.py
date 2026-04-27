@@ -38,6 +38,15 @@ urlpatterns = [
     path('live/<str:room_name>/end/', views.end_live_room, name='end_live_room'),
     path('live/<str:room_name>/start/', views.start_live_room, name='start_live_room'),
 
+    # ── Chat Room / Class Discussion URLs ──────────────────────────────
+    path('chat/', views.chat_room, name='chat_room'),
+    path('chat/create/', views.create_class_post, name='create_class_post'),
+    path('chat/post/<uuid:post_id>/', views.chat_post_detail, name='chat_post_detail'),
+    path('chat/post/<uuid:post_id>/comment/', views.chat_post_comment, name='chat_post_comment'),
+    path('chat/post/<uuid:post_id>/like/', views.chat_post_like, name='chat_post_like'),
+    path('chat/comment/<uuid:comment_id>/like/', views.chat_comment_like, name='chat_comment_like'),
+    path('chat/post/<uuid:post_id>/resolve/', views.resolve_post, name='resolve_post'),
+
     # profile must stay LAST – catches any remaining <str:username>
     path('edit-profile/', views.edit_profile, name='awa_edit_profile'),
     path('<str:username>', views.profile, name='profile'),
