@@ -23,12 +23,13 @@ urlpatterns = [
     path('?/<str:username>', views.update_profile, name='update_profile'),
 
     # ── CBT Exam ──────────────────────────────────────────────────
-    path('cbt/',             views.cbt_subjects, name='cbt_subjects'),   # subject picker page
-    path('cbt/mathematics/', views.cbt_exam,     name='cbt_exam'),   
-    path('cbt/physics/',     views.cbt_physics,    name='cbt_physics'),
-    path('cbt/english/',     views.cbt_english,   name='cbt_english'),
-    path('cbt/chemistry/',   views.cbt_chemistry, name='cbt_chemistry'),  # ← Chemistry CBT
-    path('cbt/submit/',      views.cbt_submit,    name='cbt_submit'),     # score submission
+    path('cbt/',                    views.cbt_subjects,       name='cbt_subjects'),    # subject picker
+    path('cbt/mathematics/',        views.cbt_exam,           name='cbt_exam'),
+    path('cbt/physics/',            views.cbt_physics,        name='cbt_physics'),     # ← OLD physics CBT (kept)
+    path('cbt/physics/topics/',     views.cbt_physics_topics, name='cbt_physics_topics'),  # ← NEW topic selector
+    path('cbt/english/',            views.cbt_english,        name='cbt_english'),
+    path('cbt/chemistry/',          views.cbt_chemistry,      name='cbt_chemistry'),
+    path('cbt/submit/',             views.cbt_submit,         name='cbt_submit'),      # score submission
     # ─────────────────────────────────────────────────────────────
 
     # Live video URLs
@@ -38,7 +39,7 @@ urlpatterns = [
     path('live/<str:room_name>/end/', views.end_live_room, name='end_live_room'),
     path('live/<str:room_name>/start/', views.start_live_room, name='start_live_room'),
 
-    # ── Chat Room / Class Discussion URLs ──────────────────────────────
+    # ── Chat Room / Class Discussion URLs ─────────────────────────
     path('chat/', views.chat_room, name='chat_room'),
     path('chat/create/', views.create_class_post, name='create_class_post'),
     path('chat/post/<uuid:post_id>/', views.chat_post_detail, name='chat_post_detail'),

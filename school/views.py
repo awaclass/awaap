@@ -599,14 +599,24 @@ def cbt_subjects(request):
 
 @login_required
 def cbt_exam(request):
-    """Render the CBT exam page."""
+    """Render the CBT exam page (Mathematics default)."""
     return render(request, 'cbt_exam.html')
 
 
 @login_required
 def cbt_physics(request):
-    """Render the Physics CBT exam page."""
+    """Render the original Physics CBT exam page (unchanged)."""
     return render(request, 'cbt_physics.html')
+
+
+@login_required
+def cbt_physics_topics(request):
+    """
+    Render the NEW Physics CBT page with JAMB syllabus topic selector.
+    Accessible at /cbt/physics/topics/
+    The old /cbt/physics/ route still works via cbt_physics above.
+    """
+    return render(request, 'cbt_physics_topics.html')
 
 
 @login_required
@@ -628,7 +638,7 @@ def cbt_submit(request):
     AJAX endpoint.  Receives exam result as JSON, saves CBTExam + updates CBTScore.
     Expected body:
     {
-        "subject":       "mathematics",
+        "subject":       "physics",
         "score":         15,
         "total":         20,
         "percentage":    75,
@@ -647,7 +657,7 @@ def cbt_submit(request):
     except (ValueError, KeyError):
         return JsonResponse({'ok': False, 'error': 'Invalid JSON'}, status=400)
 
-    subject       = data.get('subject', 'mathematics')
+    subject       = data.get('subject', 'physics')
     score         = int(data.get('score', 0))
     total         = int(data.get('total', 20))
     percentage    = int(data.get('percentage', 0))
@@ -748,7 +758,6 @@ def student_scores_modal(request, username):
         subject_rating = min(100, round(best_pct * 0.6 + avg_pct * 0.4))
 
         # time efficiency: full marks in half the allowed time = 100 %
-        # use best exam's time_used_sec; assume 60 s/question baseline
         if best_exam and best_exam.time_used_sec and best_exam.total:
             allowed_sec = best_exam.total * 60
             time_eff    = min(100, round((1 - best_exam.time_used_sec / allowed_sec) * 100 + 50))
@@ -794,7 +803,7 @@ def student_scores_modal(request, username):
         else:
             t_display = '—'
 
-        # per-exam rating: same weighted formula
+        # per-exam rating
         ex_rating = min(100, round(ex.percentage * 0.6 + ex.percentage * 0.4))
 
         recent_exams_data.append({
@@ -816,7 +825,6 @@ def student_scores_modal(request, username):
     total_correct   = totals['total_correct']   or 0
     total_questions = totals['total_questions'] or 0
 
-    # overall rating across all exams
     overall_rating = min(100, round(
         (cbt_score.best_score * 0.5 + (total_correct / total_questions * 100 if total_questions else 0) * 0.5)
     ))
@@ -855,25 +863,24 @@ def chat_room(request):
     """Main chat room page showing all class posts/questions"""
     subjects = ClassPost.objects.values_list('subject', flat=True).distinct()
     subject_list = [s for s in subjects if s]
-    
-    # Get filter parameters
+
     filter_subject = request.GET.get('subject', '')
-    filter_status = request.GET.get('status', '')
-    
+    filter_status  = request.GET.get('status', '')
+
     posts = ClassPost.objects.all()
-    
+
     if filter_subject:
         posts = posts.filter(subject__iexact=filter_subject)
     if filter_status == 'resolved':
         posts = posts.filter(is_resolved=True)
     elif filter_status == 'unresolved':
         posts = posts.filter(is_resolved=False)
-    
+
     context = {
-        'posts': posts,
-        'subjects': sorted(subject_list),
+        'posts':           posts,
+        'subjects':        sorted(subject_list),
         'current_subject': filter_subject,
-        'current_status': filter_status,
+        'current_status':  filter_status,
     }
     return render(request, 'chat_room.html', context)
 
@@ -882,65 +889,61 @@ def chat_room(request):
 def create_class_post(request):
     """Create a new question/post in the chat room"""
     if request.method == 'POST':
-        title = request.POST.get('title', '').strip()
-        content = request.POST.get('content', '').strip()
-        subject = request.POST.get('subject', '').strip()
+        title        = request.POST.get('title', '').strip()
+        content      = request.POST.get('content', '').strip()
+        subject      = request.POST.get('subject', '').strip()
         image_base64 = request.POST.get('image_base64', '')
-        
+
         if not title or not content:
             messages.error(request, 'Please provide both title and content for your question.')
             return redirect('chat_room')
-        
-        # Create the post
+
         post = ClassPost.objects.create(
             author=request.user,
             title=title,
             content=content,
             subject=subject if subject else 'General',
         )
-        
-        # Handle image if uploaded
+
         if image_base64 and image_base64.startswith('data:image'):
             try:
                 format, imgstr = image_base64.split(';base64,')
-                ext = format.split('/')[-1]
-                image_data = ContentFile(base64.b64decode(imgstr))
-                filename = f"class_posts/{post.post_id}.{ext}"
-                saved_path = default_storage.save(filename, image_data)
-                post.image = saved_path
+                ext            = format.split('/')[-1]
+                image_data     = ContentFile(base64.b64decode(imgstr))
+                filename       = f"class_posts/{post.post_id}.{ext}"
+                saved_path     = default_storage.save(filename, image_data)
+                post.image     = saved_path
                 post.save()
             except Exception as e:
                 print(f"Error saving image: {e}")
-        
+
         messages.success(request, 'Your question has been posted!')
-        
-        # Check if AJAX request
+
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': True,
                 'post_id': str(post.post_id),
                 'redirect': f'/chat/post/{post.post_id}/'
             })
-        
+
         return redirect('chat_post_detail', post_id=post.post_id)
-    
+
     return redirect('chat_room')
 
 
 @login_required
 def chat_post_detail(request, post_id):
     """View a single post with its comments/replies"""
-    post = get_object_or_404(ClassPost, post_id=post_id)
-    comments = ClassPostComment.objects.filter(post=post)
+    post           = get_object_or_404(ClassPost, post_id=post_id)
+    comments       = ClassPostComment.objects.filter(post=post)
     total_comments = comments.count()
-    
-    # Increment view count
+
     post.view += 1
     post.save()
-    
+
     context = {
-        'post': post,
-        'comments': comments,
+        'post':           post,
+        'comments':       comments,
         'total_comments': total_comments,
     }
     return render(request, 'chat_post_detail.html', context)
@@ -950,38 +953,36 @@ def chat_post_detail(request, post_id):
 def chat_post_comment(request, post_id):
     """Add a comment/reply to a chat post"""
     if request.method == 'POST':
-        post = get_object_or_404(ClassPost, post_id=post_id)
+        post         = get_object_or_404(ClassPost, post_id=post_id)
         comment_text = request.POST.get('comment', '').strip()
-        
+
         if comment_text:
             comment = ClassPostComment.objects.create(
                 post=post,
                 commentator=request.user,
                 comment=comment_text
             )
-            
-            # Create notification for post author (if not self-comment)
+
             if post.author != request.user:
                 Notification.objects.create(
                     user=post.author,
                     message=f'{request.user.username} replied to your question: "{post.title[:50]}"'
                 )
-            
+
             messages.success(request, 'Reply added!')
-            
-            # Check for AJAX request
+
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
-                    'success': True,
+                    'success':    True,
                     'comment_id': str(comment.comment_id),
-                    'username': request.user.username,
-                    'comment': comment.comment,
+                    'username':   request.user.username,
+                    'comment':    comment.comment,
                     'created_at': comment.created_at.strftime('%d %b %Y, %I:%M %p'),
                     'avatar_url': request.user.profile.get_picture_url,
                 })
         else:
             messages.error(request, 'Comment cannot be empty.')
-    
+
     return redirect('chat_post_detail', post_id=post_id)
 
 
@@ -989,27 +990,26 @@ def chat_post_comment(request, post_id):
 def chat_post_like(request, post_id):
     """Like/unlike a chat post"""
     post = get_object_or_404(ClassPost, post_id=post_id)
-    
+
     if request.user in post.like.all():
         post.like.remove(request.user)
         liked = False
     else:
         post.like.add(request.user)
         liked = True
-        # Notify post author if not self-like
         if post.author != request.user:
             Notification.objects.create(
                 user=post.author,
                 message=f'{request.user.username} liked your question "{post.title[:50]}"'
             )
-    
+
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
-            'success': True,
-            'liked': liked,
+            'success':     True,
+            'liked':       liked,
             'total_likes': post.like.count()
         })
-    
+
     return redirect(request.META.get('HTTP_REFERER', 'chat_room'))
 
 
@@ -1017,21 +1017,21 @@ def chat_post_like(request, post_id):
 def chat_comment_like(request, comment_id):
     """Like/unlike a comment/reply"""
     comment = get_object_or_404(ClassPostComment, comment_id=comment_id)
-    
+
     if request.user in comment.like.all():
         comment.like.remove(request.user)
         liked = False
     else:
         comment.like.add(request.user)
         liked = True
-    
+
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
-            'success': True,
-            'liked': liked,
+            'success':     True,
+            'liked':       liked,
             'total_likes': comment.like.count()
         })
-    
+
     return redirect(request.META.get('HTTP_REFERER', 'chat_room'))
 
 
@@ -1039,17 +1039,17 @@ def chat_comment_like(request, comment_id):
 def resolve_post(request, post_id):
     """Mark a question as resolved or unresolved"""
     post = get_object_or_404(ClassPost, post_id=post_id, author=request.user)
-    
+
     post.is_resolved = not post.is_resolved
     post.save()
-    
+
     status = "resolved" if post.is_resolved else "unresolved"
     messages.success(request, f'Question marked as {status}!')
-    
+
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
-            'success': True,
+            'success':     True,
             'is_resolved': post.is_resolved
         })
-    
+
     return redirect('chat_post_detail', post_id=post_id)

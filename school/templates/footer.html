@@ -159,12 +159,12 @@
         <span class="nav-label">CBT</span>
     </a>
     
-    <!-- 5. Subjects -->
-    <a href="{% url 'cbt_subjects' %}" 
-       class="nav-item {% if '/cbt' in request.path %}active{% endif %}" 
-       title="Subjects">
-        <i class="fas fa-book"></i>
-        <span class="nav-label">Subjects</span>
+    <!-- 5. Discussion Room -->
+    <a href="{% url 'chat_room' %}" 
+       class="nav-item {% if '/chat' in request.path %}active{% endif %}" 
+       title="Discussion Room">
+        <i class="fas fa-comments"></i>
+        <span class="nav-label">Discuss</span>
     </a>
 
 </nav>  
@@ -185,8 +185,6 @@
     });
   });
 </script>
-
-
 
 </body>  
 </html>

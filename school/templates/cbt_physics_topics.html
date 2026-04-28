@@ -1,0 +1,1047 @@
+{% load humanize %}
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | Physics CBT</title>
+
+  <style>
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT  (matches physics.html exactly)
+    ══════════════════════════════════════════════════ */
+    .awaClass-feed-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 16px 60px;
+    }
+    @media (min-width: 768px) {
+      .awaClass-feed-page { margin-left: 50px; }
+    }
+
+    /* ── Page header ── */
+    .awaClass-page-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
+    }
+    .awaClass-page-header-icon { font-size: 28px; line-height: 1; }
+    .awaClass-page-header h1 {
+      font-size: 20px; font-weight: 700;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 2px; letter-spacing: -0.2px;
+    }
+    .awaClass-page-header p { font-size: 13px; color: var(--awaClass-text-light, #606060); margin: 0; }
+
+    /* back link */
+    .awaClass-back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: var(--awaClass-text-light, #606060);
+      text-decoration: none; margin-bottom: 16px;
+      padding: 6px 12px; border-radius: 20px;
+      border: 1.5px solid #e5e5e5; background: #fafafa;
+      transition: border-color .15s, color .15s;
+    }
+    .awaClass-back-link:hover { border-color: #f97316; color: #f97316; }
+
+    /* ══════════════════════════════════════════════════
+       SCREENS
+    ══════════════════════════════════════════════════ */
+    .cbt-screen { display: none; }
+    .cbt-screen.active { display: block; animation: acFadeUp .3s ease both; }
+
+    @keyframes acFadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════════════════
+       TOPIC SELECTOR SCREEN
+    ══════════════════════════════════════════════════ */
+    .cbt-selector-card {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 16px;
+      padding: 24px; box-shadow: 0 1px 6px rgba(0,0,0,.05);
+    }
+
+    .cbt-section-label {
+      font-size: 11px; font-weight: 700; color: #909090;
+      text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px;
+    }
+
+    /* topic grid */
+    .cbt-topic-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px; margin-bottom: 20px;
+    }
+    .cbt-topic-btn {
+      position: relative; display: flex; flex-direction: column;
+      gap: 8px; padding: 14px 14px 12px;
+      border-radius: 12px; border: 1.5px solid #e5e5e5;
+      background: #fafafa; cursor: pointer; text-align: left;
+      transition: border-color .18s, background .18s, transform .12s, box-shadow .18s;
+      overflow: hidden;
+    }
+    .cbt-topic-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at top right, #f97316, transparent 70%);
+      opacity: 0; transition: opacity .18s; pointer-events: none;
+    }
+    .cbt-topic-btn:hover { border-color: #f97316; background: #fff8f0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(249,115,22,.12); }
+    .cbt-topic-btn:hover::before { opacity: .07; }
+    .cbt-topic-btn.selected { border-color: #f97316; background: #fff8f0; box-shadow: 0 0 0 3px rgba(249,115,22,.12); }
+    .cbt-topic-btn.selected::before { opacity: .07; }
+    .cbt-topic-icon { font-size: 20px; line-height: 1; }
+    .cbt-topic-name { font-size: 13px; font-weight: 700; color: #0f0f0f; line-height: 1.3; }
+    .cbt-topic-count { font-size: 11px; color: #909090; }
+    .cbt-topic-check {
+      position: absolute; top: 8px; right: 8px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #f97316; color: #fff;
+      font-size: 10px; display: none;
+      align-items: center; justify-content: center;
+    }
+    .cbt-topic-btn.selected .cbt-topic-check { display: flex; }
+
+    /* info bar shown after topic picked */
+    .cbt-topic-info {
+      display: none; margin-bottom: 20px;
+      padding: 12px 16px; border-radius: 10px;
+      background: #fff7ed; border: 1px solid #fed7aa;
+      font-size: 13px; color: #7c3a00; line-height: 1.5;
+    }
+    .cbt-topic-info.show { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .cbt-info-stat { text-align: center; }
+    .cbt-info-stat-val { font-size: 22px; font-weight: 800; color: #f97316; display: block; line-height: 1; font-family: inherit; }
+    .cbt-info-stat-lbl { font-size: 11px; color: #9a5a1a; }
+
+    /* config row */
+    .cbt-config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .cbt-config-group label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: #909090; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px;
+    }
+    .cbt-config-select {
+      width: 100%; padding: 10px 12px;
+      border: 1.5px solid #e5e5e5; border-radius: 10px;
+      background: #fafafa; color: #0f0f0f;
+      font-size: 13px; font-family: inherit;
+      appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 32px;
+      transition: border-color .15s;
+    }
+    .cbt-config-select:focus { outline: none; border-color: #f97316; }
+
+    .cbt-start-btn {
+      width: 100%; padding: 14px;
+      background: #f97316; border: none; border-radius: 12px;
+      color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .15s, transform .12s, box-shadow .15s;
+      box-shadow: 0 4px 14px rgba(249,115,22,.30);
+    }
+    .cbt-start-btn:hover:not(:disabled) { background: #ea6c0a; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,.36); }
+    .cbt-start-btn:active { transform: translateY(0); }
+    .cbt-start-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ══════════════════════════════════════════════════
+       EXAM SCREEN
+    ══════════════════════════════════════════════════ */
+    .cbt-exam-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .cbt-exam-topic-tag {
+      font-size: 12px; font-weight: 700; color: #f97316;
+      background: #fff8f0; border: 1px solid #fed7aa;
+      border-radius: 20px; padding: 4px 12px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
+    }
+    .cbt-timer {
+      display: flex; align-items: center; gap: 6px;
+      background: #fafafa; border: 1.5px solid #e5e5e5;
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 14px; font-weight: 700; color: #0f0f0f;
+      transition: border-color .3s, color .3s;
+    }
+    .cbt-timer-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e; animation: acPulse 1.1s infinite;
+    }
+    .cbt-timer.warn  { border-color: #fbbf24; color: #b45309; }
+    .cbt-timer.warn  .cbt-timer-dot { background: #fbbf24; }
+    .cbt-timer.danger{ border-color: #f87171; color: #dc2626; }
+    .cbt-timer.danger .cbt-timer-dot{ background: #f87171; }
+
+    @keyframes acPulse { 0%,100%{opacity:1}50%{opacity:.35} }
+
+    .cbt-progress-wrap {
+      height: 4px; background: #f0f0f0; border-radius: 4px;
+      margin-bottom: 18px; overflow: hidden;
+    }
+    .cbt-progress-fill {
+      height: 100%; background: #f97316; border-radius: 4px;
+      transition: width .4s ease;
+    }
+
+    /* question card */
+    .cbt-q-card {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 16px;
+      padding: 22px; margin-bottom: 16px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.04);
+    }
+    .cbt-q-num {
+      font-size: 11px; font-weight: 700; color: #f97316;
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;
+    }
+    .cbt-q-year {
+      display: inline-block; font-size: 11px; color: #909090;
+      background: #f5f5f5; border-radius: 6px;
+      padding: 2px 8px; margin-bottom: 10px;
+    }
+    .cbt-q-text {
+      font-size: 15px; font-weight: 600; color: #0f0f0f;
+      line-height: 1.65; margin-bottom: 18px;
+    }
+
+    /* options */
+    .cbt-options { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
+    .cbt-opt-btn {
+      width: 100%; padding: 12px 16px;
+      background: #fafafa; border: 1.5px solid #e5e5e5;
+      border-radius: 10px; color: #0f0f0f;
+      font-size: 13px; font-family: inherit;
+      text-align: left; cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      transition: border-color .15s, background .15s, transform .1s;
+    }
+    .cbt-opt-btn:hover:not(:disabled) {
+      border-color: #f97316; background: #fff8f0; transform: translateX(3px);
+    }
+    .cbt-opt-btn.selected { border-color: #f97316; background: #fff8f0; }
+    .cbt-opt-btn.correct  { border-color: #16a34a; background: #f0fdf4; color: #15803d; }
+    .cbt-opt-btn.wrong    { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
+    .cbt-opt-btn:disabled { cursor: default; }
+
+    .cbt-opt-letter {
+      width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+      background: #e5e5e5; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #606060;
+      transition: background .15s, color .15s;
+    }
+    .cbt-opt-btn.selected .cbt-opt-letter { background: #f97316; color: #fff; }
+    .cbt-opt-btn.correct  .cbt-opt-letter { background: #16a34a; color: #fff; }
+    .cbt-opt-btn.wrong    .cbt-opt-letter { background: #dc2626; color: #fff; }
+
+    /* explanation */
+    .cbt-explanation {
+      margin-top: 14px; padding: 14px 16px;
+      background: #fff7ed; border: 1px solid #fed7aa;
+      border-left: 3px solid #f97316;
+      border-radius: 0 10px 10px 0;
+      font-size: 13px; color: #7c3a00; line-height: 1.65;
+      display: none;
+    }
+    .cbt-explanation.show { display: block; animation: acFadeUp .2s ease; }
+    .cbt-explanation-head {
+      font-weight: 700; font-size: 11px; color: #f97316;
+      text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px;
+    }
+
+    /* nav row */
+    .cbt-nav-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap;
+    }
+    .cbt-nav-btn {
+      padding: 10px 22px; border-radius: 10px;
+      font-size: 13px; font-weight: 700; font-family: inherit;
+      cursor: pointer; border: none; transition: all .15s;
+    }
+    .cbt-nav-btn:active { transform: scale(.97); }
+    .cbt-nav-btn--secondary {
+      background: #fafafa; border: 1.5px solid #e5e5e5; color: #606060;
+    }
+    .cbt-nav-btn--secondary:hover { border-color: #f97316; color: #f97316; }
+    .cbt-nav-btn--primary {
+      background: #f97316; color: #fff;
+      box-shadow: 0 3px 10px rgba(249,115,22,.28);
+    }
+    .cbt-nav-btn--primary:hover { background: #ea6c0a; }
+    .cbt-nav-btn--danger {
+      background: #fef2f2; border: 1.5px solid #fca5a5; color: #dc2626;
+    }
+    .cbt-nav-btn--danger:hover { background: #fee2e2; }
+    .cbt-q-counter { font-size: 13px; color: #909090; font-weight: 600; }
+
+    /* ══════════════════════════════════════════════════
+       RESULTS SCREEN
+    ══════════════════════════════════════════════════ */
+    .cbt-result-hero {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 16px;
+      padding: 30px 24px; text-align: center; margin-bottom: 16px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.05);
+    }
+    .cbt-score-circle {
+      width: 120px; height: 120px; border-radius: 50%;
+      margin: 0 auto 18px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .cbt-score-circle svg {
+      position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg);
+    }
+    .cbt-score-circle-track { fill: none; stroke: #f0f0f0; stroke-width: 8; }
+    .cbt-score-circle-fill  { fill: none; stroke: #f97316; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .8s ease; }
+    .cbt-score-inner { position: relative; z-index: 1; text-align: center; }
+    .cbt-score-val  { font-size: 28px; font-weight: 800; color: #0f0f0f; line-height: 1; display: block; }
+    .cbt-score-denom{ font-size: 13px; color: #909090; }
+    .cbt-result-grade { font-size: 20px; font-weight: 800; margin: 0 0 4px; }
+    .cbt-result-msg   { font-size: 13px; color: #606060; }
+
+    .cbt-result-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;
+    }
+    .cbt-stat-card {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 12px;
+      padding: 14px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .cbt-stat-card .sv { font-size: 22px; font-weight: 800; display: block; line-height: 1; }
+    .cbt-stat-card .sl { font-size: 11px; color: #909090; text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+    .cbt-stat-card.c .sv { color: #16a34a; }
+    .cbt-stat-card.w .sv { color: #dc2626; }
+    .cbt-stat-card.s .sv { color: #d97706; }
+
+    /* review */
+    .cbt-review-header {
+      font-size: 13px; font-weight: 700; color: #0f0f0f;
+      padding-bottom: 10px; border-bottom: 1px solid #e5e5e5; margin-bottom: 12px;
+    }
+    .cbt-review-item {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 10px;
+      border-left-width: 3px;
+    }
+    .cbt-review-item.rc { border-left-color: #16a34a; }
+    .cbt-review-item.rw { border-left-color: #dc2626; }
+    .cbt-review-item.rs { border-left-color: #d97706; }
+    .cbt-review-q { font-size: 13px; font-weight: 600; color: #0f0f0f; margin-bottom: 8px; line-height: 1.55; }
+    .cbt-review-tags { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; margin-bottom: 8px; }
+    .cbt-rtag {
+      padding: 2px 9px; border-radius: 6px; font-weight: 700;
+    }
+    .cbt-rtag.correct { background: #f0fdf4; color: #16a34a; }
+    .cbt-rtag.wrong   { background: #fef2f2; color: #dc2626; }
+    .cbt-rtag.skipped { background: #fffbeb; color: #d97706; }
+    .cbt-review-expl {
+      font-size: 12px; color: #606060; line-height: 1.6;
+      padding-top: 8px; border-top: 1px solid #f0f0f0;
+    }
+    .cbt-review-expl strong { color: #f97316; }
+
+    .cbt-result-actions {
+      display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+    }
+    .cbt-result-actions .cbt-nav-btn { flex: 1; text-align: center; }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 540px) {
+      .cbt-topic-grid { grid-template-columns: 1fr 1fr; }
+      .cbt-config-row { grid-template-columns: 1fr; }
+      .cbt-result-stats { gap: 6px; }
+      .cbt-stat-card .sv { font-size: 18px; }
+      .cbt-result-actions { flex-direction: column; }
+      .cbt-nav-row { flex-direction: column; align-items: stretch; }
+      .cbt-nav-btn { text-align: center; }
+      .cbt-exam-topic-tag { max-width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="awaClass-feed-page">
+
+  <!-- ── Page header ───────────────────────────────────────── -->
+  <a href="{% url 'physics' %}" class="awaClass-back-link">
+    <i class="fa-solid fa-arrow-left fa-xs"></i> Back to Physics
+  </a>
+
+  <div class="awaClass-page-header">
+    <div class="awaClass-page-header-icon">🎯</div>
+    <div>
+      <h1>Physics CBT</h1>
+      <p>JAMB Syllabus-Based Practice — Select a topic to begin</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SCREEN 1 — Topic Selector
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-selector" class="cbt-screen active">
+    <div class="cbt-selector-card">
+
+      <p class="cbt-section-label">Choose a Syllabus Topic</p>
+
+      <div class="cbt-topic-grid" id="topicGrid">
+        <!-- JS renders these -->
+      </div>
+
+      <div class="cbt-topic-info" id="topicInfo">
+        <div class="cbt-info-stat">
+          <span class="cbt-info-stat-val" id="infoQCount">0</span>
+          <span class="cbt-info-stat-lbl">Questions</span>
+        </div>
+        <div class="cbt-info-stat">
+          <span class="cbt-info-stat-val" id="infoYears">—</span>
+          <span class="cbt-info-stat-lbl">Year Span</span>
+        </div>
+        <div style="flex:1; font-size:12.5px; line-height:1.55;" id="infoDesc"></div>
+      </div>
+
+      <div class="cbt-config-row">
+        <div class="cbt-config-group">
+          <label for="numQ">Number of Questions</label>
+          <select id="numQ" class="cbt-config-select">
+            <option value="10">10 Questions</option>
+            <option value="20" selected>20 Questions</option>
+            <option value="30">30 Questions</option>
+            <option value="all">All Available</option>
+          </select>
+        </div>
+        <div class="cbt-config-group">
+          <label for="timeLimit">Time Limit</label>
+          <select id="timeLimit" class="cbt-config-select">
+            <option value="600">10 Minutes</option>
+            <option value="1200" selected>20 Minutes</option>
+            <option value="1800">30 Minutes</option>
+            <option value="0">No Limit</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="startBtn" class="cbt-start-btn" onclick="startExam()" disabled>
+        <i class="fa-solid fa-bolt fa-xs"></i> Start CBT Exam
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SCREEN 2 — Exam
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-exam" class="cbt-screen">
+
+    <div class="cbt-exam-meta">
+      <span class="cbt-exam-topic-tag" id="examTopicTag">—</span>
+      <div class="cbt-timer" id="timerEl">
+        <span class="cbt-timer-dot"></span>
+        <span id="timerDisplay">20:00</span>
+      </div>
+    </div>
+
+    <div class="cbt-progress-wrap">
+      <div class="cbt-progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <div id="questionContainer"></div>
+
+    <div class="cbt-nav-row">
+      <button class="cbt-nav-btn cbt-nav-btn--secondary" id="prevBtn" onclick="navigate(-1)">
+        <i class="fa-solid fa-arrow-left fa-xs"></i> Prev
+      </button>
+      <span class="cbt-q-counter" id="qCounter">1 / 20</span>
+      <button class="cbt-nav-btn cbt-nav-btn--primary" id="nextBtn" onclick="navigate(1)">
+        Next <i class="fa-solid fa-arrow-right fa-xs"></i>
+      </button>
+    </div>
+
+    <div style="margin-top:14px; text-align:center;">
+      <button class="cbt-nav-btn cbt-nav-btn--danger" onclick="confirmSubmit()">
+        <i class="fa-solid fa-paper-plane fa-xs"></i> Submit Exam
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SCREEN 3 — Results
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-result" class="cbt-screen">
+
+    <div class="cbt-result-hero">
+      <div class="cbt-score-circle" id="scoreCircle">
+        <svg viewBox="0 0 120 120">
+          <circle class="cbt-score-circle-track" cx="60" cy="60" r="52"/>
+          <circle class="cbt-score-circle-fill"  cx="60" cy="60" r="52" id="scoreArc"
+                  stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="cbt-score-inner">
+          <span class="cbt-score-val"   id="scoreVal">0</span>
+          <span class="cbt-score-denom" id="scoreDenom">/ 0</span>
+        </div>
+      </div>
+      <div class="cbt-result-grade" id="resultGrade">—</div>
+      <div class="cbt-result-msg"   id="resultMsg">—</div>
+    </div>
+
+    <div class="cbt-result-stats">
+      <div class="cbt-stat-card c"><span class="sv" id="rCorrect">0</span><span class="sl">Correct</span></div>
+      <div class="cbt-stat-card w"><span class="sv" id="rWrong">0</span><span class="sl">Wrong</span></div>
+      <div class="cbt-stat-card s"><span class="sv" id="rSkip">0</span><span class="sl">Skipped</span></div>
+    </div>
+
+    <div class="cbt-review-header">📋 Full Review with Explanations</div>
+    <div id="reviewList"></div>
+
+    <div class="cbt-result-actions">
+      <button class="cbt-nav-btn cbt-nav-btn--secondary" onclick="retryExam()">
+        <i class="fa-solid fa-rotate-right fa-xs"></i> Retry Topic
+      </button>
+      <button class="cbt-nav-btn cbt-nav-btn--primary" onclick="goHome()">
+        <i class="fa-solid fa-list fa-xs"></i> New Topic
+      </button>
+    </div>
+
+  </div>
+
+</div><!-- /.awaClass-feed-page -->
+
+{% include 'footer.html' %}
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  TOPIC DEFINITIONS  (maps to JAMB physics syllabus sections)
+// ════════════════════════════════════════════════════════════════
+const TOPICS = [
+  {
+    key:   'measurement',
+    icon:  '📏',
+    name:  'Measurement & Units',
+    years: '1978–2018',
+    desc:  'SI units, dimensions, measuring instruments, scalar vs. vector quantities — the most heavily tested JAMB chapter.',
+  },
+  {
+    key:   'motion',
+    icon:  '🚀',
+    name:  'Motion & Forces',
+    years: 'Kinematics',
+    desc:  'Linear motion, Newton\'s laws, projectiles, circular motion, momentum, impulse.',
+  },
+  {
+    key:   'energy',
+    icon:  '⚡',
+    name:  'Work, Energy & Power',
+    years: 'Mechanics',
+    desc:  'Work-energy theorem, conservation of energy, power, efficiency, machines.',
+  },
+  {
+    key:   'pressure',
+    icon:  '🌊',
+    name:  'Pressure & Fluids',
+    years: 'Fluids',
+    desc:  'Atmospheric pressure, Pascal\'s principle, Archimedes\' principle, density, floatation.',
+  },
+  {
+    key:   'heat',
+    icon:  '🌡️',
+    name:  'Heat & Thermodynamics',
+    years: 'Thermal',
+    desc:  'Gas laws, specific heat capacity, latent heat, heat transfer, thermometers.',
+  },
+  {
+    key:   'waves',
+    icon:  '〰️',
+    name:  'Waves & Sound',
+    years: 'Waves',
+    desc:  'Wave properties, v = fλ, sound characteristics, resonance, Doppler effect.',
+  },
+  {
+    key:   'optics',
+    icon:  '🔭',
+    name:  'Optics & Light',
+    years: 'Optics',
+    desc:  'Reflection, refraction, Snell\'s law, lenses, mirrors, optical instruments.',
+  },
+  {
+    key:   'electricity',
+    icon:  '🔌',
+    name:  'Electricity & Magnetism',
+    years: 'Electricity',
+    desc:  'Ohm\'s law, circuits, capacitors, electromagnetism, transformers, induction.',
+  },
+  {
+    key:   'modern',
+    icon:  '⚛️',
+    name:  'Modern Physics',
+    years: 'Modern',
+    desc:  'Radioactivity, nuclear reactions, photoelectric effect, X-rays, semiconductors.',
+  },
+];
+
+// ════════════════════════════════════════════════════════════════
+//  QUESTION BANK
+// ════════════════════════════════════════════════════════════════
+const QB = {
+
+  // ── Chapter 1: Measurement, Dimensions, Scalars & Vectors ────
+  measurement: [
+    { id:1,  year:'1978:Q9',  q:'The internationally agreed system of units (SI) for physical measurement are:', opts:['Ib, ft, sec','g, m/sec','kg, m, sec','D, cm, g, sec'], correct:2, expl:'The SI base units for mass, length, and time are kilogram (kg), metre (m), and second (s).' },
+    { id:2,  year:'1978:Q10', q:'To determine the weight of an object, which methods below can be used?  A. Use a beam balance  B. Use a spring balance  C. Find the force needed to give it a certain acceleration  D. Use none of these methods  E. Use any of these methods', opts:['A only','B only','C only','E — any of these methods'], correct:3, expl:'Weight is a force (W = mg). A spring balance measures force directly; a beam balance measures mass (and hence W = mg); measuring the force needed for a known acceleration also gives weight. Any method works.' },
+    { id:3,  year:'1980:Q11', q:'Which of the following physical quantities is NOT a vector?', opts:['Velocity','Work','Force','Electric field intensity'], correct:1, expl:'Work = F · d (dot product) → scalar. Velocity, force, and electric field intensity all have magnitude AND direction → vectors.' },
+    { id:4,  year:'1981:Q15', q:'An example of a scalar quantity is:', opts:['Velocity','Weight','Electric charge','Acceleration due to gravity'], correct:2, expl:'Electric charge has magnitude only — no direction. Velocity, weight, and acceleration due to gravity are all vectors.' },
+    { id:5,  year:'1982:Q3',  q:'One of the following readings represents the measurement of the length of a metal rod using vernier calipers. Taking reading accuracy into consideration, the most likely one is:', opts:['5.16 cm','5.165 cm','5.0 cm','5.160 cm'], correct:3, expl:'Vernier calipers read to the nearest 0.01 cm (0.1 mm). A four-decimal reading like 5.160 cm is consistent with this precision — the trailing zero after the decimal is meaningful and within the instrument\'s capability.' },
+    { id:6,  year:'1983:Q2',  q:'Which of the following is NOT a vector quantity?', opts:['Force','Altitude','Weight','Displacement'], correct:1, expl:'Altitude is a vertical distance — a scalar (magnitude only). Force, weight, and displacement all have direction → vectors.' },
+    { id:7,  year:'1983:Q29', q:'Of the following derived units, the one that is NOT a unit of power is:', opts:['Joule/second','Ampere volt','Ampere²·volt','Volt²/ohm'], correct:2, expl:'P = VI → A·V = W ✓.  P = V²/R → V²/Ω = W ✓.  But A²·V = A·(AV) = A·W which has dimensions of A·W, not W. So Ampere²·volt is NOT a power unit.' },
+    { id:8,  year:'1984:Q3',  q:'For which of the listed quantities is the derived unit ML²T⁻² correct?  I. Moment of a force  II. Work  III. Acceleration\nA. I only  B. II only  C. III only  D. I and II', opts:['I only','II only','III only','D — I and II'], correct:3, expl:'Work = F × d = MLT⁻² × L = ML²T⁻² ✓.  Moment = F × d = ML²T⁻² ✓.  Acceleration = LT⁻² (no mass) ✗.  Therefore I and II.' },
+    { id:9,  year:'1985:Q1',  q:'Which of the following is NOT a fundamental SI unit?', opts:['Metre','Ampere','Kelvin','Radian'], correct:3, expl:'The radian is a supplementary (dimensionless) unit, not one of the 7 SI base units. The 7 base units are: metre, kilogram, second, ampere, kelvin, mole, candela.' },
+    { id:10, year:'1985:Q3',  q:'Statements about spring and chemical (beam) balances — which are TRUE?\nIII. The spring balance works on Hooke\'s law; the chemical balance on the principle of moments.\nIV. A change in gravity changes spring balance readings but NOT chemical balance readings.', opts:['I and IV only','II and III only','III and IV only','I, II, and III'], correct:2, expl:'III is true: spring balance uses Hooke\'s law (F = ke); beam balance uses moments. IV is true: gravity affects W = mg (spring) but not mass comparison (beam). Answer: C — III and IV.' },
+    { id:11, year:'1986:Q1',  q:'Which represents the correct precision when a wire\'s length is measured with a metre rule?', opts:['35 mm','35.0 mm','35.00 mm','35.01 mm'], correct:1, expl:'A metre rule reads to the nearest mm. So the answer should be 35.0 mm (one decimal place in mm = nearest mm). 35.00 mm would imply 0.01 mm accuracy — that needs a micrometer.' },
+    { id:12, year:'1986:Q4',  q:'Which of the following is a derived unit?', opts:['Kilogramme','Metre','Kelvin','Newton'], correct:3, expl:'Newton (N = kg m s⁻²) is derived from base units. Kilogramme, metre, and kelvin are all fundamental SI base units.' },
+    { id:13, year:'1987:Q1',  q:'Which of the following units is equivalent to kg m s⁻¹?', opts:['N s⁻¹','N m s','N s','J s⁻¹'], correct:2, expl:'1 N = 1 kg m s⁻², so 1 N·s = 1 kg m s⁻¹. Newton-second (N s) is the unit of momentum/impulse.' },
+    { id:14, year:'1988:Q2',  q:'Which are correct SI units?  I. N (Force)  II. Nm⁻¹ (Torque)  III. Watt (Power)  IV. kgms² (Momentum)', opts:['I and II only','I, II and III only','I, II and IV only','I and III only'], correct:3, expl:'Force: N ✓.  Torque: N·m (not Nm⁻¹) ✗.  Power: W ✓.  Momentum: kg m s⁻¹ (not kgms²) ✗.  So only I (N) and III (W) are correct.' },
+    { id:15, year:'1988:Q5',  q:'Which of the following quantities are scalars?  I. Electrical potential  II. Torque  III. Momentum  IV. Kinetic energy', opts:['II and III only','I and II only','III and IV only','I and IV only'], correct:3, expl:'Electrical potential (voltage) = scalar ✓.  Torque = vector (cross product) ✗.  Momentum = vector ✗.  Kinetic energy = scalar ✓.  Answer: D — I and IV.' },
+    { id:16, year:'1989:Q5',  q:'Which of the following is a set of vectors?', opts:['Force, mass and moment','Acceleration, velocity and moment','Mass, weight and density','Mass, volume and density'], correct:1, expl:'Acceleration (vector), velocity (vector), moment/torque (vector) — all vectors. Mass is a scalar.' },
+    { id:17, year:'1990:Q1',  q:'What is the reading of the vernier scale shown? (main scale at 1.8 cm, 8th vernier division coincides)', opts:['1.88 cm','1.80 cm','1.28 cm','1.97 cm'], correct:0, expl:'Reading = main scale + (coinciding vernier div × 0.01 cm) = 1.8 + 8×0.01 = 1.88 cm.' },
+    { id:18, year:'1990:Q2',  q:'Which of the following is a fundamental unit?', opts:['Newton','Watt','Joule','Second'], correct:3, expl:'Second (s) is one of the 7 fundamental SI base units — it measures time. Newton, watt, and joule are all derived units.' },
+    { id:19, year:'1992:Q1',  q:'What is the least possible error when using a rule graduated in centimetres?', opts:['0.1 cm','0.5 cm','1.0 cm','2.0 cm'], correct:0, expl:'A centimetre rule can be read to the nearest millimetre (0.1 cm) by estimation, so the least possible error is 0.1 cm.' },
+    { id:20, year:'1993:Q1',  q:'Which of the following quantities has the same unit as the watt?', opts:['Force × time','Force × distance','Force × acceleration','Force × velocity'], correct:3, expl:'P = F × v → N × m/s = J/s = W. Force × velocity has the same unit as power (watt).' },
+    { id:21, year:'1993:Q2',  q:'The external and internal diameters of a tube are (32 ± 2) mm and (21 ± 1) mm. What is the percentage error in the thickness?', opts:['27%','14%','9%','3%'], correct:0, expl:'Thickness = (32−21)/2 = 5.5 mm.  Max error = (2+1)/2 = 1.5 mm.  % error = (1.5/5.5) × 100 ≈ 27%.' },
+    { id:22, year:'1994:Q1',  q:'What is the reading of the vernier calipers shown? (main scale at 1.7 cm, 3rd vernier division coincides)', opts:['1.79 cm','1.73 cm','1.39 cm','1.34 cm'], correct:1, expl:'Reading = 1.7 + 3 × 0.01 = 1.73 cm.' },
+    { id:23, year:'1995:Q1',  q:'Which of the following is the dimension of pressure?', opts:['ML⁻¹T²','MLT⁻²','ML²T⁻³','ML⁻¹T⁻²'], correct:3, expl:'Pressure = Force ÷ Area = MLT⁻² ÷ L² = ML⁻¹T⁻².' },
+    { id:24, year:'1997:Q1',  q:'At which values of x, y and z is Newton (force) dimensionally equivalent to MˣLʸTᶻ?', opts:['-1, 1, 2','1, 1, −2','2, −1, 2','−1, 1, −2'], correct:1, expl:'Force = MLT⁻², so x = 1, y = 1, z = −2.' },
+    { id:25, year:'1998:Q1',  q:'The physical quantity that has the same dimensions as impulse is:', opts:['Energy','Momentum','Surface tension','Pressure'], correct:1, expl:'Impulse = F × t = N·s = kg m s⁻¹ = same as Momentum (mv). Answer: Momentum.' },
+    { id:26, year:'1999:Q9',  q:'The inner diameter of a small test tube can be measured most accurately using:', opts:['A micrometer screw gauge','Pair of dividers','Metre rule','Pair of vernier calipers'], correct:3, expl:'Vernier calipers have an internal jaw specifically designed to measure internal diameters. A micrometer measures small external dimensions only.' },
+    { id:27, year:'2001:Q9',  q:'Which of the following consists entirely of vector quantities?', opts:['Velocity, magnetic flux and reaction','Tension, magnetic flux and mass','Displacement, impulse and power','Work, pressure and moment'], correct:0, expl:'Velocity (vector), magnetic flux (vector), reaction force (vector). Power, work, and pressure are scalars.' },
+    { id:28, year:'2003:Q4',  q:'Vernier calipers read a glass block. Main scale = 1.6 cm, 4th vernier division coincides. Length of block?', opts:['1.63 cm','1.64 cm','1.65 cm','1.66 cm'], correct:1, expl:'Reading = 1.6 + 4 × 0.01 = 1.64 cm.' },
+    { id:29, year:'2005:Q33', q:'The pair of physical quantities that consists of vectors only is:', opts:['Acceleration and speed','Displacement and torque','Velocity and distance','Momentum and power'], correct:1, expl:'Displacement (vector) and torque (vector, cross product of r and F). Speed, distance, and power are scalars.' },
+    { id:30, year:'2006:Q20', q:'The correct unit of energy density is:', opts:['kg m⁻³ s²','kg m⁻¹ s⁻²','kg m⁻³ s⁻²','kg m⁻² s²'], correct:1, expl:'Energy density = J/m³ = (kg m² s⁻²)/m³ = kg m⁻¹ s⁻².' },
+    { id:31, year:'2008:Q1',  q:'The dimensions of electromotive force (emf) are:', opts:['ML²T⁻³I⁻¹','MLT⁻³I','M⁻¹LT⁻²I','M⁻¹L²T⁻²I⁻¹'], correct:0, expl:'EMF = Power/Current = ML²T⁻³ ÷ I = ML²T⁻³I⁻¹.' },
+    { id:32, year:'2008:Q2',  q:'Which are correct SI units?  I. N (Force)  II. N m⁻¹ (Torque)  III. A (Current)  IV. W (Power)', opts:['I and II only','I and III only','I, II and III only','I, III and IV only'], correct:3, expl:'N for force ✓. Torque unit is N·m (not Nm⁻¹) ✗. Ampere for current ✓. Watt for power ✓. Answer: I, III and IV.' },
+    { id:33, year:'2008:Q4',  q:'Which of the following is NOT a vector quantity?', opts:['Altitude','Acceleration','Displacement','Weight'], correct:0, expl:'Altitude is a vertical distance — scalar (magnitude only). Acceleration, displacement, and weight are all vectors.' },
+    { id:34, year:'2009:Q1',  q:'The values of x, y and z in MˣLʸTᶻ for the universal gravitational constant G are:', opts:['2, −3, −2','−1, 3, −2','−1, 2, −3','1, 3, −2'], correct:1, expl:'From F = GMm/r²: G = Fr²/Mm = (MLT⁻²·L²)/(M²) = M⁻¹L³T⁻². So x=−1, y=3, z=−2.' },
+    { id:35, year:'2009:Q2',  q:'Which of the following can be measured with a micrometer screw gauge?  I. Diameter of a small ball bearing  II. Thickness of paper  III. Diameter of a measuring cylinder  IV. Length of a piece of wire', opts:['I and II only','I and IV only','II and III only','III and IV only'], correct:0, expl:'A micrometer (range ~0–25 mm, precision 0.01 mm) is suitable for small diameters and thin thicknesses (I and II). A cylinder\'s diameter (III) may exceed its range; wire length (IV) needs a ruler.' },
+    { id:36, year:'2012:Q2',  q:'To eliminate parallax error when reading a metre rule, the eye should be:', opts:['Slanting to the left on the markings','Slanting to the right on the markings','Vertically downwards on the markings','Vertically upwards on the markings'], correct:2, expl:'Parallax is removed by ensuring the line of sight is perpendicular to the scale — i.e., looking straight down (vertically) on the markings.' },
+    { id:37, year:'2013:Q4',  q:'The pair of physical quantities that are scalar only is:', opts:['Volume and area','Moment and momentum','Length and displacement','Impulse and time'], correct:0, expl:'Volume (scalar) and area (scalar). Moment and momentum are vectors. Displacement is a vector; impulse is a vector.' },
+    { id:38, year:'2014:Q2',  q:'What is the least possible error encountered when taking a measurement with a metre rule?', opts:['1.0 mm','0.5 mm','0.2 mm','0.1 mm'], correct:1, expl:'The smallest graduation on a metre rule is 1 mm. The least count (least possible error) = ½ × smallest division = 0.5 mm.' },
+    { id:39, year:'2014:Q3',  q:'A quantity which requires both magnitude and direction to be specified is:', opts:['Distance','Displacement','Mass','Temperature'], correct:1, expl:'Displacement is a vector — it needs both magnitude (how far) and direction (which way). Distance, mass, and temperature are scalars.' },
+    { id:40, year:'2014:Q4',  q:'Which of the quantities listed are vectors?  I. Electrical potential  II. Torque  III. Kinetic energy  IV. Momentum', opts:['I and II','I and III','II and IV','II and III'], correct:2, expl:'Torque = r × F → vector. Momentum = mv → vector. Electrical potential and kinetic energy are scalars. Answer: C — II and IV.' },
+    { id:41, year:'2015:Q33', q:'From the diagram, the reading of the micrometer screw gauge is: (main scale = 4.5 mm, thimble = 28 divisions)', opts:['4.70 mm','4.78 mm','4.66 mm','4.16 mm'], correct:1, expl:'Reading = 4.5 + 28 × 0.01 = 4.5 + 0.28 = 4.78 mm.' },
+    { id:42, year:'2016:Q13', q:'An instrument whose accuracy is 0.05 cm is the:', opts:['Metre rule','Vernier calipers','Micrometer screw gauge','Lever balance'], correct:1, expl:'Vernier calipers (with a 20-division vernier) have a least count of 1/20 mm = 0.05 mm, or for a 1/20 cm vernier, 0.05 cm. Answer: vernier calipers.' },
+    { id:43, year:'2016:Q23', q:'The dimension of work and energy is:', opts:['MLT⁻³','MLT¹','ML²T⁻²','ML³'], correct:2, expl:'Work = Force × displacement = MLT⁻² × L = ML²T⁻².' },
+    { id:44, year:'2017:Q28', q:'The dimension of power is:', opts:['ML²T³','MLT¹','ML²T²','ML²T⁻³'], correct:3, expl:'Power = Work/time = ML²T⁻² ÷ T = ML²T⁻³.' },
+    { id:45, year:'2018:Q33', q:'Which of the following is the dimension of pressure?', opts:['ML⁻¹','MLT⁻²','ML²T⁻³','ML⁻¹T⁻²'], correct:3, expl:'Pressure = F/A = MLT⁻²/L² = ML⁻¹T⁻².' },
+  ],
+
+  // ── Motion ────────────────────────────────────────────────────
+  motion: [
+    { id:101, year:'JAMB', q:'A car starts from rest and accelerates uniformly to 30 m/s in 10 s. What is the acceleration?', opts:['2 m/s²','3 m/s²','5 m/s²','10 m/s²'], correct:1, expl:'a = (v − u)/t = (30 − 0)/10 = 3 m/s².' },
+    { id:102, year:'JAMB', q:'A body is thrown vertically upward with a velocity of 20 m/s. How long does it take to reach maximum height? (g = 10 m/s²)', opts:['1 s','2 s','4 s','5 s'], correct:1, expl:'At max height, v = 0. Using v = u − gt: 0 = 20 − 10t → t = 2 s.' },
+    { id:103, year:'JAMB', q:'Which of Newton\'s laws states that every action has an equal and opposite reaction?', opts:['First law','Second law','Third law','Fourth law'], correct:2, expl:'Newton\'s Third Law: for every action there is an equal and opposite reaction.' },
+    { id:104, year:'JAMB', q:'A 5 kg mass is acted on by a 20 N force. What is its acceleration?', opts:['2 m/s²','4 m/s²','5 m/s²','100 m/s²'], correct:1, expl:'F = ma → a = F/m = 20/5 = 4 m/s².' },
+    { id:105, year:'JAMB', q:'A body in uniform circular motion has constant:', opts:['Velocity','Acceleration','Speed','Momentum'], correct:2, expl:'In uniform circular motion, the speed (magnitude of velocity) stays constant. Velocity, acceleration, and momentum all change direction continuously.' },
+    { id:106, year:'JAMB', q:'The equation v² = u² + 2as is used when:', opts:['Time is known','Displacement and velocities are involved without time','Mass is required','Only acceleration is needed'], correct:1, expl:'This kinematic equation relates initial velocity (u), final velocity (v), acceleration (a), and displacement (s) — no time variable.' },
+    { id:107, year:'JAMB', q:'A projectile is launched horizontally. Which component of its motion remains constant?', opts:['Vertical velocity','Horizontal velocity','Total speed','Acceleration'], correct:1, expl:'Neglecting air resistance, the horizontal component of velocity remains constant throughout the flight.' },
+    { id:108, year:'JAMB', q:'Momentum is defined as:', opts:['Force × time','Mass × acceleration','Mass × velocity','Force × distance'], correct:2, expl:'Momentum p = mv (mass × velocity). It is a vector quantity with SI unit kg m s⁻¹ or N s.' },
+    { id:109, year:'JAMB', q:'The law of conservation of momentum states that:', opts:['Total momentum increases in a closed system','Total momentum is zero in all cases','Total momentum remains constant if no external force acts','Momentum equals force times time'], correct:2, expl:'In an isolated system (no net external force), the total momentum before a collision equals the total momentum after.' },
+    { id:110, year:'JAMB', q:'A 2 kg body moving at 4 m/s collides with a stationary 2 kg body and they stick together. Final velocity?', opts:['1 m/s','2 m/s','3 m/s','4 m/s'], correct:1, expl:'Conservation of momentum: 2×4 + 2×0 = (2+2)×v → 8 = 4v → v = 2 m/s.' },
+  ],
+
+  // ── Work, Energy & Power ──────────────────────────────────────
+  energy: [
+    { id:201, year:'JAMB', q:'A 5 kg mass is lifted 4 m. What is its gain in potential energy? (g = 10 m/s²)', opts:['20 J','50 J','200 J','400 J'], correct:2, expl:'PE = mgh = 5 × 10 × 4 = 200 J.' },
+    { id:202, year:'JAMB', q:'Power is defined as:', opts:['Force × time','Work × time','Work ÷ time','Force ÷ time'], correct:2, expl:'Power = work done per unit time = W/t. SI unit is the watt (W = J/s).' },
+    { id:203, year:'JAMB', q:'A machine does 500 J of work in 5 s. What is its power output?', opts:['50 W','100 W','250 W','2500 W'], correct:1, expl:'P = W/t = 500/5 = 100 W.' },
+    { id:204, year:'JAMB', q:'Kinetic energy of a body is given by:', opts:['mgh','½mv²','mv','Fs'], correct:1, expl:'KE = ½mv², where m is mass (kg) and v is speed (m/s).' },
+    { id:205, year:'JAMB', q:'The work-energy theorem states that:', opts:['Work done equals potential energy','Work done equals the change in kinetic energy','Work done equals force times mass','Work done is always zero'], correct:1, expl:'The net work done on a body equals the change in its kinetic energy: W_net = ΔKE.' },
+    { id:206, year:'JAMB', q:'A body of mass 2 kg moving at 6 m/s has kinetic energy:', opts:['6 J','12 J','36 J','72 J'], correct:2, expl:'KE = ½mv² = ½ × 2 × 6² = ½ × 2 × 36 = 36 J.' },
+    { id:207, year:'JAMB', q:'An object is lifted 10 m by a force of 50 N. Work done is:', opts:['5 J','50 J','500 J','5000 J'], correct:2, expl:'W = Fs = 50 × 10 = 500 J.' },
+    { id:208, year:'JAMB', q:'The law of conservation of energy states that:', opts:['Energy is always created','Energy is always destroyed','Energy cannot be created nor destroyed; only converted','Energy equals mass times velocity squared'], correct:2, expl:'Energy can neither be created nor destroyed; it can only be converted from one form to another.' },
+  ],
+
+  // ── Pressure & Fluids ─────────────────────────────────────────
+  pressure: [
+    { id:301, year:'JAMB', q:'Pressure is defined as:', opts:['Force × area','Force ÷ area','Force × volume','Mass ÷ area'], correct:1, expl:'Pressure = Force/Area. SI unit is the Pascal (Pa = N/m²).' },
+    { id:302, year:'JAMB', q:'Archimedes\' principle states that:', opts:['A floating object displaces its own weight of fluid','Pressure increases with depth','Upthrust equals weight of fluid displaced','Volume of object equals volume of fluid displaced'], correct:2, expl:'Archimedes\' principle: the upthrust (buoyant force) acting on a submerged/floating object equals the weight of fluid displaced.' },
+    { id:303, year:'JAMB', q:'The pressure at the bottom of a liquid column of height h and density ρ is:', opts:['ρg','ρgh','ρh/g','gh/ρ'], correct:1, expl:'Pressure due to a liquid column = ρgh, where ρ = density, g = gravity, h = depth.' },
+    { id:304, year:'JAMB', q:'Pascal\'s principle states that:', opts:['Pressure decreases with depth','Pressure applied to an enclosed fluid is transmitted equally in all directions','Gases exert less pressure than liquids','Pressure depends only on volume'], correct:1, expl:'Pascal\'s principle: pressure applied to an enclosed, static fluid is transmitted undiminished in all directions. This is the basis of hydraulic systems.' },
+    { id:305, year:'JAMB', q:'A body floats when:', opts:['Its density equals zero','Its weight equals the upthrust','Its volume is greater than the fluid','Its mass is less than zero'], correct:1, expl:'A body floats when the upthrust (buoyant force) equals its weight — i.e., it displaces fluid equal to its own weight.' },
+    { id:306, year:'JAMB', q:'The SI unit of pressure is:', opts:['Newton','Joule','Pascal','Watt'], correct:2, expl:'The Pascal (Pa) = N/m² is the SI unit of pressure.' },
+  ],
+
+  // ── Heat & Thermodynamics ─────────────────────────────────────
+  heat: [
+    { id:401, year:'JAMB', q:'Boyle\'s law states that at constant temperature, the pressure of a fixed mass of gas is:', opts:['Directly proportional to its volume','Inversely proportional to its volume','Equal to its volume','Independent of its volume'], correct:1, expl:'Boyle\'s law: PV = constant at constant T, i.e. P ∝ 1/V. Doubling pressure halves volume.' },
+    { id:402, year:'JAMB', q:'The specific heat capacity of a substance is the heat required to:', opts:['Melt 1 kg of the substance','Raise 1 kg by 1 K','Change the state of 1 g','Raise 1 g by 1°C'], correct:1, expl:'Specific heat capacity c is the heat energy needed to raise the temperature of 1 kg of a substance by 1 K (or 1°C). Q = mcΔT.' },
+    { id:403, year:'JAMB', q:'The conversion from Celsius to Kelvin is:', opts:['K = °C − 273','K = °C + 273','K = °C × 273','K = °C ÷ 273'], correct:1, expl:'Kelvin = Celsius + 273.15 (or +273 approximately). Absolute zero (0 K) = −273 °C.' },
+    { id:404, year:'JAMB', q:'Charles\' law states that at constant pressure, the volume of a fixed mass of gas is:', opts:['Inversely proportional to its Kelvin temperature','Directly proportional to its Kelvin temperature','Equal to its temperature','Independent of its temperature'], correct:1, expl:'Charles\' law: V/T = constant at constant P, i.e. V ∝ T (in Kelvin).' },
+    { id:405, year:'JAMB', q:'Latent heat of vaporisation is the heat needed to:', opts:['Melt a solid at constant temperature','Raise temperature of 1 kg by 1 K','Convert 1 kg of liquid to vapour at constant temperature','Cool a gas to liquid'], correct:2, expl:'Latent heat of vaporisation: heat required to convert 1 kg of liquid to vapour at constant temperature without a change in temperature. Q = mL.' },
+    { id:406, year:'JAMB', q:'Which mode of heat transfer requires no medium?', opts:['Conduction','Convection','Radiation','All require a medium'], correct:2, expl:'Radiation (electromagnetic waves) can travel through a vacuum — no medium required. Conduction and convection require a material medium.' },
+  ],
+
+  // ── Waves & Sound ─────────────────────────────────────────────
+  waves: [
+    { id:501, year:'JAMB', q:'The relationship between wave speed, frequency, and wavelength is:', opts:['v = f/λ','v = fλ','v = f + λ','v = λ/f'], correct:1, expl:'Wave speed v = fλ, where f = frequency (Hz) and λ = wavelength (m).' },
+    { id:502, year:'JAMB', q:'A wave has frequency 500 Hz and wavelength 0.68 m. Its speed is:', opts:['34 m/s','340 m/s','3400 m/s','0.0014 m/s'], correct:1, expl:'v = fλ = 500 × 0.68 = 340 m/s (approximately the speed of sound in air).' },
+    { id:503, year:'JAMB', q:'Which type of wave is a sound wave?', opts:['Transverse','Longitudinal','Electromagnetic','Torsional'], correct:1, expl:'Sound is a longitudinal (compressional) wave — the oscillations of the medium are parallel to the direction of energy transfer.' },
+    { id:504, year:'JAMB', q:'Light waves are:', opts:['Longitudinal mechanical waves','Transverse mechanical waves','Longitudinal electromagnetic waves','Transverse electromagnetic waves'], correct:3, expl:'Light waves are transverse electromagnetic waves — they do not require a material medium and can travel through a vacuum.' },
+    { id:505, year:'JAMB', q:'The Doppler effect describes:', opts:['Change in wavelength due to reflection','Change in observed frequency due to relative motion between source and observer','Change in amplitude of a wave over distance','Bending of waves around obstacles'], correct:1, expl:'The Doppler effect: when a source and observer move relative to each other, the observed frequency differs from the emitted frequency.' },
+    { id:506, year:'JAMB', q:'In a stationary (standing) wave, points of zero amplitude are called:', opts:['Crests','Antinodes','Nodes','Compressions'], correct:2, expl:'Nodes are points of minimum (zero) amplitude in a standing wave. Antinodes are points of maximum amplitude.' },
+  ],
+
+  // ── Optics ────────────────────────────────────────────────────
+  optics: [
+    { id:601, year:'JAMB', q:'The law of reflection states that the angle of incidence:', opts:['Is twice the angle of reflection','Equals the angle of reflection','Is half the angle of reflection','Is unrelated to the angle of reflection'], correct:1, expl:'First law of reflection: the angle of incidence = the angle of reflection (both measured from the normal).' },
+    { id:602, year:'JAMB', q:'Total internal reflection occurs when:', opts:['Light passes from less dense to more dense medium','Light passes from more dense to less dense medium at an angle greater than the critical angle','Any angle of incidence exceeds 90°','The wavelength of light is zero'], correct:1, expl:'TIR occurs when light travels from a denser to a less dense medium (e.g. glass to air) at an angle of incidence greater than the critical angle.' },
+    { id:603, year:'JAMB', q:'A concave mirror has focal length 15 cm. An object is placed 45 cm away. Image distance?', opts:['11.25 cm','22.5 cm','30 cm','45 cm'], correct:1, expl:'Mirror formula: 1/f = 1/v + 1/u → 1/15 = 1/v + 1/45 → 1/v = 3/45 − 1/45 = 2/45 → v = 22.5 cm (real, in front).' },
+    { id:604, year:'JAMB', q:'Which type of lens is used to correct short-sightedness (myopia)?', opts:['Convex lens','Concave lens','Plane lens','Cylindrical lens'], correct:1, expl:'Short-sightedness (myopia) is corrected by a diverging (concave) lens, which moves the focal point back to the retina.' },
+    { id:605, year:'JAMB', q:'Snell\'s law of refraction states that:', opts:['n₁ sin θ₁ = n₂ sin θ₂','n₁ cos θ₁ = n₂ cos θ₂','sin θ₁/sin θ₂ = constant regardless of media','n₁ + n₂ = sin θ₁ + sin θ₂'], correct:0, expl:'Snell\'s law: n₁ sin θ₁ = n₂ sin θ₂, where n is the refractive index and θ is the angle to the normal.' },
+    { id:606, year:'JAMB', q:'The power of a lens is:', opts:['Focal length × 100','1 ÷ focal length (in metres)','Focal length ÷ 2','2 × focal length'], correct:1, expl:'Power P = 1/f (in metres). Unit is the dioptre (D). A converging lens has positive power; a diverging lens has negative power.' },
+  ],
+
+  // ── Electricity & Magnetism ───────────────────────────────────
+  electricity: [
+    { id:701, year:'JAMB', q:'Ohm\'s law states that current through a conductor is:', opts:['Inversely proportional to the voltage applied','Directly proportional to the voltage, at constant temperature and resistance','Independent of voltage','Equal to resistance times voltage'], correct:1, expl:'Ohm\'s law: V = IR, i.e. current I = V/R is directly proportional to voltage V at constant resistance R and temperature.' },
+    { id:702, year:'JAMB', q:'Three resistors 2 Ω, 3 Ω, and 6 Ω are connected in parallel. Combined resistance?', opts:['11 Ω','1 Ω','3 Ω','0.5 Ω'], correct:1, expl:'1/R = 1/2 + 1/3 + 1/6 = 3/6 + 2/6 + 1/6 = 6/6 = 1. So R = 1 Ω.' },
+    { id:703, year:'JAMB', q:'The SI unit of electrical resistance is:', opts:['Ampere','Volt','Ohm','Coulomb'], correct:2, expl:'Resistance is measured in ohms (Ω). By Ohm\'s law: R = V/I → 1 Ω = 1 V/A.' },
+    { id:704, year:'JAMB', q:'In a series circuit, the total resistance is:', opts:['Less than the smallest resistor','The product of all resistors','The sum of all resistors','The reciprocal of the sum of reciprocals'], correct:2, expl:'In series: R_total = R₁ + R₂ + R₃ + … Total resistance is always greater than the largest individual resistor.' },
+    { id:705, year:'JAMB', q:'Faraday\'s law of electromagnetic induction states that induced emf is:', opts:['Proportional to the magnetic field strength','Equal to the product of current and resistance','Proportional to the rate of change of magnetic flux linkage','Inversely proportional to the frequency'], correct:2, expl:'Faraday\'s law: emf = −dΦ/dt — the induced emf is proportional to the rate of change of magnetic flux linkage.' },
+    { id:706, year:'JAMB', q:'A transformer has 200 primary turns and 1000 secondary turns. If primary voltage is 240 V, secondary voltage?', opts:['48 V','240 V','1200 V','4800 V'], correct:2, expl:'V_s/V_p = N_s/N_p → V_s = 240 × (1000/200) = 240 × 5 = 1200 V (step-up transformer).' },
+  ],
+
+  // ── Modern Physics ────────────────────────────────────────────
+  modern: [
+    { id:801, year:'JAMB', q:'Alpha particles consist of:', opts:['2 protons and 2 neutrons','1 proton and 1 neutron','2 protons and 1 neutron','A high-energy electron'], correct:0, expl:'An alpha particle = ₂⁴He nucleus = 2 protons + 2 neutrons. It has charge +2e and mass number 4.' },
+    { id:802, year:'JAMB', q:'The half-life of a radioactive substance is:', opts:['Time to decay completely','Time for half the nuclei to decay','Time for all nuclei to be produced','Time for radiation to travel half a metre'], correct:1, expl:'Half-life T½ is the time taken for half the radioactive nuclei in a sample to decay.' },
+    { id:803, year:'JAMB', q:'In nuclear fission:', opts:['Small nuclei join to release energy','A large nucleus splits into smaller nuclei releasing energy','Protons become neutrons','Electrons are emitted'], correct:1, expl:'Nuclear fission: a heavy nucleus (e.g. ²³⁵U) splits into two smaller nuclei + neutrons + energy. Used in nuclear reactors.' },
+    { id:804, year:'JAMB', q:'Einstein\'s mass-energy equivalence is given by:', opts:['E = mc','E = mc²','E = m/c²','E = m²c'], correct:1, expl:'E = mc² where c ≈ 3 × 10⁸ m/s. A small mass converts to enormous energy — the basis of nuclear power.' },
+    { id:805, year:'JAMB', q:'The photoelectric effect is explained by:', opts:['Wave theory of light','Particle (photon) theory of light','Electromagnetic induction','Nuclear fission'], correct:1, expl:'The photoelectric effect is explained by Einstein\'s photon theory: light consists of quanta (photons) each with energy E = hf. Classical wave theory could not explain the threshold frequency.' },
+    { id:806, year:'JAMB', q:'n-type semiconductors are formed by doping silicon with:', opts:['Trivalent (3-valence) atoms like Boron','Pentavalent (5-valence) atoms like Phosphorus','Divalent atoms','Noble gas atoms'], correct:1, expl:'n-type semiconductors: doping with pentavalent atoms (e.g. P, As) adds extra electrons as majority carriers. p-type uses trivalent atoms (e.g. B) creating "holes".' },
+  ],
+};
+
+// ════════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════════
+let S = {
+  topicKey:   null,
+  questions:  [],
+  current:    0,
+  answers:    {},
+  timerInt:   null,
+  timeLeft:   0,
+  startTime:  0,
+};
+
+// ════════════════════════════════════════════════════════════════
+//  INIT — render topic grid
+// ════════════════════════════════════════════════════════════════
+(function initGrid() {
+  const grid = document.getElementById('topicGrid');
+  TOPICS.forEach(t => {
+    const count = (QB[t.key] || []).length;
+    const btn = document.createElement('button');
+    btn.className = 'cbt-topic-btn';
+    btn.dataset.key = t.key;
+    btn.innerHTML = `
+      <div class="cbt-topic-check"><i class="fa-solid fa-check" style="font-size:9px"></i></div>
+      <span class="cbt-topic-icon">${t.icon}</span>
+      <span class="cbt-topic-name">${t.name}</span>
+      <span class="cbt-topic-count">${count} question${count !== 1 ? 's' : ''}</span>`;
+    btn.onclick = () => selectTopic(t.key);
+    grid.appendChild(btn);
+  });
+})();
+
+function selectTopic(key) {
+  // deselect all
+  document.querySelectorAll('.cbt-topic-btn').forEach(b => b.classList.remove('selected'));
+  // select clicked
+  document.querySelector(`.cbt-topic-btn[data-key="${key}"]`).classList.add('selected');
+
+  S.topicKey = key;
+  const meta   = TOPICS.find(t => t.key === key);
+  const pool   = QB[key] || [];
+
+  document.getElementById('infoQCount').textContent = pool.length;
+  document.getElementById('infoYears').textContent  = meta.years;
+  document.getElementById('infoDesc').textContent   = meta.desc;
+  document.getElementById('topicInfo').classList.add('show');
+  document.getElementById('startBtn').disabled = false;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function showScreen(id) {
+  document.querySelectorAll('.cbt-screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  START
+// ════════════════════════════════════════════════════════════════
+function startExam() {
+  if (!S.topicKey) return;
+
+  const numVal  = document.getElementById('numQ').value;
+  const timeLim = parseInt(document.getElementById('timeLimit').value);
+  const pool    = shuffle(QB[S.topicKey] || []);
+  const count   = numVal === 'all' ? pool.length : Math.min(parseInt(numVal), pool.length);
+
+  S.questions = pool.slice(0, count);
+  S.current   = 0;
+  S.answers   = {};
+  S.timeLeft  = timeLim;
+  S.startTime = Date.now();
+
+  clearInterval(S.timerInt);
+
+  const meta = TOPICS.find(t => t.key === S.topicKey);
+  document.getElementById('examTopicTag').textContent = meta.name;
+
+  const timerEl = document.getElementById('timerEl');
+  if (timeLim > 0) {
+    timerEl.style.display = '';
+    updateTimerDisplay();
+    S.timerInt = setInterval(tickTimer, 1000);
+  } else {
+    timerEl.style.display = 'none';
+  }
+
+  showScreen('screen-exam');
+  renderQuestion();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TIMER
+// ════════════════════════════════════════════════════════════════
+function tickTimer() {
+  S.timeLeft--;
+  updateTimerDisplay();
+  if (S.timeLeft <= 0) {
+    clearInterval(S.timerInt);
+    showResults();
+  }
+}
+function updateTimerDisplay() {
+  const m = Math.floor(S.timeLeft / 60).toString().padStart(2, '0');
+  const s = (S.timeLeft % 60).toString().padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  const el = document.getElementById('timerEl');
+  el.classList.remove('warn', 'danger');
+  if      (S.timeLeft <= 60)  el.classList.add('danger');
+  else if (S.timeLeft <= 180) el.classList.add('warn');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RENDER QUESTION
+// ════════════════════════════════════════════════════════════════
+function renderQuestion() {
+  const { questions, current, answers } = S;
+  const q        = questions[current];
+  const sel      = answers[current];
+  const answered = sel !== undefined;
+  const total    = questions.length;
+  const LETTERS  = ['A','B','C','D','E'];
+
+  document.getElementById('qCounter').textContent      = `${current + 1} / ${total}`;
+  document.getElementById('progressFill').style.width  = `${((current + 1) / total) * 100}%`;
+  document.getElementById('prevBtn').disabled          = current === 0;
+
+  const nextBtn = document.getElementById('nextBtn');
+  if (current === total - 1) {
+    nextBtn.innerHTML = `Submit <i class="fa-solid fa-paper-plane fa-xs"></i>`;
+    nextBtn.onclick   = confirmSubmit;
+    nextBtn.className = 'cbt-nav-btn cbt-nav-btn--danger';
+  } else {
+    nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right fa-xs"></i>`;
+    nextBtn.onclick   = () => navigate(1);
+    nextBtn.className = 'cbt-nav-btn cbt-nav-btn--primary';
+  }
+
+  const optsHTML = q.opts.map((opt, i) => {
+    let cls = 'cbt-opt-btn';
+    if (answered) {
+      if (i === q.correct) cls += ' correct';
+      else if (i === sel)  cls += ' wrong';
+    } else if (i === sel) cls += ' selected';
+    return `<li>
+      <button class="${cls}" onclick="selectOption(${i})" ${answered ? 'disabled' : ''}>
+        <span class="cbt-opt-letter">${LETTERS[i]}</span>${opt}
+      </button></li>`;
+  }).join('');
+
+  const explHTML = answered ? `
+    <div class="cbt-explanation show">
+      <div class="cbt-explanation-head">💡 Explanation</div>
+      ${q.expl}
+    </div>` : '';
+
+  document.getElementById('questionContainer').innerHTML = `
+    <div class="cbt-q-card">
+      <div class="cbt-q-num">Question ${current + 1} of ${total}</div>
+      ${q.year ? `<span class="cbt-q-year">JAMB ${q.year}</span>` : ''}
+      <div class="cbt-q-text">${q.q}</div>
+      <ul class="cbt-options">${optsHTML}</ul>
+      ${explHTML}
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SELECT OPTION
+// ════════════════════════════════════════════════════════════════
+function selectOption(idx) {
+  if (S.answers[S.current] !== undefined) return;
+  S.answers[S.current] = idx;
+  renderQuestion();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  NAVIGATE
+// ════════════════════════════════════════════════════════════════
+function navigate(dir) {
+  const next = S.current + dir;
+  if (next < 0 || next >= S.questions.length) return;
+  S.current = next;
+  renderQuestion();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SUBMIT
+// ════════════════════════════════════════════════════════════════
+function confirmSubmit() {
+  const unanswered = S.questions.length - Object.keys(S.answers).length;
+  if (unanswered > 0) {
+    if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
+  }
+  clearInterval(S.timerInt);
+  showResults();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RESULTS
+// ════════════════════════════════════════════════════════════════
+function showResults() {
+  const { questions, answers } = S;
+  let correct = 0, wrong = 0, skip = 0;
+
+  questions.forEach((q, i) => {
+    const a = answers[i];
+    if      (a === undefined)  skip++;
+    else if (a === q.correct)  correct++;
+    else                       wrong++;
+  });
+
+  const total    = questions.length;
+  const pct      = Math.round((correct / total) * 100);
+  const timeUsed = Math.round((Date.now() - S.startTime) / 1000);
+
+  // ── score circle (SVG dashoffset) ────────────────────────────
+  const circumference = 2 * Math.PI * 52; // r=52 → 326.7
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('scoreArc').style.strokeDashoffset = offset;
+  // colour by score
+  const arcColor = pct >= 70 ? '#16a34a' : pct >= 50 ? '#f97316' : '#dc2626';
+  document.getElementById('scoreArc').style.stroke = arcColor;
+
+  document.getElementById('scoreVal').textContent   = correct;
+  document.getElementById('scoreDenom').textContent = `/ ${total}`;
+  document.getElementById('rCorrect').textContent   = correct;
+  document.getElementById('rWrong').textContent     = wrong;
+  document.getElementById('rSkip').textContent      = skip;
+
+  // grade
+  let grade, msg;
+  if      (pct >= 80) { grade = '🏆 Excellent!';    msg = `Outstanding — ${pct}%! You\'re exam-ready.`; }
+  else if (pct >= 70) { grade = '✅ Very Good';      msg = `${pct}% — well above average. Keep it up!`; }
+  else if (pct >= 60) { grade = '📗 Good Pass';      msg = `${pct}% — a solid pass. Push for distinction!`; }
+  else if (pct >= 50) { grade = '📘 Pass';           msg = `${pct}% — just passing. More practice needed.`; }
+  else                { grade = '📖 Needs Work';     msg = `${pct}% — review your notes and try again.`; }
+
+  document.getElementById('resultGrade').textContent = grade;
+  document.getElementById('resultGrade').style.color = arcColor;
+  document.getElementById('resultMsg').textContent   = msg;
+
+  // ── post score to Django ──────────────────────────────────────
+  const gradeCode = pct >= 70 ? 'distinction' : pct >= 60 ? 'credit' : pct >= 50 ? 'pass' : pct >= 40 ? 'nearly' : 'fail';
+  fetch('/cbt/submit/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+    body: JSON.stringify({
+      subject:       'physics',
+      score:         correct,
+      total:         total,
+      percentage:    pct,
+      grade:         gradeCode,
+      time_used_sec: timeUsed,
+    }),
+  }).catch(() => {});  // silent fail if not logged in
+
+  // ── review list ───────────────────────────────────────────────
+  const LETTERS = ['A','B','C','D','E'];
+  const reviewHTML = questions.map((q, i) => {
+    const a         = answers[i];
+    const isCorrect = a === q.correct;
+    const isSkip    = a === undefined;
+    const cls       = isSkip ? 'rs' : isCorrect ? 'rc' : 'rw';
+    const tag       = isSkip
+      ? '<span class="cbt-rtag skipped">Skipped</span>'
+      : isCorrect
+        ? '<span class="cbt-rtag correct">✓ Correct</span>'
+        : '<span class="cbt-rtag wrong">✗ Wrong</span>';
+    const yourLine  = !isSkip && !isCorrect
+      ? `<span style="color:#dc2626;font-size:11.5px">Your answer: ${LETTERS[a]}. ${q.opts[a]}</span>` : '';
+    const corrLine  = `<span style="color:#16a34a;font-size:11.5px">Correct: ${LETTERS[q.correct]}. ${q.opts[q.correct]}</span>`;
+
+    return `
+      <div class="cbt-review-item ${cls}">
+        <div class="cbt-q-num">Q${i+1}${q.year ? ` · JAMB ${q.year}` : ''}</div>
+        <div class="cbt-review-q">${q.q}</div>
+        <div class="cbt-review-tags">${tag}${yourLine}${corrLine}</div>
+        <div class="cbt-review-expl"><strong>Explanation:</strong> ${q.expl}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('reviewList').innerHTML = reviewHTML;
+  showScreen('screen-result');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RETRY / HOME
+// ════════════════════════════════════════════════════════════════
+function retryExam() { startExam(); }
+function goHome()    { showScreen('screen-selector'); }
+
+// ════════════════════════════════════════════════════════════════
+//  CSRF helper
+// ════════════════════════════════════════════════════════════════
+function getCookie(name) {
+  let v = null;
+  document.cookie.split(';').forEach(c => {
+    const [k, val] = c.trim().split('=');
+    if (k === name) v = decodeURIComponent(val);
+  });
+  return v;
+}
+</script>
+</body>
+</html>

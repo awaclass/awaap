@@ -83,6 +83,10 @@
     .awaClass-feature-card--chat::before { background: radial-gradient(circle at top right, #22c55e, transparent 70%); }
     .awaClass-feature-card--chat:hover { border-color: #22c55e; }
 
+    .awaClass-feature-card--topics { background: #fdf4ff; border-color: #e9d5ff; text-decoration: none; color: inherit; }
+    .awaClass-feature-card--topics::before { background: radial-gradient(circle at top right, #a855f7, transparent 70%); }
+    .awaClass-feature-card--topics:hover { border-color: #a855f7; }
+
     .awaClass-feature-icon {
       width: 42px; height: 42px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
@@ -91,6 +95,7 @@
     .awaClass-feature-card--syllabus .awaClass-feature-icon { background: #ffedd5; }
     .awaClass-feature-card--cbt      .awaClass-feature-icon { background: #dbeafe; }
     .awaClass-feature-card--chat     .awaClass-feature-icon { background: #dcfce7; }
+    .awaClass-feature-card--topics   .awaClass-feature-icon { background: #f3e8ff; }
 
     .awaClass-feature-label { font-size: 14px; font-weight: 700; color: var(--awaClass-text, #0f0f0f); margin: 0 0 2px; line-height: 1.3; }
     .awaClass-feature-sub   { font-size: 12px; color: var(--awaClass-text-light, #606060); margin: 0; line-height: 1.4; }
@@ -98,6 +103,7 @@
     .awaClass-feature-card--syllabus .awaClass-feature-arrow { color: #f97316; }
     .awaClass-feature-card--cbt      .awaClass-feature-arrow { color: #3b82f6; }
     .awaClass-feature-card--chat     .awaClass-feature-arrow { color: #22c55e; }
+    .awaClass-feature-card--topics   .awaClass-feature-arrow { color: #a855f7; }
 
     /* ══════════════════════════════════════════════════
        SECTION DIVIDER
@@ -316,7 +322,7 @@
       <span class="awaClass-feature-arrow">View <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </button>
 
-    <a href="{% url 'cbt_exam' %}" class="awaClass-feature-card awaClass-feature-card--cbt">
+    <a href="{% url 'cbt_physics' %}" class="awaClass-feature-card awaClass-feature-card--cbt">
       <div class="awaClass-feature-icon">🎯</div>
       <div>
         <p class="awaClass-feature-label">CBT Exam</p>
@@ -325,7 +331,16 @@
       <span class="awaClass-feature-arrow">Start <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </a>
 
-    <a href="{% url 'live_room_list' %}" class="awaClass-feature-card awaClass-feature-card--chat">
+    <a href="{% url 'cbt_physics_topics' %}" class="awaClass-feature-card awaClass-feature-card--topics">
+      <div class="awaClass-feature-icon">📚</div>
+      <div>
+        <p class="awaClass-feature-label">CBT by Topic</p>
+        <p class="awaClass-feature-sub">JAMB syllabus topic selector</p>
+      </div>
+      <span class="awaClass-feature-arrow">Choose <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </a>
+
+    <a href="{% url 'chat_room' %}" class="awaClass-feature-card awaClass-feature-card--chat">
       <div class="awaClass-feature-icon">💬</div>
       <div>
         <p class="awaClass-feature-label">Group Chat</p>
@@ -480,7 +495,7 @@
 
     <div class="awaClass-modal-footer">
       <p class="awaClass-modal-footer-note">Based on JAMB UTME 2026 Physics Syllabus (39 topics)</p>
-      <a href="{% url 'cbt_exam' %}" class="awaClass-modal-cta">
+      <a href="{% url 'cbt_physics' %}" class="awaClass-modal-cta">
         <i class="fa-solid fa-bolt fa-xs"></i> Start CBT Practice
       </a>
     </div>
