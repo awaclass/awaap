@@ -10,17 +10,56 @@
     <title>awaClass | {{ post.title|truncatechars:50 }}</title>
     <style>
         /* ============================================
-           POST DETAIL STYLES
+           GLOBAL VARIABLES & RESET
+        ============================================ */
+        :root {
+            --primary-color: #f97316;
+            --primary-dark: #ea580c;
+            --primary-light: #fed7aa;
+            --secondary-color: #10b981;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --text-light: #9ca3af;
+            --bg-white: #ffffff;
+            --bg-gray: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-gray);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* ============================================
+           POST DETAIL CONTAINER
         ============================================ */
         .awaClass-post-detail-container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px 16px 48px;
+            padding: 24px 20px 48px;
         }
 
         @media (min-width: 768px) {
             .awaClass-post-detail-container {
-                margin-left: 50px;
+                margin-left: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .awaClass-post-detail-container {
+                padding: 16px;
             }
         }
 
@@ -29,27 +68,38 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: none;
-            border: none;
-            color: #f97316;
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             margin-bottom: 20px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         .awaClass-back-btn:hover {
-            text-decoration: underline;
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateX(-2px);
         }
 
         /* Main Post Card */
         .awaClass-main-post {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 20px;
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .awaClass-main-post:hover {
+            box-shadow: var(--shadow-lg);
         }
 
         .awaClass-post-header {
@@ -57,14 +107,16 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-gray);
         }
 
         .awaClass-post-avatar {
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid var(--primary-light);
         }
 
         .awaClass-post-author-info {
@@ -74,22 +126,31 @@
         .awaClass-post-author-name {
             font-weight: 700;
             font-size: 16px;
-            color: #0f0f0f;
+            color: var(--text-dark);
             margin: 0 0 4px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .awaClass-post-meta {
             font-size: 13px;
-            color: #909090;
+            color: var(--text-gray);
+        }
+
+        .awaClass-post-meta i {
+            margin-right: 4px;
         }
 
         .awaClass-resolved-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: var(--radius-full);
             font-size: 12px;
             font-weight: 600;
-            margin-left: 12px;
         }
 
         .badge-resolved {
@@ -103,41 +164,55 @@
         }
 
         .awaClass-post-title {
-            padding: 20px 24px 16px;
+            padding: 24px 24px 16px;
             margin: 0;
             font-size: 28px;
             font-weight: 700;
-            color: #0f0f0f;
+            color: var(--text-dark);
+            line-height: 1.3;
         }
 
         .awaClass-post-content {
             padding: 0 24px 20px;
             font-size: 16px;
-            color: #404040;
-            line-height: 1.6;
+            color: var(--text-dark);
+            line-height: 1.7;
         }
 
         .awaClass-post-image {
             max-width: 100%;
             max-height: 400px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             margin-top: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .awaClass-post-image:hover {
+            transform: scale(1.01);
         }
 
         .awaClass-post-stats {
             padding: 16px 24px;
-            border-top: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
-            gap: 24px;
+            gap: 28px;
             font-size: 14px;
-            color: #606060;
+            color: var(--text-gray);
+            background: var(--bg-gray);
+        }
+
+        .awaClass-post-stats span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .awaClass-post-actions {
             padding: 16px 24px;
             display: flex;
-            gap: 24px;
+            gap: 16px;
         }
 
         .awaClass-action-btn {
@@ -145,67 +220,100 @@
             border: none;
             cursor: pointer;
             font-size: 15px;
-            color: #606060;
-            display: flex;
+            font-weight: 500;
+            color: var(--text-gray);
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 30px;
-            transition: background 0.2s;
+            gap: 10px;
+            padding: 8px 20px;
+            border-radius: var(--radius-full);
+            transition: all 0.2s ease;
         }
 
         .awaClass-action-btn:hover {
-            background: #f5f5f5;
+            background: var(--bg-gray);
+            color: var(--primary-color);
         }
 
         .awaClass-action-btn.liked {
-            color: #f97316;
+            color: var(--primary-color);
+        }
+
+        .awaClass-action-btn.liked i {
+            animation: heartBeat 0.3s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
         /* Resolve Button */
         .awaClass-resolve-btn {
-            background: #f97316;
+            background: var(--primary-color);
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 14px;
-            padding: 8px 20px;
-            border-radius: 30px;
+            font-size: 13px;
             font-weight: 600;
-            margin-left: auto;
+            padding: 8px 20px;
+            border-radius: var(--radius-full);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .awaClass-resolve-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.02);
         }
 
         .awaClass-resolve-btn.resolved {
-            background: #10b981;
+            background: var(--secondary-color);
+        }
+
+        .awaClass-resolve-btn.resolved:hover {
+            background: #0e9f6e;
         }
 
         /* Comments Section */
         .awaClass-comments-section {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 20px;
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
         }
 
         .awaClass-comments-header {
             padding: 20px 24px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--border-color);
             font-weight: 700;
             font-size: 18px;
+            color: var(--text-dark);
+            background: var(--bg-gray);
         }
 
+        .awaClass-comments-header i {
+            color: var(--primary-color);
+            margin-right: 8px;
+        }
+
+        /* Comment Form */
         .awaClass-comment-form {
-            padding: 20px 24px;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             gap: 16px;
+            background: var(--bg-white);
         }
 
         .awaClass-comment-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid var(--primary-light);
         }
 
         .awaClass-comment-input-wrapper {
@@ -217,18 +325,20 @@
 
         .awaClass-comment-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e5e5e5;
+            padding: 12px 18px;
+            border: 2px solid var(--border-color);
             border-radius: 24px;
             resize: none;
             font-family: inherit;
             font-size: 14px;
-            box-sizing: border-box;
+            transition: all 0.2s ease;
+            background: var(--bg-white);
         }
 
         .awaClass-comment-input:focus {
             outline: none;
-            border-color: #f97316;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
         }
 
         .awaClass-media-buttons {
@@ -241,95 +351,141 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
-            background: #f5f5f5;
-            border-radius: 20px;
+            padding: 8px 16px;
+            background: var(--bg-gray);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
             cursor: pointer;
             font-size: 13px;
-            color: #f97316;
-            transition: background 0.2s;
-            border: none;
+            font-weight: 500;
+            color: var(--text-gray);
+            transition: all 0.2s ease;
         }
 
         .awaClass-media-btn:hover {
-            background: #e5e5e5;
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .awaClass-media-btn.recording {
-            background: #ff4444;
+            background: #ef4444;
             color: white;
+            border-color: #ef4444;
             animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
-            100% { opacity: 1; }
         }
 
         .awaClass-media-preview {
             position: relative;
             display: inline-block;
-            margin-top: 8px;
             margin-right: 8px;
         }
 
         .awaClass-preview-image {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 8px;
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
             object-fit: cover;
+            border: 2px solid var(--primary-light);
         }
 
         .awaClass-remove-media {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #ff4444;
+            background: #ef4444;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
             font-size: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .awaClass-remove-media:hover {
+            background: #dc2626;
+            transform: scale(1.1);
         }
 
         .awaClass-comment-submit {
-            background: #f97316;
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 24px;
+            padding: 8px 24px;
+            border-radius: var(--radius-full);
             cursor: pointer;
             font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
             align-self: flex-start;
         }
 
+        .awaClass-comment-submit:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
         .awaClass-comment-submit:disabled {
-            background: #ccc;
+            background: var(--text-light);
             cursor: not-allowed;
         }
 
+        .awaClass-recording-timer {
+            display: inline-block;
+            margin-left: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ef4444;
+        }
+
+        /* Comments List */
         .awaClass-comments-list {
-            padding: 0;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .awaClass-comments-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .awaClass-comments-list::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .awaClass-comments-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
         }
 
         .awaClass-comment-item {
             padding: 20px 24px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
-            gap: 16px;
+            gap: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .awaClass-comment-item:hover {
+            background: var(--bg-gray);
         }
 
         .awaClass-comment-avatar-small {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
+            border: 1px solid var(--primary-light);
         }
 
         .awaClass-comment-content {
@@ -337,17 +493,17 @@
         }
 
         .awaClass-comment-author {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 14px;
-            color: #0f0f0f;
-            margin: 0 0 4px;
+            color: var(--text-dark);
+            margin: 0 0 6px;
         }
 
         .awaClass-comment-text {
             font-size: 14px;
-            color: #404040;
-            line-height: 1.5;
-            margin: 0 0 8px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0 0 10px;
         }
 
         .awaClass-comment-media {
@@ -356,108 +512,127 @@
 
         .awaClass-comment-image {
             max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
+            max-height: 250px;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.2s ease;
         }
 
         .awaClass-comment-image:hover {
             opacity: 0.9;
+            transform: scale(1.01);
         }
 
         /* Custom Audio Player Styles */
         .awaClass-audio-player {
-            background: #f0f0f0;
-            border-radius: 40px;
-            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--bg-gray) 0%, #f3f4f6 100%);
+            border-radius: 60px;
+            padding: 8px 20px;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            max-width: 320px;
+            gap: 16px;
+            max-width: 360px;
             width: 100%;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
         }
 
         .awaClass-audio-play-btn {
-            background: #f97316;
+            background: var(--primary-color);
             border: none;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .awaClass-audio-play-btn:hover {
+            background: var(--primary-dark);
             transform: scale(1.05);
         }
 
         .awaClass-audio-waveform {
             flex: 1;
-            height: 40px;
+            height: 44px;
             display: flex;
             align-items: center;
             gap: 3px;
             cursor: pointer;
+            padding: 0 8px;
         }
 
         .awaClass-wave-bar {
             width: 3px;
-            background: #f97316;
-            border-radius: 2px;
-            transition: height 0.1s ease;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 3px;
+            transition: height 0.08s ease;
         }
 
         .awaClass-audio-time {
-            font-size: 12px;
-            color: #606060;
-            min-width: 70px;
-            font-family: monospace;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-gray);
+            min-width: 45px;
+            font-family: 'Monaco', 'Courier New', monospace;
         }
 
-        .awaClass-audio-duration {
+        .awaClass-comment-meta {
             font-size: 12px;
-            color: #909090;
+            color: var(--text-light);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 8px;
         }
 
-        /* Recording preview player */
-        .awaClass-preview-audio {
-            background: #f0f0f0;
-            border-radius: 40px;
-            padding: 8px 16px;
+        .awaClass-comment-like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 12px;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            max-width: 320px;
-            width: 100%;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: var(--radius-full);
+            transition: all 0.2s ease;
         }
 
-        .awaClass-recording-timer {
-            display: inline-block;
-            margin-left: 10px;
-            font-size: 12px;
-            color: #ff4444;
-            font-weight: bold;
+        .awaClass-comment-like-btn:hover {
+            background: var(--bg-gray);
+            color: var(--primary-color);
         }
 
-        /* Loading Spinner */
-        .awaClass-loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #f97316;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .awaClass-comment-like-btn.liked {
+            color: var(--primary-color);
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .awaClass-comment-like-btn.liked i {
+            animation: heartBeat 0.3s ease;
+        }
+
+        /* Empty Comments */
+        .awaClass-empty-comments {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-gray);
+        }
+
+        .awaClass-empty-comments i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .awaClass-empty-comments p {
+            font-size: 16px;
         }
 
         /* Image Modal */
@@ -468,7 +643,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             cursor: pointer;
         }
@@ -483,6 +658,18 @@
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
+            animation: zoomIn 0.2s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .awaClass-modal-close {
@@ -493,17 +680,36 @@
             font-size: 40px;
             font-weight: bold;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.2s ease;
         }
 
         .awaClass-modal-close:hover {
-            color: #f97316;
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+
+        /* Loading Spinner */
+        .awaClass-loading {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Mobile Responsive */
         @media (max-width: 640px) {
             .awaClass-post-title {
                 font-size: 22px;
+                padding: 16px 20px;
             }
             
             .awaClass-comment-form {
@@ -524,6 +730,17 @@
 
             .awaClass-audio-player {
                 max-width: 100%;
+                padding: 6px 12px;
+            }
+
+            .awaClass-audio-play-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            .awaClass-post-stats {
+                gap: 16px;
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -535,7 +752,7 @@
 <div class="awaClass-post-detail-container">
     <!-- Back Button -->
     <a href="{% url 'chat_room' %}" class="awaClass-back-btn">
-        <i class="fa-solid fa-arrow-left"></i> Back to Discussion Room
+        <i class="fa-solid fa-arrow-left"></i> Back to Discussion
     </a>
 
     <!-- Main Post -->
@@ -546,21 +763,21 @@
                 <div class="awaClass-post-author-name">
                     {{ post.author.get_full_name|default:post.author.username }}
                     {% if post.is_resolved %}
-                    <span class="awaClass-resolved-badge badge-resolved"><i class="fa-solid fa-check"></i> Resolved</span>
+                    <span class="awaClass-resolved-badge badge-resolved"><i class="fa-solid fa-check-circle"></i> Resolved</span>
                     {% else %}
-                    <span class="awaClass-resolved-badge badge-unresolved"><i class="fa-solid fa-question"></i> Unresolved</span>
+                    <span class="awaClass-resolved-badge badge-unresolved"><i class="fa-solid fa-question-circle"></i> Open</span>
                     {% endif %}
                 </div>
                 <div class="awaClass-post-meta">
                     <i class="fa-regular fa-clock"></i> {{ post.created_at|date:"F j, Y, g:i a" }}
                     {% if post.subject %}
-                    • <i class="fa-regular fa-folder"></i> {{ post.subject }}
+                    • <i class="fa-regular fa-folder-open"></i> {{ post.subject }}
                     {% endif %}
                 </div>
             </div>
             {% if request.user == post.author %}
             <button class="awaClass-resolve-btn {% if post.is_resolved %}resolved{% endif %}" onclick="toggleResolved('{{ post.post_id }}')">
-                {% if post.is_resolved %}<i class="fa-solid fa-check"></i> Resolved{% else %}<i class="fa-solid fa-check-circle"></i> Mark Resolved{% endif %}
+                {% if post.is_resolved %}<i class="fa-solid fa-check-circle"></i> Resolved{% else %}<i class="fa-solid fa-check-circle"></i> Mark Resolved{% endif %}
             </button>
             {% endif %}
         </div>
@@ -571,14 +788,14 @@
             {{ post.content|linebreaks }}
             {% if post.image %}
             <div>
-                <img src="{{ post.get_image_url }}" alt="Question image" class="awaClass-post-image">
+                <img src="{{ post.get_image_url }}" alt="Question image" class="awaClass-post-image" onclick="openImageModal(this.src)">
             </div>
             {% endif %}
         </div>
         
         <div class="awaClass-post-stats">
             <span><i class="fa-regular fa-heart"></i> <span id="likeCount">{{ post.total_likes }}</span> likes</span>
-            <span><i class="fa-regular fa-comment"></i> <span id="replyCount">{{ total_comments }}</span> replies</span>
+            <span><i class="fa-regular fa-comments"></i> <span id="replyCount">{{ total_comments }}</span> replies</span>
             <span><i class="fa-regular fa-eye"></i> {{ post.view }} views</span>
         </div>
         
@@ -596,7 +813,7 @@
     <!-- Comments Section -->
     <div class="awaClass-comments-section">
         <div class="awaClass-comments-header">
-            <i class="fa-regular fa-comments"></i> <span id="commentCountHeader">{{ total_comments }}</span> Replies
+            <i class="fa-regular fa-comments"></i> <span id="commentCountHeader">{{ total_comments }}</span> Discussion Replies
         </div>
         
         <!-- Comment Form with Audio Recording -->
@@ -605,7 +822,7 @@
             <div class="awaClass-comment-form">
                 <img src="{{ request.user.profile.get_picture_url }}" alt="{{ request.user.username }}" class="awaClass-comment-avatar">
                 <div class="awaClass-comment-input-wrapper">
-                    <textarea name="comment" class="awaClass-comment-input" placeholder="Write your reply... (You can also add an image or record audio)" rows="3"></textarea>
+                    <textarea name="comment" class="awaClass-comment-input" placeholder="Write your reply... You can also add an image or record audio" rows="3"></textarea>
                     
                     <div class="awaClass-media-buttons">
                         <label class="awaClass-media-btn">
@@ -618,10 +835,10 @@
                         <span id="recordingTimer" class="awaClass-recording-timer" style="display: none;">0:00</span>
                     </div>
                     
-                    <div id="media-preview" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px;"></div>
+                    <div id="media-preview" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px;"></div>
                 </div>
                 <button type="submit" class="awaClass-comment-submit" id="submitCommentBtn">
-                    <i class="fa-regular fa-paper-plane"></i> Post
+                    <i class="fa-regular fa-paper-plane"></i> Post Reply
                 </button>
             </div>
         </form>
@@ -650,9 +867,7 @@
                             <button class="awaClass-audio-play-btn">
                                 <i class="fa-solid fa-play"></i>
                             </button>
-                            <div class="awaClass-audio-waveform">
-                                <!-- Wave bars will be generated here -->
-                            </div>
+                            <div class="awaClass-audio-waveform"></div>
                             <span class="awaClass-audio-time">0:00</span>
                         </div>
                     </div>
@@ -662,16 +877,16 @@
                         <span><i class="fa-regular fa-clock"></i> {{ comment.created_at|timesince }} ago</span>
                         <button class="awaClass-comment-like-btn comment-like-btn-{{ comment.comment_id }}" onclick="likeComment('{{ comment.comment_id }}')">
                             <i class="{% if request.user in comment.like.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
-                            <span class="comment-like-count-{{ comment.comment_id }}">{{ comment.total_likes }}</span>
+                            <span class="comment-like-count-{{ comment.comment_id }}">{{ comment.total_likes }}</span> Likes
                         </button>
                     </div>
                 </div>
             </div>
             {% empty %}
             <div class="awaClass-empty-comments" id="emptyComments">
-                <i class="fa-regular fa-message" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                <i class="fa-regular fa-message"></i>
                 <p>No replies yet. Be the first to answer!</p>
-                <p style="font-size: 12px; margin-top: 8px;">You can add text, images, or record audio in your reply.</p>
+                <p style="font-size: 13px; margin-top: 10px;">💬 Add text, 📷 image, or 🎙️ audio to your reply</p>
             </div>
             {% endfor %}
         </div>
@@ -696,7 +911,7 @@
     }
     
     // ============================================
-    // CUSTOM AUDIO PLAYER WITH WAVEFORM
+    // CUSTOM AUDIO PLAYER WITH WAVEFORM (20 bars)
     // ============================================
     
     class CustomAudioPlayer {
@@ -716,21 +931,16 @@
         
         init() {
             this.audio = new Audio(this.audioUrl);
-            
-            // Generate wave bars
             this.generateWaveBars();
             
-            // Add click event to waveform for seeking
             this.waveformContainer.addEventListener('click', (e) => {
                 this.seekAudio(e);
             });
             
-            // Play button click
             this.playBtn.addEventListener('click', () => {
                 this.togglePlay();
             });
             
-            // Audio event listeners
             this.audio.addEventListener('timeupdate', () => {
                 this.updateTimeDisplay();
                 this.animateWaveform();
@@ -746,12 +956,11 @@
         }
         
         generateWaveBars() {
-            // Clear existing
             this.waveformContainer.innerHTML = '';
             this.waveBars = [];
             
-            // Create 40 wave bars
-            const barCount = 40;
+            // 20 wave bars only
+            const barCount = 20;
             for (let i = 0; i < barCount; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'awaClass-wave-bar';
@@ -763,32 +972,28 @@
         
         animateWaveform() {
             if (!this.isPlaying) {
-                // Random subtle movement when not playing
                 this.waveBars.forEach(bar => {
-                    const randomHeight = Math.floor(Math.random() * 15) + 4;
+                    const randomHeight = Math.floor(Math.random() * 12) + 3;
                     bar.style.height = randomHeight + 'px';
                 });
                 return;
             }
             
-            // Get audio frequency data if available
             if (this.audioContext && this.sourceNode && this.analyserNode) {
                 const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
                 this.analyserNode.getByteFrequencyData(dataArray);
                 
-                // Map frequency data to wave bars
                 const step = Math.floor(dataArray.length / this.waveBars.length);
                 this.waveBars.forEach((bar, index) => {
                     const value = dataArray[index * step] || 0;
-                    const height = Math.max(4, Math.min(40, (value / 255) * 40));
+                    const height = Math.max(3, Math.min(30, (value / 255) * 30));
                     bar.style.height = height + 'px';
                 });
             } else {
-                // Fallback: random wave animation when playing
                 this.waveBars.forEach((bar, index) => {
                     const time = Date.now() / 1000;
-                    const height = Math.sin(time * 5 + index * 0.3) * 12 + 16;
-                    bar.style.height = Math.max(4, Math.min(40, height)) + 'px';
+                    const height = Math.sin(time * 6 + index * 0.3) * 10 + 14;
+                    bar.style.height = Math.max(3, Math.min(30, height)) + 'px';
                 });
             }
             
@@ -808,7 +1013,6 @@
             this.isPlaying = true;
             this.playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
             
-            // Setup audio context for frequency analysis
             if (!this.audioContext) {
                 this.setupAudioContext();
             }
@@ -864,7 +1068,6 @@
         }
     }
     
-    // Initialize all audio players on page load
     function initAudioPlayers() {
         const audioPlayers = document.querySelectorAll('.awaClass-audio-player');
         audioPlayers.forEach(container => {
@@ -886,8 +1089,8 @@
     const recordBtn = document.getElementById('recordAudioBtn');
     const timerSpan = document.getElementById('recordingTimer');
     
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        if (recordBtn) recordBtn.style.display = 'none';
+    if (recordBtn && (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)) {
+        recordBtn.style.display = 'none';
     }
     
     function formatTime(seconds) {
@@ -977,10 +1180,8 @@
         previewContainer.className = 'awaClass-media-preview';
         previewContainer.id = 'preview-audio';
         
-        // Create custom audio player for preview
         const playerContainer = document.createElement('div');
         playerContainer.className = 'awaClass-audio-player';
-        playerContainer.style.background = '#f0f0f0';
         
         const playBtn = document.createElement('button');
         playBtn.className = 'awaClass-audio-play-btn';
@@ -998,7 +1199,6 @@
         playerContainer.appendChild(timeSpan);
         previewContainer.appendChild(playerContainer);
         
-        // Generate wave bars for preview
         for (let i = 0; i < 20; i++) {
             const bar = document.createElement('div');
             bar.className = 'awaClass-wave-bar';
@@ -1020,7 +1220,6 @@
         
         previewDiv.appendChild(previewContainer);
         
-        // Setup preview audio player
         const previewAudio = new Audio(audioUrl);
         let isPreviewPlaying = false;
         let previewAnimationId = null;
@@ -1029,13 +1228,13 @@
         function animatePreviewWaveform() {
             if (isPreviewPlaying) {
                 previewWaveBars.forEach(bar => {
-                    const height = Math.sin(Date.now() / 200 + Math.random()) * 15 + 16;
-                    bar.style.height = Math.max(4, Math.min(40, height)) + 'px';
+                    const height = Math.sin(Date.now() / 200 + Math.random()) * 12 + 14;
+                    bar.style.height = Math.max(3, Math.min(30, height)) + 'px';
                 });
                 previewAnimationId = requestAnimationFrame(animatePreviewWaveform);
             } else {
                 previewWaveBars.forEach(bar => {
-                    const randomHeight = Math.floor(Math.random() * 15) + 4;
+                    const randomHeight = Math.floor(Math.random() * 12) + 3;
                     bar.style.height = randomHeight + 'px';
                 });
             }
@@ -1079,7 +1278,6 @@
         
         animatePreviewWaveform();
         
-        // Create hidden file input
         const audioFile = new File([blob], `audio_recording_${Date.now()}.mp3`, { type: 'audio/mpeg' });
         let audioInput = document.querySelector('input[name="audio"]');
         if (!audioInput) {
@@ -1338,7 +1536,7 @@
                                 <span><i class="fa-regular fa-clock"></i> ${data.created_at}</span>
                                 <button class="awaClass-comment-like-btn comment-like-btn-${data.comment_id}" onclick="likeComment('${data.comment_id}')">
                                     <i class="fa-regular fa-heart"></i>
-                                    <span class="comment-like-count-${data.comment_id}">0</span>
+                                    <span class="comment-like-count-${data.comment_id}">0</span> Likes
                                 </button>
                             </div>
                         </div>
@@ -1351,13 +1549,11 @@
                     commentsList.innerHTML = newComment;
                 }
                 
-                // Initialize the new audio player
                 const newAudioPlayer = commentsList.querySelector('.awaClass-audio-player');
                 if (newAudioPlayer) {
                     new CustomAudioPlayer(newAudioPlayer);
                 }
                 
-                // Clear form
                 document.querySelector('.awaClass-comment-input').value = '';
                 const imageInput = document.querySelector('input[name="image"]');
                 const audioInput = document.querySelector('input[name="audio"]');
@@ -1367,7 +1563,6 @@
                 currentImageFile = null;
                 recordedAudioBlob = null;
                 
-                // Update comment counts
                 const commentCountHeader = document.getElementById('commentCountHeader');
                 const replyCountSpan = document.getElementById('replyCount');
                 let currentCount = parseInt(commentCountHeader.textContent) || 0;
@@ -1386,7 +1581,6 @@
         });
     }
     
-    // Initialize all audio players when page loads
     document.addEventListener('DOMContentLoaded', function() {
         initAudioPlayers();
     });
