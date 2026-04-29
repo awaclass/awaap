@@ -485,7 +485,7 @@
                 {{ post.content|truncatewords:50 }}
                 {% if post.image %}
                 <div>
-                    <img src="{{ post.image.url }}" alt="Question image" class="awaClass-post-image">
+                    <img src="{{ post.get_image_url }}" alt="Question image" class="awaClass-post-image">
                 </div>
                 {% endif %}
             </div>
@@ -659,32 +659,31 @@
         }
     });
     
-    // Handle form submission with AJAX for image
+    // Handle form submission — always use FormData so files are included
     document.getElementById('newPostForm').addEventListener('submit', function(e) {
-        const imageInput = document.getElementById('postImage');
-        if (imageInput.files && imageInput.files[0]) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    window.location.href = this.action;
-                }
-            })
-            .catch(() => {
+        e.preventDefault();
+        const submitBtn = this.querySelector('[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Posting…';
+
+        const formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
                 window.location.href = this.action;
-            });
-        }
+            }
+        })
+        .catch(() => {
+            this.submit(); // fallback: plain form POST
+        });
     });
 </script>
 

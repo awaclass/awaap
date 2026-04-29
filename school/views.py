@@ -9,9 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from school.models import Profile, Post, PostComment, Notification, LiveSession, LiveParticipant, CBTExam, CBTScore, ClassPost, ClassPostComment
 from django.db.models import Q
 import uuid, json
-import base64
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 
 
 # ── existing views (unchanged) ────────────────────────────────────
@@ -230,8 +227,8 @@ def profile(request, username):
     scores = []
     for ex in all_exams[:20]:
         scores.append({
-            'subject':         type('_S', (), {'name': ex.subject.capitalize()})(),
-            'exam':            type('_E', (), {'title': f'{ex.subject.capitalize()} — {ex.score}/{ex.total}'})(),
+            'subject':         type('_S', (), {'name': ex.subject.capitalize()}),
+            'exam':            type('_E', (), {'title': f'{ex.subject.capitalize()} — {ex.score}/{ex.total}'}),
             'score':           ex.score,
             'total_questions': ex.total,
             'percentage':      ex.percentage,
@@ -889,10 +886,10 @@ def chat_room(request):
 def create_class_post(request):
     """Create a new question/post in the chat room"""
     if request.method == 'POST':
-        title        = request.POST.get('title', '').strip()
-        content      = request.POST.get('content', '').strip()
-        subject      = request.POST.get('subject', '').strip()
-        image_base64 = request.POST.get('image_base64', '')
+        title   = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        image   = request.FILES.get('image')
 
         if not title or not content:
             messages.error(request, 'Please provide both title and content for your question.')
@@ -905,17 +902,9 @@ def create_class_post(request):
             subject=subject if subject else 'General',
         )
 
-        if image_base64 and image_base64.startswith('data:image'):
-            try:
-                format, imgstr = image_base64.split(';base64,')
-                ext            = format.split('/')[-1]
-                image_data     = ContentFile(base64.b64decode(imgstr))
-                filename       = f"class_posts/{post.post_id}.{ext}"
-                saved_path     = default_storage.save(filename, image_data)
-                post.image     = saved_path
-                post.save()
-            except Exception as e:
-                print(f"Error saving image: {e}")
+        if image:
+            post.image = image
+            post.save()
 
         messages.success(request, 'Your question has been posted!')
 
@@ -951,37 +940,86 @@ def chat_post_detail(request, post_id):
 
 @login_required
 def chat_post_comment(request, post_id):
-    """Add a comment/reply to a chat post"""
+    """Add a comment/reply to a chat post with optional image/audio attachments"""
     if request.method == 'POST':
-        post         = get_object_or_404(ClassPost, post_id=post_id)
+        post = get_object_or_404(ClassPost, post_id=post_id)
         comment_text = request.POST.get('comment', '').strip()
+        image_file = request.FILES.get('image')
+        audio_file = request.FILES.get('audio')
 
-        if comment_text:
-            comment = ClassPostComment.objects.create(
-                post=post,
-                commentator=request.user,
-                comment=comment_text
+        # Validate: at least one of text, image, or audio is provided
+        if not comment_text and not image_file and not audio_file:
+            messages.error(request, 'Please provide a comment, image, or audio.')
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'No content provided'}, status=400)
+            return redirect('chat_post_detail', post_id=post_id)
+
+        # Create the comment
+        comment = ClassPostComment.objects.create(
+            post=post,
+            commentator=request.user,
+            comment=comment_text if comment_text else ''
+        )
+
+        # Handle image upload
+        if image_file:
+            # Validate image file type
+            allowed_image_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+            if image_file.content_type in allowed_image_types:
+                comment.image = image_file
+            else:
+                messages.warning(request, 'Unsupported image format. Please use JPEG, PNG, GIF, or WEBP.')
+            
+        # Handle audio upload
+        if audio_file:
+            # Validate audio file type
+            allowed_audio_types = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/mp4']
+            if audio_file.content_type in allowed_audio_types:
+                # Validate file size (max 10MB)
+                if audio_file.size > 10 * 1024 * 1024:
+                    messages.warning(request, 'Audio file too large. Maximum size is 10MB.')
+                else:
+                    comment.audio = audio_file
+            else:
+                messages.warning(request, 'Unsupported audio format. Please use MP3, WAV, or OGG.')
+
+        comment.save()
+
+        # Create notification for post author
+        if post.author != request.user:
+            notification_message = f'{request.user.username} replied to your question: "{post.title[:50]}"'
+            if image_file and not comment_text:
+                notification_message = f'{request.user.username} added an image to your question: "{post.title[:50]}"'
+            elif audio_file and not comment_text:
+                notification_message = f'{request.user.username} added audio to your question: "{post.title[:50]}"'
+            
+            Notification.objects.create(
+                user=post.author,
+                message=notification_message
             )
 
-            if post.author != request.user:
-                Notification.objects.create(
-                    user=post.author,
-                    message=f'{request.user.username} replied to your question: "{post.title[:50]}"'
-                )
+        messages.success(request, 'Reply added!')
 
-            messages.success(request, 'Reply added!')
-
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success':    True,
-                    'comment_id': str(comment.comment_id),
-                    'username':   request.user.username,
-                    'comment':    comment.comment,
-                    'created_at': comment.created_at.strftime('%d %b %Y, %I:%M %p'),
-                    'avatar_url': request.user.profile.get_picture_url,
-                })
-        else:
-            messages.error(request, 'Comment cannot be empty.')
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            response_data = {
+                'success': True,
+                'comment_id': str(comment.comment_id),
+                'username': request.user.get_full_name() or request.user.username,
+                'comment': comment.comment,
+                'created_at': comment.created_at.strftime('%d %b %Y, %I:%M %p'),
+                'avatar_url': request.user.profile.get_picture_url,
+                'has_media': comment.has_media,
+            }
+            
+            # Add image URL if present
+            if comment.get_image_url:
+                response_data['image_url'] = comment.get_image_url
+            
+            # Add audio URL if present
+            if comment.get_audio_url:
+                response_data['audio_url'] = comment.get_audio_url
+            
+            return JsonResponse(response_data)
 
     return redirect('chat_post_detail', post_id=post_id)
 
@@ -1005,8 +1043,8 @@ def chat_post_like(request, post_id):
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
-            'success':     True,
-            'liked':       liked,
+            'success': True,
+            'liked': liked,
             'total_likes': post.like.count()
         })
 
@@ -1027,8 +1065,8 @@ def chat_comment_like(request, comment_id):
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
-            'success':     True,
-            'liked':       liked,
+            'success': True,
+            'liked': liked,
             'total_likes': comment.like.count()
         })
 
@@ -1048,7 +1086,7 @@ def resolve_post(request, post_id):
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
-            'success':     True,
+            'success': True,
             'is_resolved': post.is_resolved
         })
 

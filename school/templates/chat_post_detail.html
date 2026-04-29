@@ -211,22 +211,91 @@
         .awaClass-comment-input-wrapper {
             flex: 1;
             display: flex;
+            flex-direction: column;
             gap: 12px;
         }
 
         .awaClass-comment-input {
-            flex: 1;
+            width: 100%;
             padding: 12px 16px;
             border: 1px solid #e5e5e5;
             border-radius: 24px;
             resize: none;
             font-family: inherit;
             font-size: 14px;
+            box-sizing: border-box;
         }
 
         .awaClass-comment-input:focus {
             outline: none;
             border-color: #f97316;
+        }
+
+        .awaClass-media-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .awaClass-media-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #f97316;
+            transition: background 0.2s;
+            border: none;
+        }
+
+        .awaClass-media-btn:hover {
+            background: #e5e5e5;
+        }
+
+        .awaClass-media-btn.recording {
+            background: #ff4444;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .awaClass-media-preview {
+            position: relative;
+            display: inline-block;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .awaClass-preview-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .awaClass-remove-media {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .awaClass-comment-submit {
@@ -237,6 +306,12 @@
             border-radius: 24px;
             cursor: pointer;
             font-weight: 600;
+            align-self: flex-start;
+        }
+
+        .awaClass-comment-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .awaClass-comments-list {
@@ -275,36 +350,157 @@
             margin: 0 0 8px;
         }
 
-        .awaClass-comment-meta {
-            font-size: 12px;
-            color: #909090;
-            display: flex;
-            gap: 16px;
-            align-items: center;
+        .awaClass-comment-media {
+            margin: 12px 0;
         }
 
-        .awaClass-comment-like-btn {
-            background: none;
-            border: none;
+        .awaClass-comment-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
             cursor: pointer;
-            color: #909090;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            transition: opacity 0.2s;
         }
 
-        .awaClass-comment-like-btn.liked {
+        .awaClass-comment-image:hover {
+            opacity: 0.9;
+        }
+
+        /* Custom Audio Player Styles */
+        .awaClass-audio-player {
+            background: #f0f0f0;
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .awaClass-audio-play-btn {
+            background: #f97316;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .awaClass-audio-play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .awaClass-audio-waveform {
+            flex: 1;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+        }
+
+        .awaClass-wave-bar {
+            width: 3px;
+            background: #f97316;
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        .awaClass-audio-time {
+            font-size: 12px;
+            color: #606060;
+            min-width: 70px;
+            font-family: monospace;
+        }
+
+        .awaClass-audio-duration {
+            font-size: 12px;
+            color: #909090;
+        }
+
+        /* Recording preview player */
+        .awaClass-preview-audio {
+            background: #f0f0f0;
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .awaClass-recording-timer {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 12px;
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        /* Loading Spinner */
+        .awaClass-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #f97316;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Image Modal */
+        .awaClass-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .awaClass-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .awaClass-modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .awaClass-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .awaClass-modal-close:hover {
             color: #f97316;
         }
 
-        .awaClass-empty-comments {
-            text-align: center;
-            padding: 60px 20px;
-            color: #909090;
-        }
-
-        /* Mobile */
+        /* Mobile Responsive */
         @media (max-width: 640px) {
             .awaClass-post-title {
                 font-size: 22px;
@@ -316,6 +512,18 @@
             
             .awaClass-comment-avatar {
                 display: none;
+            }
+
+            .awaClass-media-buttons {
+                flex-wrap: wrap;
+            }
+
+            .awaClass-comment-submit {
+                width: 100%;
+            }
+
+            .awaClass-audio-player {
+                max-width: 100%;
             }
         }
     </style>
@@ -363,14 +571,14 @@
             {{ post.content|linebreaks }}
             {% if post.image %}
             <div>
-                <img src="{{ post.image.url }}" alt="Question image" class="awaClass-post-image">
+                <img src="{{ post.get_image_url }}" alt="Question image" class="awaClass-post-image">
             </div>
             {% endif %}
         </div>
         
         <div class="awaClass-post-stats">
             <span><i class="fa-regular fa-heart"></i> <span id="likeCount">{{ post.total_likes }}</span> likes</span>
-            <span><i class="fa-regular fa-comment"></i> {{ total_comments }} replies</span>
+            <span><i class="fa-regular fa-comment"></i> <span id="replyCount">{{ total_comments }}</span> replies</span>
             <span><i class="fa-regular fa-eye"></i> {{ post.view }} views</span>
         </div>
         
@@ -388,18 +596,33 @@
     <!-- Comments Section -->
     <div class="awaClass-comments-section">
         <div class="awaClass-comments-header">
-            <i class="fa-regular fa-comments"></i> {{ total_comments }} Replies
+            <i class="fa-regular fa-comments"></i> <span id="commentCountHeader">{{ total_comments }}</span> Replies
         </div>
         
-        <!-- Comment Form -->
-        <form id="commentForm" method="POST" action="{% url 'chat_post_comment' post.post_id %}">
+        <!-- Comment Form with Audio Recording -->
+        <form id="commentForm" method="POST" action="{% url 'chat_post_comment' post.post_id %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="awaClass-comment-form">
                 <img src="{{ request.user.profile.get_picture_url }}" alt="{{ request.user.username }}" class="awaClass-comment-avatar">
                 <div class="awaClass-comment-input-wrapper">
-                    <textarea name="comment" class="awaClass-comment-input" placeholder="Write your reply..." rows="2" required></textarea>
-                    <button type="submit" class="awaClass-comment-submit">Post</button>
+                    <textarea name="comment" class="awaClass-comment-input" placeholder="Write your reply... (You can also add an image or record audio)" rows="3"></textarea>
+                    
+                    <div class="awaClass-media-buttons">
+                        <label class="awaClass-media-btn">
+                            <i class="fa-solid fa-image"></i> Add Image
+                            <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" onchange="previewMedia(this, 'image')">
+                        </label>
+                        <button type="button" class="awaClass-media-btn" id="recordAudioBtn">
+                            <i class="fa-solid fa-microphone"></i> Record Audio
+                        </button>
+                        <span id="recordingTimer" class="awaClass-recording-timer" style="display: none;">0:00</span>
+                    </div>
+                    
+                    <div id="media-preview" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px;"></div>
                 </div>
+                <button type="submit" class="awaClass-comment-submit" id="submitCommentBtn">
+                    <i class="fa-regular fa-paper-plane"></i> Post
+                </button>
             </div>
         </form>
         
@@ -410,7 +633,31 @@
                 <img src="{{ comment.commentator.profile.get_picture_url }}" alt="{{ comment.commentator.username }}" class="awaClass-comment-avatar-small">
                 <div class="awaClass-comment-content">
                     <div class="awaClass-comment-author">{{ comment.commentator.get_full_name|default:comment.commentator.username }}</div>
-                    <div class="awaClass-comment-text">{{ comment.comment }}</div>
+                    
+                    {% if comment.comment %}
+                    <div class="awaClass-comment-text">{{ comment.comment|linebreaksbr }}</div>
+                    {% endif %}
+                    
+                    {% if comment.get_image_url %}
+                    <div class="awaClass-comment-media">
+                        <img src="{{ comment.get_image_url }}" alt="Comment image" class="awaClass-comment-image" onclick="openImageModal(this.src)">
+                    </div>
+                    {% endif %}
+                    
+                    {% if comment.get_audio_url %}
+                    <div class="awaClass-comment-media">
+                        <div class="awaClass-audio-player" data-audio-url="{{ comment.get_audio_url }}">
+                            <button class="awaClass-audio-play-btn">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <div class="awaClass-audio-waveform">
+                                <!-- Wave bars will be generated here -->
+                            </div>
+                            <span class="awaClass-audio-time">0:00</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     <div class="awaClass-comment-meta">
                         <span><i class="fa-regular fa-clock"></i> {{ comment.created_at|timesince }} ago</span>
                         <button class="awaClass-comment-like-btn comment-like-btn-{{ comment.comment_id }}" onclick="likeComment('{{ comment.comment_id }}')">
@@ -421,9 +668,10 @@
                 </div>
             </div>
             {% empty %}
-            <div class="awaClass-empty-comments">
+            <div class="awaClass-empty-comments" id="emptyComments">
                 <i class="fa-regular fa-message" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
                 <p>No replies yet. Be the first to answer!</p>
+                <p style="font-size: 12px; margin-top: 8px;">You can add text, images, or record audio in your reply.</p>
             </div>
             {% endfor %}
         </div>
@@ -447,7 +695,491 @@
         return cookieValue;
     }
     
-    // Like post
+    // ============================================
+    // CUSTOM AUDIO PLAYER WITH WAVEFORM
+    // ============================================
+    
+    class CustomAudioPlayer {
+        constructor(container) {
+            this.container = container;
+            this.audioUrl = container.dataset.audioUrl;
+            this.audio = null;
+            this.isPlaying = false;
+            this.animationId = null;
+            this.waveBars = [];
+            this.waveformContainer = container.querySelector('.awaClass-audio-waveform');
+            this.playBtn = container.querySelector('.awaClass-audio-play-btn');
+            this.timeDisplay = container.querySelector('.awaClass-audio-time');
+            
+            this.init();
+        }
+        
+        init() {
+            this.audio = new Audio(this.audioUrl);
+            
+            // Generate wave bars
+            this.generateWaveBars();
+            
+            // Add click event to waveform for seeking
+            this.waveformContainer.addEventListener('click', (e) => {
+                this.seekAudio(e);
+            });
+            
+            // Play button click
+            this.playBtn.addEventListener('click', () => {
+                this.togglePlay();
+            });
+            
+            // Audio event listeners
+            this.audio.addEventListener('timeupdate', () => {
+                this.updateTimeDisplay();
+                this.animateWaveform();
+            });
+            
+            this.audio.addEventListener('ended', () => {
+                this.stopPlayback();
+            });
+            
+            this.audio.addEventListener('loadedmetadata', () => {
+                this.updateTimeDisplay();
+            });
+        }
+        
+        generateWaveBars() {
+            // Clear existing
+            this.waveformContainer.innerHTML = '';
+            this.waveBars = [];
+            
+            // Create 40 wave bars
+            const barCount = 40;
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'awaClass-wave-bar';
+                bar.style.height = '4px';
+                this.waveformContainer.appendChild(bar);
+                this.waveBars.push(bar);
+            }
+        }
+        
+        animateWaveform() {
+            if (!this.isPlaying) {
+                // Random subtle movement when not playing
+                this.waveBars.forEach(bar => {
+                    const randomHeight = Math.floor(Math.random() * 15) + 4;
+                    bar.style.height = randomHeight + 'px';
+                });
+                return;
+            }
+            
+            // Get audio frequency data if available
+            if (this.audioContext && this.sourceNode && this.analyserNode) {
+                const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
+                this.analyserNode.getByteFrequencyData(dataArray);
+                
+                // Map frequency data to wave bars
+                const step = Math.floor(dataArray.length / this.waveBars.length);
+                this.waveBars.forEach((bar, index) => {
+                    const value = dataArray[index * step] || 0;
+                    const height = Math.max(4, Math.min(40, (value / 255) * 40));
+                    bar.style.height = height + 'px';
+                });
+            } else {
+                // Fallback: random wave animation when playing
+                this.waveBars.forEach((bar, index) => {
+                    const time = Date.now() / 1000;
+                    const height = Math.sin(time * 5 + index * 0.3) * 12 + 16;
+                    bar.style.height = Math.max(4, Math.min(40, height)) + 'px';
+                });
+            }
+            
+            this.animationId = requestAnimationFrame(() => this.animateWaveform());
+        }
+        
+        togglePlay() {
+            if (this.isPlaying) {
+                this.pause();
+            } else {
+                this.play();
+            }
+        }
+        
+        play() {
+            this.audio.play();
+            this.isPlaying = true;
+            this.playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            
+            // Setup audio context for frequency analysis
+            if (!this.audioContext) {
+                this.setupAudioContext();
+            }
+            
+            this.animateWaveform();
+        }
+        
+        pause() {
+            this.audio.pause();
+            this.isPlaying = false;
+            this.playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            if (this.animationId) {
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
+            }
+        }
+        
+        stopPlayback() {
+            this.isPlaying = false;
+            this.playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            if (this.animationId) {
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
+            }
+        }
+        
+        setupAudioContext() {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                this.audioContext = new AudioContextClass();
+                this.analyserNode = this.audioContext.createAnalyser();
+                this.analyserNode.fftSize = 256;
+                this.sourceNode = this.audioContext.createMediaElementSource(this.audio);
+                this.sourceNode.connect(this.analyserNode);
+                this.analyserNode.connect(this.audioContext.destination);
+            }
+        }
+        
+        updateTimeDisplay() {
+            const currentTime = this.audio.currentTime;
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = Math.floor(currentTime % 60);
+            this.timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        seekAudio(event) {
+            const rect = this.waveformContainer.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percentage = x / rect.width;
+            if (this.audio.duration) {
+                this.audio.currentTime = percentage * this.audio.duration;
+            }
+        }
+    }
+    
+    // Initialize all audio players on page load
+    function initAudioPlayers() {
+        const audioPlayers = document.querySelectorAll('.awaClass-audio-player');
+        audioPlayers.forEach(container => {
+            new CustomAudioPlayer(container);
+        });
+    }
+    
+    // ============================================
+    // AUDIO RECORDING
+    // ============================================
+    
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let recordingStartTime = null;
+    let recordingTimer = null;
+    let recordedAudioBlob = null;
+    
+    const recordBtn = document.getElementById('recordAudioBtn');
+    const timerSpan = document.getElementById('recordingTimer');
+    
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (recordBtn) recordBtn.style.display = 'none';
+    }
+    
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function updateTimer() {
+        if (recordingStartTime) {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            timerSpan.textContent = formatTime(elapsed);
+        }
+    }
+    
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                stream.getTracks().forEach(track => track.stop());
+                recordedAudioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                const audioUrl = URL.createObjectURL(recordedAudioBlob);
+                createAudioPreview(audioUrl, recordedAudioBlob);
+                
+                if (recordingTimer) {
+                    clearInterval(recordingTimer);
+                    recordingTimer = null;
+                }
+                timerSpan.style.display = 'none';
+                recordBtn.innerHTML = '<i class="fa-solid fa-microphone"></i> Record Audio';
+                recordBtn.classList.remove('recording');
+            };
+            
+            mediaRecorder.start(1000);
+            isRecording = true;
+            recordingStartTime = Date.now();
+            timerSpan.style.display = 'inline-block';
+            timerSpan.textContent = '0:00';
+            recordingTimer = setInterval(updateTimer, 1000);
+            recordBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop Recording';
+            recordBtn.classList.add('recording');
+            
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            alert('Unable to access microphone. Please check your permissions.');
+        }
+    }
+    
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+        }
+    }
+    
+    function toggleRecording() {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    }
+    
+    if (recordBtn) {
+        recordBtn.addEventListener('click', toggleRecording);
+    }
+    
+    function createAudioPreview(audioUrl, blob) {
+        const previewDiv = document.getElementById('media-preview');
+        
+        const existingPreview = document.getElementById('preview-audio');
+        if (existingPreview) {
+            existingPreview.remove();
+        }
+        
+        const previewContainer = document.createElement('div');
+        previewContainer.className = 'awaClass-media-preview';
+        previewContainer.id = 'preview-audio';
+        
+        // Create custom audio player for preview
+        const playerContainer = document.createElement('div');
+        playerContainer.className = 'awaClass-audio-player';
+        playerContainer.style.background = '#f0f0f0';
+        
+        const playBtn = document.createElement('button');
+        playBtn.className = 'awaClass-audio-play-btn';
+        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+        
+        const waveformDiv = document.createElement('div');
+        waveformDiv.className = 'awaClass-audio-waveform';
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'awaClass-audio-time';
+        timeSpan.textContent = '0:00';
+        
+        playerContainer.appendChild(playBtn);
+        playerContainer.appendChild(waveformDiv);
+        playerContainer.appendChild(timeSpan);
+        previewContainer.appendChild(playerContainer);
+        
+        // Generate wave bars for preview
+        for (let i = 0; i < 20; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'awaClass-wave-bar';
+            bar.style.height = '4px';
+            waveformDiv.appendChild(bar);
+        }
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '×';
+        removeBtn.className = 'awaClass-remove-media';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            previewContainer.remove();
+            recordedAudioBlob = null;
+            const audioInput = document.querySelector('input[name="audio"]');
+            if (audioInput) audioInput.value = '';
+        };
+        previewContainer.appendChild(removeBtn);
+        
+        previewDiv.appendChild(previewContainer);
+        
+        // Setup preview audio player
+        const previewAudio = new Audio(audioUrl);
+        let isPreviewPlaying = false;
+        let previewAnimationId = null;
+        const previewWaveBars = waveformDiv.querySelectorAll('.awaClass-wave-bar');
+        
+        function animatePreviewWaveform() {
+            if (isPreviewPlaying) {
+                previewWaveBars.forEach(bar => {
+                    const height = Math.sin(Date.now() / 200 + Math.random()) * 15 + 16;
+                    bar.style.height = Math.max(4, Math.min(40, height)) + 'px';
+                });
+                previewAnimationId = requestAnimationFrame(animatePreviewWaveform);
+            } else {
+                previewWaveBars.forEach(bar => {
+                    const randomHeight = Math.floor(Math.random() * 15) + 4;
+                    bar.style.height = randomHeight + 'px';
+                });
+            }
+        }
+        
+        playBtn.addEventListener('click', () => {
+            if (isPreviewPlaying) {
+                previewAudio.pause();
+                isPreviewPlaying = false;
+                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            } else {
+                previewAudio.play();
+                isPreviewPlaying = true;
+                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                animatePreviewWaveform();
+            }
+        });
+        
+        previewAudio.addEventListener('timeupdate', () => {
+            const minutes = Math.floor(previewAudio.currentTime / 60);
+            const seconds = Math.floor(previewAudio.currentTime % 60);
+            timeSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        });
+        
+        previewAudio.addEventListener('ended', () => {
+            isPreviewPlaying = false;
+            playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            if (previewAnimationId) {
+                cancelAnimationFrame(previewAnimationId);
+            }
+        });
+        
+        waveformDiv.addEventListener('click', (e) => {
+            const rect = waveformDiv.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percentage = x / rect.width;
+            if (previewAudio.duration) {
+                previewAudio.currentTime = percentage * previewAudio.duration;
+            }
+        });
+        
+        animatePreviewWaveform();
+        
+        // Create hidden file input
+        const audioFile = new File([blob], `audio_recording_${Date.now()}.mp3`, { type: 'audio/mpeg' });
+        let audioInput = document.querySelector('input[name="audio"]');
+        if (!audioInput) {
+            audioInput = document.createElement('input');
+            audioInput.type = 'file';
+            audioInput.name = 'audio';
+            audioInput.style.display = 'none';
+            document.getElementById('commentForm').appendChild(audioInput);
+        }
+        
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(audioFile);
+        audioInput.files = dataTransfer.files;
+    }
+    
+    // ============================================
+    // IMAGE PREVIEW
+    // ============================================
+    
+    let currentImageFile = null;
+    
+    function previewMedia(input, type) {
+        const previewDiv = document.getElementById('media-preview');
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const existingPreview = document.getElementById(`preview-${type}`);
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+                
+                const previewContainer = document.createElement('div');
+                previewContainer.className = 'awaClass-media-preview';
+                previewContainer.id = `preview-${type}`;
+                
+                if (type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'awaClass-preview-image';
+                    previewContainer.appendChild(img);
+                    currentImageFile = file;
+                }
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '×';
+                removeBtn.className = 'awaClass-remove-media';
+                removeBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    input.value = '';
+                    previewContainer.remove();
+                    if (type === 'image') {
+                        currentImageFile = null;
+                        const imageInput = document.querySelector('input[name="image"]');
+                        if (imageInput) imageInput.value = '';
+                    }
+                };
+                previewContainer.appendChild(removeBtn);
+                
+                previewDiv.appendChild(previewContainer);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // ============================================
+    // IMAGE MODAL
+    // ============================================
+    
+    function openImageModal(imageSrc) {
+        let modal = document.getElementById('imageModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'imageModal';
+            modal.className = 'awaClass-modal';
+            modal.innerHTML = `
+                <span class="awaClass-modal-close">&times;</span>
+                <img class="awaClass-modal-image" src="">
+            `;
+            document.body.appendChild(modal);
+            
+            modal.onclick = function(e) {
+                if (e.target === modal || e.target.className === 'awaClass-modal-close') {
+                    modal.classList.remove('active');
+                }
+            };
+        }
+        
+        const modalImg = modal.querySelector('img');
+        modalImg.src = imageSrc;
+        modal.classList.add('active');
+    }
+    
+    // ============================================
+    // LIKE FUNCTIONS
+    // ============================================
+    
     function likePost(postId) {
         fetch(`/chat/post/${postId}/like/`, {
             method: 'POST',
@@ -477,7 +1209,6 @@
         .catch(error => console.error('Error:', error));
     }
     
-    // Like comment
     function likeComment(commentId) {
         fetch(`/chat/comment/${commentId}/like/`, {
             method: 'POST',
@@ -507,7 +1238,6 @@
         .catch(error => console.error('Error:', error));
     }
     
-    // Toggle resolved status
     function toggleResolved(postId) {
         fetch(`/chat/post/${postId}/resolve/`, {
             method: 'POST',
@@ -525,18 +1255,44 @@
         .catch(error => console.error('Error:', error));
     }
     
-    // Scroll to comment form
     function scrollToCommentForm() {
         document.querySelector('.awaClass-comment-input').focus();
         document.querySelector('.awaClass-comment-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     
-    // Handle comment form submission with AJAX
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // ============================================
+    // FORM SUBMISSION
+    // ============================================
+    
     document.getElementById('commentForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const formData = new FormData(this);
         
-        fetch(this.action, {
+        if (isRecording) {
+            stopRecording();
+            setTimeout(() => {
+                submitForm();
+            }, 500);
+        } else {
+            submitForm();
+        }
+    });
+    
+    function submitForm() {
+        const submitBtn = document.getElementById('submitCommentBtn');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="awaClass-loading"></span> Posting...';
+        submitBtn.disabled = true;
+        
+        const formData = new FormData(document.getElementById('commentForm'));
+        
+        fetch(document.getElementById('commentForm').action, {
             method: 'POST',
             body: formData,
             headers: {
@@ -545,18 +1301,39 @@
         })
         .then(response => response.json())
         .then(data => {
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+            
             if (data.success) {
-                // Add new comment to the list
                 const commentsList = document.getElementById('commentsList');
-                const emptyDiv = commentsList.querySelector('.awaClass-empty-comments');
+                const emptyDiv = commentsList.querySelector('#emptyComments');
                 if (emptyDiv) emptyDiv.remove();
+                
+                let mediaHtml = '';
+                if (data.image_url) {
+                    mediaHtml += `<div class="awaClass-comment-media">
+                        <img src="${data.image_url}" alt="Comment image" class="awaClass-comment-image" onclick="openImageModal(this.src)">
+                    </div>`;
+                }
+                if (data.audio_url) {
+                    mediaHtml += `<div class="awaClass-comment-media">
+                        <div class="awaClass-audio-player" data-audio-url="${data.audio_url}">
+                            <button class="awaClass-audio-play-btn">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <div class="awaClass-audio-waveform"></div>
+                            <span class="awaClass-audio-time">0:00</span>
+                        </div>
+                    </div>`;
+                }
                 
                 const newComment = `
                     <div class="awaClass-comment-item" id="comment-${data.comment_id}">
                         <img src="${data.avatar_url}" alt="${data.username}" class="awaClass-comment-avatar-small">
                         <div class="awaClass-comment-content">
                             <div class="awaClass-comment-author">${escapeHtml(data.username)}</div>
-                            <div class="awaClass-comment-text">${escapeHtml(data.comment)}</div>
+                            ${data.comment ? `<div class="awaClass-comment-text">${escapeHtml(data.comment).replace(/\n/g, '<br>')}</div>` : ''}
+                            ${mediaHtml}
                             <div class="awaClass-comment-meta">
                                 <span><i class="fa-regular fa-clock"></i> ${data.created_at}</span>
                                 <button class="awaClass-comment-like-btn comment-like-btn-${data.comment_id}" onclick="likeComment('${data.comment_id}')">
@@ -567,28 +1344,52 @@
                         </div>
                     </div>
                 `;
-                commentsList.insertAdjacentHTML('afterbegin', newComment);
+                
+                if (commentsList.firstChild) {
+                    commentsList.insertAdjacentHTML('afterbegin', newComment);
+                } else {
+                    commentsList.innerHTML = newComment;
+                }
+                
+                // Initialize the new audio player
+                const newAudioPlayer = commentsList.querySelector('.awaClass-audio-player');
+                if (newAudioPlayer) {
+                    new CustomAudioPlayer(newAudioPlayer);
+                }
                 
                 // Clear form
                 document.querySelector('.awaClass-comment-input').value = '';
+                const imageInput = document.querySelector('input[name="image"]');
+                const audioInput = document.querySelector('input[name="audio"]');
+                if (imageInput) imageInput.value = '';
+                if (audioInput) audioInput.value = '';
+                document.getElementById('media-preview').innerHTML = '';
+                currentImageFile = null;
+                recordedAudioBlob = null;
                 
-                // Update comment count
-                const commentCountSpan = document.querySelector('.awaClass-comments-header');
-                const currentCount = parseInt(commentCountSpan.textContent.match(/\d+/)[0]) || 0;
-                commentCountSpan.innerHTML = `<i class="fa-regular fa-comments"></i> ${currentCount + 1} Replies`;
+                // Update comment counts
+                const commentCountHeader = document.getElementById('commentCountHeader');
+                const replyCountSpan = document.getElementById('replyCount');
+                let currentCount = parseInt(commentCountHeader.textContent) || 0;
+                let newCount = currentCount + 1;
+                commentCountHeader.textContent = newCount;
+                if (replyCountSpan) replyCountSpan.textContent = newCount;
+            } else if (data.error) {
+                alert(data.error);
             }
         })
         .catch(error => {
-            this.submit();
+            console.error('Error:', error);
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+            alert('An error occurred. Please try again.');
         });
-    });
-    
-    // Escape HTML for safety
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
+    
+    // Initialize all audio players when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initAudioPlayers();
+    });
 </script>
 
 {% include 'footer.html' %}

@@ -320,7 +320,12 @@ class ClassPost(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='class_posts')
     title = models.CharField(max_length=300)
     content = models.TextField()
-    image = models.ImageField(upload_to='class_posts/', blank=True, null=True)
+
+    if settings.USE_CLOUDINARY:
+        image = CloudinaryField('image', folder='class_posts', blank=True, null=True)
+    else:
+        image = models.ImageField(upload_to='class_posts/', blank=True, null=True)
+
     subject = models.CharField(max_length=100, blank=True, default='General')
     like = models.ManyToManyField(User, related_name='class_posts_like', blank=True)
     view = models.IntegerField(default=0)
@@ -333,6 +338,27 @@ class ClassPost(models.Model):
 
     def __str__(self):
         return f"{self.title[:50]} by {self.author.username}"
+
+    @property
+    def get_image_url(self):
+        """Returns a usable image URL in both Cloudinary and local environments."""
+        try:
+            if getattr(settings, 'USE_CLOUDINARY', False):
+                import cloudinary
+                pic = self.image
+                public_id = None
+                if hasattr(pic, 'public_id') and pic.public_id:
+                    public_id = str(pic.public_id).strip()
+                elif pic and str(pic).strip() not in ('', 'None'):
+                    public_id = str(pic).strip()
+                if public_id:
+                    return cloudinary.CloudinaryImage(public_id).build_url(secure=True)
+            else:
+                if self.image and hasattr(self.image, 'url'):
+                    return self.image.url
+        except Exception:
+            pass
+        return None
 
     @property
     def total_comments(self):
@@ -351,11 +377,20 @@ class ClassPost(models.Model):
 
 
 class ClassPostComment(models.Model):
-    """Comments/replies for ClassPost - same structure as PostComment"""
+    """Comments/replies for ClassPost - supports text, images, and audio"""
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     commentator = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(ClassPost, on_delete=models.CASCADE, related_name='class_comments')
-    comment = models.TextField()
+    comment = models.TextField(blank=True, null=True)  # Made optional since audio/image can be standalone
+    
+    # Media fields for comments
+    if settings.USE_CLOUDINARY:
+        image = CloudinaryField('image', folder='comment_images', blank=True, null=True)
+        audio = CloudinaryField('audio', resource_type='video', folder='comment_audio', blank=True, null=True)
+    else:
+        image = models.ImageField(upload_to='comment_images/', blank=True, null=True)
+        audio = models.FileField(upload_to='comment_audio/', blank=True, null=True)
+    
     like = models.ManyToManyField(User, related_name='class_comment_likes', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -363,8 +398,73 @@ class ClassPostComment(models.Model):
         ordering = ['created_at']
 
     def __str__(self):
-        return f"Comment by {self.commentator.username} on {self.post.title[:30]}"
+        media_type = []
+        if self.comment:
+            media_type.append('text')
+        if self.image:
+            media_type.append('image')
+        if self.audio:
+            media_type.append('audio')
+        media_str = '+'.join(media_type) if media_type else 'empty'
+        return f"Comment ({media_str}) by {self.commentator.username} on {self.post.title[:30]}"
 
     @property
     def total_likes(self):
         return self.like.count()
+    
+    @property
+    def get_image_url(self):
+        """Returns usable image URL"""
+        try:
+            if getattr(settings, 'USE_CLOUDINARY', False):
+                import cloudinary
+                img = self.image
+                public_id = None
+                if hasattr(img, 'public_id') and img.public_id:
+                    public_id = str(img.public_id).strip()
+                elif img and str(img).strip() not in ('', 'None'):
+                    public_id = str(img).strip()
+                if public_id:
+                    return cloudinary.CloudinaryImage(public_id).build_url(secure=True)
+            else:
+                if self.image and hasattr(self.image, 'url'):
+                    return self.image.url
+        except Exception:
+            pass
+        return None
+    
+    @property
+    def get_audio_url(self):
+        """Returns usable audio URL"""
+        try:
+            if getattr(settings, 'USE_CLOUDINARY', False):
+                import cloudinary
+                aud = self.audio
+                public_id = None
+                if hasattr(aud, 'public_id') and aud.public_id:
+                    public_id = str(aud.public_id).strip()
+                elif aud and str(aud).strip() not in ('', 'None'):
+                    public_id = str(aud).strip()
+                if public_id:
+                    return cloudinary.CloudinaryVideo(public_id).build_url(secure=True)
+            else:
+                if self.audio and hasattr(self.audio, 'url'):
+                    return self.audio.url
+        except Exception:
+            pass
+        return None
+    
+    @property
+    def has_media(self):
+        return bool(self.image or self.audio)
+    
+    @property
+    def content_summary(self):
+        """Returns a summary of the comment content for display in lists"""
+        if self.comment:
+            return self.comment[:100]
+        elif self.image:
+            return "📷 Image attachment"
+        elif self.audio:
+            return "🎵 Audio attachment"
+        return "Empty comment"
