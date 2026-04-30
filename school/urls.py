@@ -24,7 +24,7 @@ urlpatterns = [
 
     # ── CBT Exam ──────────────────────────────────────────────────
     path('cbt/',                    views.cbt_subjects,       name='cbt_subjects'),    # subject picker
-    path('cbt/mathematics/',        views.cbt_exam,           name='cbt_exam'),
+    path('cbt/mathematics/',        views.cbt_mathematics,           name='cbt_mathematics'),
     path('cbt/physics/',            views.cbt_physics,        name='cbt_physics'),     # ← OLD physics CBT (kept)
     path('cbt/physics/topics/',     views.cbt_physics_topics, name='cbt_physics_topics'),  # ← NEW topic selector
     path('cbt/english/',            views.cbt_english,        name='cbt_english'),

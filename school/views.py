@@ -11,7 +11,6 @@ from django.db.models import Q
 import uuid, json
 
 
-# ── existing views (unchanged) ────────────────────────────────────
 
 def index(request):
     if request.user.is_authenticated:
@@ -426,22 +425,22 @@ def search(request):
 
 def mathematics(request):
     videos = Post.objects.filter(subject__iexact='mathematics').order_by('-created_at')
-    return render(request, 'mathematics.html', {'videos': videos})
+    return render(request, 'subjects/mathematics.html', {'videos': videos})
 
 
 def physics(request):
     videos = Post.objects.filter(subject__iexact='physics').order_by('-created_at')
-    return render(request, 'physics.html', {'videos': videos})
+    return render(request, 'subjects/physics.html', {'videos': videos})
 
 
 def english(request):
     videos = Post.objects.filter(subject__iexact='english').order_by('-created_at')
-    return render(request, 'english.html', {'videos': videos})
+    return render(request, 'subjects/english.html', {'videos': videos})
 
 
 def chemistry(request):
     videos = Post.objects.filter(subject__iexact='chemistry').order_by('-created_at')
-    return render(request, 'chemistry.html', {'videos': videos})
+    return render(request, 'subjects/chemistry.html', {'videos': videos})
 
 
 def notifications(request):
@@ -595,9 +594,9 @@ def cbt_subjects(request):
 
 
 @login_required
-def cbt_exam(request):
+def cbt_mathematics(request):
     """Render the CBT exam page (Mathematics default)."""
-    return render(request, 'cbt_exam.html')
+    return render(request, 'cbt_mathematics.html')
 
 
 @login_required
@@ -973,7 +972,7 @@ def chat_post_comment(request, post_id):
         # Handle audio upload
         if audio_file:
             # Validate audio file type
-            allowed_audio_types = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/mp4']
+            allowed_audio_types = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/webm', 'audio/webm;codecs=opus', 'audio/ogg;codecs=opus']
             if audio_file.content_type in allowed_audio_types:
                 # Validate file size (max 10MB)
                 if audio_file.size > 10 * 1024 * 1024:

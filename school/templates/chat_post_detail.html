@@ -943,7 +943,6 @@
             
             this.audio.addEventListener('timeupdate', () => {
                 this.updateTimeDisplay();
-                this.animateWaveform();
             });
             
             this.audio.addEventListener('ended', () => {
@@ -978,26 +977,35 @@
                 });
                 return;
             }
-            
-            if (this.audioContext && this.sourceNode && this.analyserNode) {
-                const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
-                this.analyserNode.getByteFrequencyData(dataArray);
-                
-                const step = Math.floor(dataArray.length / this.waveBars.length);
-                this.waveBars.forEach((bar, index) => {
-                    const value = dataArray[index * step] || 0;
-                    const height = Math.max(3, Math.min(30, (value / 255) * 30));
-                    bar.style.height = height + 'px';
-                });
-            } else {
-                this.waveBars.forEach((bar, index) => {
-                    const time = Date.now() / 1000;
-                    const height = Math.sin(time * 6 + index * 0.3) * 10 + 14;
-                    bar.style.height = Math.max(3, Math.min(30, height)) + 'px';
-                });
+
+            // Cancel any existing loop before starting a new one
+            if (this.animationId) {
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
             }
             
-            this.animationId = requestAnimationFrame(() => this.animateWaveform());
+            const tick = () => {
+                if (!this.isPlaying) return;
+                if (this.audioContext && this.sourceNode && this.analyserNode) {
+                    const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
+                    this.analyserNode.getByteFrequencyData(dataArray);
+                    
+                    const step = Math.floor(dataArray.length / this.waveBars.length);
+                    this.waveBars.forEach((bar, index) => {
+                        const value = dataArray[index * step] || 0;
+                        const height = Math.max(3, Math.min(30, (value / 255) * 30));
+                        bar.style.height = height + 'px';
+                    });
+                } else {
+                    this.waveBars.forEach((bar, index) => {
+                        const time = Date.now() / 1000;
+                        const height = Math.sin(time * 6 + index * 0.3) * 10 + 14;
+                        bar.style.height = Math.max(3, Math.min(30, height)) + 'px';
+                    });
+                }
+                this.animationId = requestAnimationFrame(tick);
+            };
+            this.animationId = requestAnimationFrame(tick);
         }
         
         togglePlay() {
@@ -1009,14 +1017,17 @@
         }
         
         play() {
-            this.audio.play();
-            this.isPlaying = true;
-            this.playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-            
             if (!this.audioContext) {
                 this.setupAudioContext();
             }
-            
+
+            if (this.audioContext && this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
+            }
+
+            this.audio.play();
+            this.isPlaying = true;
+            this.playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
             this.animateWaveform();
         }
         
@@ -1110,7 +1121,15 @@
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            mediaRecorder = new MediaRecorder(stream);
+            // Use the MIME type the browser actually supports
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? 'audio/webm;codecs=opus'
+                : MediaRecorder.isTypeSupported('audio/webm')
+                ? 'audio/webm'
+                : MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
+                ? 'audio/ogg;codecs=opus'
+                : '';
+            mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
             audioChunks = [];
             
             mediaRecorder.ondataavailable = (event) => {
@@ -1121,7 +1140,8 @@
             
             mediaRecorder.onstop = () => {
                 stream.getTracks().forEach(track => track.stop());
-                recordedAudioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                const actualMimeType = mediaRecorder.mimeType || 'audio/webm';
+                recordedAudioBlob = new Blob(audioChunks, { type: actualMimeType });
                 const audioUrl = URL.createObjectURL(recordedAudioBlob);
                 createAudioPreview(audioUrl, recordedAudioBlob);
                 
@@ -1211,6 +1231,15 @@
         removeBtn.className = 'awaClass-remove-media';
         removeBtn.onclick = (e) => {
             e.stopPropagation();
+            // Stop audio, cancel animation, revoke blob URL
+            previewAudio.pause();
+            previewAudio.src = '';
+            isPreviewPlaying = false;
+            if (previewAnimationId) {
+                cancelAnimationFrame(previewAnimationId);
+                previewAnimationId = null;
+            }
+            URL.revokeObjectURL(audioUrl);
             previewContainer.remove();
             recordedAudioBlob = null;
             const audioInput = document.querySelector('input[name="audio"]');
@@ -1246,6 +1275,17 @@
                 isPreviewPlaying = false;
                 playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
             } else {
+                if (!previewAudio._audioCtx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) {
+                        previewAudio._audioCtx = new AudioContextClass();
+                        const source = previewAudio._audioCtx.createMediaElementSource(previewAudio);
+                        source.connect(previewAudio._audioCtx.destination);
+                    }
+                }
+                if (previewAudio._audioCtx && previewAudio._audioCtx.state === 'suspended') {
+                    previewAudio._audioCtx.resume();
+                }
                 previewAudio.play();
                 isPreviewPlaying = true;
                 playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
@@ -1276,9 +1316,14 @@
             }
         });
         
-        animatePreviewWaveform();
+        // Set static wave bars on load — no animation until user presses play
+        previewWaveBars.forEach(bar => {
+            bar.style.height = (Math.floor(Math.random() * 12) + 3) + 'px';
+        });
         
-        const audioFile = new File([blob], `audio_recording_${Date.now()}.mp3`, { type: 'audio/mpeg' });
+        const blobMime = blob.type || 'audio/webm';
+        const ext = blobMime.includes('ogg') ? 'ogg' : 'webm';
+        const audioFile = new File([blob], `audio_recording_${Date.now()}.${ext}`, { type: blobMime });
         let audioInput = document.querySelector('input[name="audio"]');
         if (!audioInput) {
             audioInput = document.createElement('input');
