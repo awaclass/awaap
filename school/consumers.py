@@ -135,6 +135,87 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        elif message_type == 'raise_hand':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'raise_hand',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'raised': text_data_json.get('raised', True)
+                }
+            )
+
+        elif message_type == 'reaction':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'reaction',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'emoji': text_data_json.get('emoji', '👍')
+                }
+            )
+
+        elif message_type == 'question_ask':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'question_ask',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'question': text_data_json.get('question', ''),
+                    'question_id': text_data_json.get('question_id', '')
+                }
+            )
+
+        elif message_type == 'question_answered':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'question_answered',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'question_id': text_data_json.get('question_id', '')
+                }
+            )
+
+        elif message_type == 'poll_create':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'poll_create',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'poll_id': text_data_json.get('poll_id', ''),
+                    'question': text_data_json.get('question', ''),
+                    'options': text_data_json.get('options', [])
+                }
+            )
+
+        elif message_type == 'poll_vote':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'poll_vote',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'poll_id': text_data_json.get('poll_id', ''),
+                    'option_index': text_data_json.get('option_index', 0)
+                }
+            )
+
+        elif message_type == 'poll_end':
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'poll_end',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'poll_id': text_data_json.get('poll_id', '')
+                }
+            )
+
     async def offer(self, event):
         await self.send(text_data=json.dumps({
             'type': 'offer',
@@ -203,6 +284,66 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
             'user': event['user'],
             'user_id': event['user_id'],
             'message': event['message']
+        }))
+
+    async def raise_hand(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'raise_hand',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'raised': event['raised']
+        }))
+
+    async def reaction(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'reaction',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'emoji': event['emoji']
+        }))
+
+    async def question_ask(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'question_ask',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'question': event['question'],
+            'question_id': event['question_id']
+        }))
+
+    async def question_answered(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'question_answered',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'question_id': event['question_id']
+        }))
+
+    async def poll_create(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'poll_create',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'poll_id': event['poll_id'],
+            'question': event['question'],
+            'options': event['options']
+        }))
+
+    async def poll_vote(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'poll_vote',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'poll_id': event['poll_id'],
+            'option_index': event['option_index']
+        }))
+
+    async def poll_end(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'poll_end',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'poll_id': event['poll_id']
         }))
 
     @database_sync_to_async

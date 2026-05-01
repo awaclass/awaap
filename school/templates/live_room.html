@@ -497,6 +497,354 @@
         padding: 0 16px;
       }
     }
+
+    /* ── REACTION PICKER ── */
+    .reaction-picker {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: rgba(28,28,28,0.96);
+      backdrop-filter: blur(20px);
+      border-radius: 60px;
+      padding: 10px 18px;
+      display: flex;
+      gap: 10px;
+      z-index: 9998;
+      border: 1px solid rgba(255,255,255,0.15);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .reaction-picker.open {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      pointer-events: auto;
+    }
+    .reaction-emoji {
+      font-size: 28px;
+      cursor: pointer;
+      transition: transform 0.15s;
+      line-height: 1;
+      user-select: none;
+    }
+    .reaction-emoji:hover { transform: scale(1.4); }
+
+    /* floating burst emojis */
+    .emoji-float {
+      position: fixed;
+      font-size: 32px;
+      pointer-events: none;
+      z-index: 9997;
+      animation: floatUp 2.5s ease-out forwards;
+      user-select: none;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-160px) scale(1.4); }
+    }
+
+    /* ── HAND RAISE NOTIFICATION ── */
+    .hand-queue {
+      position: fixed;
+      top: 70px;
+      left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9990;
+      pointer-events: none;
+    }
+    .hand-badge {
+      background: rgba(249,115,22,0.92);
+      backdrop-filter: blur(10px);
+      padding: 7px 14px;
+      border-radius: 40px;
+      font-size: 13px;
+      color: white;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: slideIn 0.3s ease;
+      pointer-events: auto;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .hand-badge .dismiss-hand {
+      background: rgba(255,255,255,0.25);
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+
+    /* ── SIDEBAR TABS (Chat / Q&A) ── */
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .sidebar-tab {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      position: relative;
+    }
+    .sidebar-tab.active { color: #f97316; }
+    .sidebar-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: #f97316;
+    }
+    .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab-content.active { display: flex; }
+
+    /* unread dot on tab */
+    .tab-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-left: 5px;
+      vertical-align: middle;
+      display: none;
+    }
+    .tab-dot.show { display: inline-block; }
+
+    /* ── Q&A PANEL ── */
+    .qa-list {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .qa-item {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 10px 12px;
+      border-left: 3px solid #f97316;
+      position: relative;
+    }
+    .qa-item.answered {
+      border-left-color: #22c55e;
+      opacity: 0.6;
+    }
+    .qa-item .qa-asker {
+      font-size: 11px;
+      color: #f97316;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .qa-item .qa-text {
+      font-size: 13px;
+      color: #eee;
+      line-height: 1.4;
+    }
+    .qa-item .qa-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .qa-mark-btn {
+      background: #22c55e22;
+      border: 1px solid #22c55e;
+      color: #22c55e;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .qa-mark-btn:hover { background: #22c55e44; }
+    .qa-answered-tag {
+      font-size: 11px;
+      color: #22c55e;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+    .qa-input-area {
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #2a2a2a;
+    }
+    .qa-input-area input {
+      flex: 1;
+      background: #2a2a2a;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 30px;
+      color: white;
+      font-size: 13px;
+    }
+    .qa-input-area button {
+      background: #f97316;
+      border: none;
+      padding: 0 14px;
+      border-radius: 30px;
+      font-weight: bold;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .qa-empty {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    /* ── POLL PANEL ── */
+    .poll-overlay {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(380px, 92vw);
+      background: rgba(18,18,18,0.97);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid #333;
+      z-index: 9995;
+      padding: 20px;
+      display: none;
+    }
+    .poll-overlay.open { display: block; animation: slideUp 0.25s ease; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .poll-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .poll-title-bar h4 {
+      color: #f97316;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .poll-question { color: #eee; font-size: 14px; font-weight: 600; margin-bottom: 14px; line-height: 1.4; }
+    .poll-option {
+      background: #2a2a2a;
+      border: 1.5px solid #3a3a3a;
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .poll-option:hover { border-color: #f97316; }
+    .poll-option.voted { border-color: #f97316; }
+    .poll-option .opt-label { color: #eee; font-size: 13px; font-weight: 500; position: relative; z-index: 1; }
+    .poll-option .opt-pct { color: #f97316; font-size: 12px; font-weight: 700; float: right; position: relative; z-index: 1; }
+    .poll-option .opt-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: rgba(249,115,22,0.15);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    .poll-vote-count { color: #888; font-size: 11px; margin-top: 8px; }
+
+    /* host poll creator */
+    .poll-creator {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .poll-creator.open { display: flex; }
+    .poll-creator-box {
+      background: #181818;
+      border-radius: 20px;
+      padding: 24px;
+      width: min(400px, 100%);
+      border: 1px solid #333;
+    }
+    .poll-creator-box h3 { color: #f97316; font-size: 16px; margin-bottom: 18px; }
+    .poll-creator-box input, .poll-creator-box .poll-opt-input {
+      width: 100%;
+      background: #2a2a2a;
+      border: 1px solid #3a3a3a;
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: white;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .poll-creator-box .poll-opt-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .poll-creator-box .poll-opt-row input { margin-bottom: 0; flex: 1; }
+    .poll-creator-box .remove-opt {
+      background: #ef444422;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      border-radius: 8px;
+      padding: 0 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .poll-creator-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .poll-creator-actions button {
+      flex: 1;
+      padding: 11px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-launch-poll { background: #f97316; color: white; }
+    .btn-cancel-poll { background: #2a2a2a; color: #aaa; }
+    .add-option-btn {
+      background: none;
+      border: 1px dashed #555;
+      color: #888;
+      border-radius: 10px;
+      padding: 8px;
+      width: 100%;
+      cursor: pointer;
+      font-size: 12px;
+      margin-bottom: 10px;
+      transition: 0.2s;
+    }
+    .add-option-btn:hover { border-color: #f97316; color: #f97316; }
   </style>
 </head>
 <body>
@@ -547,11 +895,87 @@
     <div class="control-group"><button class="control-btn" id="toggle-audio"><i class="fa-solid fa-microphone"></i></button><span>Mic</span></div>
     <div class="control-group" id="flip-camera-group" style="display:none;"><button class="control-btn" id="flip-camera"><i class="fa-solid fa-rotate"></i></button><span>Flip</span></div>
     <div class="control-group" id="screen-share-group"><button class="control-btn" id="toggle-screen"><i class="fa-solid fa-desktop"></i></button><span>Screen</span></div>
+    <div class="control-group" id="raise-hand-group"><button class="control-btn" id="raise-hand-btn"><i class="fa-solid fa-hand"></i></button><span>Hand</span></div>
+    <div class="control-group"><button class="control-btn" id="toggle-react"><i class="fa-solid fa-face-smile"></i></button><span>React</span></div>
+    <div class="control-group" id="poll-btn-group" style="display:none;"><button class="control-btn" id="toggle-poll-creator"><i class="fa-solid fa-chart-bar"></i></button><span>Poll</span></div>
     <div class="control-group"><button class="control-btn" id="toggle-chat"><i class="fa-regular fa-comment-dots"></i></button><span>Chat</span></div>
     <div class="control-group"><button class="control-btn leave-btn" id="leave-room"><i class="fa-solid fa-phone-slash"></i><span>Leave</span></button></div>
   </div>
 
-  <!-- chat -->
+  <!-- REACTION PICKER -->
+  <div class="reaction-picker" id="reaction-picker">
+    <span class="reaction-emoji" data-emoji="👍">👍</span>
+    <span class="reaction-emoji" data-emoji="❤️">❤️</span>
+    <span class="reaction-emoji" data-emoji="😂">😂</span>
+    <span class="reaction-emoji" data-emoji="😮">😮</span>
+    <span class="reaction-emoji" data-emoji="🔥">🔥</span>
+    <span class="reaction-emoji" data-emoji="👏">👏</span>
+    <span class="reaction-emoji" data-emoji="🙋">🙋</span>
+  </div>
+
+  <!-- HAND RAISE QUEUE (host sees this) -->
+  <div class="hand-queue" id="hand-queue"></div>
+
+  <!-- LIVE POLL DISPLAY (students see active poll here) -->
+  <div class="poll-overlay" id="poll-overlay">
+    <div class="poll-title-bar">
+      <h4><i class="fa-solid fa-chart-simple"></i> Live Poll</h4>
+      <i class="fa-solid fa-xmark" id="close-poll" style="color:#aaa;cursor:pointer;"></i>
+    </div>
+    <div class="poll-question" id="poll-question-text"></div>
+    <div id="poll-options-list"></div>
+    <div class="poll-vote-count" id="poll-vote-count">0 votes</div>
+  </div>
+
+  <!-- HOST POLL CREATOR MODAL -->
+  <div class="poll-creator" id="poll-creator">
+    <div class="poll-creator-box">
+      <h3><i class="fa-solid fa-chart-bar"></i> Create a Poll</h3>
+      <input type="text" id="poll-q-input" placeholder="Ask the class a question...">
+      <div id="poll-options-builder">
+        <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option A" value=""><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
+        <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option B" value=""><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
+      </div>
+      <button class="add-option-btn" id="add-option-btn"><i class="fa-solid fa-plus"></i> Add Option</button>
+      <div class="poll-creator-actions">
+        <button class="btn-cancel-poll" id="cancel-poll-btn">Cancel</button>
+        <button class="btn-launch-poll" id="launch-poll-btn"><i class="fa-solid fa-bolt"></i> Launch Poll</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- chat + Q&A sidebar -->
+  <div class="chat-overlay" id="chat-overlay"></div>
+  <div class="chat-sidebar" id="chat-sidebar">
+    <div class="chat-header">
+      <span><i class="fa-regular fa-comment"></i> Class Panel</span>
+      <i class="fa-solid fa-xmark" id="close-chat" style="cursor:pointer;"></i>
+    </div>
+    <!-- Tabs -->
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" id="tab-chat" onclick="switchTab('chat')">
+        Chat <span class="tab-dot" id="chat-dot"></span>
+      </button>
+      <button class="sidebar-tab" id="tab-qa" onclick="switchTab('qa')">
+        Q&amp;A <span class="tab-dot" id="qa-dot"></span>
+      </button>
+    </div>
+    <!-- Chat Tab -->
+    <div class="tab-content active" id="tab-content-chat">
+      <div class="chat-messages" id="chat-messages"><div class="chat-message"><strong>✨ System:</strong> Welcome to the live class</div></div>
+      <div class="chat-input"><input type="text" id="chat-input" placeholder="Say something..."><button id="send-chat">Send</button></div>
+    </div>
+    <!-- Q&A Tab -->
+    <div class="tab-content" id="tab-content-qa">
+      <div class="qa-list" id="qa-list">
+        <div class="qa-empty" id="qa-empty"><i class="fa-solid fa-question-circle" style="font-size:28px;color:#333;margin-bottom:8px;display:block;"></i>No questions yet.<br>Students can ask questions here.</div>
+      </div>
+      <div class="qa-input-area" id="qa-input-area">
+        <input type="text" id="qa-input" placeholder="Ask the teacher a question...">
+        <button id="send-qa">Ask</button>
+      </div>
+    </div>
+  </div>
   <div class="chat-overlay" id="chat-overlay"></div>
   <div class="chat-sidebar" id="chat-sidebar">
     <div class="chat-header"><span><i class="fa-regular fa-comment"></i> Class Chat</span><i class="fa-solid fa-xmark" id="close-chat" style="cursor:pointer;"></i></div>
@@ -561,7 +985,7 @@
 </div>
 
 <script>
-  // Django template variables - these will be replaced by Django backend
+  // Django template variables
   const roomName = '{{ room_name }}';
   const userName = '{{ user.username }}';
   const userId   = Number('{{ user.id }}');
@@ -570,7 +994,6 @@
   const sessionTitle = '{{ session.title|escapejs }}';
   const hostUsername = '{{ session.created_by.username|escapejs }}';
 
-  // WebRTC Configuration with multiple STUN servers for better connectivity
   const configuration = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
@@ -593,57 +1016,51 @@
   let currentFacingMode = 'user';
   let reconnectAttempts = 0;
   let flipInProgress = false;
+  let handRaised = false;
+  let activePoll = null;
+  let pollVotes = {};
+  let myVote = null;
+  let activeSidebarTab = 'chat';
+  let questions = {};   // question_id -> { user, text, answered }
 
   // DOM elements
-  const hostVideoEl = document.getElementById('host-video-element');
-  const hostPlaceholder = document.getElementById('host-placeholder');
-  const waitingOverlay = document.getElementById('waiting-overlay');
-  const studentTray = document.getElementById('student-tray');
+  const hostVideoEl      = document.getElementById('host-video-element');
+  const hostPlaceholder  = document.getElementById('host-placeholder');
+  const waitingOverlay   = document.getElementById('waiting-overlay');
+  const studentTray      = document.getElementById('student-tray');
   const selfBubbleContainer = document.getElementById('self-bubble-container');
-  const selfVideo = document.getElementById('self-video');
-  const selfAvatar = document.getElementById('self-avatar');
-  const selfMicIcon = document.getElementById('self-mic-icon');
-  const selfNameLabel = document.getElementById('self-name-label');
+  const selfVideo        = document.getElementById('self-video');
+  const selfAvatar       = document.getElementById('self-avatar');
+  const selfMicIcon      = document.getElementById('self-mic-icon');
+  const selfNameLabel    = document.getElementById('self-name-label');
   const participantCountSpan = document.getElementById('participant-count');
   const sessionTitleSpan = document.getElementById('session-title-display');
-  const hostDisplaySpan = document.getElementById('host-display-name');
+  const hostDisplaySpan  = document.getElementById('host-display-name');
 
-  // Initialize UI text
   sessionTitleSpan.textContent = sessionTitle || 'Live Class';
-  hostDisplaySpan.textContent = hostUsername || 'Host';
+  hostDisplaySpan.textContent  = hostUsername  || 'Host';
   document.getElementById('host-placeholder-name').textContent = hostUsername || 'Host';
-
-  // Host mutes their own video to avoid hearing themselves (echo prevention)
-  // Students must NOT have it muted — they need to hear the host
   hostVideoEl.muted = isHost;
 
-  // Helper: Show host video on main stage
+  // ── VIDEO / STAGE HELPERS ──────────────────────────────────────────
   function setHostVideo(stream) {
-    console.log('Setting host video on main stage');
-    if (hostVideoEl) {
-      // Null srcObject first to force browser to re-render the new stream
-      hostVideoEl.srcObject = null;
-      hostVideoEl.srcObject = stream;
-      hostVideoEl.style.display = 'block';
-      hostPlaceholder.style.display = 'none';
-      waitingOverlay.style.display = 'none';
-      hostVideoEl.play().catch(e => console.log('Play error:', e));
-    }
+    hostVideoEl.srcObject = null;
+    hostVideoEl.srcObject = stream;
+    hostVideoEl.style.display = 'block';
+    hostPlaceholder.style.display = 'none';
+    waitingOverlay.style.display = 'none';
+    hostVideoEl.play().catch(e => console.log('Play error:', e));
   }
-
   function showHostPlaceholder() {
     hostVideoEl.style.display = 'none';
     hostPlaceholder.style.display = 'flex';
     waitingOverlay.style.display = 'none';
   }
-
   function showWaitingOverlay() {
     hostVideoEl.style.display = 'none';
     hostPlaceholder.style.display = 'none';
     waitingOverlay.style.display = 'flex';
   }
-
-  // Student Self Bubble UI
   function showSelfBubble() {
     selfBubbleContainer.style.display = 'block';
     if (localStream) {
@@ -656,20 +1073,18 @@
     }
     selfNameLabel.textContent = userName.length > 12 ? userName.slice(0,10)+'..' : userName;
   }
-
   function updateSelfMicIcon() {
-    if (selfMicIcon) {
-      if (isAudioEnabled) {
-        selfMicIcon.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-        selfMicIcon.style.background = '#111';
-      } else {
-        selfMicIcon.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
-        selfMicIcon.style.background = '#ef4444';
-      }
+    if (!selfMicIcon) return;
+    if (isAudioEnabled) {
+      selfMicIcon.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+      selfMicIcon.style.background = '#111';
+    } else {
+      selfMicIcon.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
+      selfMicIcon.style.background = '#ef4444';
     }
   }
 
-  // Add student bubble (for host to see other students)
+  // ── STUDENT BUBBLES ───────────────────────────────────────────────
   function addStudentBubble(username, uid) {
     if (document.getElementById(`bubble-wrapper-${uid}`)) return;
     const wrapper = document.createElement('div');
@@ -679,8 +1094,7 @@
     bubble.className = 'student-bubble';
     bubble.id = `video-${uid}`;
     const video = document.createElement('video');
-    video.autoplay = true;
-    video.playsInline = true;
+    video.autoplay = true; video.playsInline = true;
     video.id = `video-element-${uid}`;
     video.style.borderRadius = '50%';
     const avatarDiv = document.createElement('div');
@@ -700,193 +1114,372 @@
     wrapper.appendChild(nameSpan);
     studentTray.appendChild(wrapper);
   }
-
   function removeStudentBubble(uid) {
     const wrapper = document.getElementById(`bubble-wrapper-${uid}`);
     if (wrapper) wrapper.remove();
-    if (peerConnections[uid]) {
-      peerConnections[uid].close();
-      delete peerConnections[uid];
-    }
+    if (peerConnections[uid]) { peerConnections[uid].close(); delete peerConnections[uid]; }
   }
-
-  // Route remote stream: host stream goes to main stage, others to bubbles
   function routeRemoteStream(remoteUserId, stream) {
-    console.log(`Routing stream from user ${remoteUserId} (hostId=${hostId}, isHost=${isHost})`);
     if (remoteUserId == hostId) {
       setHostVideo(stream);
     } else {
       const videoElem = document.getElementById(`video-element-${remoteUserId}`);
       if (videoElem && stream) {
         videoElem.srcObject = stream;
-        const avatarDiv = document.getElementById(`bubble-avatar-${remoteUserId}`);
-        if (avatarDiv) avatarDiv.style.display = 'none';
+        const av = document.getElementById(`bubble-avatar-${remoteUserId}`);
+        if (av) av.style.display = 'none';
       }
     }
   }
 
-  // WebRTC: Create offer (called by host when a student joins)
+  // ── WEBRTC ────────────────────────────────────────────────────────
   async function createOffer(remoteUserId) {
-    console.log(`Creating offer for ${remoteUserId}`);
     const pc = new RTCPeerConnection(configuration);
     peerConnections[remoteUserId] = pc;
-    
-    if (localStream) {
-      localStream.getTracks().forEach(track => {
-        pc.addTrack(track, localStream);
-      });
-    }
-    
+    if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
     pc.onicecandidate = (e) => {
-      if (e.candidate) {
-        socket.send(JSON.stringify({ type: 'ice_candidate', candidate: e.candidate, user_id: remoteUserId }));
-      }
+      if (e.candidate) socket.send(JSON.stringify({ type: 'ice_candidate', candidate: e.candidate, user_id: remoteUserId }));
     };
-    
-    pc.ontrack = (e) => {
-      if (e.streams && e.streams[0]) {
-        routeRemoteStream(remoteUserId, e.streams[0]);
-      }
-    };
-    
+    pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(remoteUserId, e.streams[0]); };
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
-    socket.send(JSON.stringify({ type: 'offer', offer: offer, user_id: remoteUserId }));
+    socket.send(JSON.stringify({ type: 'offer', offer, user_id: remoteUserId }));
   }
-
-  // Handle incoming offer (student receives host's offer)
   async function handleOffer(data) {
-    console.log(`Handling offer from ${data.user_id}`);
     const pc = new RTCPeerConnection(configuration);
     peerConnections[data.user_id] = pc;
-    
-    if (localStream) {
-      localStream.getTracks().forEach(track => {
-        pc.addTrack(track, localStream);
-      });
-    }
-    
+    if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
     pc.onicecandidate = (e) => {
-      if (e.candidate) {
-        socket.send(JSON.stringify({ type: 'ice_candidate', candidate: e.candidate, user_id: data.user_id }));
-      }
+      if (e.candidate) socket.send(JSON.stringify({ type: 'ice_candidate', candidate: e.candidate, user_id: data.user_id }));
     };
-    
-    pc.ontrack = (e) => {
-      if (e.streams && e.streams[0]) {
-        routeRemoteStream(data.user_id, e.streams[0]);
-      }
-    };
-    
+    pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(data.user_id, e.streams[0]); };
     await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    socket.send(JSON.stringify({ type: 'answer', answer: answer, user_id: data.user_id }));
+    socket.send(JSON.stringify({ type: 'answer', answer, user_id: data.user_id }));
   }
-
   async function handleAnswer(data) {
     const pc = peerConnections[data.user_id];
-    if (pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-    }
+    if (pc) await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
   }
-
   async function handleIceCandidate(data) {
     const pc = peerConnections[data.user_id];
-    if (pc && data.candidate) {
-      await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-    }
+    if (pc && data.candidate) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
   }
-
   function updateRemoteMute(uid, enabled) {
     const icon = document.getElementById(`bubble-muted-${uid}`);
     if (icon) icon.style.display = enabled ? 'none' : 'flex';
   }
 
-  // WebSocket signaling handler
+  // ── SIDEBAR TABS ──────────────────────────────────────────────────
+  function switchTab(tab) {
+    activeSidebarTab = tab;
+    document.getElementById('tab-chat').classList.toggle('active', tab === 'chat');
+    document.getElementById('tab-qa').classList.toggle('active', tab === 'qa');
+    document.getElementById('tab-content-chat').classList.toggle('active', tab === 'chat');
+    document.getElementById('tab-content-qa').classList.toggle('active', tab === 'qa');
+    if (tab === 'chat') document.getElementById('chat-dot').classList.remove('show');
+    if (tab === 'qa')   document.getElementById('qa-dot').classList.remove('show');
+  }
+
+  // ── REACTIONS ─────────────────────────────────────────────────────
+  function burstEmoji(emoji) {
+    const count = 4 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'emoji-float';
+        el.textContent = emoji;
+        el.style.left = (20 + Math.random() * 60) + 'vw';
+        el.style.bottom = '120px';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }, i * 120);
+    }
+  }
+  function sendReaction(emoji) {
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'reaction', emoji }));
+    }
+    burstEmoji(emoji);
+    document.getElementById('reaction-picker').classList.remove('open');
+  }
+
+  // ── RAISE HAND ────────────────────────────────────────────────────
+  function toggleHand() {
+    handRaised = !handRaised;
+    const btn = document.getElementById('raise-hand-btn');
+    btn.classList.toggle('active', handRaised);
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'raise_hand', raised: handRaised }));
+    }
+  }
+  function showHandBadge(username, uid) {
+    const queue = document.getElementById('hand-queue');
+    if (document.getElementById(`hand-badge-${uid}`)) return;
+    const badge = document.createElement('div');
+    badge.className = 'hand-badge';
+    badge.id = `hand-badge-${uid}`;
+    badge.innerHTML = `✋ <strong>${escapeHtml(username)}</strong> has a question
+      <button class="dismiss-hand" onclick="dismissHand(${uid})">✕</button>`;
+    queue.appendChild(badge);
+  }
+  function dismissHand(uid) {
+    const el = document.getElementById(`hand-badge-${uid}`);
+    if (el) el.remove();
+  }
+  function clearHandBadge(uid) {
+    dismissHand(uid);
+  }
+
+  // ── Q&A ───────────────────────────────────────────────────────────
+  function sendQuestion() {
+    const input = document.getElementById('qa-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const qid = 'q_' + Date.now() + '_' + userId;
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'question_ask', question: text, question_id: qid }));
+    }
+    input.value = '';
+  }
+  function addQuestionToPanel(qid, username, text, isOwn) {
+    questions[qid] = { user: username, text, answered: false };
+    const list = document.getElementById('qa-list');
+    document.getElementById('qa-empty').style.display = 'none';
+    const item = document.createElement('div');
+    item.className = 'qa-item';
+    item.id = `qa-${qid}`;
+    let actionsHtml = '';
+    if (isHost) {
+      actionsHtml = `<div class="qa-actions">
+        <button class="qa-mark-btn" onclick="markAnswered('${qid}')">✓ Mark Answered</button>
+      </div>`;
+    }
+    item.innerHTML = `
+      <div class="qa-asker">🎓 ${escapeHtml(username)}</div>
+      <div class="qa-text">${escapeHtml(text)}</div>
+      ${actionsHtml}
+    `;
+    list.appendChild(item);
+    list.scrollTop = list.scrollHeight;
+    // Dot notification if on other tab
+    if (activeSidebarTab !== 'qa') {
+      document.getElementById('qa-dot').classList.add('show');
+    }
+  }
+  function markAnswered(qid) {
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'question_answered', question_id: qid }));
+    }
+    setQuestionAnswered(qid);
+  }
+  function setQuestionAnswered(qid) {
+    const item = document.getElementById(`qa-${qid}`);
+    if (item) {
+      item.classList.add('answered');
+      const actions = item.querySelector('.qa-actions');
+      if (actions) actions.innerHTML = '<div class="qa-answered-tag">✓ Answered</div>';
+      else item.insertAdjacentHTML('beforeend', '<div class="qa-answered-tag">✓ Answered</div>');
+    }
+    if (questions[qid]) questions[qid].answered = true;
+  }
+
+  // ── POLLS ─────────────────────────────────────────────────────────
+  function openPollCreator() {
+    document.getElementById('poll-creator').classList.add('open');
+  }
+  function closePollCreator() {
+    document.getElementById('poll-creator').classList.remove('open');
+    document.getElementById('poll-q-input').value = '';
+    // reset options
+    const builder = document.getElementById('poll-options-builder');
+    builder.innerHTML = `
+      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option A"><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
+      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option B"><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
+    `;
+  }
+  function addPollOption() {
+    const builder = document.getElementById('poll-options-builder');
+    const letters = 'ABCDEFGH';
+    const idx = builder.children.length;
+    if (idx >= 6) return;
+    const row = document.createElement('div');
+    row.className = 'poll-opt-row';
+    row.innerHTML = `<input class="poll-opt-input" placeholder="Option ${letters[idx]}"><button class="remove-opt" onclick="removePollOption(this)">✕</button>`;
+    builder.appendChild(row);
+  }
+  function removePollOption(btn) {
+    const builder = document.getElementById('poll-options-builder');
+    if (builder.children.length <= 2) return;
+    btn.parentElement.remove();
+  }
+  function launchPoll() {
+    const question = document.getElementById('poll-q-input').value.trim();
+    const optionInputs = document.querySelectorAll('.poll-opt-input');
+    const options = Array.from(optionInputs).map(i => i.value.trim()).filter(Boolean);
+    if (!question || options.length < 2) {
+      addChatMessage('System', 'Please enter a question and at least 2 options.');
+      return;
+    }
+    const pollId = 'poll_' + Date.now();
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'poll_create', poll_id: pollId, question, options }));
+    }
+    closePollCreator();
+  }
+  function showPoll(pollId, question, options) {
+    activePoll = pollId;
+    pollVotes = {};
+    myVote = null;
+    options.forEach((_, i) => pollVotes[i] = 0);
+    document.getElementById('poll-question-text').textContent = question;
+    renderPollOptions(options);
+    document.getElementById('poll-vote-count').textContent = '0 votes';
+    document.getElementById('poll-overlay').classList.add('open');
+  }
+  function renderPollOptions(options) {
+    const list = document.getElementById('poll-options-list');
+    list.innerHTML = '';
+    const total = Object.values(pollVotes).reduce((a,b) => a+b, 0);
+    options.forEach((opt, i) => {
+      const votes = pollVotes[i] || 0;
+      const pct = total > 0 ? Math.round((votes / total) * 100) : 0;
+      const div = document.createElement('div');
+      div.className = 'poll-option' + (myVote === i ? ' voted' : '');
+      div.dataset.index = i;
+      div.innerHTML = `
+        <div class="opt-bar" style="width:${pct}%"></div>
+        <span class="opt-label">${escapeHtml(opt)}</span>
+        <span class="opt-pct">${pct}%</span>
+      `;
+      if (myVote === null && !isHost) {
+        div.addEventListener('click', () => castVote(i));
+      }
+      list.appendChild(div);
+    });
+  }
+  function castVote(optionIndex) {
+    if (myVote !== null || !activePoll) return;
+    myVote = optionIndex;
+    socket.send(JSON.stringify({ type: 'poll_vote', poll_id: activePoll, option_index: optionIndex }));
+    pollVotes[optionIndex] = (pollVotes[optionIndex] || 0) + 1;
+    refreshPollDisplay();
+  }
+  function handlePollVote(pollId, optionIndex) {
+    if (pollId !== activePoll) return;
+    pollVotes[optionIndex] = (pollVotes[optionIndex] || 0) + 1;
+    refreshPollDisplay();
+  }
+  function refreshPollDisplay() {
+    const total = Object.values(pollVotes).reduce((a,b) => a+b, 0);
+    document.getElementById('poll-vote-count').textContent = `${total} vote${total !== 1 ? 's' : ''}`;
+    const options = Array.from(document.querySelectorAll('.poll-option'));
+    options.forEach(opt => {
+      const i = parseInt(opt.dataset.index);
+      const votes = pollVotes[i] || 0;
+      const pct = total > 0 ? Math.round((votes / total) * 100) : 0;
+      opt.querySelector('.opt-bar').style.width = pct + '%';
+      opt.querySelector('.opt-pct').textContent = pct + '%';
+    });
+  }
+  function endPoll() {
+    activePoll = null;
+    document.getElementById('poll-overlay').classList.remove('open');
+  }
+
+  // ── WEBSOCKET SIGNALING ───────────────────────────────────────────
   function handleSignalingData(data) {
     switch (data.type) {
       case 'user_joined':
         if (data.user_id != userId) {
-          console.log(`User joined: ${data.user} (${data.user_id})`);
           if (isHost) {
-            if (data.user_id != hostId) {
-              addStudentBubble(data.user, data.user_id);
-            }
+            if (data.user_id != hostId) addStudentBubble(data.user, data.user_id);
             createOffer(data.user_id);
           } else {
-            if (data.user_id != hostId) {
-              addStudentBubble(data.user, data.user_id);
-              createOffer(data.user_id);
-            }
+            if (data.user_id != hostId) { addStudentBubble(data.user, data.user_id); createOffer(data.user_id); }
           }
           addChatMessage('System', `${data.user} joined the class`);
           updateParticipantCount();
         }
         break;
-        
       case 'user_left':
-        console.log(`User left: ${data.user_id}`);
         removeStudentBubble(data.user_id);
+        clearHandBadge(data.user_id);
         addChatMessage('System', `${data.user} left the class`);
         updateParticipantCount();
-        if (!isHost && data.user_id == hostId) {
-          showWaitingOverlay();
-        }
+        if (!isHost && data.user_id == hostId) showWaitingOverlay();
         break;
-        
       case 'offer':
-        if (data.user_id != userId) {
-          handleOffer(data);
-        }
+        if (data.user_id != userId) handleOffer(data);
         break;
-        
       case 'answer':
-        if (data.user_id != userId) {
-          handleAnswer(data);
-        }
+        if (data.user_id != userId) handleAnswer(data);
         break;
-        
       case 'ice_candidate':
-        if (data.user_id != userId) {
-          handleIceCandidate(data);
-        }
+        if (data.user_id != userId) handleIceCandidate(data);
         break;
-        
       case 'audio_toggle':
-        if (data.user_id != userId) {
-          updateRemoteMute(data.user_id, data.enabled);
-        }
+        if (data.user_id != userId) updateRemoteMute(data.user_id, data.enabled);
         break;
-        
       case 'video_toggle':
         if (!isHost && data.user_id == hostId) {
-          if (!data.enabled) {
-            showHostPlaceholder();
-          } else if (hostVideoEl.srcObject) {
-            setHostVideo(hostVideoEl.srcObject);
+          if (!data.enabled) showHostPlaceholder();
+          else if (hostVideoEl.srcObject) setHostVideo(hostVideoEl.srcObject);
+        }
+        break;
+      case 'chat_message':
+        addChatMessage(data.user, data.message);
+        if (activeSidebarTab !== 'chat') document.getElementById('chat-dot').classList.add('show');
+        break;
+      case 'raise_hand':
+        if (data.user_id != userId) {
+          if (data.raised) {
+            showHandBadge(data.user, data.user_id);
+            if (!isHost) addChatMessage('System', `✋ ${data.user} raised their hand`);
+          } else {
+            clearHandBadge(data.user_id);
           }
         }
         break;
-        
-      case 'chat_message':
-        addChatMessage(data.user, data.message);
+      case 'reaction':
+        if (data.user_id != userId) burstEmoji(data.emoji);
+        break;
+      case 'question_ask':
+        if (data.user_id != userId || isHost) {
+          addQuestionToPanel(data.question_id, data.user, data.question, data.user_id === userId);
+        }
+        if (!isHost && data.user_id === userId) {
+          // already added via send; just confirm
+        }
+        break;
+      case 'question_answered':
+        setQuestionAnswered(data.question_id);
+        break;
+      case 'poll_create':
+        if (data.user_id != userId) {
+          showPoll(data.poll_id, data.question, data.options);
+        } else if (isHost) {
+          showPoll(data.poll_id, data.question, data.options);
+        }
+        addChatMessage('System', `📊 ${data.user} launched a poll: "${data.question}"`);
+        break;
+      case 'poll_vote':
+        handlePollVote(data.poll_id, data.option_index);
+        break;
+      case 'poll_end':
+        endPoll();
         break;
     }
   }
 
-  // Initialize WebSocket connection
   function initWebSocket() {
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
     socket = new WebSocket(`${protocol}//${location.host}/ws/live/${roomName}/`);
-    socket.onopen = () => {
-      console.log('WebSocket connected');
-      reconnectAttempts = 0;
-    };
+    socket.onopen = () => { console.log('WS connected'); reconnectAttempts = 0; };
     socket.onmessage = (e) => handleSignalingData(JSON.parse(e.data));
-    socket.onerror = (e) => console.error('WebSocket error:', e);
+    socket.onerror = (e) => console.error('WS error:', e);
     socket.onclose = () => {
-      console.log('WebSocket closed, attempting reconnect...');
       if (reconnectAttempts < 5) {
         setTimeout(initWebSocket, 2000 * (reconnectAttempts + 1));
         reconnectAttempts++;
@@ -894,40 +1487,20 @@
     };
   }
 
-  // FIXED: Properly initialize local stream with both video AND audio working
   async function initLocalStream() {
     try {
-      // Request both video and audio with optimal settings
-      const constraints = {
-        video: { 
-          facingMode: currentFacingMode,
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        },
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      };
-      
-      localStream = await navigator.mediaDevices.getUserMedia(constraints);
-      
-      // Verify audio tracks exist and are enabled
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      });
       const audioTracks = localStream.getAudioTracks();
       if (audioTracks.length === 0) {
-        console.warn('No audio track available');
-        addChatMessage('System', 'Microphone access denied or no mic found. Audio will not work.');
+        addChatMessage('System', 'Microphone access denied or no mic found.');
       } else {
-        console.log('Audio track acquired, enabling:', isAudioEnabled);
         audioTracks[0].enabled = isAudioEnabled;
       }
-      
       const videoTracks = localStream.getVideoTracks();
-      if (videoTracks.length > 0) {
-        videoTracks[0].enabled = isVideoEnabled;
-      }
-      
+      if (videoTracks.length > 0) videoTracks[0].enabled = isVideoEnabled;
       if (isHost) {
         setHostVideo(localStream);
         selfBubbleContainer.style.display = 'none';
@@ -938,12 +1511,9 @@
         showWaitingOverlay();
         updateSelfMicIcon();
       }
-      
       updateVideoButtonUI();
       updateAudioButtonUI();
-      
     } catch (err) {
-      console.error('Media access error:', err);
       let errorMsg = 'Cannot access camera/microphone. ';
       if (err.name === 'NotAllowedError') errorMsg += 'Please allow permissions.';
       else if (err.name === 'NotFoundError') errorMsg += 'No camera/mic found.';
@@ -951,122 +1521,61 @@
       addChatMessage('System', errorMsg);
     }
   }
-  
+
   function updateVideoButtonUI() {
     const btn = document.getElementById('toggle-video');
-    if (isVideoEnabled) {
-      btn.innerHTML = '<i class="fa-solid fa-video"></i>';
-      btn.classList.remove('danger');
-    } else {
-      btn.innerHTML = '<i class="fa-solid fa-video-slash"></i>';
-      btn.classList.add('danger');
-    }
+    btn.innerHTML = isVideoEnabled ? '<i class="fa-solid fa-video"></i>' : '<i class="fa-solid fa-video-slash"></i>';
+    btn.classList.toggle('danger', !isVideoEnabled);
   }
-  
   function updateAudioButtonUI() {
     const btn = document.getElementById('toggle-audio');
-    if (isAudioEnabled) {
-      btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-      btn.classList.remove('danger');
-    } else {
-      btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
-      btn.classList.add('danger');
-    }
+    btn.innerHTML = isAudioEnabled ? '<i class="fa-solid fa-microphone"></i>' : '<i class="fa-solid fa-microphone-slash"></i>';
+    btn.classList.toggle('danger', !isAudioEnabled);
   }
 
-  // Toggle controls
   async function toggleVideo() {
     isVideoEnabled = !isVideoEnabled;
     const track = localStream?.getVideoTracks()[0];
     if (track) track.enabled = isVideoEnabled;
     updateVideoButtonUI();
-    if (isHost && !isVideoEnabled) {
-      showHostPlaceholder();
-    } else if (isHost && isVideoEnabled && localStream) {
-      setHostVideo(localStream);
-    }
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: 'video_toggle', enabled: isVideoEnabled }));
-    }
+    if (isHost && !isVideoEnabled) showHostPlaceholder();
+    else if (isHost && isVideoEnabled && localStream) setHostVideo(localStream);
+    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'toggle_video', enabled: isVideoEnabled }));
   }
-
   function toggleAudio() {
     isAudioEnabled = !isAudioEnabled;
     const track = localStream?.getAudioTracks()[0];
-    if (track) {
-      track.enabled = isAudioEnabled;
-      console.log(`Audio ${isAudioEnabled ? 'enabled' : 'disabled'} on track`, track);
-    } else {
-      console.warn('No audio track found to toggle');
-    }
+    if (track) track.enabled = isAudioEnabled;
     updateAudioButtonUI();
     updateSelfMicIcon();
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: 'audio_toggle', enabled: isAudioEnabled }));
-    }
+    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'toggle_audio', enabled: isAudioEnabled }));
   }
 
-  // Robust camera flip that maintains audio and updates all peers
   async function flipCamera() {
     if (!isHost || flipInProgress) return;
     flipInProgress = true;
-    
     const flipBtn = document.getElementById('flip-camera');
-    const originalIcon = flipBtn.innerHTML;
+    const orig = flipBtn.innerHTML;
     flipBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-    
     try {
       currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-      
-      const newVideoStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: currentFacingMode },
-        audio: false
-      });
-      
-      const newVideoTrack = newVideoStream.getVideoTracks()[0];
-      const oldVideoTrack = localStream?.getVideoTracks()[0];
-      
-      // Apply same enabled state as current video
-      newVideoTrack.enabled = isVideoEnabled;
-
-      if (oldVideoTrack) {
-        localStream.removeTrack(oldVideoTrack);
-        oldVideoTrack.stop();
-      }
-      localStream.addTrack(newVideoTrack);
-
-      // Force video element to re-render the updated stream
-      hostVideoEl.srcObject = null;
-      hostVideoEl.srcObject = localStream;
-      if (isVideoEnabled) {
-        hostVideoEl.style.display = 'block';
-        hostPlaceholder.style.display = 'none';
-        hostVideoEl.play().catch(e => console.log('Play error:', e));
-      }
-      
-      // Replace track in all active peer connections
-      const replacePromises = Object.values(peerConnections).map(async (pc) => {
-        const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
-        if (sender) {
-          try {
-            await sender.replaceTrack(newVideoTrack);
-          } catch (e) {
-            console.warn('Failed to replace track for peer:', e);
-          }
-        }
-      });
-      
-      await Promise.all(replacePromises);
-      console.log('Camera flipped successfully to', currentFacingMode);
-      
+      const newStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false });
+      const newTrack = newStream.getVideoTracks()[0];
+      newTrack.enabled = isVideoEnabled;
+      const oldTrack = localStream?.getVideoTracks()[0];
+      if (oldTrack) { localStream.removeTrack(oldTrack); oldTrack.stop(); }
+      localStream.addTrack(newTrack);
+      hostVideoEl.srcObject = null; hostVideoEl.srcObject = localStream;
+      if (isVideoEnabled) { hostVideoEl.style.display = 'block'; hostPlaceholder.style.display = 'none'; hostVideoEl.play().catch(() => {}); }
+      await Promise.all(Object.values(peerConnections).map(async pc => {
+        const sender = pc.getSenders().find(s => s.track?.kind === 'video');
+        if (sender) await sender.replaceTrack(newTrack).catch(() => {});
+      }));
     } catch (err) {
-      console.error('Flip camera failed:', err);
-      // Revert facing mode on failure
       currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-      addChatMessage('System', 'Failed to flip camera. Your device may only have one camera.');
+      addChatMessage('System', 'Failed to flip camera.');
     } finally {
-      flipInProgress = false;
-      flipBtn.innerHTML = originalIcon;
+      flipInProgress = false; flipBtn.innerHTML = orig;
     }
   }
 
@@ -1085,11 +1594,8 @@
         isScreenSharing = true;
         document.getElementById('toggle-screen').classList.add('active');
       } catch (e) { console.error('Screen share error:', e); }
-    } else {
-      stopScreenShare();
-    }
+    } else { stopScreenShare(); }
   }
-  
   function stopScreenShare() {
     if (screenStream) screenStream.getTracks().forEach(t => t.stop());
     const videoTrack = localStream.getVideoTracks()[0];
@@ -1103,8 +1609,7 @@
   }
 
   function updateParticipantCount() {
-    const count = Object.keys(peerConnections).length + 1;
-    participantCountSpan.textContent = count;
+    participantCountSpan.textContent = Object.keys(peerConnections).length + 1;
   }
 
   function addChatMessage(sender, msg) {
@@ -1115,73 +1620,100 @@
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
   }
-  
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
-  
   function sendChatMessage() {
     const input = document.getElementById('chat-input');
-    if (input.value.trim()) {
-      socket.send(JSON.stringify({ type: 'chat_message', message: input.value }));
-      input.value = '';
-    }
+    if (!input.value.trim()) return;
+    socket.send(JSON.stringify({ type: 'chat_message', message: input.value }));
+    input.value = '';
   }
-  
   function leaveRoom() {
     if (localStream) localStream.getTracks().forEach(t => t.stop());
     if (screenStream) screenStream.getTracks().forEach(t => t.stop());
     if (socket) socket.close();
     window.location.href = "{% url 'live_room_list' %}";
   }
-  
   function isMobile() {
     return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
 
-  // Event Listeners
+  // ── BOOT ─────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', async () => {
     await initLocalStream();
     initWebSocket();
-    
-    if (isHost && isMobile()) {
-      document.getElementById('flip-camera-group').style.display = 'flex';
-    }
-    if (!isHost) {
+
+    // Role-based UI
+    if (isHost) {
+      document.getElementById('flip-camera-group').style.display = isMobile() ? 'flex' : 'none';
+      document.getElementById('poll-btn-group').style.display = 'flex';
+      document.getElementById('raise-hand-group').style.display = 'none';  // host doesn't raise hand
+      // host doesn't need Q&A input
+      document.getElementById('qa-input-area').style.display = 'none';
+    } else {
       document.getElementById('screen-share-group').style.display = 'none';
+      document.getElementById('poll-btn-group').style.display = 'none';
     }
-    
+
+    // Controls
     document.getElementById('toggle-video').addEventListener('click', toggleVideo);
     document.getElementById('toggle-audio').addEventListener('click', toggleAudio);
     document.getElementById('toggle-screen').addEventListener('click', toggleScreenShare);
     document.getElementById('leave-room').addEventListener('click', leaveRoom);
     const flipBtn = document.getElementById('flip-camera');
     if (flipBtn) flipBtn.addEventListener('click', flipCamera);
-    
-    // Chat UI
+
+    // Raise hand
+    document.getElementById('raise-hand-btn').addEventListener('click', toggleHand);
+
+    // Reactions
+    const reactBtn = document.getElementById('toggle-react');
+    const picker = document.getElementById('reaction-picker');
+    reactBtn.addEventListener('click', (e) => { e.stopPropagation(); picker.classList.toggle('open'); });
+    document.querySelectorAll('.reaction-emoji').forEach(em => {
+      em.addEventListener('click', () => sendReaction(em.dataset.emoji));
+    });
+    document.addEventListener('click', () => picker.classList.remove('open'));
+    picker.addEventListener('click', e => e.stopPropagation());
+
+    // Polls (host)
+    document.getElementById('toggle-poll-creator')?.addEventListener('click', openPollCreator);
+    document.getElementById('cancel-poll-btn').addEventListener('click', closePollCreator);
+    document.getElementById('launch-poll-btn').addEventListener('click', launchPoll);
+    document.getElementById('add-option-btn').addEventListener('click', addPollOption);
+    document.getElementById('close-poll').addEventListener('click', () => {
+      document.getElementById('poll-overlay').classList.remove('open');
+      if (isHost && activePoll && socket?.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ type: 'poll_end', poll_id: activePoll }));
+        activePoll = null;
+      }
+    });
+
+    // Chat sidebar
     const chatSide = document.getElementById('chat-sidebar');
     const chatOver = document.getElementById('chat-overlay');
-    document.getElementById('toggle-chat').onclick = () => {
-      chatSide.classList.add('open');
-      chatOver.classList.add('active');
-    };
-    document.getElementById('close-chat').onclick = () => {
-      chatSide.classList.remove('open');
-      chatOver.classList.remove('active');
-    };
-    chatOver.onclick = () => {
-      chatSide.classList.remove('open');
-      chatOver.classList.remove('active');
-    };
+    document.getElementById('toggle-chat').onclick = () => { chatSide.classList.add('open'); chatOver.classList.add('active'); };
+    document.getElementById('close-chat').onclick = () => { chatSide.classList.remove('open'); chatOver.classList.remove('active'); };
+    chatOver.onclick = () => { chatSide.classList.remove('open'); chatOver.classList.remove('active'); };
     document.getElementById('send-chat').onclick = sendChatMessage;
-    document.getElementById('chat-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendChatMessage();
+    document.getElementById('chat-input').addEventListener('keypress', e => { if (e.key === 'Enter') sendChatMessage(); });
+
+    // Q&A
+    document.getElementById('send-qa').addEventListener('click', () => {
+      const input = document.getElementById('qa-input');
+      const text = input.value.trim();
+      if (!text) return;
+      const qid = 'q_' + Date.now() + '_' + userId;
+      addQuestionToPanel(qid, userName, text, true);
+      if (socket?.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ type: 'question_ask', question: text, question_id: qid }));
+      }
+      input.value = '';
+    });
+    document.getElementById('qa-input').addEventListener('keypress', e => {
+      if (e.key === 'Enter') document.getElementById('send-qa').click();
     });
   });
 </script>
