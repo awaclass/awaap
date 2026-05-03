@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <title>awaClass | Pass JAMB, WAEC & NECO with Confidence</title>
+  <title>awaClass | Learn Maths & Physics the Right Way</title>
 
   <style>
     :root {
@@ -53,22 +53,26 @@
     ══════════════════════════════════════════════════ */
     .awaClass-page {
       display: flex;
+      flex-direction: column;
       min-height: 100vh;
+    }
+    @media (min-width: 860px) {
+      .awaClass-page { flex-direction: row; }
     }
 
     /* Left panel — hero */
     .awaClass-hero-panel {
-      display: none;
+      display: flex;
       flex: 1;
       background: var(--awaClass-primary-lt);
-      padding: 60px 56px;
+      padding: 36px 24px 28px;
       flex-direction: column;
       justify-content: center;
       position: relative;
       overflow: hidden;
     }
     @media (min-width: 860px) {
-      .awaClass-hero-panel { display: flex; }
+      .awaClass-hero-panel { padding: 60px 56px; }
     }
 
     /* subtle background pattern */
@@ -85,10 +89,13 @@
     .awaClass-hero-inner { position: relative; z-index: 1; max-width: 420px; }
 
     .awaClass-hero-logo {
-      width: 72px; height: 72px;
-      border-radius: 18px;
+      width: 52px; height: 52px;
+      border-radius: 14px;
       object-fit: cover;
-      margin-bottom: 32px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 860px) {
+      .awaClass-hero-logo { width: 72px; height: 72px; border-radius: 18px; margin-bottom: 32px; }
     }
 
     .awaClass-hero-tag {
@@ -101,17 +108,20 @@
       font-weight: 600;
       padding: 5px 12px;
       border-radius: 100px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       letter-spacing: 0.03em;
     }
 
     .awaClass-hero-title {
-      font-size: 40px;
+      font-size: 28px;
       font-weight: 800;
-      letter-spacing: -1.2px;
+      letter-spacing: -0.8px;
       line-height: 1.15;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       color: var(--awaClass-text);
+    }
+    @media (min-width: 860px) {
+      .awaClass-hero-title { font-size: 40px; letter-spacing: -1.2px; margin-bottom: 16px; }
     }
     .awaClass-hero-title em {
       font-style: normal;
@@ -119,10 +129,13 @@
     }
 
     .awaClass-hero-sub {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--awaClass-text-light);
       line-height: 1.7;
-      margin-bottom: 36px;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 860px) {
+      .awaClass-hero-sub { font-size: 15px; margin-bottom: 36px; }
     }
 
     .awaClass-hero-features {
@@ -182,7 +195,7 @@
       display: block;
       margin: 0 auto 20px;
     }
-    @media (min-width: 860px) { .awaClass-mobile-logo { display: none; } }
+    @media (min-width: 0px) { .awaClass-mobile-logo { display: none; } }
 
     .awaClass-form-title {
       font-size: 26px;
@@ -366,13 +379,13 @@
 
      <div class="awaClass-hero-logo">A</div>
 
-      <div class="awaClass-hero-tag">🎓 JAMB · WAEC · NECO Preparation</div>
+      <div class="awaClass-hero-tag">🎓 Mathematics · Physics · Science</div>
 
       <h1 class="awaClass-hero-title">
-        Stop Memorising.<br>Start <em>Understanding.</em>
+        Learn it Properly.<br>Use it <em>Confidently.</em>
       </h1>
       <p class="awaClass-hero-sub">
-        awaClass teaches Mathematics and Physics the way they actually appear in JAMB, WAEC, and NECO — step by step, with real exam questions, so you walk into the hall ready and confident.
+        awaClass breaks down Mathematics and Physics into clear, step-by-step lessons — whether you're building a strong foundation, keeping up with your class, or preparing for JAMB, WAEC, and NECO.
       </p>
 
       <ul class="awaClass-hero-features">
@@ -380,25 +393,25 @@
           <span class="awaClass-feature-dot">
             <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
           </span>
-          Practice with past JAMB &amp; WAEC questions, topic by topic
+          Step-by-step lessons from JSS basics to SSS advanced topics
         </li>
         <li>
           <span class="awaClass-feature-dot">
             <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
           </span>
-          Step-by-step solutions so you understand, not just copy
+          Understand the "why", not just the "how" — concepts that actually stick
         </li>
         <li>
           <span class="awaClass-feature-dot">
             <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
           </span>
-          Live classes &amp; offline coaching — study anywhere
+          Live classes &amp; offline coaching — learn at your pace, anywhere
         </li>
         <li>
           <span class="awaClass-feature-dot">
             <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
           </span>
-          Timed CBT mock exams that build speed &amp; accuracy
+          Exam-ready practice: CBT mock tests aligned to JAMB, WAEC &amp; NECO
         </li>
       </ul>
 
@@ -429,7 +442,7 @@
 
 
         <h1 class="awaClass-form-title">Welcome back 👋</h1>
-        <p class="awaClass-form-subtitle">Continue your exam preparation</p>
+        <p class="awaClass-form-subtitle">Welcome back — continue learning</p>
 
         {% if messages %}
         <div class="awaClass-messages">
