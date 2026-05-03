@@ -599,6 +599,10 @@ def cbt_mathematics(request):
     return render(request, 'cbt_mathematics.html')
 
 
+# kept for backwards compat — alias used by cbt_exam url
+cbt_exam = cbt_mathematics
+
+
 @login_required
 def cbt_physics(request):
     """Render the original Physics CBT exam page (unchanged)."""
@@ -856,14 +860,42 @@ def student_scores_modal(request, username):
 
 @login_required
 def chat_room(request):
-    """Main chat room page showing all class posts/questions"""
-    subjects = ClassPost.objects.values_list('subject', flat=True).distinct()
-    subject_list = [s for s in subjects if s]
+    """
+    Main chat room page — supports sort, subject/status filters,
+    trending posts, live stats, and a lightweight count-polling endpoint
+    for the new-posts banner.
+    """
+    from django.db.models import Count
+    from django.utils import timezone
+    import datetime
 
+    # ── Count-only polling endpoint (for the new-posts banner) ────
+    # Called by JS every 60s with ?_count=1 to check if new posts exist.
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('_count'):
+        filter_subject = request.GET.get('subject', '')
+        filter_status  = request.GET.get('status', '')
+        qs = ClassPost.objects.all()
+        if filter_subject:
+            qs = qs.filter(subject__iexact=filter_subject)
+        if filter_status == 'resolved':
+            qs = qs.filter(is_resolved=True)
+        elif filter_status == 'unresolved':
+            qs = qs.filter(is_resolved=False)
+        return JsonResponse({'count': qs.count()})
+
+    # ── Query params ───────────────────────────────────────────────
     filter_subject = request.GET.get('subject', '')
     filter_status  = request.GET.get('status', '')
+    sort_by        = request.GET.get('sort', 'latest')   # latest | popular | unanswered
 
-    posts = ClassPost.objects.all()
+    # ── Subject list for filter chips ─────────────────────────────
+    subjects = ClassPost.objects.values_list('subject', flat=True).distinct()
+    subject_list = sorted([s for s in subjects if s])
+
+    # ── Base queryset ──────────────────────────────────────────────
+    posts = ClassPost.objects.select_related(
+        'author', 'author__profile'
+    ).prefetch_related('like', 'class_comments')
 
     if filter_subject:
         posts = posts.filter(subject__iexact=filter_subject)
@@ -872,11 +904,46 @@ def chat_room(request):
     elif filter_status == 'unresolved':
         posts = posts.filter(is_resolved=False)
 
+    # ── Sort ───────────────────────────────────────────────────────
+    if sort_by == 'popular':
+        # Rank by likes first, then views
+        posts = posts.annotate(like_count=Count('like')).order_by('-like_count', '-view')
+    elif sort_by == 'unanswered':
+        # Only posts with zero replies, newest first
+        posts = posts.annotate(reply_count=Count('class_comments')).filter(reply_count=0).order_by('-created_at')
+    else:
+        # Default: latest
+        posts = posts.order_by('-created_at')
+
+    # ── Stats for the stats bar ────────────────────────────────────
+    all_posts      = ClassPost.objects.all()
+    resolved_count = all_posts.filter(is_resolved=True).count()
+
+    today_start  = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    active_today = all_posts.filter(created_at__gte=today_start).count()
+
+    # ── Trending strip (top 6 by engagement in last 7 days) ───────
+    seven_days_ago = timezone.now() - datetime.timedelta(days=7)
+    trending_posts = (
+        ClassPost.objects
+        .filter(created_at__gte=seven_days_ago)
+        .annotate(
+            like_count=Count('like'),
+            reply_count=Count('class_comments'),
+        )
+        .order_by('-like_count', '-reply_count', '-view')
+        [:6]
+    )
+
     context = {
         'posts':           posts,
-        'subjects':        sorted(subject_list),
+        'subjects':        subject_list,
         'current_subject': filter_subject,
         'current_status':  filter_status,
+        'current_sort':    sort_by,
+        'resolved_count':  resolved_count,
+        'active_today':    active_today,
+        'trending_posts':  trending_posts,
     }
     return render(request, 'chat_room.html', context)
 
@@ -962,19 +1029,16 @@ def chat_post_comment(request, post_id):
 
         # Handle image upload
         if image_file:
-            # Validate image file type
             allowed_image_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
             if image_file.content_type in allowed_image_types:
                 comment.image = image_file
             else:
                 messages.warning(request, 'Unsupported image format. Please use JPEG, PNG, GIF, or WEBP.')
-            
+
         # Handle audio upload
         if audio_file:
-            # Validate audio file type
             allowed_audio_types = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/webm', 'audio/webm;codecs=opus', 'audio/ogg;codecs=opus']
             if audio_file.content_type in allowed_audio_types:
-                # Validate file size (max 10MB)
                 if audio_file.size > 10 * 1024 * 1024:
                     messages.warning(request, 'Audio file too large. Maximum size is 10MB.')
                 else:
@@ -991,7 +1055,7 @@ def chat_post_comment(request, post_id):
                 notification_message = f'{request.user.username} added an image to your question: "{post.title[:50]}"'
             elif audio_file and not comment_text:
                 notification_message = f'{request.user.username} added audio to your question: "{post.title[:50]}"'
-            
+
             Notification.objects.create(
                 user=post.author,
                 message=notification_message
@@ -1009,15 +1073,13 @@ def chat_post_comment(request, post_id):
                 'avatar_url': request.user.profile.get_picture_url,
                 'has_media': comment.has_media,
             }
-            
-            # Add image URL if present
+
             if comment.get_image_url:
                 response_data['image_url'] = comment.get_image_url
-            
-            # Add audio URL if present
+
             if comment.get_audio_url:
                 response_data['audio_url'] = comment.get_audio_url
-            
+
             return JsonResponse(response_data)
 
     return redirect('chat_post_detail', post_id=post_id)
