@@ -26,16 +26,9 @@
             --awa-radius: 16px;
         }
 
-        /* Subject colour palette */
+        /* Subject colour palette (only Mathematics & Physics) */
         --subj-mathematics: #3b82f6;
         --subj-physics:     #8b5cf6;
-        --subj-chemistry:   #10b981;
-        --subj-biology:     #22c55e;
-        --subj-english:     #f59e0b;
-        --subj-economics:   #ef4444;
-        --subj-government:  #06b6d4;
-        --subj-accounting:  #f97316;
-        --subj-geography:   #84cc16;
         --subj-general:     #9ca3af;
 
         .awaClass-chat-container {
@@ -395,13 +388,6 @@
 
         .awaClass-post-card[data-subject="Mathematics"]::before { background: #3b82f6; }
         .awaClass-post-card[data-subject="Physics"]::before     { background: #8b5cf6; }
-        .awaClass-post-card[data-subject="Chemistry"]::before   { background: #10b981; }
-        .awaClass-post-card[data-subject="Biology"]::before     { background: #22c55e; }
-        .awaClass-post-card[data-subject="English"]::before     { background: #f59e0b; }
-        .awaClass-post-card[data-subject="Economics"]::before   { background: #ef4444; }
-        .awaClass-post-card[data-subject="Government"]::before  { background: #06b6d4; }
-        .awaClass-post-card[data-subject="Accounting"]::before  { background: #f97316; }
-        .awaClass-post-card[data-subject="Geography"]::before   { background: #84cc16; }
         .awaClass-post-card[data-subject="General"]::before     { background: #9ca3af; }
 
         .awaClass-post-resolved-badge {
@@ -467,13 +453,6 @@
 
         .subj-color-Mathematics { background:#dbeafe; color:#1d4ed8; }
         .subj-color-Physics     { background:#ede9fe; color:#6d28d9; }
-        .subj-color-Chemistry   { background:#d1fae5; color:#065f46; }
-        .subj-color-Biology     { background:#dcfce7; color:#15803d; }
-        .subj-color-English     { background:#fef3c7; color:#92400e; }
-        .subj-color-Economics   { background:#fee2e2; color:#991b1b; }
-        .subj-color-Government  { background:#cffafe; color:#155e75; }
-        .subj-color-Accounting  { background:#fff7ed; color:#9a3412; }
-        .subj-color-Geography   { background:#f7fee7; color:#3f6212; }
         .subj-color-General     { background:#f3f4f6; color:#374151; }
 
         .awaClass-post-title {
@@ -987,10 +966,10 @@
         <div class="awa-subject-chips">
             <button class="awa-chip {% if not current_subject %}active{% endif %}"
                     onclick="setSubject('')">All</button>
-            {% for subject in subjects %}
-            <button class="awa-chip {% if current_subject == subject %}active{% endif %}"
-                    onclick="setSubject('{{ subject }}')">{{ subject }}</button>
-            {% endfor %}
+            <button class="awa-chip {% if current_subject == 'Mathematics' %}active{% endif %}"
+                    onclick="setSubject('Mathematics')">Mathematics</button>
+            <button class="awa-chip {% if current_subject == 'Physics' %}active{% endif %}"
+                    onclick="setSubject('Physics')">Physics</button>
         </div>
         <select class="awaClass-filter-select" id="statusFilter" onchange="applyFilters()">
             <option value="">All Status</option>
@@ -1160,13 +1139,6 @@
                         <option value="">General</option>
                         <option value="Mathematics">Mathematics</option>
                         <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Biology">Biology</option>
-                        <option value="English">English</option>
-                        <option value="Economics">Economics</option>
-                        <option value="Government">Government</option>
-                        <option value="Accounting">Accounting</option>
-                        <option value="Geography">Geography</option>
                     </select>
                 </div>
                 <div class="awaClass-form-group">

@@ -85,29 +85,109 @@
     }
 
     /* ══════════════════════════════════════════════════
-       SUBJECTS GRID
+       SUBJECTS & FEATURE GRID (unified grid system)
     ══════════════════════════════════════════════════ */
+    .awaClass-features-grid,
     .awaClass-subjects-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
     @media (min-width: 400px) {
+      .awaClass-features-grid,
       .awaClass-subjects-grid { gap: 12px; }
     }
     @media (min-width: 480px) {
-      .awaClass-subjects-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .awaClass-features-grid,
+      .awaClass-subjects-grid { gap: 14px; }
     }
     @media (min-width: 600px) {
-      .awaClass-subjects-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+      .awaClass-features-grid,
+      .awaClass-subjects-grid { gap: 16px; }
     }
     @media (min-width: 768px) {
+      .awaClass-features-grid,
       .awaClass-subjects-grid { gap: 18px; }
     }
     @media (min-width: 1024px) {
+      .awaClass-features-grid,
       .awaClass-subjects-grid { gap: 20px; }
     }
 
+    /* Feature card styling (matches subject tile) */
+    .awaClass-feature-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--awaClass-text, #0f0f0f);
+      padding: 12px 6px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+      text-align: center;
+    }
+    .awaClass-feature-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    @media (min-width: 480px) {
+      .awaClass-feature-tile { padding: 14px 8px; gap: 8px; border-radius: 12px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-feature-tile { padding: 18px 10px; gap: 10px; border-radius: 14px; }
+    }
+    @media (min-width: 1024px) {
+      .awaClass-feature-tile { padding: 22px 12px; gap: 12px; border-radius: 16px; }
+    }
+
+    .awaClass-feature-icon {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--awaClass-bg, #f5f5f5);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+    @media (min-width: 480px) {
+      .awaClass-feature-icon { width: 48px; height: 48px; font-size: 24px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-feature-icon { width: 56px; height: 56px; font-size: 28px; }
+    }
+    @media (min-width: 1024px) {
+      .awaClass-feature-icon { width: 64px; height: 64px; font-size: 32px; }
+    }
+
+    .awaClass-feature-name {
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--awaClass-text, #0f0f0f);
+      line-height: 1.3;
+    }
+    @media (min-width: 480px) { .awaClass-feature-name { font-size: 11px; } }
+    @media (min-width: 768px) { .awaClass-feature-name { font-size: 12px; } }
+    @media (min-width: 1024px) { .awaClass-feature-name { font-size: 13px; } }
+
+    .awaClass-feature-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      color: #606060;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+
+    /* Subject tile (updated to match feature tile exactly) */
     .awaClass-subject-tile {
       display: flex;
       flex-direction: column;
@@ -119,10 +199,11 @@
       background: #ffffff;
       border: 1px solid #e5e5e5;
       border-radius: 10px;
-      transition: transform 0.15s;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
     .awaClass-subject-tile:hover {
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     @media (min-width: 480px) {
       .awaClass-subject-tile { padding: 14px 8px; gap: 8px; border-radius: 12px; }
@@ -169,98 +250,10 @@
     @media (min-width: 768px) { .awaClass-subject-name { font-size: 12px; } }
     @media (min-width: 1024px) { .awaClass-subject-name { font-size: 13px; } }
 
-    /* ══════════════════════════════════════════════════
-       LIVE CLASS BANNER
-    ══════════════════════════════════════════════════ */
-    .awaClass-live-banner {
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
-      padding: 16px 18px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
+    /* Section spacing */
+    .section-spacing {
+      margin-bottom: 28px;
     }
-
-    .awaClass-live-banner-icon {
-      width: 40px; height: 40px;
-      border-radius: 8px;
-      background: #f5f5f5;
-      border: 1px solid #e5e5e5;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; overflow: hidden;
-    }
-
-    .awaClass-live-banner-icon img { width: 22px; height: 22px; object-fit: contain; }
-
-    .awaClass-live-banner-body { flex: 1; min-width: 0; }
-    .awaClass-live-banner-body h3 {
-      font-size: 14px; font-weight: 600; color: #0f0f0f; margin: 0 0 3px;
-    }
-    .awaClass-live-banner-body p { font-size: 12px; color: #606060; margin: 0; line-height: 1.4; }
-
-    .awaClass-btn-live {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 16px;
-      background: #0f0f0f; color: #ffffff;
-      border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 600; font-family: inherit;
-      text-decoration: none; white-space: nowrap; cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .awaClass-btn-live:hover { opacity: 0.85; color: #ffffff; }
-
-    /* ══════════════════════════════════════════════════
-       CBT EXAM BANNER
-    ══════════════════════════════════════════════════ */
-    .awaClass-cbt-banner {
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
-      padding: 16px 18px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .awaClass-cbt-banner-icon {
-      width: 40px; height: 40px;
-      border-radius: 8px;
-      background: #f5f5f5;
-      border: 1px solid #e5e5e5;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 18px;
-    }
-
-    .awaClass-cbt-banner-body { flex: 1; min-width: 0; }
-    .awaClass-cbt-banner-body h3 {
-      font-size: 14px; font-weight: 600; color: #0f0f0f; margin: 0 0 3px;
-      display: flex; align-items: center; gap: 7px;
-    }
-
-    .awaClass-cbt-badge {
-      font-size: 9px; font-weight: 700; letter-spacing: .06em;
-      text-transform: uppercase;
-      background: #f5f5f5; border: 1px solid #e5e5e5; color: #606060;
-      padding: 2px 6px; border-radius: 4px;
-    }
-
-    .awaClass-cbt-banner-body p { font-size: 12px; color: #606060; margin: 0; line-height: 1.4; }
-
-    .awaClass-btn-cbt {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 16px;
-      background: #0f0f0f; color: #fff;
-      border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 600; font-family: inherit;
-      text-decoration: none; white-space: nowrap; cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .awaClass-btn-cbt:hover { opacity: 0.85; color: #fff; }
 
     /* ══════════════════════════════════════════════════
        ADMIN CTA BANNER
@@ -299,7 +292,7 @@
     .awaClass-btn-pill:hover { background: var(--awaClass-primary-dk, #ea6c0a); }
 
     /* ══════════════════════════════════════════════════
-       LEADERBOARD CARD
+       LEADERBOARD CARD (unchanged but kept for context)
     ══════════════════════════════════════════════════ */
     .awaClass-leaderboard-card {
       background: #ffffff;
@@ -308,7 +301,6 @@
       overflow: hidden;
     }
 
-    /* card header */
     .awaClass-lb-header {
       display: flex;
       align-items: center;
@@ -344,7 +336,6 @@
       font-weight: 500;
     }
 
-    /* list */
     .awaClass-lb-list {
       list-style: none;
       margin: 0;
@@ -365,7 +356,6 @@
       background: #fafafa;
     }
 
-    /* position badge */
     .awaClass-lb-pos {
       width: 22px;
       flex-shrink: 0;
@@ -375,19 +365,16 @@
       color: #909090;
     }
 
-    .awaClass-lb-pos.pos-1 { color: #d97706; }  /* gold */
-    .awaClass-lb-pos.pos-2 { color: #71717a; }  /* silver */
-    .awaClass-lb-pos.pos-3 { color: #b45309; }  /* bronze */
-
-    /* medal icons for top 3 */
+    .awaClass-lb-pos.pos-1 { color: #d97706; }
+    .awaClass-lb-pos.pos-2 { color: #71717a; }
+    .awaClass-lb-pos.pos-3 { color: #b45309; }
     .awaClass-lb-pos.pos-1::before { content: "🥇"; font-size: 16px; }
     .awaClass-lb-pos.pos-2::before { content: "🥈"; font-size: 16px; }
     .awaClass-lb-pos.pos-3::before { content: "🥉"; font-size: 16px; }
     .awaClass-lb-pos.pos-1,
     .awaClass-lb-pos.pos-2,
-    .awaClass-lb-pos.pos-3 { font-size: 0; }   /* hide number, show medal */
+    .awaClass-lb-pos.pos-3 { font-size: 0; }
 
-    /* avatar */
     .awaClass-lb-avatar {
       width: 34px; height: 34px;
       border-radius: 50%;
@@ -397,7 +384,6 @@
       background: #f5f5f5;
     }
 
-    /* name + level */
     .awaClass-lb-info {
       flex: 1;
       min-width: 0;
@@ -424,15 +410,13 @@
       border-radius: 100px;
     }
 
-    /* level colour variants */
-    .awaClass-lb-level.lvl-1 { background: #f5f5f5; color: #606060; }          /* Beginner */
-    .awaClass-lb-level.lvl-2 { background: #fdf2e9; color: #a86232; }          /* Bronze */
-    .awaClass-lb-level.lvl-3 { background: #f2f4f8; color: #5c6b8a; }          /* Silver */
-    .awaClass-lb-level.lvl-4 { background: #fffbeb; color: #b45309; }          /* Gold */
-    .awaClass-lb-level.lvl-5 { background: #f3e8ff; color: #7c3aed; }          /* Platinum */
-    .awaClass-lb-level.lvl-6 { background: #fff0f0; color: #dc2626; }          /* Champion */
+    .awaClass-lb-level.lvl-1 { background: #f5f5f5; color: #606060; }
+    .awaClass-lb-level.lvl-2 { background: #fdf2e9; color: #a86232; }
+    .awaClass-lb-level.lvl-3 { background: #f2f4f8; color: #5c6b8a; }
+    .awaClass-lb-level.lvl-4 { background: #fffbeb; color: #b45309; }
+    .awaClass-lb-level.lvl-5 { background: #f3e8ff; color: #7c3aed; }
+    .awaClass-lb-level.lvl-6 { background: #fff0f0; color: #dc2626; }
 
-    /* points pill */
     .awaClass-lb-points {
       flex-shrink: 0;
       text-align: right;
@@ -453,12 +437,10 @@
       letter-spacing: 0.05em;
     }
 
-    /* divider between items */
     .awaClass-lb-item + .awaClass-lb-item {
       border-top: 1px solid #f5f5f5;
     }
 
-    /* empty state */
     .awaClass-lb-empty {
       padding: 28px 16px;
       text-align: center;
@@ -466,7 +448,6 @@
       color: #aaaaaa;
     }
 
-    /* card footer */
     .awaClass-lb-footer {
       border-top: 1px solid #f0f0f0;
       padding: 10px 16px;
@@ -512,7 +493,6 @@
       to   { opacity: 1; transform: none; }
     }
 
-    /* close btn */
     .aw-modal-close {
       position: absolute;
       top: 14px; right: 14px;
@@ -528,7 +508,6 @@
     }
     .aw-modal-close:hover { background: #ebebeb; }
 
-    /* header */
     .aw-modal-header {
       padding: 22px 20px 16px;
       display: flex;
@@ -576,7 +555,6 @@
     .aw-modal-badge.level-5 { background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; }
     .aw-modal-badge.level-6 { background: #fff0f0; color: #dc2626; border-color: #fecaca; }
 
-    /* stats row */
     .aw-modal-stats {
       display: flex;
       gap: 0;
@@ -606,9 +584,7 @@
       display: block;
     }
 
-    /* body */
     .aw-modal-body { padding: 18px 20px; }
-
     .aw-modal-section-title {
       font-size: 12px;
       font-weight: 700;
@@ -618,7 +594,6 @@
       margin: 0 0 10px;
     }
 
-    /* subject card */
     .aw-subject-cards {
       display: flex;
       flex-direction: column;
@@ -672,7 +647,6 @@
     }
     .aw-subject-meta strong { color: #0f0f0f; }
 
-    /* recent exams table */
     .aw-recent-table {
       width: 100%;
       border-collapse: collapse;
@@ -704,7 +678,6 @@
       color: #606060;
     }
 
-    /* loading / empty */
     .aw-modal-loading {
       padding: 40px 20px;
       text-align: center;
@@ -721,11 +694,9 @@
     }
     @keyframes aw-spin { to { transform: rotate(360deg); } }
 
-    /* make leaderboard items look clickable */
     .awaClass-lb-item[data-username] {
       cursor: pointer;
     }
-
   </style>
 </head>
 <body>
@@ -739,103 +710,49 @@
   ══════════════════════════════════════════ -->
   <main class="awaClass-home-main">
 
-    <!-- LIVE CLASSES BANNER -->
-    <div class="awaClass-live-banner">
-      <div class="awaClass-live-banner-icon">
-        <img src="{% static 'images/video-call.png' %}" alt="Live">
+    <!-- FEATURE CARDS SECTION (Live Classes + CBT Exams together) -->
+    <div class="section-spacing">
+      <h2 class="awaClass-section-title">Learning Tools</h2>
+      <div class="awaClass-features-grid">
+        <!-- Live Classes Card -->
+        <a href="{% url 'live_room_list' %}" class="awaClass-feature-tile">
+          <div class="awaClass-feature-icon">
+            <i class="fa-solid fa-video" style="color: #f97316;"></i>
+          </div>
+          <p class="awaClass-feature-name">Live Classes</p>
+          <span class="awaClass-feature-badge">
+            <i class="fa-solid fa-circle" style="font-size:7px; color:#ef4444;"></i> Live
+          </span>
+        </a>
+
+        <!-- CBT Exams Card -->
+        <a href="{% url 'cbt_subjects' %}" class="awaClass-feature-tile">
+          <div class="awaClass-feature-icon">
+            <i class="fa-solid fa-pen-to-square" style="color: #3b82f6;"></i>
+          </div>
+          <p class="awaClass-feature-name">CBT Exams</p>
+          <span class="awaClass-feature-badge">New</span>
+        </a>
       </div>
-      <div class="awaClass-live-banner-body">
-        <h3><i class="fa-solid fa-circle" style="font-size:9px; color:#ef4444;"></i> Live Interactive Classes</h3>
-        <p>Join real-time video sessions with your teachers and classmates</p>
-      </div>
-      <a href="{% url 'live_room_list' %}" class="awaClass-btn-live">
-        <i class="fa-solid fa-video"></i> Join Now
-      </a>
     </div>
 
-    <!-- CBT EXAM BANNER -->
-    <div class="awaClass-cbt-banner">
-      <div class="awaClass-cbt-banner-icon">🎯</div>
-      <div class="awaClass-cbt-banner-body">
-        <h3>
-          CBT Practice Exams
-          <span class="awaClass-cbt-badge">New</span>
-        </h3>
-        <p>Test your knowledge in Maths, Physics, English &amp; more with timed exams</p>
+    <!-- SUBJECTS SECTION (Mathematics & Physics only) -->
+    <div class="section-spacing">
+      <h2 class="awaClass-section-title">Explore Subjects</h2>
+      <div class="awaClass-subjects-grid">
+        <a href="{% url 'mathematics' %}" class="awaClass-subject-tile">
+          <div class="awaClass-subject-icon">
+            <img src="{% static 'images/Mathematics.png' %}" alt="Mathematics">
+          </div>
+          <p class="awaClass-subject-name">Mathematics</p>
+        </a>
+        <a href="{% url 'physics' %}" class="awaClass-subject-tile">
+          <div class="awaClass-subject-icon">
+            <img src="{% static 'images/physics.png' %}" alt="Physics">
+          </div>
+          <p class="awaClass-subject-name">Physics</p>
+        </a>
       </div>
-      <a href="{% url 'cbt_subjects' %}" class="awaClass-btn-cbt">
-        <i class="fa-solid fa-pen-to-square"></i> Start Exam
-      </a>
-    </div>
-
-    <!-- SUBJECTS -->
-    <h2 class="awaClass-section-title">Explore Subjects</h2>
-
-    <div class="awaClass-subjects-grid">
-
-      <a href="{% url 'mathematics' %}" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/Mathematics.png' %}" alt="Mathematics">
-        </div>
-        <p class="awaClass-subject-name">Mathematics</p>
-      </a>
-
-      <a href="{% url 'english' %}" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/english.png' %}" alt="English">
-        </div>
-        <p class="awaClass-subject-name">English</p>
-      </a>
-
-      <a href="{% url 'chemistry' %}" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/chemistry.png' %}" alt="Chemistry">
-        </div>
-        <p class="awaClass-subject-name">Chemistry</p>
-      </a>
-
-      <a href="{% url 'physics' %}" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/physics.png' %}" alt="Physics">
-        </div>
-        <p class="awaClass-subject-name">Physics</p>
-      </a>
-
-      <a href="subjects/biology.php" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/biology.png' %}" alt="Biology">
-        </div>
-        <p class="awaClass-subject-name">Biology</p>
-      </a>
-
-      <a href="subjects/accounting.php" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/accounting.png' %}" alt="Accounting">
-        </div>
-        <p class="awaClass-subject-name">Accounting</p>
-      </a>
-
-      <a href="subjects/government.php" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/government.png' %}" alt="Government">
-        </div>
-        <p class="awaClass-subject-name">Government</p>
-      </a>
-
-      <a href="subjects/geography.php" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/geography.png' %}" alt="Geography">
-        </div>
-        <p class="awaClass-subject-name">Geography</p>
-      </a>
-
-      <a href="subjects/economics.php" class="awaClass-subject-tile">
-        <div class="awaClass-subject-icon">
-          <img src="{% static 'images/economics.png' %}" alt="Economics">
-        </div>
-        <p class="awaClass-subject-name">Economics</p>
-      </a>
-
     </div>
 
     <!-- ══════════════════════════════════════════
@@ -878,23 +795,16 @@
 </div><!-- /.awaClass-home-wrapper -->
 
 <!-- ══════════════════════════════════════════
-     STUDENT SCORES MODAL
+     STUDENT SCORES MODAL (unchanged)
 ══════════════════════════════════════════ -->
 <div class="aw-modal-backdrop" id="awStudentModal" role="dialog" aria-modal="true" aria-labelledby="awModalName">
-
   <div class="aw-modal">
     <button class="aw-modal-close" id="awModalClose" aria-label="Close">&#x2715;</button>
-
-    <!-- Loading state (shown while fetching) -->
     <div class="aw-modal-loading" id="awModalLoading">
       <div class="aw-modal-spinner"></div>
       Loading student data…
     </div>
-
-    <!-- Content (hidden until data arrives) -->
     <div id="awModalContent" style="display:none;">
-
-      <!-- Header -->
       <div class="aw-modal-header">
         <img src="" alt="Avatar" class="aw-modal-avatar" id="awModalAvatar">
         <div>
@@ -903,8 +813,6 @@
           <div class="aw-modal-badges" id="awModalBadges"></div>
         </div>
       </div>
-
-      <!-- Stats row -->
       <div class="aw-modal-stats">
         <div class="aw-modal-stat">
           <span class="aw-modal-stat-val accent" id="awStatPoints"></span>
@@ -927,35 +835,20 @@
           <span class="aw-modal-stat-lbl">Rating</span>
         </div>
       </div>
-
-      <!-- Body -->
       <div class="aw-modal-body">
-
-        <!-- Per-subject breakdown -->
         <p class="aw-modal-section-title">Subject Performance</p>
         <div class="aw-subject-cards" id="awSubjectCards"></div>
-
-        <!-- Recent exams -->
         <p class="aw-modal-section-title">Recent Exams</p>
         <table class="aw-recent-table">
           <thead>
-            <tr>
-              <th>Subject</th>
-              <th>Score</th>
-              <th>Grade</th>
-              <th>Rating</th>
-              <th>Time</th>
-              <th>Date</th>
-            </tr>
+            <tr><th>Subject</th><th>Score</th><th>Grade</th><th>Rating</th><th>Time</th><th>Date</th></tr>
           </thead>
           <tbody id="awRecentBody"></tbody>
         </table>
-
       </div>
-    </div><!-- /#awModalContent -->
-
-  </div><!-- /.aw-modal -->
-</div><!-- /.aw-modal-backdrop -->
+    </div>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -966,7 +859,6 @@
   const loading   = document.getElementById('awModalLoading');
   const content   = document.getElementById('awModalContent');
 
-  // ── helpers ────────────────────────────────────────────────────
   function setText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
@@ -992,59 +884,33 @@
     content.style.display  = 'block';
   }
 
-  // ── build grade pill colour ─────────────────────────────────────
-  function gradeColor(grade) {
-    const map = {
-      'distinction': '#16a34a',
-      'credit':      '#2563eb',
-      'pass':        '#d97706',
-      'nearly':      '#ea580c',
-      'fail':        '#dc2626',
-    };
-    return map[grade.toLowerCase()] || '#606060';
-  }
-
-  // ── populate modal with fetched data ────────────────────────────
   function populateModal(data) {
     const s = data.student;
-
-    // header
     document.getElementById('awModalAvatar').src = s.picture_url;
     setText('awModalName', s.full_name || s.username);
-
     const metaParts = [];
-    if (s.grade)           metaParts.push(s.grade);
-    if (s.specialization)  metaParts.push(s.specialization);
-    if (s.school_type)     metaParts.push(s.school_type);
+    if (s.grade) metaParts.push(s.grade);
+    if (s.specialization) metaParts.push(s.specialization);
+    if (s.school_type) metaParts.push(s.school_type);
     setText('awModalMeta', metaParts.join(' · ') || '@' + s.username);
-
-    // badges
     const badgesEl = document.getElementById('awModalBadges');
     badgesEl.innerHTML = '';
     const levelBadge = document.createElement('span');
     levelBadge.className = 'aw-modal-badge level-' + s.level_num;
     levelBadge.textContent = '⭐ ' + s.level_name;
     badgesEl.appendChild(levelBadge);
-
     const uBadge = document.createElement('span');
     uBadge.className = 'aw-modal-badge';
     uBadge.textContent = '@' + s.username;
     badgesEl.appendChild(uBadge);
-
-    // stats
     setText('awStatPoints',   s.points.toLocaleString());
     setText('awStatAttempts', s.total_attempts);
     setText('awStatBest',     s.best_score + '%');
-    const accuracy = s.total_questions > 0
-      ? Math.round((s.total_correct / s.total_questions) * 100) + '%'
-      : '—';
+    const accuracy = s.total_questions > 0 ? Math.round((s.total_correct / s.total_questions) * 100) + '%' : '—';
     setText('awStatAccuracy', accuracy);
     setText('awStatRating',   s.overall_rating + '/100');
-
-    // per-subject cards
     const cardsEl = document.getElementById('awSubjectCards');
     cardsEl.innerHTML = '';
-
     if (!data.subjects.length) {
       cardsEl.innerHTML = '<p style="font-size:13px;color:#aaa;margin:0;">No exams taken yet.</p>';
     } else {
@@ -1069,93 +935,61 @@
         cardsEl.appendChild(card);
       });
     }
-
-    // recent exams table
     const tbody = document.getElementById('awRecentBody');
     tbody.innerHTML = '';
-
     if (!data.recent_exams.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="color:#aaa;padding:12px 0;">No recent exams.</td></tr>';
-    } else {
-      data.recent_exams.forEach(function (ex) {
-        const tr = document.createElement('tr');
-        tr.innerHTML =
-          '<td>' + ex.subject + '</td>' +
-          '<td><strong>' + ex.score + '/' + ex.total + '</strong> <span style="color:#aaa">(' + ex.percentage + '%)</span></td>' +
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#aaa;padding:12px 0;">No recent exams.</span></td>' +
           '<td><span class="aw-recent-grade">' + ex.grade + '</span></td>' +
           '<td><strong>' + ex.rating + '</strong><span style="color:#aaa">/100</span></td>' +
-          '<td>' + ex.time_display + '</td>' +
-          '<td style="color:#909090">' + ex.taken_at + '</td>';
+          '<td>' + ex.time_display + '</span></td>' +
+          '<td style="color:#909090">' + ex.taken_at + '</span></td>';
         tbody.appendChild(tr);
       });
     }
-
     showContent();
   }
 
-  // ── fetch and show ───────────────────────────────────────────────
   function loadStudentModal(username) {
     openModal();
     showLoading();
-
     const url = '/student-scores/' + username + '/';
-
-    fetch(url, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + r.statusText);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     })
     .then(function (data) {
-      if (data.ok) {
-        populateModal(data);
-      } else {
-        console.error('student_scores_modal error:', data);
-        loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Failed to load data.</p>';
-      }
+      if (data.ok) populateModal(data);
+      else loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Failed to load data.</p>';
     })
     .catch(function (err) {
-      console.error('student_scores_modal fetch failed:', err);
       loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Error: ' + err.message + '</p>';
     });
   }
 
-  // ── leaderboard subject dropdown (handles both mobile + desktop cards) ──
   document.querySelectorAll('.awaClass-leaderboard-card').forEach(function (card) {
     var select = card.querySelector('[data-lb-select]');
     if (!select) return;
-
     select.addEventListener('change', function () {
       var tab = this.value;
-      card.querySelectorAll('.awaClass-lb-panel').forEach(function (p) {
-        p.classList.remove('active');
-      });
+      card.querySelectorAll('.awaClass-lb-panel').forEach(function (p) { p.classList.remove('active'); });
       var panel = card.querySelector('[data-lb-panel="' + tab + '"]');
       if (panel) panel.classList.add('active');
     });
   });
 
-  // ── event delegation for leaderboard items ───────────────────────
   document.addEventListener('click', function (e) {
     const item = e.target.closest('.awaClass-lb-item[data-username]');
     if (item) {
       e.preventDefault();
       const username = item.dataset.username;
-      if (!username || username.trim() === '') return;
-      loadStudentModal(username.trim());
+      if (username && username.trim() !== '') loadStudentModal(username.trim());
     }
   });
 
-  // ── close handlers ───────────────────────────────────────────────
   closeBtn.addEventListener('click', closeModal);
-  backdrop.addEventListener('click', function (e) {
-    if (e.target === backdrop) closeModal();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeModal();
-  });
-
+  backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 })();
 </script>
 

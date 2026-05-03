@@ -11,8 +11,6 @@ urlpatterns = [
     path('postcomment/<uuid:post_id>', views.post_comment, name="post_comment"),
     path('mathematics', views.mathematics, name='mathematics'),
     path('physics', views.physics, name='physics'),
-    path('english', views.english, name='english'),
-    path('chemistry', views.chemistry, name='chemistry'),
     path('comment_like/<uuid:comment_id>', views.comment_like, name="comment_like"),
     path('open_notify/<int:pk>', views.open_notify, name='open_notify'),
     path('notify', views.notifications, name='notifications'),
@@ -27,8 +25,6 @@ urlpatterns = [
     path('cbt/mathematics/',        views.cbt_mathematics,           name='cbt_mathematics'),
     path('cbt/physics/',            views.cbt_physics,        name='cbt_physics'),     # ← OLD physics CBT (kept)
     path('cbt/physics/topics/',     views.cbt_physics_topics, name='cbt_physics_topics'),  # ← NEW topic selector
-    path('cbt/english/',            views.cbt_english,        name='cbt_english'),
-    path('cbt/chemistry/',          views.cbt_chemistry,      name='cbt_chemistry'),
     path('cbt/submit/',             views.cbt_submit,         name='cbt_submit'),      # score submission
     # ─────────────────────────────────────────────────────────────
 

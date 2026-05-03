@@ -151,25 +151,11 @@ def home(request):
     top_students    = _build_top_students_overall()
     top_mathematics = _build_top_students_subject('mathematics')
     top_physics     = _build_top_students_subject('physics')
-    top_english     = _build_top_students_subject('english')
-    top_chemistry   = _build_top_students_subject('chemistry')
-    top_biology     = _build_top_students_subject('biology')
-    top_economics   = _build_top_students_subject('economics')
-    top_government  = _build_top_students_subject('government')
-    top_accounting  = _build_top_students_subject('accounting')
-    top_geography   = _build_top_students_subject('geography')
 
     return render(request, 'home.html', {
         'top_students':    top_students,
         'top_mathematics': top_mathematics,
         'top_physics':     top_physics,
-        'top_english':     top_english,
-        'top_chemistry':   top_chemistry,
-        'top_biology':     top_biology,
-        'top_economics':   top_economics,
-        'top_government':  top_government,
-        'top_accounting':  top_accounting,
-        'top_geography':   top_geography,
     })
 
 
@@ -433,16 +419,6 @@ def physics(request):
     return render(request, 'subjects/physics.html', {'videos': videos})
 
 
-def english(request):
-    videos = Post.objects.filter(subject__iexact='english').order_by('-created_at')
-    return render(request, 'subjects/english.html', {'videos': videos})
-
-
-def chemistry(request):
-    videos = Post.objects.filter(subject__iexact='chemistry').order_by('-created_at')
-    return render(request, 'subjects/chemistry.html', {'videos': videos})
-
-
 def notifications(request):
     return render(request, 'notification.html')
 
@@ -617,18 +593,6 @@ def cbt_physics_topics(request):
     The old /cbt/physics/ route still works via cbt_physics above.
     """
     return render(request, 'cbt_physics_topics.html')
-
-
-@login_required
-def cbt_english(request):
-    """Render the English Language CBT exam page."""
-    return render(request, 'cbt_english.html')
-
-
-@login_required
-def cbt_chemistry(request):
-    """Render the Chemistry CBT exam page."""
-    return render(request, 'cbt_chemistry.html')
 
 
 @login_required

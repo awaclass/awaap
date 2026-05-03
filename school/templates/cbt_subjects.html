@@ -117,7 +117,7 @@
       .awaClass-cbt-grid { gap: 12px; }
     }
     @media (min-width: 600px) {
-      .awaClass-cbt-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .awaClass-cbt-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 480px; }
     }
 
     .awaClass-cbt-card {
@@ -188,23 +188,6 @@
     .awaClass-cbt-card:hover .awaClass-cbt-card-arrow {
       opacity: 1;
       transform: translateX(0);
-    }
-
-    /* ── coming soon overlay ── */
-    .awaClass-cbt-card--soon {
-      opacity: .5;
-      pointer-events: none;
-    }
-    .awaClass-cbt-soon-tag {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .07em;
-      text-transform: uppercase;
-      background: #f5f5f5;
-      border: 1px solid #e5e5e5;
-      color: #9ca3af;
-      padding: 2px 7px;
-      border-radius: 4px;
     }
 
     /* ══════════════════════════════════════════════════
@@ -288,11 +271,11 @@
   </div>
 
   <!-- ══════════════════════════════════════════
-       CORE SUBJECTS
+       AVAILABLE SUBJECTS
   ══════════════════════════════════════════ -->
   <h2 class="awaClass-section-title">
     <i class="fa-solid fa-star" style="font-size:11px;"></i>
-    Core Subjects
+    Available Subjects
   </h2>
 
   <div class="awaClass-cbt-grid">
@@ -323,121 +306,6 @@
       </div>
     </a>
 
-    <!-- English -->
-    <a href="{% url 'cbt_english' %}?subject=english" class="awaClass-cbt-card awaClass-cbt-card--english">
-      <div class="awaClass-cbt-card-icon">📝</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">English Language</p>
-        <p class="awaClass-cbt-card-meta">Comprehension, Grammar &amp; more</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-    <!-- Chemistry -->
-    <a href="{% url 'cbt_chemistry' %}" class="awaClass-cbt-card awaClass-cbt-card--chemistry">
-      <div class="awaClass-cbt-card-icon">🧪</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Chemistry</p>
-        <p class="awaClass-cbt-card-meta">Organic, Inorganic &amp; Physical Chem</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-    <!-- Biology -->
-    <a href="{% url 'cbt_subjects' %}?subject=biology" class="awaClass-cbt-card awaClass-cbt-card--biology">
-      <div class="awaClass-cbt-card-icon">🧬</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Biology</p>
-        <p class="awaClass-cbt-card-meta">Cell Biology, Ecology &amp; Genetics</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-    <!-- Economics -->
-    <a href="{% url 'cbt_subjects' %}?subject=economics" class="awaClass-cbt-card awaClass-cbt-card--economics">
-      <div class="awaClass-cbt-card-icon">📊</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Economics</p>
-        <p class="awaClass-cbt-card-meta">Micro, Macro &amp; Trade</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════
-       OTHER SUBJECTS
-  ══════════════════════════════════════════ -->
-  <h2 class="awaClass-section-title">
-    <i class="fa-solid fa-book-open" style="font-size:11px;"></i>
-    Other Subjects
-  </h2>
-
-  <div class="awaClass-cbt-grid">
-
-    <!-- Government -->
-    <a href="{% url 'cbt_subjects' %}?subject=government" class="awaClass-cbt-card awaClass-cbt-card--government">
-      <div class="awaClass-cbt-card-icon">🏛️</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Government</p>
-        <p class="awaClass-cbt-card-meta">Civics, Constitutions &amp; Politics</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-    <!-- Accounting -->
-    <a href="{% url 'cbt_subjects' %}?subject=accounting" class="awaClass-cbt-card awaClass-cbt-card--accounting">
-      <div class="awaClass-cbt-card-icon">🧾</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Accounting</p>
-        <p class="awaClass-cbt-card-meta">Financial Records &amp; Statements</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-    <!-- Geography -->
-    <a href="{% url 'cbt_subjects' %}?subject=geography" class="awaClass-cbt-card awaClass-cbt-card--geography">
-      <div class="awaClass-cbt-card-icon">🌍</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Geography</p>
-        <p class="awaClass-cbt-card-meta">Physical &amp; Human Geography</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-card-badge">100 Qs · 2 hrs</span>
-        <i class="fa-solid fa-arrow-right awaClass-cbt-card-arrow"></i>
-      </div>
-    </a>
-
-    <!-- Literature — coming soon -->
-    <div class="awaClass-cbt-card awaClass-cbt-card--literature awaClass-cbt-card--soon">
-      <div class="awaClass-cbt-card-icon">📚</div>
-      <div class="awaClass-cbt-card-body">
-        <p class="awaClass-cbt-card-name">Literature</p>
-        <p class="awaClass-cbt-card-meta">Prose, Poetry &amp; Drama</p>
-      </div>
-      <div class="awaClass-cbt-card-footer">
-        <span class="awaClass-cbt-soon-tag">Coming Soon</span>
-      </div>
-    </div>
-
   </div>
 
   <hr class="awaClass-divider">
@@ -452,7 +320,7 @@
         <div class="awaClass-cbt-step-num">1</div>
         <div class="awaClass-cbt-step-text">
           <strong>Choose a subject</strong>
-          <span>Pick any subject from the list above to start your timed practice exam.</span>
+          <span>Pick Mathematics or Physics to start your timed practice exam.</span>
         </div>
       </div>
       <div class="awaClass-cbt-how-step">

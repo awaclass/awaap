@@ -238,13 +238,6 @@ class CBTExam(models.Model):
     SUBJECT_CHOICES = [
         ('mathematics', 'Mathematics'),
         ('physics',     'Physics'),
-        ('english',     'English'),
-        ('chemistry',   'Chemistry'),
-        ('biology',     'Biology'),
-        ('economics',   'Economics'),
-        ('government',  'Government'),
-        ('accounting',  'Accounting'),
-        ('geography',   'Geography'),
     ]
     GRADE_CHOICES = [
         ('distinction', 'Distinction'),
