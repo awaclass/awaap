@@ -45,6 +45,7 @@
 
     .awaClass-home-main {
       min-width: 0;
+      isolation: auto; /* do not create a new stacking context */
     }
 
     /* sidebar column — hidden on mobile, shown on desktop */
@@ -79,9 +80,7 @@
 
     /* ── Thin divider between sections ── */
     .awaClass-divider {
-      border: none;
-      border-top: 1px solid var(--awaClass-border, #e5e5e5);
-      margin: 28px 0;
+      display: none;
     }
 
     /* ══════════════════════════════════════════════════
@@ -92,151 +91,99 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-    }
-    @media (min-width: 400px) {
-      .awaClass-features-grid,
-      .awaClass-subjects-grid { gap: 12px; }
-    }
-    @media (min-width: 480px) {
-      .awaClass-features-grid,
-      .awaClass-subjects-grid { gap: 14px; }
+      overflow: visible; /* must not clip tooltips */
     }
     @media (min-width: 600px) {
       .awaClass-features-grid,
-      .awaClass-subjects-grid { gap: 16px; }
-    }
-    @media (min-width: 768px) {
-      .awaClass-features-grid,
-      .awaClass-subjects-grid { gap: 18px; }
+      .awaClass-subjects-grid { gap: 12px; }
     }
     @media (min-width: 1024px) {
       .awaClass-features-grid,
-      .awaClass-subjects-grid { gap: 20px; }
+      .awaClass-subjects-grid { gap: 14px; }
     }
 
-    /* Feature card styling (matches subject tile) */
-    .awaClass-feature-tile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-      color: var(--awaClass-text, #0f0f0f);
-      padding: 12px 6px;
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
-      transition: transform 0.15s, box-shadow 0.15s;
-      cursor: pointer;
-      text-align: center;
-    }
-    .awaClass-feature-tile:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    @media (min-width: 480px) {
-      .awaClass-feature-tile { padding: 14px 8px; gap: 8px; border-radius: 12px; }
-    }
-    @media (min-width: 768px) {
-      .awaClass-feature-tile { padding: 18px 10px; gap: 10px; border-radius: 14px; }
-    }
-    @media (min-width: 1024px) {
-      .awaClass-feature-tile { padding: 22px 12px; gap: 12px; border-radius: 16px; }
-    }
-
-    .awaClass-feature-icon {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--awaClass-bg, #f5f5f5);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      flex-shrink: 0;
-      font-size: 20px;
-    }
-    @media (min-width: 480px) {
-      .awaClass-feature-icon { width: 48px; height: 48px; font-size: 24px; }
-    }
-    @media (min-width: 768px) {
-      .awaClass-feature-icon { width: 56px; height: 56px; font-size: 28px; }
-    }
-    @media (min-width: 1024px) {
-      .awaClass-feature-icon { width: 64px; height: 64px; font-size: 32px; }
-    }
-
-    .awaClass-feature-name {
-      font-size: 10px;
-      font-weight: 600;
-      text-align: center;
-      color: var(--awaClass-text, #0f0f0f);
-      line-height: 1.3;
-    }
-    @media (min-width: 480px) { .awaClass-feature-name { font-size: 11px; } }
-    @media (min-width: 768px) { .awaClass-feature-name { font-size: 12px; } }
-    @media (min-width: 1024px) { .awaClass-feature-name { font-size: 13px; } }
-
-    .awaClass-feature-badge {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      background: #f5f5f5;
-      border: 1px solid #e5e5e5;
-      color: #606060;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-top: 2px;
-    }
-
-    /* Subject tile (updated to match feature tile exactly) */
+    /* ── Shared card base (feature + subject tiles) ── */
+    .awaClass-feature-tile,
     .awaClass-subject-tile {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 6px;
+      align-items: stretch;
       text-decoration: none;
       color: var(--awaClass-text, #0f0f0f);
-      padding: 12px 6px;
       background: #ffffff;
-      border: 1px solid #e5e5e5;
+      border: 1px solid #ebebeb;
       border-radius: 10px;
-      transition: transform 0.15s, box-shadow 0.15s;
+      /* NO overflow:hidden — tooltip must escape the card bounds */
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer;
     }
+    .awaClass-feature-tile:hover,
     .awaClass-subject-tile:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+      border-color: #d4d4d4;
     }
-    @media (min-width: 480px) {
-      .awaClass-subject-tile { padding: 14px 8px; gap: 8px; border-radius: 12px; }
-    }
-    @media (min-width: 768px) {
-      .awaClass-subject-tile { padding: 18px 10px; gap: 10px; border-radius: 14px; }
-    }
-    @media (min-width: 1024px) {
-      .awaClass-subject-tile { padding: 22px 12px; gap: 12px; border-radius: 16px; }
+    @media (min-width: 600px) {
+      .awaClass-feature-tile,
+      .awaClass-subject-tile { border-radius: 12px; }
     }
 
+    /* ── Image area: overflow:hidden lives here only, not on the card ── */
+    .awaClass-feature-icon,
     .awaClass-subject-icon {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--awaClass-bg, #f5f5f5);
-      display: flex; align-items: center; justify-content: center;
+      width: 100%;
+      aspect-ratio: 3 / 2;
       overflow: hidden;
       flex-shrink: 0;
+      background: #f5f5f5;
+      border-radius: 9px 9px 0 0;
     }
-    @media (min-width: 480px) {
-      .awaClass-subject-icon { width: 48px; height: 48px; }
+    @media (min-width: 600px) {
+      .awaClass-feature-icon,
+      .awaClass-subject-icon { border-radius: 11px 11px 0 0; }
     }
-    @media (min-width: 768px) {
-      .awaClass-subject-icon { width: 56px; height: 56px; }
+    .awaClass-feature-icon img,
+    .awaClass-subject-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.2s ease;
     }
-    @media (min-width: 1024px) {
-      .awaClass-subject-icon { width: 64px; height: 64px; }
+    .awaClass-feature-tile:hover .awaClass-feature-icon img,
+    .awaClass-subject-tile:hover .awaClass-subject-icon img {
+      transform: scale(1.04);
     }
 
-    .awaClass-subject-icon img {
-      width: 60%;
-      height: 60%;
-      object-fit: contain;
+    /* ── Text label ── */
+    .awaClass-feature-name,
+    .awaClass-subject-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--awaClass-text, #0f0f0f);
+      line-height: 1.3;
+      padding: 7px 6px 5px;
+    }
+    @media (min-width: 480px) {
+      .awaClass-feature-name,
+      .awaClass-subject-name { font-size: 12px; padding: 8px 8px 6px; }
+    }
+    @media (min-width: 768px) {
+      .awaClass-feature-name,
+      .awaClass-subject-name { font-size: 13px; padding: 9px 10px 7px; }
+    }
+
+    /* ── Badge strip ── */
+    .awaClass-feature-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #606060;
+      padding: 3px 6px 5px;
+      text-align: center;
     }
 
     .awaClass-subject-name {
@@ -253,6 +200,8 @@
     /* Section spacing */
     .section-spacing {
       margin-bottom: 28px;
+      padding-bottom: 8px; /* extra room for tooltip overflow below cards */
+      overflow: visible;
     }
 
     /* ══════════════════════════════════════════════════
@@ -296,7 +245,7 @@
     ══════════════════════════════════════════════════ */
     .awaClass-leaderboard-card {
       background: #ffffff;
-      border: 1px solid #e5e5e5;
+      border: 1px solid #ebebeb;
       border-radius: 14px;
       overflow: hidden;
     }
@@ -306,7 +255,6 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 16px 12px;
-      border-bottom: 1px solid #f0f0f0;
     }
 
     .awaClass-lb-header-left {
@@ -380,7 +328,6 @@
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
-      border: 1.5px solid #e5e5e5;
       background: #f5f5f5;
     }
 
@@ -519,7 +466,6 @@
       width: 56px; height: 56px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #e5e5e5;
       flex-shrink: 0;
     }
     .aw-modal-student-name {
@@ -544,16 +490,15 @@
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 100px;
-      border: 1px solid #e5e5e5;
       background: #f5f5f5;
       color: #606060;
     }
     .aw-modal-badge.level-1 { background: #f5f5f5; color: #606060; }
-    .aw-modal-badge.level-2 { background: #fdf2e9; color: #a86232; border-color: #f3d5b0; }
-    .aw-modal-badge.level-3 { background: #f2f4f8; color: #5c6b8a; border-color: #c8d0e0; }
-    .aw-modal-badge.level-4 { background: #fffbeb; color: #b45309; border-color: #fde68a; }
-    .aw-modal-badge.level-5 { background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; }
-    .aw-modal-badge.level-6 { background: #fff0f0; color: #dc2626; border-color: #fecaca; }
+    .aw-modal-badge.level-2 { background: #fdf2e9; color: #a86232; }
+    .aw-modal-badge.level-3 { background: #f2f4f8; color: #5c6b8a; }
+    .aw-modal-badge.level-4 { background: #fffbeb; color: #b45309; }
+    .aw-modal-badge.level-5 { background: #f3e8ff; color: #7c3aed; }
+    .aw-modal-badge.level-6 { background: #fff0f0; color: #dc2626; }
 
     .aw-modal-stats {
       display: flex;
@@ -601,9 +546,10 @@
       margin-bottom: 22px;
     }
     .aw-subject-card {
-      border: 1px solid #e5e5e5;
+      border: 1px solid #ebebeb;
       border-radius: 10px;
       padding: 12px 14px;
+      background: #ffffff;
     }
     .aw-subject-card-top {
       display: flex;
@@ -697,6 +643,70 @@
     .awaClass-lb-item[data-username] {
       cursor: pointer;
     }
+
+    /* ══════════════════════════════════════════════════
+       CARD TOOLTIPS
+    ══════════════════════════════════════════════════ */
+    .awaClass-feature-tile,
+    .awaClass-subject-tile {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Lift the hovered/tapped tile above all other sections */
+    .awaClass-feature-tile:hover,
+    .awaClass-subject-tile:hover,
+    .awaClass-feature-tile.tooltip-visible,
+    .awaClass-subject-tile.tooltip-visible {
+      z-index: 9999;
+    }
+
+    .awaClass-card-tooltip {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15, 15, 15, 0.90);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 9px;
+      width: max-content;
+      max-width: 200px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 9999;
+      white-space: normal;
+    }
+
+    /* Arrow pointing UP */
+    .awaClass-card-tooltip::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-bottom-color: rgba(15, 15, 15, 0.90);
+    }
+
+    /* Show on hover (desktop) */
+    .awaClass-feature-tile:hover .awaClass-card-tooltip,
+    .awaClass-subject-tile:hover .awaClass-card-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Show on mobile tap via JS class */
+    .awaClass-feature-tile.tooltip-visible .awaClass-card-tooltip,
+    .awaClass-subject-tile.tooltip-visible .awaClass-card-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -716,22 +726,20 @@
       <div class="awaClass-features-grid">
         <!-- Live Classes Card -->
         <a href="{% url 'live_room_list' %}" class="awaClass-feature-tile">
+          <span class="awaClass-card-tooltip">Attend live coaching sessions where teachers break down NECO, WAEC & JAMB topics in real time — ask questions and get instant answers.</span>
           <div class="awaClass-feature-icon">
-            <i class="fa-solid fa-video" style="color: #f97316;"></i>
+            <img src="{% static 'images/lives.png' %}" alt="Live Classes">
           </div>
           <p class="awaClass-feature-name">Live Classes</p>
-          <span class="awaClass-feature-badge">
-            <i class="fa-solid fa-circle" style="font-size:7px; color:#ef4444;"></i> Live
-          </span>
         </a>
 
         <!-- CBT Exams Card -->
         <a href="{% url 'cbt_subjects' %}" class="awaClass-feature-tile">
+          <span class="awaClass-card-tooltip">Test yourself with past NECO, WAEC & JAMB questions in a timed exam setting — build confidence and track your improvement over time.</span>
           <div class="awaClass-feature-icon">
-            <i class="fa-solid fa-pen-to-square" style="color: #3b82f6;"></i>
+            <img src="{% static 'images/CBT.png' %}" alt="CBT Exams">
           </div>
           <p class="awaClass-feature-name">CBT Exams</p>
-          <span class="awaClass-feature-badge">New</span>
         </a>
       </div>
     </div>
@@ -741,14 +749,16 @@
       <h2 class="awaClass-section-title">Explore Subjects</h2>
       <div class="awaClass-subjects-grid">
         <a href="{% url 'mathematics' %}" class="awaClass-subject-tile">
+          <span class="awaClass-card-tooltip">Learn and understand Mathematics the right way — covering the full NECO, WAEC & JAMB syllabus with clear explanations, worked examples and practice questions.</span>
           <div class="awaClass-subject-icon">
-            <img src="{% static 'images/Mathematics.png' %}" alt="Mathematics">
+            <img src="{% static 'images/maths.png' %}" alt="Mathematics">
           </div>
           <p class="awaClass-subject-name">Mathematics</p>
         </a>
         <a href="{% url 'physics' %}" class="awaClass-subject-tile">
+          <span class="awaClass-card-tooltip">Understand Physics concepts from the ground up — mechanics, waves, electricity and more, fully aligned with the NECO, WAEC & JAMB syllabus.</span>
           <div class="awaClass-subject-icon">
-            <img src="{% static 'images/physics.png' %}" alt="Physics">
+            <img src="{% static 'images/phy.png' %}" alt="Physics">
           </div>
           <p class="awaClass-subject-name">Physics</p>
         </a>
@@ -990,6 +1000,30 @@
   closeBtn.addEventListener('click', closeModal);
   backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeModal(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Mobile tooltip: tap card to show, tap elsewhere to hide ── */
+  document.querySelectorAll('.awaClass-feature-tile, .awaClass-subject-tile').forEach(function (tile) {
+    tile.addEventListener('click', function (e) {
+      var alreadyVisible = tile.classList.contains('tooltip-visible');
+      /* hide all others */
+      document.querySelectorAll('.awaClass-feature-tile.tooltip-visible, .awaClass-subject-tile.tooltip-visible').forEach(function (t) {
+        t.classList.remove('tooltip-visible');
+      });
+      if (!alreadyVisible) {
+        e.preventDefault();           /* first tap: show tooltip, don't navigate */
+        tile.classList.add('tooltip-visible');
+      }
+      /* second tap (not prevented): follows the href naturally */
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.awaClass-feature-tile') && !e.target.closest('.awaClass-subject-tile')) {
+      document.querySelectorAll('.awaClass-feature-tile.tooltip-visible, .awaClass-subject-tile.tooltip-visible').forEach(function (t) {
+        t.classList.remove('tooltip-visible');
+      });
+    }
+  });
 })();
 </script>
 
