@@ -356,12 +356,6 @@
 
     .leave-btn {
       background: #ef4444;
-      width: auto;
-      padding: 0 28px;
-      border-radius: 40px;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 600;
     }
 
     .control-group {
@@ -492,9 +486,6 @@
         width: 42px;
         height: 42px;
         font-size: 16px;
-      }
-      .leave-btn {
-        padding: 0 16px;
       }
     }
 
@@ -852,6 +843,13 @@
   <!-- Main host stage (fullscreen) -->
   <div class="host-stage" id="host-stage">
     <video id="host-video-element" autoplay playsinline></video>
+
+    <!-- Unmute prompt: shown when browser blocks unmuted autoplay for students -->
+    <div id="unmute-prompt" style="display:none; position:absolute; inset:0; z-index:30; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px);">
+      <button id="unmute-btn" style="background:#f97316; border:none; color:white; font-size:18px; font-weight:700; padding:18px 40px; border-radius:50px; cursor:pointer; display:flex; align-items:center; gap:12px; box-shadow:0 4px 20px rgba(249,115,22,0.4);">
+        <i class="fa-solid fa-volume-high"></i> Tap to hear host
+      </button>
+    </div>
     <div class="host-avatar-placeholder" id="host-placeholder">
       <div class="avatar-circle"><i class="fa-solid fa-chalkboard-user"></i></div>
       <span id="host-placeholder-name">Host</span>
@@ -899,7 +897,7 @@
     <div class="control-group"><button class="control-btn" id="toggle-react"><i class="fa-solid fa-face-smile"></i></button><span>React</span></div>
     <div class="control-group" id="poll-btn-group" style="display:none;"><button class="control-btn" id="toggle-poll-creator"><i class="fa-solid fa-chart-bar"></i></button><span>Poll</span></div>
     <div class="control-group"><button class="control-btn" id="toggle-chat"><i class="fa-regular fa-comment-dots"></i></button><span>Chat</span></div>
-    <div class="control-group"><button class="control-btn leave-btn" id="leave-room"><i class="fa-solid fa-phone-slash"></i><span>Leave</span></button></div>
+    <div class="control-group"><button class="control-btn leave-btn" id="leave-room"><i class="fa-solid fa-phone-slash"></i></button><span>Leave</span></div>
   </div>
 
   <!-- REACTION PICKER -->
@@ -1040,16 +1038,41 @@
   sessionTitleSpan.textContent = sessionTitle || 'Live Class';
   hostDisplaySpan.textContent  = hostUsername  || 'Host';
   document.getElementById('host-placeholder-name').textContent = hostUsername || 'Host';
-  hostVideoEl.muted = isHost;
+  // Note: hostVideoEl.muted is set per-call inside setHostVideo() and initLocalStream()
 
   // ── VIDEO / STAGE HELPERS ──────────────────────────────────────────
   function setHostVideo(stream) {
     hostVideoEl.srcObject = null;
     hostVideoEl.srcObject = stream;
+    hostVideoEl.muted = isHost; // host mutes self to prevent echo; students hear audio
     hostVideoEl.style.display = 'block';
     hostPlaceholder.style.display = 'none';
     waitingOverlay.style.display = 'none';
-    hostVideoEl.play().catch(e => console.log('Play error:', e));
+
+    const unmutePrompt = document.getElementById('unmute-prompt');
+
+    if (!isHost) {
+      // Try unmuted play first (some browsers require a user gesture for unmuted autoplay)
+      hostVideoEl.muted = false;
+      hostVideoEl.play().then(() => {
+        // Unmuted play succeeded — hide the prompt
+        if (unmutePrompt) unmutePrompt.style.display = 'none';
+      }).catch(() => {
+        // Browser blocked unmuted autoplay — play muted then prompt user to unmute
+        hostVideoEl.muted = true;
+        hostVideoEl.play().catch(e => console.log('Play error:', e));
+        if (unmutePrompt) {
+          unmutePrompt.style.display = 'flex';
+          document.getElementById('unmute-btn').onclick = () => {
+            hostVideoEl.muted = false;
+            hostVideoEl.play().catch(e => console.log('Unmute play error:', e));
+            unmutePrompt.style.display = 'none';
+          };
+        }
+      });
+    } else {
+      hostVideoEl.play().catch(e => console.log('Play error:', e));
+    }
   }
   function showHostPlaceholder() {
     hostVideoEl.style.display = 'none';
@@ -1502,6 +1525,7 @@
       const videoTracks = localStream.getVideoTracks();
       if (videoTracks.length > 0) videoTracks[0].enabled = isVideoEnabled;
       if (isHost) {
+        hostVideoEl.muted = true; // prevent echo for host
         setHostVideo(localStream);
         selfBubbleContainer.style.display = 'none';
         studentTray.style.display = 'flex';
