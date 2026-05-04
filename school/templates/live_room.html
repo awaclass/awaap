@@ -457,19 +457,39 @@
     /* responsive adjustments */
     @media (max-width: 640px) {
       .self-bubble { width: 72px; height: 72px; }
+
+      /* Scrollable horizontal controls bar on mobile */
       .controls-bar {
         bottom: 16px;
-        padding: 6px 16px;
-        gap: 12px;
+        left: 0;
+        right: 0;
+        transform: none;
+        border-radius: 0;
+        padding: 8px 16px;
+        gap: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;          /* Firefox */
+        justify-content: flex-start;
+        width: 100%;
+        max-width: 100vw;
+        /* stretch pill border to full width edges */
+        border-left: none;
+        border-right: none;
+        border-radius: 20px 20px 0 0;
       }
+      /* hide scrollbar on webkit */
+      .controls-bar::-webkit-scrollbar { display: none; }
+
+      .control-group {
+        flex-shrink: 0;   /* prevent buttons from squishing */
+      }
+
       .control-btn {
         width: 46px;
         height: 46px;
         font-size: 18px;
-      }
-      .leave-btn {
-        padding: 0 20px;
-        font-size: 13px;
       }
       .student-tray { top: 12px; right: 12px; }
       .student-bubble { width: 56px; height: 56px; }
@@ -480,7 +500,7 @@
     @media (max-width: 480px) {
       .controls-bar {
         gap: 8px;
-        padding: 6px 12px;
+        padding: 8px 12px;
       }
       .control-btn {
         width: 42px;
@@ -1044,34 +1064,43 @@
   function setHostVideo(stream) {
     hostVideoEl.srcObject = null;
     hostVideoEl.srcObject = stream;
-    hostVideoEl.muted = isHost; // host mutes self to prevent echo; students hear audio
     hostVideoEl.style.display = 'block';
     hostPlaceholder.style.display = 'none';
     waitingOverlay.style.display = 'none';
 
     const unmutePrompt = document.getElementById('unmute-prompt');
 
-    if (!isHost) {
-      // Try unmuted play first (some browsers require a user gesture for unmuted autoplay)
+    if (isHost) {
+      // Host always mutes their own video to prevent echo
+      hostVideoEl.muted = true;
+      hostVideoEl.play().catch(e => console.log('Host play error:', e));
+    } else {
+      // Students must hear the host — attempt unmuted autoplay first
       hostVideoEl.muted = false;
+      hostVideoEl.volume = 1.0;
       hostVideoEl.play().then(() => {
-        // Unmuted play succeeded — hide the prompt
+        // Unmuted autoplay succeeded — hide prompt if visible
         if (unmutePrompt) unmutePrompt.style.display = 'none';
+        console.log('Student: host audio playing unmuted ✓');
       }).catch(() => {
-        // Browser blocked unmuted autoplay — play muted then prompt user to unmute
+        // Browser blocked unmuted autoplay (requires prior user gesture)
+        // Fall back: play muted silently, then surface the tap-to-hear prompt
         hostVideoEl.muted = true;
-        hostVideoEl.play().catch(e => console.log('Play error:', e));
+        hostVideoEl.play().catch(e => console.log('Muted fallback play error:', e));
         if (unmutePrompt) {
           unmutePrompt.style.display = 'flex';
-          document.getElementById('unmute-btn').onclick = () => {
+          const unmuteBtn = document.getElementById('unmute-btn');
+          // Replace handler each time to avoid stale closures
+          const handleUnmute = () => {
             hostVideoEl.muted = false;
+            hostVideoEl.volume = 1.0;
             hostVideoEl.play().catch(e => console.log('Unmute play error:', e));
             unmutePrompt.style.display = 'none';
+            unmuteBtn.removeEventListener('click', handleUnmute);
           };
+          unmuteBtn.addEventListener('click', handleUnmute, { once: true });
         }
       });
-    } else {
-      hostVideoEl.play().catch(e => console.log('Play error:', e));
     }
   }
   function showHostPlaceholder() {
@@ -1144,6 +1173,8 @@
   }
   function routeRemoteStream(remoteUserId, stream) {
     if (remoteUserId == hostId) {
+      // Ensure audio tracks from the host are enabled before handing off
+      stream.getAudioTracks().forEach(track => { track.enabled = true; });
       setHostVideo(stream);
     } else {
       const videoElem = document.getElementById(`video-element-${remoteUserId}`);
@@ -1525,7 +1556,7 @@
       const videoTracks = localStream.getVideoTracks();
       if (videoTracks.length > 0) videoTracks[0].enabled = isVideoEnabled;
       if (isHost) {
-        hostVideoEl.muted = true; // prevent echo for host
+        hostVideoEl.muted = true; // host always mutes their own local preview to prevent echo
         setHostVideo(localStream);
         selfBubbleContainer.style.display = 'none';
         studentTray.style.display = 'flex';
