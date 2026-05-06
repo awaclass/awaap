@@ -174,6 +174,11 @@ class Notification(models.Model):
     # null=True so notifications not tied to a post (follow, birthday, etc.) are allowed,
     # and SET_NULL prevents the notification from being wiped when a post is deleted.
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True, blank=True)
+    # FK to ClassPost so chat-room reply/like notifications redirect correctly
+    class_post = models.ForeignKey(
+        'ClassPost', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='notifications'
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification')
     message = models.TextField()
     is_read = models.BooleanField(default=False)

@@ -6,31 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <title>awaClass | {{ post.title|truncatechars:50 }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         /* ============================================
-           GLOBAL VARIABLES & RESET
+           CLEAN DESIGN – NO SHADOWS, MINIMAL COLOR
         ============================================ */
-        :root {
-            --primary-color: #f97316;
-            --primary-dark: #ea580c;
-            --primary-light: #fed7aa;
-            --secondary-color: #10b981;
-            --text-dark: #1f2937;
-            --text-gray: #6b7280;
-            --text-light: #9ca3af;
-            --bg-white: #ffffff;
-            --bg-gray: #f9fafb;
-            --border-color: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-full: 9999px;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -38,340 +19,295 @@
         }
 
         body {
-            background: var(--bg-gray);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1a1a1a;
         }
 
-        /* ============================================
-           POST DETAIL CONTAINER
-        ============================================ */
-        .awaClass-post-detail-container {
+        .detail-container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 24px 20px 48px;
+            padding: 32px 20px 56px;
         }
 
         @media (min-width: 768px) {
-            .awaClass-post-detail-container {
+            .detail-container {
                 margin-left: 280px;
             }
         }
 
         @media (max-width: 768px) {
-            .awaClass-post-detail-container {
-                padding: 16px;
+            .detail-container {
+                padding: 20px 16px;
             }
         }
 
-        /* Back Button */
-        .awaClass-back-btn {
+        /* back link */
+        .back-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: var(--bg-white);
-            border: 1px solid var(--border-color);
-            color: var(--primary-color);
+            background: transparent;
+            border: 1px solid #dce3ec;
+            color: #2c3e50;
             font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            border-radius: var(--radius-full);
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 40px;
             text-decoration: none;
-            transition: all 0.2s ease;
+            margin-bottom: 24px;
+            transition: background 0.2s;
         }
 
-        .awaClass-back-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            transform: translateX(-2px);
+        .back-link:hover {
+            background: #f4f6f9;
+            border-color: #c0cbd8;
         }
 
-        /* Main Post Card */
-        .awaClass-main-post {
-            background: var(--bg-white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
+        /* main post card */
+        .post-card {
+            background: #fff;
+            border: 1px solid #e6edf4;
             margin-bottom: 28px;
-            transition: box-shadow 0.2s ease;
         }
 
-        .awaClass-main-post:hover {
-            box-shadow: var(--shadow-lg);
-        }
-
-        .awaClass-post-header {
-            padding: 20px 24px;
+        .post-header {
+            padding: 20px 24px 12px 24px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-gray);
+            gap: 14px;
+            border-bottom: 1px solid #eef2f6;
+            flex-wrap: wrap;
         }
 
-        .awaClass-post-avatar {
-            width: 52px;
-            height: 52px;
+        .avatar {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--primary-light);
+            background: #f0f2f5;
+            border: 1px solid #e2e8f0;
         }
 
-        .awaClass-post-author-info {
+        .author-info {
             flex: 1;
         }
 
-        .awaClass-post-author-name {
+        .author-name {
             font-weight: 700;
             font-size: 16px;
-            color: var(--text-dark);
-            margin: 0 0 4px;
+            color: #111827;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
+            margin-bottom: 4px;
         }
 
-        .awaClass-post-meta {
+        .post-meta {
             font-size: 13px;
-            color: var(--text-gray);
+            color: #5b6e8c;
         }
 
-        .awaClass-post-meta i {
-            margin-right: 4px;
-        }
-
-        .awaClass-resolved-badge {
+        .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 12px;
-            border-radius: var(--radius-full);
+            padding: 3px 10px;
+            border-radius: 30px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #2c3e50;
         }
 
         .badge-resolved {
-            background: #d1fae5;
-            color: #065f46;
+            background: #e3f7ec;
+            color: #1e7b48;
         }
 
-        .badge-unresolved {
-            background: #fee2e2;
-            color: #991b1b;
+        .badge-open {
+            background: #fee8e7;
+            color: #b91c1c;
         }
 
-        .awaClass-post-title {
-            padding: 24px 24px 16px;
-            margin: 0;
-            font-size: 28px;
+        .post-title {
+            font-size: 26px;
             font-weight: 700;
-            color: var(--text-dark);
+            padding: 20px 24px 12px 24px;
+            color: #0a0c10;
             line-height: 1.3;
         }
 
-        .awaClass-post-content {
-            padding: 0 24px 20px;
+        .post-content {
+            padding: 0 24px 20px 24px;
             font-size: 16px;
-            color: var(--text-dark);
-            line-height: 1.7;
+            color: #2c3e50;
+            line-height: 1.65;
         }
 
-        .awaClass-post-image {
+        .post-image {
             max-width: 100%;
-            max-height: 400px;
-            border-radius: var(--radius-md);
+            max-height: 380px;
+            border-radius: 12px;
             margin-top: 16px;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            border: 1px solid #e9edf2;
         }
 
-        .awaClass-post-image:hover {
-            transform: scale(1.01);
-        }
-
-        .awaClass-post-stats {
-            padding: 16px 24px;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+        .post-stats {
+            padding: 12px 24px;
+            border-top: 1px solid #eef2f6;
+            border-bottom: 1px solid #eef2f6;
             display: flex;
             gap: 28px;
             font-size: 14px;
-            color: var(--text-gray);
-            background: var(--bg-gray);
+            color: #5b6e8c;
+            background: #fafcff;
         }
 
-        .awaClass-post-stats span {
+        .post-stats span {
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .awaClass-post-actions {
-            padding: 16px 24px;
+        .action-buttons {
+            padding: 14px 24px;
             display: flex;
-            gap: 16px;
+            gap: 20px;
         }
 
-        .awaClass-action-btn {
-            background: none;
+        .action-btn {
+            background: transparent;
             border: none;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
-            color: var(--text-gray);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 20px;
-            border-radius: var(--radius-full);
-            transition: all 0.2s ease;
-        }
-
-        .awaClass-action-btn:hover {
-            background: var(--bg-gray);
-            color: var(--primary-color);
-        }
-
-        .awaClass-action-btn.liked {
-            color: var(--primary-color);
-        }
-
-        .awaClass-action-btn.liked i {
-            animation: heartBeat 0.3s ease;
-        }
-
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        /* Resolve Button */
-        .awaClass-resolve-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 8px 20px;
-            border-radius: var(--radius-full);
-            transition: all 0.2s ease;
+            color: #4a5b7a;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            padding: 6px 16px;
+            border-radius: 32px;
+            transition: all 0.15s;
         }
 
-        .awaClass-resolve-btn:hover {
-            background: var(--primary-dark);
-            transform: scale(1.02);
+        .action-btn:hover {
+            background: #f0f4f9;
+            color: #e85d04;
         }
 
-        .awaClass-resolve-btn.resolved {
-            background: var(--secondary-color);
+        .action-btn.liked {
+            color: #e85d04;
         }
 
-        .awaClass-resolve-btn.resolved:hover {
-            background: #0e9f6e;
+        .resolve-post-btn {
+            background: #eef2f9;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #2c3e50;
+            transition: background 0.2s;
         }
 
-        /* Comments Section */
-        .awaClass-comments-section {
-            background: var(--bg-white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
+        .resolve-post-btn.resolved {
+            background: #dcfce7;
+            color: #15803d;
         }
 
-        .awaClass-comments-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
+        /* comments section */
+        .comments-wrapper {
+            background: #fff;
+            border: 1px solid #e6edf4;
+        }
+
+        .comments-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #eef2f6;
             font-weight: 700;
             font-size: 18px;
-            color: var(--text-dark);
-            background: var(--bg-gray);
+            background: #fefefe;
+            color: #1e293b;
         }
 
-        .awaClass-comments-header i {
-            color: var(--primary-color);
+        .comments-header i {
             margin-right: 8px;
+            color: #e85d04;
         }
 
-        /* Comment Form */
-        .awaClass-comment-form {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-color);
+        .comment-form-row {
+            padding: 20px 24px;
+            border-bottom: 1px solid #eef2f6;
             display: flex;
             gap: 16px;
-            background: var(--bg-white);
+            background: #fff;
+            flex-wrap: wrap;
         }
 
-        .awaClass-comment-avatar {
+        .comment-avatar-sm {
             width: 44px;
             height: 44px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--primary-light);
+            border: 1px solid #e2e8f0;
         }
 
-        .awaClass-comment-input-wrapper {
+        .comment-input-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .awaClass-comment-input {
+        .comment-textarea {
             width: 100%;
             padding: 12px 18px;
-            border: 2px solid var(--border-color);
+            border: 1px solid #d4dce6;
             border-radius: 24px;
-            resize: none;
             font-family: inherit;
             font-size: 14px;
-            transition: all 0.2s ease;
-            background: var(--bg-white);
+            resize: vertical;
         }
 
-        .awaClass-comment-input:focus {
+        .comment-textarea:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+            border-color: #e85d04;
         }
 
-        .awaClass-media-buttons {
+        .media-toolbar {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
         }
 
-        .awaClass-media-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--bg-gray);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-full);
-            cursor: pointer;
+        .media-btn {
+            background: #f8fafc;
+            border: 1px solid #dce3ec;
+            padding: 6px 14px;
+            border-radius: 40px;
             font-size: 13px;
             font-weight: 500;
-            color: var(--text-gray);
-            transition: all 0.2s ease;
+            cursor: pointer;
+            color: #415a77;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .awaClass-media-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+        .media-btn:hover {
+            background: #eef2f8;
         }
 
-        .awaClass-media-btn.recording {
-            background: #ef4444;
-            color: white;
-            border-color: #ef4444;
+        .media-btn.recording {
+            background: #fee2e2;
+            color: #b91c1c;
             animation: pulse 1s infinite;
         }
 
@@ -380,21 +316,33 @@
             50% { opacity: 0.7; }
         }
 
-        .awaClass-media-preview {
+        .recording-timer {
+            font-size: 13px;
+            font-weight: 500;
+            color: #dc2626;
+        }
+
+        .preview-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .media-preview {
             position: relative;
             display: inline-block;
-            margin-right: 8px;
         }
 
-        .awaClass-preview-image {
-            width: 80px;
-            height: 80px;
-            border-radius: var(--radius-md);
+        .preview-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 12px;
             object-fit: cover;
-            border: 2px solid var(--primary-light);
+            border: 1px solid #dee4ec;
         }
 
-        .awaClass-remove-media {
+        .remove-media {
             position: absolute;
             top: -8px;
             right: -8px;
@@ -406,342 +354,216 @@
             height: 22px;
             cursor: pointer;
             font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
         }
 
-        .awaClass-remove-media:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-
-        .awaClass-comment-submit {
-            background: var(--primary-color);
+        .submit-comment {
+            background: #e85d04;
             color: white;
             border: none;
-            padding: 8px 24px;
-            border-radius: var(--radius-full);
-            cursor: pointer;
+            padding: 8px 20px;
+            border-radius: 40px;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.2s ease;
+            cursor: pointer;
             align-self: flex-start;
         }
 
-        .awaClass-comment-submit:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .awaClass-comment-submit:disabled {
-            background: var(--text-light);
+        .submit-comment:disabled {
+            background: #bac8d9;
             cursor: not-allowed;
         }
 
-        .awaClass-recording-timer {
-            display: inline-block;
-            margin-left: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #ef4444;
-        }
-
-        /* Comments List */
-        .awaClass-comments-list {
-            max-height: 600px;
+        .comments-list {
+            max-height: 580px;
             overflow-y: auto;
         }
 
-        .awaClass-comments-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .awaClass-comments-list::-webkit-scrollbar-track {
-            background: var(--border-color);
-            border-radius: 3px;
-        }
-
-        .awaClass-comments-list::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 3px;
-        }
-
-        .awaClass-comment-item {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
+        .comment-item {
+            padding: 18px 24px;
+            border-bottom: 1px solid #f0f3f8;
             display: flex;
             gap: 14px;
-            transition: background 0.2s ease;
         }
 
-        .awaClass-comment-item:hover {
-            background: var(--bg-gray);
+        .comment-item:hover {
+            background: #fefcf9;
         }
 
-        .awaClass-comment-avatar-small {
-            width: 40px;
-            height: 40px;
+        .comment-avatar-mini {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid var(--primary-light);
+            border: 1px solid #e2e8f0;
         }
 
-        .awaClass-comment-content {
+        .comment-body {
             flex: 1;
         }
 
-        .awaClass-comment-author {
+        .comment-author-name {
             font-weight: 700;
             font-size: 14px;
-            color: var(--text-dark);
-            margin: 0 0 6px;
+            margin-bottom: 6px;
+            color: #1e293b;
         }
 
-        .awaClass-comment-text {
+        .comment-text {
             font-size: 14px;
-            color: var(--text-dark);
-            line-height: 1.6;
-            margin: 0 0 10px;
+            color: #2d3a48;
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
 
-        .awaClass-comment-media {
-            margin: 12px 0;
+        .comment-media {
+            margin: 10px 0 6px;
         }
 
-        .awaClass-comment-image {
+        .comment-image {
             max-width: 100%;
-            max-height: 250px;
-            border-radius: var(--radius-md);
+            max-height: 220px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
         }
 
-        .awaClass-comment-image:hover {
-            opacity: 0.9;
-            transform: scale(1.01);
-        }
-
-        /* Custom Audio Player Styles */
-        .awaClass-audio-player {
-            background: linear-gradient(135deg, var(--bg-gray) 0%, #f3f4f6 100%);
+        .audio-mini {
+            background: #f8fafd;
             border-radius: 60px;
-            padding: 8px 20px;
+            padding: 6px 16px;
             display: inline-flex;
             align-items: center;
-            gap: 16px;
-            max-width: 360px;
-            width: 100%;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
+            gap: 12px;
+            border: 1px solid #e2e8f0;
+            max-width: 320px;
         }
 
-        .awaClass-audio-play-btn {
-            background: var(--primary-color);
+        .play-audio-btn {
+            background: #e85d04;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            cursor: pointer;
             color: white;
-            display: flex;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
         }
 
-        .awaClass-audio-play-btn:hover {
-            background: var(--primary-dark);
-            transform: scale(1.05);
-        }
-
-        .awaClass-audio-waveform {
+        .waveform-bars {
             flex: 1;
-            height: 44px;
             display: flex;
-            align-items: center;
             gap: 3px;
-            cursor: pointer;
-            padding: 0 8px;
-        }
-
-        .awaClass-wave-bar {
-            width: 3px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            border-radius: 3px;
-            transition: height 0.08s ease;
-        }
-
-        .awaClass-audio-time {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-gray);
-            min-width: 45px;
-            font-family: 'Monaco', 'Courier New', monospace;
-        }
-
-        .awaClass-comment-meta {
-            font-size: 12px;
-            color: var(--text-light);
-            display: flex;
-            gap: 20px;
             align-items: center;
-            margin-top: 8px;
+            height: 30px;
         }
 
-        .awaClass-comment-like-btn {
+        .wave-bar {
+            width: 3px;
+            background: #e85d04;
+            border-radius: 2px;
+        }
+
+        .audio-time {
+            font-size: 12px;
+            color: #4a5b7a;
+            font-family: monospace;
+            min-width: 42px;
+        }
+
+        .comment-meta-row {
+            display: flex;
+            gap: 18px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6f7e95;
+            align-items: center;
+        }
+
+        .comment-like-btn {
             background: none;
             border: none;
             cursor: pointer;
-            color: var(--text-light);
-            font-size: 12px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 8px;
-            border-radius: var(--radius-full);
-            transition: all 0.2s ease;
+            font-size: 12px;
+            color: #6f7e95;
+            padding: 2px 6px;
+            border-radius: 30px;
         }
 
-        .awaClass-comment-like-btn:hover {
-            background: var(--bg-gray);
-            color: var(--primary-color);
+        .comment-like-btn.liked {
+            color: #e85d04;
         }
 
-        .awaClass-comment-like-btn.liked {
-            color: var(--primary-color);
-        }
-
-        .awaClass-comment-like-btn.liked i {
-            animation: heartBeat 0.3s ease;
-        }
-
-        /* Empty Comments */
-        .awaClass-empty-comments {
+        .empty-comments {
             text-align: center;
-            padding: 60px 20px;
-            color: var(--text-gray);
+            padding: 48px 20px;
+            color: #6c7e9b;
         }
 
-        .awaClass-empty-comments i {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.5;
+        .empty-comments i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
         }
 
-        .awaClass-empty-comments p {
-            font-size: 16px;
-        }
-
-        /* Image Modal */
-        .awaClass-modal {
+        .image-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 1100;
             cursor: pointer;
-        }
-
-        .awaClass-modal.active {
-            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .awaClass-modal-image {
+        .image-modal.active {
+            display: flex;
+        }
+
+        .modal-img {
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
-            animation: zoomIn 0.2s ease;
         }
 
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .awaClass-modal-close {
+        .modal-close {
             position: absolute;
-            top: 20px;
-            right: 35px;
+            top: 24px;
+            right: 32px;
+            font-size: 32px;
             color: white;
-            font-size: 40px;
-            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
-        .awaClass-modal-close:hover {
-            color: var(--primary-color);
-            transform: rotate(90deg);
-        }
-
-        /* Loading Spinner */
-        .awaClass-loading {
+        .loading-spinner {
             display: inline-block;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border: 2px solid white;
-            border-top: 2px solid transparent;
+            border-top-color: transparent;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
+            animation: spin 0.7s linear infinite;
+            margin-right: 6px;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
-        /* Mobile Responsive */
         @media (max-width: 640px) {
-            .awaClass-post-title {
-                font-size: 22px;
-                padding: 16px 20px;
-            }
-            
-            .awaClass-comment-form {
-                flex-direction: column;
-            }
-            
-            .awaClass-comment-avatar {
-                display: none;
-            }
-
-            .awaClass-media-buttons {
-                flex-wrap: wrap;
-            }
-
-            .awaClass-comment-submit {
-                width: 100%;
-            }
-
-            .awaClass-audio-player {
-                max-width: 100%;
-                padding: 6px 12px;
-            }
-
-            .awaClass-audio-play-btn {
-                width: 32px;
-                height: 32px;
-            }
-
-            .awaClass-post-stats {
-                gap: 16px;
-                flex-wrap: wrap;
-            }
+            .post-title { font-size: 22px; padding: 16px 20px; }
+            .comment-form-row { flex-direction: column; }
+            .comment-avatar-sm { display: none; }
+            .submit-comment { width: 100%; }
+            .audio-mini { max-width: 100%; }
         }
     </style>
 </head>
@@ -749,26 +571,26 @@
 
 {% include 'sidebar.html' %}
 
-<div class="awaClass-post-detail-container">
+<div class="detail-container">
     <!-- Back Button -->
-    <a href="{% url 'chat_room' %}" class="awaClass-back-btn">
+    <a href="{% url 'chat_room' %}" class="back-link">
         <i class="fa-solid fa-arrow-left"></i> Back to Discussion
     </a>
 
     <!-- Main Post -->
-    <div class="awaClass-main-post">
-        <div class="awaClass-post-header">
-            <img src="{{ post.author.profile.get_picture_url }}" alt="{{ post.author.username }}" class="awaClass-post-avatar">
-            <div class="awaClass-post-author-info">
-                <div class="awaClass-post-author-name">
+    <div class="post-card">
+        <div class="post-header">
+            <img src="{{ post.author.profile.get_picture_url }}" alt="{{ post.author.username }}" class="avatar">
+            <div class="author-info">
+                <div class="author-name">
                     {{ post.author.get_full_name|default:post.author.username }}
                     {% if post.is_resolved %}
-                    <span class="awaClass-resolved-badge badge-resolved"><i class="fa-solid fa-check-circle"></i> Resolved</span>
+                    <span class="status-badge badge-resolved"><i class="fa-solid fa-check-circle"></i> Resolved</span>
                     {% else %}
-                    <span class="awaClass-resolved-badge badge-unresolved"><i class="fa-solid fa-question-circle"></i> Open</span>
+                    <span class="status-badge badge-open"><i class="fa-regular fa-circle-question"></i> Open</span>
                     {% endif %}
                 </div>
-                <div class="awaClass-post-meta">
+                <div class="post-meta">
                     <i class="fa-regular fa-clock"></i> {{ post.created_at|date:"F j, Y, g:i a" }}
                     {% if post.subject %}
                     • <i class="fa-regular fa-folder-open"></i> {{ post.subject }}
@@ -776,106 +598,106 @@
                 </div>
             </div>
             {% if request.user == post.author %}
-            <button class="awaClass-resolve-btn {% if post.is_resolved %}resolved{% endif %}" onclick="toggleResolved('{{ post.post_id }}')">
-                {% if post.is_resolved %}<i class="fa-solid fa-check-circle"></i> Resolved{% else %}<i class="fa-solid fa-check-circle"></i> Mark Resolved{% endif %}
+            <button class="resolve-post-btn {% if post.is_resolved %}resolved{% endif %}" onclick="toggleResolved('{{ post.post_id }}')">
+                {% if post.is_resolved %}<i class="fa-solid fa-check-circle"></i> Resolved{% else %}<i class="fa-regular fa-check-circle"></i> Mark Resolved{% endif %}
             </button>
             {% endif %}
         </div>
         
-        <h1 class="awaClass-post-title">{{ post.title }}</h1>
+        <h1 class="post-title">{{ post.title }}</h1>
         
-        <div class="awaClass-post-content">
+        <div class="post-content">
             {{ post.content|linebreaks }}
             {% if post.image %}
             <div>
-                <img src="{{ post.get_image_url }}" alt="Question image" class="awaClass-post-image" onclick="openImageModal(this.src)">
+                <img src="{{ post.get_image_url }}" alt="Question image" class="post-image" onclick="openImageModal(this.src)">
             </div>
             {% endif %}
         </div>
         
-        <div class="awaClass-post-stats">
+        <div class="post-stats">
             <span><i class="fa-regular fa-heart"></i> <span id="likeCount">{{ post.total_likes }}</span> likes</span>
             <span><i class="fa-regular fa-comments"></i> <span id="replyCount">{{ total_comments }}</span> replies</span>
             <span><i class="fa-regular fa-eye"></i> {{ post.view }} views</span>
         </div>
         
-        <div class="awaClass-post-actions">
-            <button class="awaClass-action-btn like-btn" onclick="likePost('{{ post.post_id }}')">
+        <div class="action-buttons">
+            <button class="action-btn like-btn" onclick="likePost('{{ post.post_id }}')">
                 <i class="{% if request.user in post.like.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
                 Like
             </button>
-            <button class="awaClass-action-btn" onclick="scrollToCommentForm()">
+            <button class="action-btn" onclick="scrollToCommentForm()">
                 <i class="fa-regular fa-comment"></i> Reply
             </button>
         </div>
     </div>
 
     <!-- Comments Section -->
-    <div class="awaClass-comments-section">
-        <div class="awaClass-comments-header">
+    <div class="comments-wrapper">
+        <div class="comments-header">
             <i class="fa-regular fa-comments"></i> <span id="commentCountHeader">{{ total_comments }}</span> Discussion Replies
         </div>
         
-        <!-- Comment Form with Audio Recording -->
+        <!-- Comment Form -->
         <form id="commentForm" method="POST" action="{% url 'chat_post_comment' post.post_id %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="awaClass-comment-form">
-                <img src="{{ request.user.profile.get_picture_url }}" alt="{{ request.user.username }}" class="awaClass-comment-avatar">
-                <div class="awaClass-comment-input-wrapper">
-                    <textarea name="comment" class="awaClass-comment-input" placeholder="Write your reply... You can also add an image or record audio" rows="3"></textarea>
+            <div class="comment-form-row">
+                <img src="{{ request.user.profile.get_picture_url }}" alt="{{ request.user.username }}" class="comment-avatar-sm">
+                <div class="comment-input-area">
+                    <textarea name="comment" class="comment-textarea" placeholder="Write your reply... You can also add an image or record audio" rows="3"></textarea>
                     
-                    <div class="awaClass-media-buttons">
-                        <label class="awaClass-media-btn">
+                    <div class="media-toolbar">
+                        <label class="media-btn">
                             <i class="fa-solid fa-image"></i> Add Image
                             <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" onchange="previewMedia(this, 'image')">
                         </label>
-                        <button type="button" class="awaClass-media-btn" id="recordAudioBtn">
+                        <button type="button" class="media-btn" id="recordAudioBtn">
                             <i class="fa-solid fa-microphone"></i> Record Audio
                         </button>
-                        <span id="recordingTimer" class="awaClass-recording-timer" style="display: none;">0:00</span>
+                        <span id="recordingTimer" class="recording-timer" style="display: none;">0:00</span>
                     </div>
                     
-                    <div id="media-preview" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px;"></div>
+                    <div id="media-preview" class="preview-container"></div>
                 </div>
-                <button type="submit" class="awaClass-comment-submit" id="submitCommentBtn">
+                <button type="submit" class="submit-comment" id="submitCommentBtn">
                     <i class="fa-regular fa-paper-plane"></i> Post Reply
                 </button>
             </div>
         </form>
         
         <!-- Comments List -->
-        <div class="awaClass-comments-list" id="commentsList">
+        <div class="comments-list" id="commentsList">
             {% for comment in comments %}
-            <div class="awaClass-comment-item" id="comment-{{ comment.comment_id }}">
-                <img src="{{ comment.commentator.profile.get_picture_url }}" alt="{{ comment.commentator.username }}" class="awaClass-comment-avatar-small">
-                <div class="awaClass-comment-content">
-                    <div class="awaClass-comment-author">{{ comment.commentator.get_full_name|default:comment.commentator.username }}</div>
+            <div class="comment-item" id="comment-{{ comment.comment_id }}">
+                <img src="{{ comment.commentator.profile.get_picture_url }}" alt="{{ comment.commentator.username }}" class="comment-avatar-mini">
+                <div class="comment-body">
+                    <div class="comment-author-name">{{ comment.commentator.get_full_name|default:comment.commentator.username }}</div>
                     
                     {% if comment.comment %}
-                    <div class="awaClass-comment-text">{{ comment.comment|linebreaksbr }}</div>
+                    <div class="comment-text">{{ comment.comment|linebreaksbr }}</div>
                     {% endif %}
                     
                     {% if comment.get_image_url %}
-                    <div class="awaClass-comment-media">
-                        <img src="{{ comment.get_image_url }}" alt="Comment image" class="awaClass-comment-image" onclick="openImageModal(this.src)">
+                    <div class="comment-media">
+                        <img src="{{ comment.get_image_url }}" alt="Comment image" class="comment-image" onclick="openImageModal(this.src)">
                     </div>
                     {% endif %}
                     
                     {% if comment.get_audio_url %}
-                    <div class="awaClass-comment-media">
-                        <div class="awaClass-audio-player" data-audio-url="{{ comment.get_audio_url }}">
-                            <button class="awaClass-audio-play-btn">
+                    <div class="comment-media">
+                        <div class="audio-mini" data-audio-url="{{ comment.get_audio_url }}">
+                            <button class="play-audio-btn">
                                 <i class="fa-solid fa-play"></i>
                             </button>
-                            <div class="awaClass-audio-waveform"></div>
-                            <span class="awaClass-audio-time">0:00</span>
+                            <div class="waveform-bars"></div>
+                            <span class="audio-time">0:00</span>
                         </div>
                     </div>
                     {% endif %}
                     
-                    <div class="awaClass-comment-meta">
+                    <div class="comment-meta-row">
                         <span><i class="fa-regular fa-clock"></i> {{ comment.created_at|timesince }} ago</span>
-                        <button class="awaClass-comment-like-btn comment-like-btn-{{ comment.comment_id }}" onclick="likeComment('{{ comment.comment_id }}')">
+                        <button class="comment-like-btn comment-like-btn-{{ comment.comment_id }}" onclick="likeComment('{{ comment.comment_id }}')">
                             <i class="{% if request.user in comment.like.all %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
                             <span class="comment-like-count-{{ comment.comment_id }}">{{ comment.total_likes }}</span> Likes
                         </button>
@@ -883,7 +705,7 @@
                 </div>
             </div>
             {% empty %}
-            <div class="awaClass-empty-comments" id="emptyComments">
+            <div class="empty-comments" id="emptyComments">
                 <i class="fa-regular fa-message"></i>
                 <p>No replies yet. Be the first to answer!</p>
                 <p style="font-size: 13px; margin-top: 10px;">💬 Add text, 📷 image, or 🎙️ audio to your reply</p>
@@ -911,7 +733,7 @@
     }
     
     // ============================================
-    // CUSTOM AUDIO PLAYER WITH WAVEFORM (20 bars)
+    // CUSTOM AUDIO PLAYER WITH WAVEFORM
     // ============================================
     
     class CustomAudioPlayer {
@@ -922,10 +744,9 @@
             this.isPlaying = false;
             this.animationId = null;
             this.waveBars = [];
-            this.waveformContainer = container.querySelector('.awaClass-audio-waveform');
-            this.playBtn = container.querySelector('.awaClass-audio-play-btn');
-            this.timeDisplay = container.querySelector('.awaClass-audio-time');
-            
+            this.waveformContainer = container.querySelector('.waveform-bars');
+            this.playBtn = container.querySelector('.play-audio-btn');
+            this.timeDisplay = container.querySelector('.audio-time');
             this.init();
         }
         
@@ -933,36 +754,17 @@
             this.audio = new Audio(this.audioUrl);
             this.generateWaveBars();
             
-            this.waveformContainer.addEventListener('click', (e) => {
-                this.seekAudio(e);
-            });
-            
-            this.playBtn.addEventListener('click', () => {
-                this.togglePlay();
-            });
-            
-            this.audio.addEventListener('timeupdate', () => {
-                this.updateTimeDisplay();
-            });
-            
-            this.audio.addEventListener('ended', () => {
-                this.stopPlayback();
-            });
-            
-            this.audio.addEventListener('loadedmetadata', () => {
-                this.updateTimeDisplay();
-            });
+            this.playBtn.addEventListener('click', () => this.togglePlay());
+            this.audio.addEventListener('timeupdate', () => this.updateTimeDisplay());
+            this.audio.addEventListener('ended', () => this.stopPlayback());
         }
         
         generateWaveBars() {
             this.waveformContainer.innerHTML = '';
             this.waveBars = [];
-            
-            // 20 wave bars only
-            const barCount = 20;
-            for (let i = 0; i < barCount; i++) {
+            for (let i = 0; i < 20; i++) {
                 const bar = document.createElement('div');
-                bar.className = 'awaClass-wave-bar';
+                bar.className = 'wave-bar';
                 bar.style.height = '4px';
                 this.waveformContainer.appendChild(bar);
                 this.waveBars.push(bar);
@@ -972,59 +774,29 @@
         animateWaveform() {
             if (!this.isPlaying) {
                 this.waveBars.forEach(bar => {
-                    const randomHeight = Math.floor(Math.random() * 12) + 3;
-                    bar.style.height = randomHeight + 'px';
+                    bar.style.height = Math.floor(Math.random() * 12) + 3 + 'px';
                 });
                 return;
             }
-
-            // Cancel any existing loop before starting a new one
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-            }
+            if (this.animationId) cancelAnimationFrame(this.animationId);
             
             const tick = () => {
                 if (!this.isPlaying) return;
-                if (this.audioContext && this.sourceNode && this.analyserNode) {
-                    const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
-                    this.analyserNode.getByteFrequencyData(dataArray);
-                    
-                    const step = Math.floor(dataArray.length / this.waveBars.length);
-                    this.waveBars.forEach((bar, index) => {
-                        const value = dataArray[index * step] || 0;
-                        const height = Math.max(3, Math.min(30, (value / 255) * 30));
-                        bar.style.height = height + 'px';
-                    });
-                } else {
-                    this.waveBars.forEach((bar, index) => {
-                        const time = Date.now() / 1000;
-                        const height = Math.sin(time * 6 + index * 0.3) * 10 + 14;
-                        bar.style.height = Math.max(3, Math.min(30, height)) + 'px';
-                    });
-                }
+                this.waveBars.forEach((bar, index) => {
+                    const height = Math.sin(Date.now() / 200 + index * 0.3) * 10 + 14;
+                    bar.style.height = Math.max(4, Math.min(28, height)) + 'px';
+                });
                 this.animationId = requestAnimationFrame(tick);
             };
             this.animationId = requestAnimationFrame(tick);
         }
         
         togglePlay() {
-            if (this.isPlaying) {
-                this.pause();
-            } else {
-                this.play();
-            }
+            if (this.isPlaying) this.pause();
+            else this.play();
         }
         
         play() {
-            if (!this.audioContext) {
-                this.setupAudioContext();
-            }
-
-            if (this.audioContext && this.audioContext.state === 'suspended') {
-                this.audioContext.resume();
-            }
-
             this.audio.play();
             this.isPlaying = true;
             this.playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
@@ -1035,54 +807,28 @@
             this.audio.pause();
             this.isPlaying = false;
             this.playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-            }
+            if (this.animationId) cancelAnimationFrame(this.animationId);
         }
         
         stopPlayback() {
             this.isPlaying = false;
             this.playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-            }
-        }
-        
-        setupAudioContext() {
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            if (AudioContextClass) {
-                this.audioContext = new AudioContextClass();
-                this.analyserNode = this.audioContext.createAnalyser();
-                this.analyserNode.fftSize = 256;
-                this.sourceNode = this.audioContext.createMediaElementSource(this.audio);
-                this.sourceNode.connect(this.analyserNode);
-                this.analyserNode.connect(this.audioContext.destination);
-            }
+            if (this.animationId) cancelAnimationFrame(this.animationId);
         }
         
         updateTimeDisplay() {
-            const currentTime = this.audio.currentTime;
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = Math.floor(currentTime % 60);
+            const minutes = Math.floor(this.audio.currentTime / 60);
+            const seconds = Math.floor(this.audio.currentTime % 60);
             this.timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        seekAudio(event) {
-            const rect = this.waveformContainer.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const percentage = x / rect.width;
-            if (this.audio.duration) {
-                this.audio.currentTime = percentage * this.audio.duration;
-            }
         }
     }
     
     function initAudioPlayers() {
-        const audioPlayers = document.querySelectorAll('.awaClass-audio-player');
-        audioPlayers.forEach(container => {
-            new CustomAudioPlayer(container);
+        document.querySelectorAll('.audio-mini').forEach(container => {
+            if (!container.dataset.initialized) {
+                container.dataset.initialized = 'true';
+                new CustomAudioPlayer(container);
+            }
         });
     }
     
@@ -1100,10 +846,6 @@
     const recordBtn = document.getElementById('recordAudioBtn');
     const timerSpan = document.getElementById('recordingTimer');
     
-    if (recordBtn && (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)) {
-        recordBtn.style.display = 'none';
-    }
-    
     function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -1120,41 +862,26 @@
     async function startRecording() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            
-            // Use the MIME type the browser actually supports
-            const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-                ? 'audio/webm;codecs=opus'
-                : MediaRecorder.isTypeSupported('audio/webm')
-                ? 'audio/webm'
-                : MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
-                ? 'audio/ogg;codecs=opus'
-                : '';
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
             mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
             audioChunks = [];
             
             mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
+                if (event.data.size > 0) audioChunks.push(event.data);
             };
             
             mediaRecorder.onstop = () => {
                 stream.getTracks().forEach(track => track.stop());
-                const actualMimeType = mediaRecorder.mimeType || 'audio/webm';
-                recordedAudioBlob = new Blob(audioChunks, { type: actualMimeType });
+                recordedAudioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
                 const audioUrl = URL.createObjectURL(recordedAudioBlob);
                 createAudioPreview(audioUrl, recordedAudioBlob);
-                
-                if (recordingTimer) {
-                    clearInterval(recordingTimer);
-                    recordingTimer = null;
-                }
+                if (recordingTimer) clearInterval(recordingTimer);
                 timerSpan.style.display = 'none';
                 recordBtn.innerHTML = '<i class="fa-solid fa-microphone"></i> Record Audio';
                 recordBtn.classList.remove('recording');
             };
             
-            mediaRecorder.start(1000);
+            mediaRecorder.start();
             isRecording = true;
             recordingStartTime = Date.now();
             timerSpan.style.display = 'inline-block';
@@ -1162,10 +889,8 @@
             recordingTimer = setInterval(updateTimer, 1000);
             recordBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop Recording';
             recordBtn.classList.add('recording');
-            
         } catch (error) {
-            console.error('Error accessing microphone:', error);
-            alert('Unable to access microphone. Please check your permissions.');
+            alert('Unable to access microphone. Please check permissions.');
         }
     }
     
@@ -1177,41 +902,33 @@
     }
     
     function toggleRecording() {
-        if (isRecording) {
-            stopRecording();
-        } else {
-            startRecording();
-        }
+        if (isRecording) stopRecording();
+        else startRecording();
     }
     
-    if (recordBtn) {
-        recordBtn.addEventListener('click', toggleRecording);
-    }
+    if (recordBtn) recordBtn.addEventListener('click', toggleRecording);
     
     function createAudioPreview(audioUrl, blob) {
         const previewDiv = document.getElementById('media-preview');
-        
-        const existingPreview = document.getElementById('preview-audio');
-        if (existingPreview) {
-            existingPreview.remove();
-        }
+        const existing = document.getElementById('preview-audio');
+        if (existing) existing.remove();
         
         const previewContainer = document.createElement('div');
-        previewContainer.className = 'awaClass-media-preview';
+        previewContainer.className = 'media-preview';
         previewContainer.id = 'preview-audio';
         
         const playerContainer = document.createElement('div');
-        playerContainer.className = 'awaClass-audio-player';
+        playerContainer.className = 'audio-mini';
         
         const playBtn = document.createElement('button');
-        playBtn.className = 'awaClass-audio-play-btn';
+        playBtn.className = 'play-audio-btn';
         playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
         
         const waveformDiv = document.createElement('div');
-        waveformDiv.className = 'awaClass-audio-waveform';
+        waveformDiv.className = 'waveform-bars';
         
         const timeSpan = document.createElement('span');
-        timeSpan.className = 'awaClass-audio-time';
+        timeSpan.className = 'audio-time';
         timeSpan.textContent = '0:00';
         
         playerContainer.appendChild(playBtn);
@@ -1221,24 +938,16 @@
         
         for (let i = 0; i < 20; i++) {
             const bar = document.createElement('div');
-            bar.className = 'awaClass-wave-bar';
+            bar.className = 'wave-bar';
             bar.style.height = '4px';
             waveformDiv.appendChild(bar);
         }
         
         const removeBtn = document.createElement('button');
         removeBtn.innerHTML = '×';
-        removeBtn.className = 'awaClass-remove-media';
-        removeBtn.onclick = (e) => {
-            e.stopPropagation();
-            // Stop audio, cancel animation, revoke blob URL
-            previewAudio.pause();
-            previewAudio.src = '';
-            isPreviewPlaying = false;
-            if (previewAnimationId) {
-                cancelAnimationFrame(previewAnimationId);
-                previewAnimationId = null;
-            }
+        removeBtn.className = 'remove-media';
+        removeBtn.onclick = () => {
+            if (previewAudio) previewAudio.pause();
             URL.revokeObjectURL(audioUrl);
             previewContainer.remove();
             recordedAudioBlob = null;
@@ -1246,26 +955,20 @@
             if (audioInput) audioInput.value = '';
         };
         previewContainer.appendChild(removeBtn);
-        
         previewDiv.appendChild(previewContainer);
         
         const previewAudio = new Audio(audioUrl);
         let isPreviewPlaying = false;
         let previewAnimationId = null;
-        const previewWaveBars = waveformDiv.querySelectorAll('.awaClass-wave-bar');
+        const previewWaveBars = waveformDiv.querySelectorAll('.wave-bar');
         
-        function animatePreviewWaveform() {
+        function animatePreview() {
             if (isPreviewPlaying) {
-                previewWaveBars.forEach(bar => {
-                    const height = Math.sin(Date.now() / 200 + Math.random()) * 12 + 14;
-                    bar.style.height = Math.max(3, Math.min(30, height)) + 'px';
+                previewWaveBars.forEach((bar, idx) => {
+                    const height = Math.sin(Date.now() / 200 + idx * 0.3) * 10 + 14;
+                    bar.style.height = Math.max(4, Math.min(28, height)) + 'px';
                 });
-                previewAnimationId = requestAnimationFrame(animatePreviewWaveform);
-            } else {
-                previewWaveBars.forEach(bar => {
-                    const randomHeight = Math.floor(Math.random() * 12) + 3;
-                    bar.style.height = randomHeight + 'px';
-                });
+                previewAnimationId = requestAnimationFrame(animatePreview);
             }
         }
         
@@ -1274,22 +977,12 @@
                 previewAudio.pause();
                 isPreviewPlaying = false;
                 playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                if (previewAnimationId) cancelAnimationFrame(previewAnimationId);
             } else {
-                if (!previewAudio._audioCtx) {
-                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                    if (AudioContextClass) {
-                        previewAudio._audioCtx = new AudioContextClass();
-                        const source = previewAudio._audioCtx.createMediaElementSource(previewAudio);
-                        source.connect(previewAudio._audioCtx.destination);
-                    }
-                }
-                if (previewAudio._audioCtx && previewAudio._audioCtx.state === 'suspended') {
-                    previewAudio._audioCtx.resume();
-                }
                 previewAudio.play();
                 isPreviewPlaying = true;
                 playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                animatePreviewWaveform();
+                animatePreview();
             }
         });
         
@@ -1302,28 +995,10 @@
         previewAudio.addEventListener('ended', () => {
             isPreviewPlaying = false;
             playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-            if (previewAnimationId) {
-                cancelAnimationFrame(previewAnimationId);
-            }
+            if (previewAnimationId) cancelAnimationFrame(previewAnimationId);
         });
         
-        waveformDiv.addEventListener('click', (e) => {
-            const rect = waveformDiv.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const percentage = x / rect.width;
-            if (previewAudio.duration) {
-                previewAudio.currentTime = percentage * previewAudio.duration;
-            }
-        });
-        
-        // Set static wave bars on load — no animation until user presses play
-        previewWaveBars.forEach(bar => {
-            bar.style.height = (Math.floor(Math.random() * 12) + 3) + 'px';
-        });
-        
-        const blobMime = blob.type || 'audio/webm';
-        const ext = blobMime.includes('ogg') ? 'ogg' : 'webm';
-        const audioFile = new File([blob], `audio_recording_${Date.now()}.${ext}`, { type: blobMime });
+        const audioFile = new File([blob], `audio_${Date.now()}.webm`, { type: blob.type || 'audio/webm' });
         let audioInput = document.querySelector('input[name="audio"]');
         if (!audioInput) {
             audioInput = document.createElement('input');
@@ -1332,7 +1007,6 @@
             audioInput.style.display = 'none';
             document.getElementById('commentForm').appendChild(audioInput);
         }
-        
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(audioFile);
         audioInput.files = dataTransfer.files;
@@ -1342,51 +1016,36 @@
     // IMAGE PREVIEW
     // ============================================
     
-    let currentImageFile = null;
-    
     function previewMedia(input, type) {
         const previewDiv = document.getElementById('media-preview');
-        
         if (input.files && input.files[0]) {
             const file = input.files[0];
             const reader = new FileReader();
-            
             reader.onload = function(e) {
-                const existingPreview = document.getElementById(`preview-${type}`);
-                if (existingPreview) {
-                    existingPreview.remove();
-                }
+                const existing = document.getElementById(`preview-${type}`);
+                if (existing) existing.remove();
                 
                 const previewContainer = document.createElement('div');
-                previewContainer.className = 'awaClass-media-preview';
+                previewContainer.className = 'media-preview';
                 previewContainer.id = `preview-${type}`;
                 
-                if (type === 'image') {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'awaClass-preview-image';
-                    previewContainer.appendChild(img);
-                    currentImageFile = file;
-                }
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'preview-img';
+                previewContainer.appendChild(img);
                 
                 const removeBtn = document.createElement('button');
                 removeBtn.innerHTML = '×';
-                removeBtn.className = 'awaClass-remove-media';
-                removeBtn.onclick = function(e) {
-                    e.stopPropagation();
+                removeBtn.className = 'remove-media';
+                removeBtn.onclick = () => {
                     input.value = '';
                     previewContainer.remove();
-                    if (type === 'image') {
-                        currentImageFile = null;
-                        const imageInput = document.querySelector('input[name="image"]');
-                        if (imageInput) imageInput.value = '';
-                    }
+                    const imageInput = document.querySelector('input[name="image"]');
+                    if (imageInput) imageInput.value = '';
                 };
                 previewContainer.appendChild(removeBtn);
-                
                 previewDiv.appendChild(previewContainer);
             };
-            
             reader.readAsDataURL(file);
         }
     }
@@ -1400,27 +1059,21 @@
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'imageModal';
-            modal.className = 'awaClass-modal';
-            modal.innerHTML = `
-                <span class="awaClass-modal-close">&times;</span>
-                <img class="awaClass-modal-image" src="">
-            `;
+            modal.className = 'image-modal';
+            modal.innerHTML = `<span class="modal-close">&times;</span><img class="modal-img" src="">`;
             document.body.appendChild(modal);
-            
-            modal.onclick = function(e) {
-                if (e.target === modal || e.target.className === 'awaClass-modal-close') {
+            modal.onclick = (e) => {
+                if (e.target === modal || e.target.classList.contains('modal-close')) {
                     modal.classList.remove('active');
                 }
             };
         }
-        
-        const modalImg = modal.querySelector('img');
-        modalImg.src = imageSrc;
+        modal.querySelector('img').src = imageSrc;
         modal.classList.add('active');
     }
     
     // ============================================
-    // LIKE FUNCTIONS
+    // LIKE & RESOLVE FUNCTIONS
     // ============================================
     
     function likePost(postId) {
@@ -1437,7 +1090,6 @@
                 const likeBtn = document.querySelector('.like-btn');
                 const icon = likeBtn.querySelector('i');
                 const likeCount = document.getElementById('likeCount');
-                
                 if (data.liked) {
                     icon.className = 'fa-solid fa-heart';
                     likeBtn.classList.add('liked');
@@ -1445,7 +1097,6 @@
                     icon.className = 'fa-regular fa-heart';
                     likeBtn.classList.remove('liked');
                 }
-                
                 likeCount.textContent = data.total_likes;
             }
         })
@@ -1466,7 +1117,6 @@
                 const likeBtn = document.querySelector(`.comment-like-btn-${commentId}`);
                 const icon = likeBtn.querySelector('i');
                 const likeCountSpan = document.querySelector(`.comment-like-count-${commentId}`);
-                
                 if (data.liked) {
                     icon.className = 'fa-solid fa-heart';
                     likeBtn.classList.add('liked');
@@ -1474,7 +1124,6 @@
                     icon.className = 'fa-regular fa-heart';
                     likeBtn.classList.remove('liked');
                 }
-                
                 likeCountSpan.textContent = data.total_likes;
             }
         })
@@ -1491,16 +1140,14 @@
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                location.reload();
-            }
+            if (data.success) location.reload();
         })
         .catch(error => console.error('Error:', error));
     }
     
     function scrollToCommentForm() {
-        document.querySelector('.awaClass-comment-input').focus();
-        document.querySelector('.awaClass-comment-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.querySelector('.comment-textarea').focus();
+        document.querySelector('.comment-textarea').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     
     function escapeHtml(text) {
@@ -1511,7 +1158,7 @@
     }
     
     // ============================================
-    // FORM SUBMISSION
+    // FORM SUBMISSION (AJAX)
     // ============================================
     
     document.getElementById('commentForm').addEventListener('submit', function(e) {
@@ -1519,9 +1166,7 @@
         
         if (isRecording) {
             stopRecording();
-            setTimeout(() => {
-                submitForm();
-            }, 500);
+            setTimeout(() => submitForm(), 500);
         } else {
             submitForm();
         }
@@ -1529,8 +1174,8 @@
     
     function submitForm() {
         const submitBtn = document.getElementById('submitCommentBtn');
-        const originalBtnText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<span class="awaClass-loading"></span> Posting...';
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> Posting...';
         submitBtn.disabled = true;
         
         const formData = new FormData(document.getElementById('commentForm'));
@@ -1538,13 +1183,11 @@
         fetch(document.getElementById('commentForm').action, {
             method: 'POST',
             body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(response => response.json())
         .then(data => {
-            submitBtn.innerHTML = originalBtnText;
+            submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
             
             if (data.success) {
@@ -1554,32 +1197,22 @@
                 
                 let mediaHtml = '';
                 if (data.image_url) {
-                    mediaHtml += `<div class="awaClass-comment-media">
-                        <img src="${data.image_url}" alt="Comment image" class="awaClass-comment-image" onclick="openImageModal(this.src)">
-                    </div>`;
+                    mediaHtml += `<div class="comment-media"><img src="${data.image_url}" alt="Comment image" class="comment-image" onclick="openImageModal(this.src)"></div>`;
                 }
                 if (data.audio_url) {
-                    mediaHtml += `<div class="awaClass-comment-media">
-                        <div class="awaClass-audio-player" data-audio-url="${data.audio_url}">
-                            <button class="awaClass-audio-play-btn">
-                                <i class="fa-solid fa-play"></i>
-                            </button>
-                            <div class="awaClass-audio-waveform"></div>
-                            <span class="awaClass-audio-time">0:00</span>
-                        </div>
-                    </div>`;
+                    mediaHtml += `<div class="comment-media"><div class="audio-mini" data-audio-url="${data.audio_url}"><button class="play-audio-btn"><i class="fa-solid fa-play"></i></button><div class="waveform-bars"></div><span class="audio-time">0:00</span></div></div>`;
                 }
                 
                 const newComment = `
-                    <div class="awaClass-comment-item" id="comment-${data.comment_id}">
-                        <img src="${data.avatar_url}" alt="${data.username}" class="awaClass-comment-avatar-small">
-                        <div class="awaClass-comment-content">
-                            <div class="awaClass-comment-author">${escapeHtml(data.username)}</div>
-                            ${data.comment ? `<div class="awaClass-comment-text">${escapeHtml(data.comment).replace(/\n/g, '<br>')}</div>` : ''}
+                    <div class="comment-item" id="comment-${data.comment_id}">
+                        <img src="${data.avatar_url}" alt="${data.username}" class="comment-avatar-mini">
+                        <div class="comment-body">
+                            <div class="comment-author-name">${escapeHtml(data.username)}</div>
+                            ${data.comment ? `<div class="comment-text">${escapeHtml(data.comment).replace(/\n/g, '<br>')}</div>` : ''}
                             ${mediaHtml}
-                            <div class="awaClass-comment-meta">
+                            <div class="comment-meta-row">
                                 <span><i class="fa-regular fa-clock"></i> ${data.created_at}</span>
-                                <button class="awaClass-comment-like-btn comment-like-btn-${data.comment_id}" onclick="likeComment('${data.comment_id}')">
+                                <button class="comment-like-btn comment-like-btn-${data.comment_id}" onclick="likeComment('${data.comment_id}')">
                                     <i class="fa-regular fa-heart"></i>
                                     <span class="comment-like-count-${data.comment_id}">0</span> Likes
                                 </button>
@@ -1594,18 +1227,15 @@
                     commentsList.innerHTML = newComment;
                 }
                 
-                const newAudioPlayer = commentsList.querySelector('.awaClass-audio-player');
-                if (newAudioPlayer) {
-                    new CustomAudioPlayer(newAudioPlayer);
-                }
+                const newAudioPlayer = commentsList.querySelector('.audio-mini');
+                if (newAudioPlayer) new CustomAudioPlayer(newAudioPlayer);
                 
-                document.querySelector('.awaClass-comment-input').value = '';
+                document.querySelector('.comment-textarea').value = '';
+                document.getElementById('media-preview').innerHTML = '';
                 const imageInput = document.querySelector('input[name="image"]');
                 const audioInput = document.querySelector('input[name="audio"]');
                 if (imageInput) imageInput.value = '';
                 if (audioInput) audioInput.value = '';
-                document.getElementById('media-preview').innerHTML = '';
-                currentImageFile = null;
                 recordedAudioBlob = null;
                 
                 const commentCountHeader = document.getElementById('commentCountHeader');
@@ -1620,12 +1250,13 @@
         })
         .catch(error => {
             console.error('Error:', error);
-            submitBtn.innerHTML = originalBtnText;
+            submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
             alert('An error occurred. Please try again.');
         });
     }
     
+    // Initialize audio players on page load
     document.addEventListener('DOMContentLoaded', function() {
         initAudioPlayers();
     });

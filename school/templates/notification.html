@@ -257,7 +257,13 @@
 
         <!-- Avatar -->
         <div class="aw-notif-avatar-wrap">
-          {% if n.post and n.post.author.profile.get_picture_url %}
+          {% if n.class_post and n.class_post.author.profile.get_picture_url %}
+            <img
+              src="{{ n.class_post.author.profile.get_picture_url }}"
+              alt="{{ n.class_post.author.username }}"
+              class="aw-notif-avatar"
+              loading="lazy">
+          {% elif n.post and n.post.author.profile.get_picture_url %}
             <img
               src="{{ n.post.author.profile.get_picture_url }}"
               alt="{{ n.post.author.username }}"
@@ -271,7 +277,7 @@
           {% endif %}
 
           {# ── Type badge ── #}
-          {% if "comment" in n.message|lower %}
+          {% if "replied" in n.message|lower or "comment" in n.message|lower or "image" in n.message|lower or "audio" in n.message|lower %}
             <span class="aw-notif-type-badge type-comment"><i class="fas fa-comment"></i></span>
           {% elif "like" in n.message|lower %}
             <span class="aw-notif-type-badge type-like"><i class="fas fa-heart"></i></span>

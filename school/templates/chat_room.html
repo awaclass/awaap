@@ -10,26 +10,19 @@
     <title>awaClass | Discussion Room</title>
     <style>
         /* ============================================
-           CHAT ROOM STYLES — Enhanced Interactive
+           CLEAN DESIGN — NO SHADOWS, NO LEFT BORDERS
         ============================================ */
-        :root {
-            --awa-orange: #f97316;
-            --awa-orange-dark: #ea6c0a;
-            --awa-orange-light: #fff7ed;
-            --awa-border: #e5e5e5;
-            --awa-text: #0f0f0f;
-            --awa-text-mid: #404040;
-            --awa-text-light: #606060;
-            --awa-text-muted: #909090;
-            --awa-bg: #f8f9fa;
-            --awa-white: #ffffff;
-            --awa-radius: 16px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Subject colour palette (only Mathematics & Physics) */
-        --subj-mathematics: #3b82f6;
-        --subj-physics:     #8b5cf6;
-        --subj-general:     #9ca3af;
+        body {
+            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1a1a1a;
+        }
 
         .awaClass-chat-container {
             max-width: 1280px;
@@ -38,100 +31,44 @@
         }
 
         @media (min-width: 768px) {
-            .awaClass-chat-container { margin-left: 50px; padding: 40px 32px 100px; }
+            .awaClass-chat-container {
+                margin-left: 280px;
+            }
         }
 
-        /* ── Live Stats Bar ─────────────────────────────────────── */
-        .awa-stats-bar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        @media (max-width: 768px) {
+            .awaClass-chat-container {
+                padding: 20px 16px;
+            }
         }
 
-        .awa-stat-pill {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            background: var(--awa-white);
-            border-radius: 30px;
-            padding: 6px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--awa-text-mid);
-        }
-
-        .awa-stat-pill:hover { }
-
-        .awa-stat-pill i { color: var(--awa-orange); font-size: 12px; }
-
-        .awa-online-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 0 2px #dcfce7;
-            animation: pulse-green 2s infinite;
-        }
-
-        @keyframes pulse-green {
-            0%, 100% { box-shadow: 0 0 0 2px #dcfce7; }
-            50%       { box-shadow: 0 0 0 4px #bbf7d0; }
-        }
-
-        /* ── New-Posts Banner ─────────────────────────────────────── */
-        .awa-new-posts-banner {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: var(--awa-orange);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 16px;
-            animation: slide-down .3s ease;
-            border: none;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .awa-new-posts-banner.visible { display: flex; }
-
-        @keyframes slide-down {
-            from { transform: translateY(-20px); opacity: 0; }
-            to   { transform: translateY(0);     opacity: 1; }
-        }
-
-        /* ── Header ────────────────────────────────────────────── */
+        /* Header */
         .awaClass-chat-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             padding-bottom: 16px;
+            border-bottom: 1px solid #eef2f6;
         }
 
         .awaClass-chat-title h1 {
             font-size: 24px;
             font-weight: 700;
             margin: 0 0 4px;
-            color: var(--awa-text);
+            color: #111827;
         }
 
         .awaClass-chat-title p {
             font-size: 14px;
-            color: var(--awa-text-light);
+            color: #6b7a8f;
             margin: 0;
         }
 
         .awaClass-new-post-btn {
-            background: var(--awa-orange);
+            background: #e85d04;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -142,15 +79,37 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: background .2s, transform .1s;
         }
 
         .awaClass-new-post-btn:hover {
-            background: var(--awa-orange-dark);
-            transform: scale(1.02);
+            background: #cc5503;
         }
 
-        /* ── Search + Sort Bar ─────────────────────────────────── */
+        /* New Posts Banner */
+        .awa-new-posts-banner {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #e85d04;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            border: none;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .awa-new-posts-banner.visible {
+            display: flex;
+        }
+
+        /* Search + Sort Bar */
         .awa-control-bar {
             display: flex;
             flex-wrap: wrap;
@@ -170,23 +129,22 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--awa-text-muted);
+            color: #9ca3af;
             font-size: 13px;
-            pointer-events: none;
         }
 
         .awa-search-input {
             width: 100%;
             padding: 9px 12px 9px 34px;
-            border: none;
+            border: 1px solid #dce3ec;
             border-radius: 30px;
             font-size: 13px;
-            background: var(--awa-white);
-            box-sizing: border-box;
+            background: white;
         }
 
         .awa-search-input:focus {
             outline: none;
+            border-color: #e85d04;
         }
 
         .awa-sort-tabs {
@@ -197,31 +155,31 @@
 
         .awa-sort-tab {
             padding: 7px 14px;
-            border: none;
+            border: 1px solid #dce3ec;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            background: var(--awa-white);
-            color: var(--awa-text-light);
-            transition: all .15s;
-            white-space: nowrap;
+            background: white;
+            color: #5b6e8c;
         }
 
         .awa-sort-tab.active,
         .awa-sort-tab:hover {
-            background: var(--awa-orange);
+            background: #e85d04;
+            border-color: #e85d04;
             color: white;
         }
 
-        /* ── Filter Bar ────────────────────────────────────────── */
+        /* Filter Bar */
         .awaClass-filter-bar {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
             padding: 10px 14px;
-            background: var(--awa-bg);
+            background: #f8fafc;
+            border: 1px solid #eef2f6;
             border-radius: 12px;
             align-items: center;
         }
@@ -229,12 +187,10 @@
         .awaClass-filter-label {
             font-size: 12px;
             font-weight: 700;
-            color: var(--awa-text-light);
+            color: #5b6e8c;
             text-transform: uppercase;
-            letter-spacing: .4px;
         }
 
-        /* Subject filter chips */
         .awa-subject-chips {
             display: flex;
             gap: 6px;
@@ -248,66 +204,53 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            border: none;
-            background: var(--awa-white);
-            color: var(--awa-text-light);
-            transition: all .15s;
+            border: 1px solid #dce3ec;
+            background: white;
+            color: #5b6e8c;
         }
 
-        .awa-chip:hover  { color: var(--awa-orange); }
-        .awa-chip.active { background: var(--awa-orange); color: white; }
+        .awa-chip:hover {
+            border-color: #e85d04;
+            color: #e85d04;
+        }
+
+        .awa-chip.active {
+            background: #e85d04;
+            border-color: #e85d04;
+            color: white;
+        }
 
         .awaClass-filter-select {
             padding: 6px 12px;
-            border: none;
+            border: 1px solid #dce3ec;
             border-radius: 20px;
-            background: var(--awa-white);
+            background: white;
             font-size: 13px;
             cursor: pointer;
         }
 
-        .awaClass-filter-select:focus { outline: none; }
-
         .awaClass-filter-clear {
-            color: var(--awa-orange);
+            color: #e85d04;
             text-decoration: none;
             font-size: 13px;
             margin-left: auto;
             white-space: nowrap;
         }
 
-        /* ── Posts Grid ────────────────────────────────────────── */
+        /* Posts Grid */
         .awaClass-posts-grid {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        /* ── Post Card ─────────────────────────────────────────── */
+        /* Post Card — NO left border stripe */
         .awaClass-post-card {
-            background: var(--awa-white);
-            border-radius: var(--awa-radius);
+            background: white;
+            border: 1px solid #e6edf4;
+            border-radius: 12px;
             overflow: hidden;
-            transition: transform .2s;
-            position: relative;
         }
-
-        .awaClass-post-card:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Subject accent stripe */
-        .awaClass-post-card::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            border-radius: 4px 0 0 4px;
-        }
-
-        .awaClass-post-card[data-subject="Mathematics"]::before { background: #3b82f6; }
-        .awaClass-post-card[data-subject="Physics"]::before     { background: #8b5cf6; }
-        .awaClass-post-card[data-subject="General"]::before     { background: #9ca3af; }
 
         .awaClass-post-resolved-badge {
             display: inline-flex;
@@ -320,8 +263,15 @@
             margin-left: 8px;
         }
 
-        .badge-resolved   { background: #d1fae5; color: #065f46; }
-        .badge-unresolved { background: #fee2e2; color: #991b1b; }
+        .badge-resolved {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-unresolved {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
 
         .awaClass-post-header {
             padding: 14px 16px 8px 20px;
@@ -331,18 +281,23 @@
         }
 
         .awaClass-post-avatar {
-            width: 38px; height: 38px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
+            border: 1px solid #e2e8f0;
             flex-shrink: 0;
         }
 
-        .awaClass-post-meta { flex: 1; min-width: 0; }
+        .awaClass-post-meta {
+            flex: 1;
+            min-width: 0;
+        }
 
         .awaClass-post-author {
             font-weight: 600;
             font-size: 14px;
-            color: var(--awa-text);
+            color: #1e293b;
             margin: 0 0 2px;
             white-space: nowrap;
             overflow: hidden;
@@ -351,7 +306,7 @@
 
         .awaClass-post-time {
             font-size: 12px;
-            color: var(--awa-text-muted);
+            color: #7c8b9f;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -367,35 +322,34 @@
             padding: 2px 8px;
             border-radius: 10px;
             text-transform: uppercase;
-            letter-spacing: .3px;
         }
 
-        .subj-color-Mathematics { background:#dbeafe; color:#1d4ed8; }
-        .subj-color-Physics     { background:#ede9fe; color:#6d28d9; }
-        .subj-color-General     { background:#f3f4f6; color:#374151; }
+        .subj-color-Mathematics { background: #dbeafe; color: #1d4ed8; }
+        .subj-color-Physics     { background: #ede9fe; color: #6d28d9; }
+        .subj-color-General     { background: #f3f4f6; color: #374151; }
 
         .awaClass-post-title {
             padding: 0 16px 0 20px;
             margin: 0 0 6px;
             font-size: 17px;
             font-weight: 700;
-            color: var(--awa-text);
+            color: #111827;
             line-height: 1.35;
         }
 
         .awaClass-post-title a {
             text-decoration: none;
             color: inherit;
-            transition: color .15s;
         }
 
-        .awaClass-post-title a:hover { color: var(--awa-orange); }
+        .awaClass-post-title a:hover {
+            color: #e85d04;
+        }
 
-        /* Collapsed post body — click to expand */
         .awaClass-post-content {
             padding: 0 16px 10px 20px;
             font-size: 14px;
-            color: var(--awa-text-mid);
+            color: #4a5a72;
             line-height: 1.55;
         }
 
@@ -406,12 +360,14 @@
             overflow: hidden;
         }
 
-        .awa-content-clamp.expanded { -webkit-line-clamp: unset; }
+        .awa-content-clamp.expanded {
+            -webkit-line-clamp: unset;
+        }
 
         .awa-expand-btn {
             background: none;
             border: none;
-            color: var(--awa-orange);
+            color: #e85d04;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -425,19 +381,19 @@
             border-radius: 10px;
             margin: 6px 0 6px 20px;
             cursor: pointer;
-            object-fit: cover;
-            transition: opacity .15s;
+            border: 1px solid #e9edf2;
         }
-
-        .awaClass-post-image:hover { opacity: .9; }
 
         .awaClass-post-stats {
             padding: 10px 16px 10px 20px;
             display: flex;
             gap: 18px;
             font-size: 12px;
-            color: var(--awa-text-light);
+            color: #7c8b9f;
             align-items: center;
+            border-top: 1px solid #eef2f6;
+            border-bottom: 1px solid #eef2f6;
+            background: #fafcff;
         }
 
         .awaClass-post-stats span {
@@ -446,12 +402,12 @@
             gap: 5px;
         }
 
-        /* ── Actions Row ────────────────────────────────────────── */
+        /* Actions Row */
         .awaClass-post-actions {
             padding: 8px 12px 8px 16px;
             display: flex;
             gap: 6px;
-            background: #fafafa;
+            background: #fefefe;
             flex-wrap: wrap;
         }
 
@@ -460,85 +416,93 @@
             border: none;
             cursor: pointer;
             font-size: 13px;
-            color: var(--awa-text-light);
+            color: #7c8b9f;
             display: flex;
             align-items: center;
             gap: 5px;
             padding: 6px 12px;
             border-radius: 20px;
-            transition: background .15s, color .15s;
             text-decoration: none;
         }
 
-        .awaClass-action-btn:hover { background: #ececec; color: var(--awa-text); }
-        .awaClass-action-btn.liked { color: var(--awa-orange); }
-        .awaClass-action-btn.liked i { animation: heart-pop .3s ease; }
-
-        @keyframes heart-pop {
-            0%   { transform: scale(1); }
-            50%  { transform: scale(1.5); }
-            100% { transform: scale(1); }
+        .awaClass-action-btn:hover {
+            background: #f0f4f9;
+            color: #1e293b;
         }
 
-        /* ── Image Lightbox ─────────────────────────────────────── */
+        .awaClass-action-btn.liked {
+            color: #e85d04;
+        }
+
+        /* Lightbox */
         .awa-lightbox {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.88);
+            background: rgba(0, 0, 0, 0.92);
             z-index: 2000;
             align-items: center;
             justify-content: center;
         }
 
-        .awa-lightbox.active { display: flex; }
+        .awa-lightbox.active {
+            display: flex;
+        }
 
         .awa-lightbox img {
             max-width: 92vw;
             max-height: 90vh;
             border-radius: 10px;
-            object-fit: contain;
         }
 
         .awa-lightbox-close {
             position: absolute;
-            top: 18px; right: 22px;
-            background: rgba(255,255,255,.15);
+            top: 18px;
+            right: 22px;
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: white;
             font-size: 22px;
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        /* ── Empty State ────────────────────────────────────────── */
+        /* Empty State */
         .awaClass-empty {
             text-align: center;
             padding: 60px 20px;
-            color: var(--awa-text-muted);
+            color: #7c8b9f;
+            border: 1px solid #eef2f6;
+            border-radius: 12px;
+            background: #fefefe;
         }
 
-        .awaClass-empty i { font-size: 48px; margin-bottom: 16px; display: block; }
+        .awaClass-empty i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
 
-        /* ── Modal Styles ───────────────────────────────────────── */
+        /* Modal */
         .awaClass-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
 
-        .awaClass-modal.active { display: flex; }
+        .awaClass-modal.active {
+            display: flex;
+        }
 
         .awaClass-modal-content {
-            background: var(--awa-white);
+            background: white;
+            border: 1px solid #eef2f6;
             border-radius: 20px;
             max-width: 600px;
             width: 90%;
@@ -551,31 +515,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #eef2f6;
         }
 
-        .awaClass-modal-header h3 { margin: 0; font-size: 18px; }
+        .awaClass-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
 
         .awaClass-modal-close {
             background: none;
             border: none;
             font-size: 22px;
             cursor: pointer;
-            color: var(--awa-text-muted);
-            width: 32px; height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #9ca3af;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            transition: background .15s;
         }
 
-        .awaClass-modal-close:hover { background: #f0f0f0; }
+        .awaClass-modal-close:hover {
+            background: #f0f0f0;
+        }
 
-        .awaClass-modal-body { padding: 20px; }
+        .awaClass-modal-body {
+            padding: 20px;
+        }
 
-        /* Writing tips box */
         .awa-tips-box {
             background: #fff7ed;
+            border: 1px solid #fed7aa;
             border-radius: 10px;
             padding: 10px 14px;
             font-size: 12px;
@@ -584,16 +553,20 @@
             line-height: 1.6;
         }
 
-        .awa-tips-box strong { color: var(--awa-orange); }
+        .awa-tips-box strong {
+            color: #e85d04;
+        }
 
-        .awaClass-form-group { margin-bottom: 16px; }
+        .awaClass-form-group {
+            margin-bottom: 16px;
+        }
 
         .awaClass-form-group label {
             display: block;
             margin-bottom: 6px;
             font-weight: 600;
             font-size: 13px;
-            color: var(--awa-text-mid);
+            color: #4a5a72;
         }
 
         .awaClass-form-group input,
@@ -601,11 +574,10 @@
         .awaClass-form-group select {
             width: 100%;
             padding: 10px 12px;
-            border: none;
+            border: 1px solid #dce3ec;
             border-radius: 10px;
             font-size: 14px;
-            box-sizing: border-box;
-            background: var(--awa-bg);
+            background: white;
             font-family: inherit;
         }
 
@@ -613,6 +585,7 @@
         .awaClass-form-group textarea:focus,
         .awaClass-form-group select:focus {
             outline: none;
+            border-color: #e85d04;
         }
 
         .awaClass-form-group textarea {
@@ -620,15 +593,16 @@
             min-height: 110px;
         }
 
-        /* Char counter */
         .awa-char-counter {
             font-size: 11px;
-            color: var(--awa-text-muted);
+            color: #9ca3af;
             text-align: right;
             margin-top: 4px;
         }
 
-        .awa-char-counter.warn { color: #ef4444; }
+        .awa-char-counter.warn {
+            color: #ef4444;
+        }
 
         .awaClass-image-preview {
             max-width: 100%;
@@ -636,7 +610,7 @@
             margin-top: 8px;
             border-radius: 8px;
             display: none;
-            object-fit: cover;
+            border: 1px solid #eef2f6;
         }
 
         .awaClass-modal-footer {
@@ -644,10 +618,11 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
+            border-top: 1px solid #eef2f6;
         }
 
         .awaClass-btn-primary {
-            background: var(--awa-orange);
+            background: #e85d04;
             color: white;
             border: none;
             padding: 10px 24px;
@@ -655,47 +630,59 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 14px;
-            transition: background .15s;
         }
 
-        .awaClass-btn-primary:hover { background: var(--awa-orange-dark); }
-        .awaClass-btn-primary:disabled { opacity: .6; cursor: default; }
+        .awaClass-btn-primary:hover {
+            background: #cc5503;
+        }
+
+        .awaClass-btn-primary:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
 
         .awaClass-btn-secondary {
             background: #f0f0f0;
-            color: var(--awa-text-light);
-            border: none;
+            color: #5b6e8c;
+            border: 1px solid #dce3ec;
             padding: 10px 20px;
             border-radius: 30px;
             cursor: pointer;
             font-size: 14px;
         }
 
-        /* ── No results state ───────────────────────────────────── */
+        /* No results */
         .awa-no-results {
             text-align: center;
             padding: 40px 20px;
-            color: var(--awa-text-muted);
+            color: #7c8b9f;
             display: none;
         }
 
-        .awa-no-results i { font-size: 36px; margin-bottom: 12px; display: block; }
+        .awa-no-results i {
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
+        }
 
-        /* ── Mobile ─────────────────────────────────────────────── */
         @media (max-width: 640px) {
-            .awaClass-chat-container { padding: 24px 16px 100px; }
-            .awaClass-chat-header { flex-direction: column; align-items: stretch; }
-            .awaClass-new-post-btn { justify-content: center; }
-            .awa-sort-tabs { overflow-x: auto; padding-bottom: 4px; }
-            .awa-sort-tab { font-size: 11px; padding: 6px 11px; }
-            .awaClass-post-title { font-size: 15px; padding: 0 16px; }
-            .awa-stats-bar { gap: 8px; }
-            .awa-stat-pill { font-size: 12px; padding: 5px 10px; }
-            .awaClass-post-header { padding: 16px 16px 10px 16px; }
-            .awaClass-post-content { padding: 0 16px 10px; }
-            .awa-expand-btn { padding: 0 0 8px 16px; }
-            .awaClass-post-stats { padding: 10px 16px; }
-            .awaClass-post-actions { padding: 8px 12px; }
+            .awaClass-chat-container {
+                padding: 20px 16px;
+            }
+            .awaClass-chat-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .awaClass-new-post-btn {
+                justify-content: center;
+            }
+            .awa-sort-tabs {
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+            .awaClass-post-title {
+                font-size: 15px;
+            }
         }
     </style>
 </head>
@@ -705,27 +692,7 @@
 
 <div class="awaClass-chat-container">
 
-    <!-- ── Stats Bar ────────────────────────────────────────────── -->
-    <div class="awa-stats-bar">
-        <div class="awa-stat-pill">
-            <i class="fa-solid fa-layer-group"></i>
-            <span id="statTotal">{{ posts.count }} posts</span>
-        </div>
-        <div class="awa-stat-pill">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>{{ resolved_count|default:0 }} resolved</span>
-        </div>
-        <div class="awa-stat-pill">
-            <i class="fa-solid fa-fire"></i>
-            <span>{{ active_today|default:0 }} active today</span>
-        </div>
-        <div class="awa-stat-pill">
-            <div class="awa-online-dot"></div>
-            <span id="onlineCount">Students online</span>
-        </div>
-    </div>
-
-    <!-- ── Page Header ──────────────────────────────────────────── -->
+    <!-- Page Header (Stats bar removed) -->
     <div class="awaClass-chat-header">
         <div class="awaClass-chat-title">
             <h1><i class="fa-regular fa-comments"></i> Discussion Room</h1>
@@ -736,56 +703,43 @@
         </button>
     </div>
 
-    <!-- ── New Posts Banner (auto-poll) ─────────────────────────── -->
+    <!-- New Posts Banner -->
     <button class="awa-new-posts-banner" id="newPostsBanner" onclick="refreshPosts()">
         <i class="fa-solid fa-arrow-up"></i>
         <span id="newPostsBannerText">New posts available — tap to refresh</span>
     </button>
 
-    <!-- ── Search + Sort ─────────────────────────────────────────── -->
+    <!-- Search + Sort -->
     <div class="awa-control-bar">
         <div class="awa-search-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input
-                type="text"
-                class="awa-search-input"
-                id="liveSearch"
-                placeholder="Search questions…"
-                autocomplete="off"
-                oninput="liveSearchPosts(this.value)"
-            >
+            <input type="text" class="awa-search-input" id="liveSearch" placeholder="Search questions…" autocomplete="off" oninput="liveSearchPosts(this.value)">
         </div>
         <div class="awa-sort-tabs">
-            <button class="awa-sort-tab {% if not current_sort or current_sort == 'latest' %}active{% endif %}"
-                    onclick="setSort('latest')">
+            <button class="awa-sort-tab {% if not current_sort or current_sort == 'latest' %}active{% endif %}" onclick="setSort('latest')">
                 <i class="fa-regular fa-clock"></i> Latest
             </button>
-            <button class="awa-sort-tab {% if current_sort == 'popular' %}active{% endif %}"
-                    onclick="setSort('popular')">
+            <button class="awa-sort-tab {% if current_sort == 'popular' %}active{% endif %}" onclick="setSort('popular')">
                 <i class="fa-solid fa-fire"></i> Popular
             </button>
-            <button class="awa-sort-tab {% if current_sort == 'unanswered' %}active{% endif %}"
-                    onclick="setSort('unanswered')">
+            <button class="awa-sort-tab {% if current_sort == 'unanswered' %}active{% endif %}" onclick="setSort('unanswered')">
                 <i class="fa-regular fa-question-circle"></i> Unanswered
             </button>
         </div>
     </div>
 
-    <!-- ── Filter Bar ────────────────────────────────────────────── -->
+    <!-- Filter Bar -->
     <div class="awaClass-filter-bar">
         <span class="awaClass-filter-label">Subject:</span>
         <div class="awa-subject-chips">
-            <button class="awa-chip {% if not current_subject %}active{% endif %}"
-                    onclick="setSubject('')">All</button>
-            <button class="awa-chip {% if current_subject == 'Mathematics' %}active{% endif %}"
-                    onclick="setSubject('Mathematics')">Mathematics</button>
-            <button class="awa-chip {% if current_subject == 'Physics' %}active{% endif %}"
-                    onclick="setSubject('Physics')">Physics</button>
+            <button class="awa-chip {% if not current_subject %}active{% endif %}" onclick="setSubject('')">All</button>
+            <button class="awa-chip {% if current_subject == 'Mathematics' %}active{% endif %}" onclick="setSubject('Mathematics')">Mathematics</button>
+            <button class="awa-chip {% if current_subject == 'Physics' %}active{% endif %}" onclick="setSubject('Physics')">Physics</button>
         </div>
         <select class="awaClass-filter-select" id="statusFilter" onchange="applyFilters()">
             <option value="">All Status</option>
             <option value="unresolved" {% if current_status == 'unresolved' %}selected{% endif %}>Unresolved</option>
-            <option value="resolved"   {% if current_status == 'resolved'   %}selected{% endif %}>Resolved</option>
+            <option value="resolved"   {% if current_status == 'resolved' %}selected{% endif %}>Resolved</option>
         </select>
         {% if current_subject or current_status %}
         <a href="{% url 'chat_room' %}" class="awaClass-filter-clear">
@@ -794,7 +748,7 @@
         {% endif %}
     </div>
 
-    <!-- ── Posts Grid ─────────────────────────────────────────────── -->
+    <!-- Posts Grid -->
     <div class="awaClass-posts-grid" id="postsGrid">
         {% for post in posts %}
         <div class="awaClass-post-card"
@@ -804,7 +758,6 @@
              data-replies="{{ post.total_comments }}"
              data-post-id="{{ post.post_id }}">
 
-            <!-- Header -->
             <div class="awaClass-post-header">
                 <img src="{{ post.author.profile.get_picture_url }}" alt="{{ post.author.username }}" class="awaClass-post-avatar">
                 <div class="awaClass-post-meta">
@@ -827,42 +780,34 @@
                 </div>
             </div>
 
-            <!-- Title -->
             <div class="awaClass-post-title">
                 <a href="{% url 'chat_post_detail' post.post_id %}">{{ post.title }}</a>
             </div>
 
-            <!-- Content (collapsible) -->
             <div class="awaClass-post-content">
                 <div class="awa-content-clamp" id="content-{{ post.post_id }}">{{ post.content }}</div>
             </div>
-            <button class="awa-expand-btn" id="expand-btn-{{ post.post_id }}"
-                    onclick="toggleExpand('{{ post.post_id }}')">
+            <button class="awa-expand-btn" id="expand-btn-{{ post.post_id }}" onclick="toggleExpand('{{ post.post_id }}')">
                 Show more <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>
             </button>
 
             {% if post.image %}
             <div>
-                <img src="{{ post.get_image_url }}"
-                     alt="Question image"
-                     class="awaClass-post-image"
-                     onclick="openLightbox(this.src)">
+                <img src="{{ post.get_image_url }}" alt="Question image" class="awaClass-post-image" onclick="openLightbox(this.src)">
             </div>
             {% endif %}
 
-            <!-- Stats -->
             <div class="awaClass-post-stats">
                 <span><i class="fa-regular fa-heart"></i> <b class="like-count-{{ post.post_id }}">{{ post.total_likes }}</b></span>
                 <span><i class="fa-regular fa-comment"></i> {{ post.total_comments }} repl{{ post.total_comments|pluralize:"y,ies" }}</span>
                 <span><i class="fa-regular fa-eye"></i> {{ post.view }}</span>
                 {% if post.last_activity != post.created_at %}
-                <span style="margin-left:auto; font-size:11px; color:#bbb;">
+                <span style="margin-left:auto; font-size:11px; color:#a0aec0;">
                     last reply {{ post.last_activity|timesince }} ago
                 </span>
                 {% endif %}
             </div>
 
-            <!-- Actions -->
             <div class="awaClass-post-actions">
                 <a href="{% url 'chat_post_detail' post.post_id %}" class="awaClass-action-btn">
                     <i class="fa-regular fa-comment-dots"></i> View Thread
@@ -885,7 +830,6 @@
         {% endfor %}
     </div>
 
-    <!-- No-results placeholder for live search -->
     <div class="awa-no-results" id="noResults">
         <i class="fa-regular fa-face-frown-open"></i>
         <p>No questions match your search.</p>
@@ -895,7 +839,7 @@
     </div>
 </div>
 
-<!-- ── New Post Modal ────────────────────────────────────────────── -->
+<!-- New Post Modal -->
 <div id="newPostModal" class="awaClass-modal">
     <div class="awaClass-modal-content">
         <div class="awaClass-modal-header">
@@ -912,9 +856,7 @@
                 </div>
                 <div class="awaClass-form-group">
                     <label>Question Title <span style="color:red;">*</span></label>
-                    <input type="text" name="title" id="postTitle" maxlength="300"
-                           placeholder="e.g. How do I solve quadratic equations using the formula?"
-                           required oninput="updateCounter('titleCounter', this.value.length, 300)">
+                    <input type="text" name="title" id="postTitle" maxlength="300" placeholder="e.g. How do I solve quadratic equations using the formula?" required oninput="updateCounter('titleCounter', this.value.length, 300)">
                     <div class="awa-char-counter" id="titleCounter">0 / 300</div>
                 </div>
                 <div class="awaClass-form-group">
@@ -927,9 +869,7 @@
                 </div>
                 <div class="awaClass-form-group">
                     <label>Question Details <span style="color:red;">*</span></label>
-                    <textarea name="content" id="postContent" maxlength="5000"
-                              placeholder="Describe what you're struggling with, what you've tried so far, and any relevant context…"
-                              required oninput="updateCounter('contentCounter', this.value.length, 5000)"></textarea>
+                    <textarea name="content" id="postContent" maxlength="5000" placeholder="Describe what you're struggling with, what you've tried so far, and any relevant context…" required oninput="updateCounter('contentCounter', this.value.length, 5000)"></textarea>
                     <div class="awa-char-counter" id="contentCounter">0 / 5000</div>
                 </div>
                 <div class="awaClass-form-group">
@@ -948,7 +888,7 @@
     </div>
 </div>
 
-<!-- ── Image Lightbox ─────────────────────────────────────────────── -->
+<!-- Lightbox -->
 <div id="lightbox" class="awa-lightbox" onclick="closeLightbox()">
     <button class="awa-lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
     <img id="lightboxImg" src="" alt="">
@@ -957,7 +897,6 @@
 <script>
     const CSRF = getCookie('csrftoken');
 
-    // ── CSRF Helper ────────────────────────────────────────────────
     function getCookie(name) {
         let v = null;
         if (document.cookie) {
@@ -969,7 +908,6 @@
         return v;
     }
 
-    // ── Modal ──────────────────────────────────────────────────────
     function openNewPostModal() {
         document.getElementById('newPostModal').classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -985,7 +923,6 @@
         if (e.target === this) closeNewPostModal();
     });
 
-    // ── Image preview ──────────────────────────────────────────────
     function previewImage(input) {
         const preview = document.getElementById('imagePreview');
         if (input.files && input.files[0]) {
@@ -997,21 +934,18 @@
         }
     }
 
-    // ── Char counters ──────────────────────────────────────────────
     function updateCounter(id, len, max) {
         const el = document.getElementById(id);
         el.textContent = `${len} / ${max}`;
         el.classList.toggle('warn', len > max * 0.9);
     }
 
-    // ── Sort ───────────────────────────────────────────────────────
     function setSort(sort) {
         const url = new URL(window.location.href);
         url.searchParams.set('sort', sort);
         window.location.href = url.toString();
     }
 
-    // ── Subject chip filter ────────────────────────────────────────
     function setSubject(subject) {
         const url = new URL(window.location.href);
         if (subject) url.searchParams.set('subject', subject);
@@ -1019,26 +953,24 @@
         window.location.href = url.toString();
     }
 
-    // ── Status filter ──────────────────────────────────────────────
     function applyFilters() {
         const status = document.getElementById('statusFilter').value;
-        const url    = new URL(window.location.href);
+        const url = new URL(window.location.href);
         if (status) url.searchParams.set('status', status);
         else url.searchParams.delete('status');
         window.location.href = url.toString();
     }
 
-    // ── Live Search (client-side) ──────────────────────────────────
     function liveSearchPosts(query) {
-        const q     = query.trim().toLowerCase();
+        const q = query.trim().toLowerCase();
         const cards = document.querySelectorAll('.awaClass-post-card');
         let visible = 0;
 
         cards.forEach(card => {
-            const title   = card.dataset.title   || '';
+            const title = card.dataset.title || '';
             const content = card.dataset.content || '';
             const subject = card.dataset.subject || '';
-            const match   = !q || title.includes(q) || content.includes(q) || subject.toLowerCase().includes(q);
+            const match = !q || title.includes(q) || content.includes(q) || subject.toLowerCase().includes(q);
             card.style.display = match ? '' : 'none';
             if (match) visible++;
         });
@@ -1046,27 +978,24 @@
         document.getElementById('noResults').style.display = (visible === 0 && q) ? 'block' : 'none';
     }
 
-    // ── Expand/collapse post content ───────────────────────────────
     function toggleExpand(postId) {
         const clamp = document.getElementById(`content-${postId}`);
-        const btn   = document.getElementById(`expand-btn-${postId}`);
+        const btn = document.getElementById(`expand-btn-${postId}`);
         if (!clamp) return;
         const expanded = clamp.classList.toggle('expanded');
-        btn.innerHTML  = expanded
+        btn.innerHTML = expanded
             ? 'Show less <i class="fa-solid fa-chevron-up" style="font-size:10px;"></i>'
             : 'Show more <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i>';
     }
 
-    // Hide expand button if content isn't clamped
     document.querySelectorAll('.awa-content-clamp').forEach(el => {
         if (el.scrollHeight <= el.clientHeight + 4) {
             const postId = el.id.replace('content-', '');
-            const btn    = document.getElementById(`expand-btn-${postId}`);
+            const btn = document.getElementById(`expand-btn-${postId}`);
             if (btn) btn.style.display = 'none';
         }
     });
 
-    // ── Like post ──────────────────────────────────────────────────
     function likePost(postId, btn) {
         fetch(`/chat/post/${postId}/like/`, {
             method: 'POST',
@@ -1090,7 +1019,6 @@
         .catch(console.error);
     }
 
-    // ── Lightbox ───────────────────────────────────────────────────
     function openLightbox(src) {
         document.getElementById('lightboxImg').src = src;
         document.getElementById('lightbox').classList.add('active');
@@ -1109,12 +1037,11 @@
         }
     });
 
-    // ── Form submit (AJAX with file support) ───────────────────────
     document.getElementById('newPostForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('postSubmitBtn');
-        btn.disabled    = true;
-        btn.innerHTML   = '<i class="fa-solid fa-spinner fa-spin"></i> Posting…';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Posting…';
 
         fetch(this.action, {
             method: 'POST',
@@ -1132,33 +1059,9 @@
         .catch(() => this.submit());
     });
 
-    // ── New-posts polling (every 60s) ──────────────────────────────
-    let lastChecked = Date.now();
-    let knownCount  = {{ posts.count }};
-
-    function checkForNewPosts() {
-        const url = new URL(window.location.href);
-        fetch(`{% url 'chat_room' %}?_count=1&subject=${url.searchParams.get('subject') || ''}&status=${url.searchParams.get('status') || ''}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.count && data.count > knownCount) {
-                const diff  = data.count - knownCount;
-                const banner = document.getElementById('newPostsBanner');
-                document.getElementById('newPostsBannerText').textContent =
-                    `${diff} new question${diff > 1 ? 's' : ''} — tap to refresh`;
-                banner.classList.add('visible');
-            }
-        })
-        .catch(() => {});
-    }
+    let knownCount = {{ posts.count }};
 
     function refreshPosts() { window.location.reload(); }
-
-    // Poll every 60 seconds
-    setInterval(checkForNewPosts, 60000);
-
 </script>
 
 {% include 'footer.html' %}

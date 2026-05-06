@@ -427,8 +427,11 @@ def open_notify(request, pk):
     notification          = get_object_or_404(Notification, pk=pk, user=request.user)
     notification.is_read  = True
     notification.save()
+    if notification.class_post:
+        return redirect('chat_post_detail', post_id=notification.class_post.post_id)
     if notification.post:
         return redirect('post_detail', post_id=notification.post.post_id)
+    return redirect('notifications')
 
 
 def comment_like(request, comment_id):
@@ -1022,6 +1025,7 @@ def chat_post_comment(request, post_id):
 
             Notification.objects.create(
                 user=post.author,
+                class_post=post,
                 message=notification_message
             )
 
@@ -1063,6 +1067,7 @@ def chat_post_like(request, post_id):
         if post.author != request.user:
             Notification.objects.create(
                 user=post.author,
+                class_post=post,
                 message=f'{request.user.username} liked your question "{post.title[:50]}"'
             )
 
