@@ -70,11 +70,7 @@ def register(request):
 
 @require_POST
 def register_with_picture(request):
-    """
-    AJAX endpoint called by the profile-picture modal on the register page.
-    Accepts all registration fields + an optional 'profile_picture' file.
-    Returns JSON { success, redirect } or { success: false, error }.
-    """
+   
     username  = request.POST.get('username', '').strip()
     email     = request.POST.get('email', '').strip()
     fname     = request.POST.get('fname', '').strip()
@@ -119,10 +115,6 @@ def register_with_picture(request):
 
 
 def _get_student_level(points):
-    """
-    Returns (level_name, level_number) for a given points total.
-    Thresholds: Beginner → Bronze → Silver → Gold → Platinum → Champion
-    """
     if points >= 2000:
         return ('Champion', 6)
     elif points >= 1000:
@@ -138,7 +130,6 @@ def _get_student_level(points):
 
 
 def _build_top_students_overall():
-    """Return top-5 students ranked by overall CBT points."""
     top_scores = (
         CBTScore.objects
         .select_related('user', 'user__profile')
@@ -640,45 +631,20 @@ def cbt_physics(request):
 
 @login_required
 def cbt_physics_topics(request):
-    """
-    Render the NEW Physics CBT page with JAMB syllabus topic selector.
-    Accessible at /cbt/physics/topics/
-    The old /cbt/physics/ route still works via cbt_physics above.
-    """
+ 
     return render(request, 'cbt_physics_topics.html')
 
 
 @login_required
 def cbt_mathematics_topics(request):
-    """
-    Render the Mathematics CBT page with JAMB syllabus topic selector.
-    Accessible at /cbt/mathematics/topics/
-    The old /cbt/mathematics/ route still works via cbt_mathematics above.
-    """
+
     return render(request, 'cbt_mathematics_topics.html')
 
 
 @login_required
 @require_POST
 def cbt_submit(request):
-    """
-    AJAX endpoint.  Receives exam result as JSON, saves CBTExam + updates CBTScore.
-    Expected body:
-    {
-        "subject":       "physics",
-        "score":         15,
-        "total":         20,
-        "percentage":    75,
-        "grade":         "distinction",
-        "time_used_sec": 842
-    }
-    Returns:
-    {
-        "ok":     true,
-        "points": 395,
-        "best":   85
-    }
-    """
+
     try:
         data = json.loads(request.body)
     except (ValueError, KeyError):
@@ -722,25 +688,6 @@ def cbt_submit(request):
 
 @login_required
 def student_scores_modal(request, username):
-    """
-    JSON endpoint called by the leaderboard modal JS in home.html.
-    Returns all data needed to populate the modal (student info,
-    per-subject breakdown, recent exams).
-
-    Response shape:
-    {
-      "ok": true,
-      "student": { username, full_name, picture_url, points, best_score,
-                   total_attempts, total_correct, total_questions,
-                   overall_rating, level_name, level_num,
-                   grade, specialization, school_type },
-      "subjects": [ { subject, attempts, best_score, best_total, best_pct,
-                      best_grade, avg_pct, subject_rating, best_time_eff,
-                      time_display, last_taken }, ... ],
-      "recent_exams": [ { subject, score, total, percentage, grade,
-                          rating, time_display, taken_at }, ... ]
-    }
-    """
     import math
     from django.db.models import Max, Avg, Sum, Count
     from django.utils.timezone import localtime
