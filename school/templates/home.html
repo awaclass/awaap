@@ -1,3 +1,4 @@
+{% load pwa %}
 {% load static %}
 {% include 'header.html' %}
 <!DOCTYPE html>
@@ -6,6 +7,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+  {% progressive_web_app_meta %}
+<script src="{% static 'js/pwa-install.js' %}" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <title>awaClass | Home</title>
 
@@ -775,6 +778,23 @@
     </div>
 
     <hr class="awaClass-divider">
+
+    <!-- ADMIN CTA  (superuser only) -->
+    {% if user.is_superuser %}
+    <div class="awaClass-admin-banner">
+      <div class="awaClass-admin-banner-icon">
+        <img src="{% static 'images/classroom.png' %}" alt="Classroom">
+      </div>
+      <div class="awaClass-admin-banner-body">
+        <h3>Classroom Management</h3>
+        <p>Create your own classroom and share knowledge with others.</p>
+      </div>
+      <a href="{% url 'post' %}" class="awaClass-btn-pill">
+        <i class="fa-solid fa-plus"></i> Create Now
+      </a>
+    </div>
+    <hr class="awaClass-divider">
+    {% endif %}
 
   </main>
 

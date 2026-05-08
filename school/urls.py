@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('register', views.register, name='register'),
+    path('register/complete', views.register_with_picture, name='register_with_picture'),
     path('home', views.home, name='home'),
     path('logout', views.user_logout, name='logout'),
     path('post', views.post, name='post'),
@@ -23,6 +24,7 @@ urlpatterns = [
     # ── CBT Exam ──────────────────────────────────────────────────
     path('cbt/',                    views.cbt_subjects,       name='cbt_subjects'),    # subject picker
     path('cbt/mathematics/',        views.cbt_mathematics,           name='cbt_mathematics'),
+    path('cbt/mathematics/topics/', views.cbt_mathematics_topics, name='cbt_mathematics_topics'),  # ← NEW topic selector
     path('cbt/physics/',            views.cbt_physics,        name='cbt_physics'),     # ← OLD physics CBT (kept)
     path('cbt/physics/topics/',     views.cbt_physics_topics, name='cbt_physics_topics'),  # ← NEW topic selector
     path('cbt/submit/',             views.cbt_submit,         name='cbt_submit'),      # score submission
@@ -48,3 +50,5 @@ urlpatterns = [
     path('edit-profile/', views.edit_profile, name='awa_edit_profile'),
     path('<str:username>', views.profile, name='profile'),
 ]
+
+

@@ -18,7 +18,7 @@ ALLOWED_HOSTS = [
     'awaapp.onrender.com',
 ]
 
-# Add localhost ports for development
+
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -29,9 +29,9 @@ CSRF_TRUSTED_ORIGINS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Application definition
+
 INSTALLED_APPS = [
-    'daphne',  # Must be before channels for WebSocket support
+    'daphne', 
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,14 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'school',  # Your main app with all models including live video
+    'school',  
     'django.contrib.humanize',
     'pwa',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,16 +77,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'myApp.wsgi.application'
 ASGI_APPLICATION = 'myApp.asgi.application'
 
-# Channel Layers Configuration (for WebSockets)
+
 if DEBUG:
-    # Use in-memory channel layer for development
+    
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels.layers.InMemoryChannelLayer',
         }
     }
 else:
-    # Use Redis channel layer for production
+    
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -116,7 +116,7 @@ else:
     }
 
 
-# Password validation
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -132,13 +132,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Africa/Lagos'  # Set to your timezone
+TIME_ZONE = 'Africa/Lagos'  
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 _static_dir = os.path.join(BASE_DIR, 'static')
@@ -184,8 +184,8 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 
 PWA_APP_ICONS = [
-    {'src': '/static/images/Mathematics.png', 'sizes': '192x192', 'type': 'image/png'},
-    {'src': '/static/images/Mathematics.png', 'sizes': '512x512', 'type': 'image/png'},
+    {'src': '/static/images/cbt2.png', 'sizes': '192x192', 'type': 'image/png'},
+    {'src': '/static/images/cbt2.png', 'sizes': '512x512', 'type': 'image/png'},
     {
         'src': '/static/images/Mathematics.png',
         'sizes': '512x512',
@@ -195,12 +195,12 @@ PWA_APP_ICONS = [
 ]
 
 # Point django-pwa at your custom service worker
-PWA_SERVICE_WORKER_PATH = BASE_DIR / 'social' / 'static' / 'js' / 'serviceworker.js'
+PWA_SERVICE_WORKER_PATH = BASE_DIR / 'school' / 'static' / 'js' / 'serviceworker.js'
 
 # The offline fallback URL — must match urls.py
-PWA_APP_FETCH_URL = '/index/'
+PWA_APP_FETCH_URL = '/'
 
-# Security Settings (Production only)
+
 if not DEBUG:
     # HTTPS Security
     SECURE_SSL_REDIRECT = True

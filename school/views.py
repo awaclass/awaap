@@ -68,6 +68,56 @@ def register(request):
     return render(request, 'register.html')
 
 
+@require_POST
+def register_with_picture(request):
+    """
+    AJAX endpoint called by the profile-picture modal on the register page.
+    Accepts all registration fields + an optional 'profile_picture' file.
+    Returns JSON { success, redirect } or { success: false, error }.
+    """
+    username  = request.POST.get('username', '').strip()
+    email     = request.POST.get('email', '').strip()
+    fname     = request.POST.get('fname', '').strip()
+    lname     = request.POST.get('lname', '').strip()
+    password  = request.POST.get('pass1', '')
+    password2 = request.POST.get('pass2', '')
+    picture   = request.FILES.get('profile_picture')
+
+    # --- Server-side validation ---
+    if len(username) < 5:
+        return JsonResponse({'success': False, 'error': 'Username must be at least 5 characters.'})
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({'success': False, 'error': 'Username is already taken.'})
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({'success': False, 'error': 'Email is already registered.'})
+    if password != password2:
+        return JsonResponse({'success': False, 'error': 'Passwords do not match.'})
+    if len(password) < 6:
+        return JsonResponse({'success': False, 'error': 'Password must be at least 6 characters.'})
+
+    # --- Create user ---
+    user = User.objects.create_user(
+        username=username, email=email,
+        first_name=fname, last_name=lname, password=password
+    )
+    profile = Profile.objects.create(user=user)
+    CBTScore.objects.create(user=user)
+
+    # --- Save profile picture if provided ---
+    if picture:
+        allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+        if picture.content_type in allowed_types and picture.size <= 5 * 1024 * 1024:
+            profile.picture = picture
+            profile.save()
+
+    # --- Log the user in immediately ---
+    from django.contrib.auth import login as auth_login
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    auth_login(request, user)
+
+    return JsonResponse({'success': True, 'redirect': '/home'})
+
+
 def _get_student_level(points):
     """
     Returns (level_name, level_number) for a given points total.
@@ -596,6 +646,16 @@ def cbt_physics_topics(request):
     The old /cbt/physics/ route still works via cbt_physics above.
     """
     return render(request, 'cbt_physics_topics.html')
+
+
+@login_required
+def cbt_mathematics_topics(request):
+    """
+    Render the Mathematics CBT page with JAMB syllabus topic selector.
+    Accessible at /cbt/mathematics/topics/
+    The old /cbt/mathematics/ route still works via cbt_mathematics above.
+    """
+    return render(request, 'cbt_mathematics_topics.html')
 
 
 @login_required

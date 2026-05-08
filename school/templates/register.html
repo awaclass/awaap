@@ -461,6 +461,192 @@
         font-size: 24px;
       }
     }
+
+    /* ===== PROFILE PICTURE MODAL ===== */
+    .ac-pp-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: acFadeIn 0.2s ease;
+    }
+    .ac-pp-backdrop.open {
+      display: flex;
+    }
+    @keyframes acFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .ac-pp-modal {
+      background: var(--ac-surface);
+      border-radius: 24px;
+      padding: 36px 32px 32px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+      animation: acSlideUp 0.28s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes acSlideUp {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .ac-pp-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .ac-pp-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+    .ac-pp-sub {
+      font-size: 13px;
+      color: var(--ac-text-light);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* Avatar preview circle */
+    .ac-pp-avatar-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 20px;
+      cursor: pointer;
+    }
+    .ac-pp-avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--ac-border);
+      transition: border-color 0.2s, transform 0.18s;
+      background: #f5f5f4;
+    }
+    .ac-pp-avatar-wrap:hover .ac-pp-avatar {
+      border-color: var(--ac-primary);
+      transform: scale(1.03);
+    }
+    .ac-pp-avatar-edit {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--ac-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      border: 2px solid var(--ac-surface);
+      pointer-events: none;
+    }
+
+    /* Hidden file input */
+    #ac-pp-file-input {
+      display: none;
+    }
+
+    /* Upload tap zone */
+    .ac-pp-upload-zone {
+      border: 2px dashed var(--ac-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 13px;
+      color: var(--ac-text-light);
+      font-weight: 500;
+    }
+    .ac-pp-upload-zone:hover,
+    .ac-pp-upload-zone.has-file {
+      border-color: var(--ac-primary);
+      background: var(--ac-primary-lt);
+      color: var(--ac-primary);
+    }
+
+    /* Modal action buttons */
+    .ac-pp-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ac-pp-btn-finish {
+      width: 100%;
+      padding: 13px;
+      background: var(--ac-primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+    .ac-pp-btn-finish:hover {
+      background: var(--ac-primary-dk);
+      transform: translateY(-1px);
+    }
+    .ac-pp-btn-finish:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .ac-pp-btn-skip {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: var(--ac-text-light);
+      border: 1.5px solid var(--ac-border);
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.18s, color 0.18s;
+    }
+    .ac-pp-btn-skip:hover {
+      border-color: var(--ac-text-light);
+      color: var(--ac-text);
+    }
+
+    /* Spinner inside finish button */
+    .ac-pp-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: acSpin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes acSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .ac-pp-file-name {
+      font-size: 12px;
+      color: var(--ac-primary);
+      font-weight: 600;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -520,11 +706,11 @@
     </div>
   </div>
 
-  <!-- RIGHT PANEL: Registration Form (refined index design) -->
+  <!-- RIGHT PANEL: Registration Form -->
   <div class="ac-form-panel">
     <div class="ac-form-wrap" id="ac-register-card">
 
-      <!-- Skeleton Loader (matches index style) -->
+      <!-- Skeleton Loader -->
       <div id="ac-skeleton">
         <div class="ac-skeleton ac-sk-logo"></div>
         <div class="ac-skeleton ac-sk-title"></div>
@@ -616,9 +802,43 @@
   </div>
 </div>
 
+<!-- ===== PROFILE PICTURE MODAL ===== -->
+<div class="ac-pp-backdrop" id="ac-pp-backdrop">
+  <div class="ac-pp-modal" role="dialog" aria-modal="true" aria-labelledby="ac-pp-title">
+
+    <div class="ac-pp-icon">🎉</div>
+    <h2 class="ac-pp-title" id="ac-pp-title">Almost done!</h2>
+    <p class="ac-pp-sub">Add a profile picture so your classmates can recognise you.<br>You can always change it later.</p>
+
+    <!-- Avatar preview -->
+    <div class="ac-pp-avatar-wrap" id="ac-pp-avatar-wrap" title="Tap to choose a photo">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 110'%3E%3Crect width='110' height='110' fill='%23f5f5f4'/%3E%3Ccircle cx='55' cy='42' r='18' fill='%23d6d3d1'/%3E%3Cellipse cx='55' cy='85' rx='28' ry='20' fill='%23d6d3d1'/%3E%3C/svg%3E"
+           alt="Profile preview" class="ac-pp-avatar" id="ac-pp-preview">
+      <div class="ac-pp-avatar-edit">📷</div>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="ac-pp-file-input" accept="image/jpeg,image/png,image/webp,image/gif">
+
+    <!-- Tap-to-upload zone (also acts as label for file input) -->
+    <div class="ac-pp-upload-zone" id="ac-pp-upload-zone">
+      <span id="ac-pp-zone-text">Tap to choose a photo from your device</span>
+      <div class="ac-pp-file-name" id="ac-pp-file-name" style="display:none;"></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="ac-pp-actions">
+      <button class="ac-pp-btn-finish" id="ac-pp-finish-btn">Finish Registration →</button>
+      <button class="ac-pp-btn-skip" id="ac-pp-skip-btn">Skip for now</button>
+    </div>
+
+  </div>
+</div>
+
 <script>
   (function() {
-    // ========== 1. Desktop slideshow (same as index) ==========
+
+    // ========== 1. Desktop slideshow ==========
     const dslides = document.querySelectorAll('.ac-dslide');
     const ddots   = document.querySelectorAll('.ac-ddot');
     let dcurrent  = 0;
@@ -674,15 +894,14 @@
       });
     });
 
-    // ========== 4. Real-time field validation (username, email, password match) ==========
+    // ========== 4. Real-time field validation ==========
     const usernameField = document.getElementById('ac-username');
-    const usernameHint = document.getElementById('ac-username-hint');
-    const emailField = document.getElementById('ac-email');
-    const pass1Field = document.getElementById('ac-pass1');
-    const pass2Field = document.getElementById('ac-pass2');
-    const pwHint = document.getElementById('ac-pw-hint');
+    const usernameHint  = document.getElementById('ac-username-hint');
+    const emailField    = document.getElementById('ac-email');
+    const pass1Field    = document.getElementById('ac-pass1');
+    const pass2Field    = document.getElementById('ac-pass2');
+    const pwHint        = document.getElementById('ac-pw-hint');
 
-    // Username validation
     if (usernameField && usernameHint) {
       usernameField.addEventListener('input', function() {
         const val = usernameField.value.trim();
@@ -703,7 +922,6 @@
       });
     }
 
-    // Email validation
     if (emailField) {
       function validateEmail() {
         const email = emailField.value.trim();
@@ -729,7 +947,6 @@
       emailField.addEventListener('input', validateEmail);
     }
 
-    // Password match validation
     if (pass2Field && pwHint) {
       function checkPasswordMatch() {
         const p1 = pass1Field ? pass1Field.value : '';
@@ -761,9 +978,20 @@
       });
     }
 
-    // ========== 5. Form submission with client-side blocking (smooth UX) ==========
-    const form = document.getElementById('ac-register-form');
-    const submitBtn = document.getElementById('ac-register-submit');
+    // ========== 5. Input focus styling ==========
+    const allInputs = document.querySelectorAll('.ac-input');
+    allInputs.forEach(inp => {
+      inp.addEventListener('focus', () => {
+        inp.style.borderColor = 'var(--ac-primary)';
+      });
+      inp.addEventListener('blur', () => {
+        if (!inp.classList.contains('ac-error') && !inp.classList.contains('ac-success')) {
+          inp.style.borderColor = 'var(--ac-border)';
+        }
+      });
+    });
+
+    // ========== 6. Messages helpers ==========
     const dynamicMsgDiv = document.getElementById('ac-dynamic-messages');
 
     function showClientMessage(text, type) {
@@ -772,26 +1000,33 @@
       msgDiv.className = `ac-message ${type === 'error' ? 'ac-message-error' : 'ac-message-success'}`;
       msgDiv.textContent = text;
       dynamicMsgDiv.appendChild(msgDiv);
-      // auto-scroll to see messages
-      if (dynamicMsgDiv.firstChild) {
-        dynamicMsgDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
+      dynamicMsgDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function clearClientMessages() {
       if (dynamicMsgDiv) dynamicMsgDiv.innerHTML = '';
     }
 
+    // ========== 7. Form submit → validate → open modal ==========
+    const form      = document.getElementById('ac-register-form');
+    const submitBtn = document.getElementById('ac-register-submit');
+    const backdrop  = document.getElementById('ac-pp-backdrop');
+
+    // Store collected form data here once validated
+    let pendingFormData = null;
+
     if (form) {
       form.addEventListener('submit', function(event) {
+        // Always prevent default — we handle submission via AJAX after modal
+        event.preventDefault();
         clearClientMessages();
 
         const username = usernameField ? usernameField.value.trim() : '';
-        const email = emailField ? emailField.value.trim() : '';
-        const fname = document.getElementById('ac-fname') ? document.getElementById('ac-fname').value.trim() : '';
-        const lname = document.getElementById('ac-lname') ? document.getElementById('ac-lname').value.trim() : '';
+        const email    = emailField    ? emailField.value.trim()    : '';
+        const fname    = document.getElementById('ac-fname') ? document.getElementById('ac-fname').value.trim() : '';
+        const lname    = document.getElementById('ac-lname') ? document.getElementById('ac-lname').value.trim() : '';
         const password = pass1Field ? pass1Field.value : '';
-        const confirm = pass2Field ? pass2Field.value : '';
+        const confirm  = pass2Field ? pass2Field.value : '';
 
         let hasError = false;
 
@@ -821,32 +1056,153 @@
           hasError = true;
         }
 
-        if (hasError) {
-          event.preventDefault();
-          // disable submit button briefly to avoid double-click? not necessary, but we keep it enabled
-        } else {
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Creating account ...';
-          // let the form naturally POST to Django
-        }
+        if (hasError) return;
+
+        // All good — collect data and open the profile picture modal
+        pendingFormData = { username, email, fname, lname, password, confirm };
+        openPpModal();
       });
     }
 
-    // Optional: remove any Django server-side message duplication styling? Already fine.
+    // ========== 8. Profile picture modal logic ==========
+    const ppFileInput  = document.getElementById('ac-pp-file-input');
+    const ppPreview    = document.getElementById('ac-pp-preview');
+    const ppAvatarWrap = document.getElementById('ac-pp-avatar-wrap');
+    const ppUploadZone = document.getElementById('ac-pp-upload-zone');
+    const ppZoneText   = document.getElementById('ac-pp-zone-text');
+    const ppFileName   = document.getElementById('ac-pp-file-name');
+    const ppFinishBtn  = document.getElementById('ac-pp-finish-btn');
+    const ppSkipBtn    = document.getElementById('ac-pp-skip-btn');
 
-    // If there are existing Django messages and we are on mobile/desktop, ensure no conflict.
-    // Add a subtle effect to match index: input focus border
-    const allInputs = document.querySelectorAll('.ac-input');
-    allInputs.forEach(inp => {
-      inp.addEventListener('focus', () => {
-        inp.style.borderColor = 'var(--ac-primary)';
-      });
-      inp.addEventListener('blur', () => {
-        if (!inp.classList.contains('ac-error') && !inp.classList.contains('ac-success')) {
-          inp.style.borderColor = 'var(--ac-border)';
+    let selectedPicFile = null;
+
+    // Default placeholder SVG (reused when clearing)
+    const defaultAvatarSrc = ppPreview ? ppPreview.src : '';
+
+    function openPpModal() {
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePpModal() {
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Avatar wrap / upload zone both trigger file picker
+    if (ppAvatarWrap) {
+      ppAvatarWrap.addEventListener('click', () => ppFileInput && ppFileInput.click());
+    }
+    if (ppUploadZone) {
+      ppUploadZone.addEventListener('click', () => ppFileInput && ppFileInput.click());
+    }
+
+    if (ppFileInput) {
+      ppFileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        // Validate type & size (max 5 MB)
+        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowed.includes(file.type)) {
+          alert('Please choose a JPEG, PNG, WEBP, or GIF image.');
+          this.value = '';
+          return;
         }
+        if (file.size > 5 * 1024 * 1024) {
+          alert('Image is too large. Maximum size is 5 MB.');
+          this.value = '';
+          return;
+        }
+
+        selectedPicFile = file;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          ppPreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Update zone text
+        ppZoneText.textContent = 'Photo selected ✓ Tap to change';
+        ppFileName.textContent = file.name;
+        ppFileName.style.display = 'block';
+        ppUploadZone.classList.add('has-file');
       });
-    });
+    }
+
+    // ---- Submit registration (with or without picture) ----
+    function submitRegistration(withPicture) {
+      if (!pendingFormData) return;
+
+      // Disable buttons
+      ppFinishBtn.disabled = true;
+      ppSkipBtn.disabled   = true;
+      ppFinishBtn.innerHTML = '<span class="ac-pp-spinner"></span> Creating account…';
+
+      const fd = new FormData();
+      // Grab CSRF token from the existing form
+      const csrfInput = document.querySelector('#ac-register-form [name=csrfmiddlewaretoken]');
+      if (csrfInput) fd.append('csrfmiddlewaretoken', csrfInput.value);
+
+      fd.append('username', pendingFormData.username);
+      fd.append('email',    pendingFormData.email);
+      fd.append('fname',    pendingFormData.fname);
+      fd.append('lname',    pendingFormData.lname);
+      fd.append('pass1',    pendingFormData.password);
+      fd.append('pass2',    pendingFormData.confirm);
+
+      if (withPicture && selectedPicFile) {
+        fd.append('profile_picture', selectedPicFile);
+      }
+
+      fetch('{% url "register_with_picture" %}', {
+        method: 'POST',
+        body: fd,
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // Show success state before redirecting
+          ppFinishBtn.innerHTML = '✓ Account created! Redirecting…';
+          setTimeout(() => {
+            window.location.href = data.redirect || '/';
+          }, 900);
+        } else {
+          // Server-side error — close modal, show error on form
+          closePpModal();
+          ppFinishBtn.disabled = false;
+          ppSkipBtn.disabled   = false;
+          ppFinishBtn.innerHTML = 'Finish Registration →';
+          clearClientMessages();
+          showClientMessage(data.error || 'Registration failed. Please try again.', 'error');
+        }
+      })
+      .catch(() => {
+        closePpModal();
+        ppFinishBtn.disabled = false;
+        ppSkipBtn.disabled   = false;
+        ppFinishBtn.innerHTML = 'Finish Registration →';
+        clearClientMessages();
+        showClientMessage('Network error. Please check your connection and try again.', 'error');
+      });
+    }
+
+    if (ppFinishBtn) {
+      ppFinishBtn.addEventListener('click', () => submitRegistration(true));
+    }
+    if (ppSkipBtn) {
+      ppSkipBtn.addEventListener('click', () => submitRegistration(false));
+    }
+
+    // Close on backdrop click (outside modal box)
+    if (backdrop) {
+      backdrop.addEventListener('click', function(e) {
+        if (e.target === backdrop) closePpModal();
+      });
+    }
+
   })();
 </script>
 
