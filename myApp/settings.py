@@ -173,7 +173,7 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # PWA Settings
-PWA_APP_NAME = 'awaChat'
+PWA_APP_NAME = 'awaClass'
 PWA_APP_DESCRIPTION = "Make Learning easier"
 PWA_APP_THEME_COLOR = '#ffffff'
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
@@ -184,10 +184,10 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 
 PWA_APP_ICONS = [
-    {'src': '/static/images/cbt2.png', 'sizes': '192x192', 'type': 'image/png'},
-    {'src': '/static/images/cbt2.png', 'sizes': '512x512', 'type': 'image/png'},
+    {'src': '/static/images/logo.png', 'sizes': '192x192', 'type': 'image/png'},
+    {'src': '/static/images/logo.png', 'sizes': '512x512', 'type': 'image/png'},
     {
-        'src': '/static/images/Mathematics.png',
+        'src': '/static/images/logo.png',
         'sizes': '512x512',
         'type': 'image/png',
         'purpose': 'maskable'
