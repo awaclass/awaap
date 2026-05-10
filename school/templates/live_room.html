@@ -314,6 +314,30 @@
       color: white;
     }
 
+    /* Teacher-only mic control button on student bubbles */
+    .bubble-mic-ctrl {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(249, 115, 22, 0.85);
+      color: white;
+      font-size: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.15s;
+      z-index: 5;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    .bubble-mic-ctrl:hover { background: rgba(249,115,22,1); transform: scale(1.15); }
+    .bubble-mic-ctrl.mic-ctrl-muted { background: rgba(239,68,68,0.9); }
+
     /* ========== FIXED CONTROLS BAR (always visible, never hidden) ========== */
     .controls-bar {
       position: fixed;
@@ -916,6 +940,7 @@
     <div class="control-group" id="raise-hand-group"><button class="control-btn" id="raise-hand-btn"><i class="fa-solid fa-hand"></i></button><span>Hand</span></div>
     <div class="control-group"><button class="control-btn" id="toggle-react"><i class="fa-solid fa-face-smile"></i></button><span>React</span></div>
     <div class="control-group" id="poll-btn-group" style="display:none;"><button class="control-btn" id="toggle-poll-creator"><i class="fa-solid fa-chart-bar"></i></button><span>Poll</span></div>
+    <div class="control-group" id="mute-all-group" style="display:none;"><button class="control-btn" id="mute-all-btn" title="Mute all students"><i class="fa-solid fa-microphone-slash"></i></button><span>Mute All</span></div>
     <div class="control-group"><button class="control-btn" id="toggle-chat"><i class="fa-regular fa-comment-dots"></i></button><span>Chat</span></div>
     <div class="control-group"><button class="control-btn leave-btn" id="leave-room"><i class="fa-solid fa-phone-slash"></i></button><span>Leave</span></div>
   </div>
@@ -1142,6 +1167,7 @@
     const wrapper = document.createElement('div');
     wrapper.className = 'student-bubble-wrapper';
     wrapper.id = `bubble-wrapper-${uid}`;
+    wrapper.dataset.micEnabled = '1'; // assume mic on by default
     const bubble = document.createElement('div');
     bubble.className = 'student-bubble';
     bubble.id = `video-${uid}`;
@@ -1156,12 +1182,34 @@
     const mutedIcon = document.createElement('div');
     mutedIcon.className = 'bubble-muted-icon';
     mutedIcon.id = `bubble-muted-${uid}`;
-    const nameSpan = document.createElement('div');
-    nameSpan.className = 'bubble-name';
-    nameSpan.textContent = username;
+    mutedIcon.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
     bubble.appendChild(video);
     bubble.appendChild(avatarDiv);
     bubble.appendChild(mutedIcon);
+
+    // Teacher mic control overlay (only rendered if isHost)
+    if (isHost) {
+      const micCtrl = document.createElement('button');
+      micCtrl.className = 'bubble-mic-ctrl';
+      micCtrl.id = `bubble-mic-ctrl-${uid}`;
+      micCtrl.title = 'Mute / Unmute student';
+      micCtrl.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+      micCtrl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        teacherToggleStudentMic(uid);
+        // Update ctrl icon optimistically
+        const nowEnabled = wrapper.dataset.micEnabled === '1';
+        micCtrl.innerHTML = nowEnabled
+          ? '<i class="fa-solid fa-microphone-slash"></i>'
+          : '<i class="fa-solid fa-microphone"></i>';
+        micCtrl.classList.toggle('mic-ctrl-muted', nowEnabled);
+      });
+      bubble.appendChild(micCtrl);
+    }
+
+    const nameSpan = document.createElement('div');
+    nameSpan.className = 'bubble-name';
+    nameSpan.textContent = username;
     wrapper.appendChild(bubble);
     wrapper.appendChild(nameSpan);
     studentTray.appendChild(wrapper);
@@ -1524,7 +1572,40 @@
       case 'poll_end':
         endPoll();
         break;
+
+      // ── MIC CONTROL (teacher → student) ──────────────────────────
+      case 'mic_control':
+        // Only the targeted student acts on this
+        if (!isHost && data.target_user_id == userId) {
+          const forcedEnabled = Boolean(data.enabled);
+          toggleAudio(forcedEnabled);
+          const msg = forcedEnabled
+            ? '🎙️ Your microphone was unmuted by the teacher.'
+            : '🔇 Your microphone was muted by the teacher.';
+          addChatMessage('System', msg);
+        }
+        // Everyone (including host) updates the bubble mute icon
+        updateRemoteMute(data.target_user_id, data.enabled);
+        break;
     }
+  }
+
+  // ── TEACHER MIC CONTROL HELPERS ──────────────────────────────────
+  function teacherToggleStudentMic(targetUserId) {
+    const wrapper = document.getElementById(`bubble-wrapper-${targetUserId}`);
+    // micEnabled defaults to '1' (assume on) unless we've tracked it
+    const currentlyEnabled = wrapper ? wrapper.dataset.micEnabled !== '0' : true;
+    const newEnabled = !currentlyEnabled;
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        type: 'mic_control',
+        target_user_id: targetUserId,
+        enabled: newEnabled
+      }));
+    }
+    // Optimistically update icon and state
+    updateRemoteMute(targetUserId, newEnabled);
+    if (wrapper) wrapper.dataset.micEnabled = newEnabled ? '1' : '0';
   }
 
   function initWebSocket() {
@@ -1595,15 +1676,23 @@
     updateVideoButtonUI();
     if (isHost && !isVideoEnabled) showHostPlaceholder();
     else if (isHost && isVideoEnabled && localStream) setHostVideo(localStream);
-    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'toggle_video', enabled: isVideoEnabled }));
+    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'video_toggle', enabled: isVideoEnabled }));
   }
-  function toggleAudio() {
-    isAudioEnabled = !isAudioEnabled;
+  function toggleAudio(forcedState) {
+    // forcedState: if provided (true/false), use it; otherwise toggle
+    if (typeof forcedState === 'boolean') {
+      isAudioEnabled = forcedState;
+    } else {
+      isAudioEnabled = !isAudioEnabled;
+    }
     const track = localStream?.getAudioTracks()[0];
     if (track) track.enabled = isAudioEnabled;
     updateAudioButtonUI();
     updateSelfMicIcon();
-    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'toggle_audio', enabled: isAudioEnabled }));
+    // 'audio_toggle' is the correct type that handleSignalingData listens for
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: 'audio_toggle', enabled: isAudioEnabled }));
+    }
   }
 
   async function flipCamera() {
@@ -1704,6 +1793,7 @@
     if (isHost) {
       document.getElementById('flip-camera-group').style.display = isMobile() ? 'flex' : 'none';
       document.getElementById('poll-btn-group').style.display = 'flex';
+      document.getElementById('mute-all-group').style.display = 'flex';
       document.getElementById('raise-hand-group').style.display = 'none';  // host doesn't raise hand
       // host doesn't need Q&A input
       document.getElementById('qa-input-area').style.display = 'none';
@@ -1735,6 +1825,29 @@
 
     // Polls (host)
     document.getElementById('toggle-poll-creator')?.addEventListener('click', openPollCreator);
+
+    // Mute All (host)
+    document.getElementById('mute-all-btn')?.addEventListener('click', () => {
+      const wrappers = document.querySelectorAll('.student-bubble-wrapper');
+      wrappers.forEach(wrapper => {
+        const uid = wrapper.id.replace('bubble-wrapper-', '');
+        const currentlyEnabled = wrapper.dataset.micEnabled !== '0';
+        if (currentlyEnabled) {
+          // mute this student
+          if (socket?.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ type: 'mic_control', target_user_id: uid, enabled: false }));
+          }
+          updateRemoteMute(uid, false);
+          wrapper.dataset.micEnabled = '0';
+          const ctrl = document.getElementById(`bubble-mic-ctrl-${uid}`);
+          if (ctrl) {
+            ctrl.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
+            ctrl.classList.add('mic-ctrl-muted');
+          }
+        }
+      });
+      addChatMessage('System', '🔇 You muted all students.');
+    });
     document.getElementById('cancel-poll-btn').addEventListener('click', closePollCreator);
     document.getElementById('launch-poll-btn').addEventListener('click', launchPoll);
     document.getElementById('add-option-btn').addEventListener('click', addPollOption);

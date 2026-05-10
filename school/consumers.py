@@ -90,7 +90,7 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                     'user_id': self.user.id
                 }
             )
-        elif message_type == 'toggle_video':
+        elif message_type == 'video_toggle':
             # Update participant's video status
             await self.update_video_status(text_data_json.get('enabled', True))
             await self.channel_layer.group_send(
@@ -102,7 +102,7 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                     'enabled': text_data_json.get('enabled', True)
                 }
             )
-        elif message_type == 'toggle_audio':
+        elif message_type == 'audio_toggle':
             # Update participant's audio status
             await self.update_audio_status(text_data_json.get('enabled', True))
             await self.channel_layer.group_send(
@@ -213,6 +213,19 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                     'user': self.user.username,
                     'user_id': self.user.id,
                     'poll_id': text_data_json.get('poll_id', '')
+                }
+            )
+
+        elif message_type == 'mic_control':
+            # Broadcast teacher's mute/unmute command to all room members
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'mic_control',
+                    'user': self.user.username,
+                    'user_id': self.user.id,
+                    'target_user_id': text_data_json.get('target_user_id'),
+                    'enabled': text_data_json.get('enabled', True)
                 }
             )
 
@@ -344,6 +357,15 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
             'user': event['user'],
             'user_id': event['user_id'],
             'poll_id': event['poll_id']
+        }))
+
+    async def mic_control(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'mic_control',
+            'user': event['user'],
+            'user_id': event['user_id'],
+            'target_user_id': event['target_user_id'],
+            'enabled': event['enabled']
         }))
 
     @database_sync_to_async
