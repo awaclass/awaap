@@ -17,6 +17,11 @@
     /* ══════════════════════════════════════════════════
        BASE
     ══════════════════════════════════════════════════ */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     body {
       background-color: #ffffff;
     }
@@ -28,11 +33,13 @@
       max-width: 1080px;
       margin: 0 auto;
       padding: 20px 16px 48px;
+      box-sizing: border-box;
+      width: 100%;
     }
 
     @media (min-width: 768px) {
       .awaClass-home-wrapper {
-        margin-left: 50px;
+        padding-left: 66px; /* sidebar offset via padding, not margin */
       }
     }
 
@@ -95,6 +102,8 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       overflow: visible; /* must not clip tooltips */
+      min-width: 0;
+      width: 100%;
     }
     @media (min-width: 600px) {
       .awaClass-features-grid,
@@ -434,6 +443,7 @@
       max-width: 520px;
       max-height: 88vh;
       overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
       box-shadow: 0 8px 40px rgba(0,0,0,.18);
       animation: aw-modal-in .18s ease;
@@ -505,16 +515,18 @@
 
     .aw-modal-stats {
       display: flex;
+      flex-wrap: wrap;
       gap: 0;
       border-bottom: 1px solid #f0f0f0;
     }
+
     .aw-modal-stat {
-      flex: 1;
+      flex: 1 1 60px;
       text-align: center;
-      padding: 14px 8px;
+      padding: 12px 6px;
       border-right: 1px solid #f5f5f5;
-    }
-    .aw-modal-stat:last-child { border-right: none; }
+      min-width: 0;
+    }    .aw-modal-stat:last-child { border-right: none; }
     .aw-modal-stat-val {
       font-size: 18px;
       font-weight: 800;
@@ -596,8 +608,15 @@
     }
     .aw-subject-meta strong { color: #0f0f0f; }
 
+    .aw-recent-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     .aw-recent-table {
       width: 100%;
+      min-width: 420px; /* prevent columns from collapsing too tightly */
       border-collapse: collapse;
       font-size: 12px;
     }
@@ -678,12 +697,14 @@
       padding: 10px 14px;
       border-radius: 9px;
       width: max-content;
-      max-width: 200px;
+      max-width: min(200px, calc(100vw - 32px));
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.2s ease, transform 0.2s ease;
       z-index: 9999;
       white-space: normal;
+      /* Prevent tooltip from escaping viewport on edge cards */
+      margin-left: max(calc(-50vw + 50% + 16px), 0px);
     }
 
     /* Arrow pointing UP */
@@ -852,12 +873,14 @@
         <p class="aw-modal-section-title">Subject Performance</p>
         <div class="aw-subject-cards" id="awSubjectCards"></div>
         <p class="aw-modal-section-title">Recent Exams</p>
+        <div class="aw-recent-table-wrap">
         <table class="aw-recent-table">
           <thead>
             <tr><th>Subject</th><th>Score</th><th>Grade</th><th>Rating</th><th>Time</th><th>Date</th></tr>
           </thead>
           <tbody id="awRecentBody"></tbody>
         </table>
+        </div>
       </div>
     </div>
   </div>

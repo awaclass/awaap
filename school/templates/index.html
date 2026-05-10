@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="{% static 'js/pwa-install.js' %}" defer></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f97316'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-weight='bold'%3EA%3C/text%3E%3C/svg%3E">
@@ -29,12 +30,18 @@
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       background: var(--ac-bg);
       color: var(--ac-text);
       line-height: 1.5;
-      height: 900vh;
+      height: 100vh;
+      overflow: hidden;
     }
 
     /* ═══════════════════════════════════════════
@@ -44,7 +51,7 @@
       display: none;
     }
     @media (min-width: 860px) {
-      .ac-page { display: flex; flex-direction: row; min-height: 100vh; }
+      .ac-page { display: flex; flex-direction: row; height: 100vh; overflow: hidden; }
     }
 
     /* ─── Desktop hero panel ─── */
@@ -149,7 +156,7 @@
     .ac-mobile-screen {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      height: 100vh;
       background: var(--ac-bg);
       overflow: hidden;
       position: relative;
@@ -185,7 +192,7 @@
       margin: 16px 20px 0;
       border-radius: 24px;
       overflow: hidden;
-      height: 280px;
+      height: clamp(200px, 38vh, 300px);
       position: relative;
       background: #ddd;
       flex-shrink: 0;
@@ -207,16 +214,16 @@
 
     /* Text content */
     .ac-slide-body {
-      padding: 28px 28px 0;
+      padding: 20px 28px 0;
       flex: 1;
     }
 
     .ac-slide-title {
-      font-size: 22px;
+      font-size: clamp(18px, 4.5vw, 22px);
       font-weight: 800;
       line-height: 1.3;
       letter-spacing: -0.4px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: var(--ac-text);
     }
     .ac-slide-title em { font-style: normal; color: var(--ac-primary); }
@@ -235,7 +242,7 @@
       justify-content: center;
       align-items: center;
       gap: 8px;
-      padding: 20px 0 0;
+      padding: 12px 0 0;
     }
     .ac-dot {
       width: 8px; height: 8px;
@@ -252,7 +259,7 @@
 
     /* CTA button area */
     .ac-cta-area {
-      padding: 20px 20px 36px;
+      padding: 16px 20px max(20px, env(safe-area-inset-bottom));
     }
 
     .ac-btn-get-started {
