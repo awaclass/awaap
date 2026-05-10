@@ -67,7 +67,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                     'type': 'offer',
                     'offer': text_data_json['offer'],
                     'user': self.user.username,
-                    'user_id': self.user.id
+                    'user_id': self.user.id,
+                    'target_user_id': text_data_json.get('target_user_id')
                 }
             )
         elif message_type == 'answer':
@@ -77,7 +78,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                     'type': 'answer',
                     'answer': text_data_json['answer'],
                     'user': self.user.username,
-                    'user_id': self.user.id
+                    'user_id': self.user.id,
+                    'target_user_id': text_data_json.get('target_user_id')
                 }
             )
         elif message_type == 'ice_candidate':
@@ -87,7 +89,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
                     'type': 'ice_candidate',
                     'candidate': text_data_json['candidate'],
                     'user': self.user.username,
-                    'user_id': self.user.id
+                    'user_id': self.user.id,
+                    'target_user_id': text_data_json.get('target_user_id')
                 }
             )
         elif message_type == 'video_toggle':
@@ -234,7 +237,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
             'type': 'offer',
             'offer': event['offer'],
             'user': event['user'],
-            'user_id': event['user_id']
+            'user_id': event['user_id'],
+            'target_user_id': event.get('target_user_id')
         }))
 
     async def answer(self, event):
@@ -242,7 +246,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
             'type': 'answer',
             'answer': event['answer'],
             'user': event['user'],
-            'user_id': event['user_id']
+            'user_id': event['user_id'],
+            'target_user_id': event.get('target_user_id')
         }))
 
     async def ice_candidate(self, event):
@@ -250,7 +255,8 @@ class LiveVideoConsumer(AsyncWebsocketConsumer):
             'type': 'ice_candidate',
             'candidate': event['candidate'],
             'user': event['user'],
-            'user_id': event['user_id']
+            'user_id': event['user_id'],
+            'target_user_id': event.get('target_user_id')
         }))
 
     async def user_joined(self, event):

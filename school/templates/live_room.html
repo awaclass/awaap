@@ -1115,7 +1115,9 @@
       hostVideoEl.muted = true;
       hostVideoEl.play().catch(e => console.log('Host play error:', e));
     } else {
-      // Students MUST hear the host — no optional prompt
+      // Students MUST hear the host — no optional prompt.
+      // Reset so a new stream always gets a fresh unmute attempt.
+      _autoUnmuteAttached = false;
       hostVideoEl.volume = 1.0;
       hostVideoEl.muted = false;
       hostVideoEl.play().then(() => {
@@ -1242,31 +1244,54 @@
     peerConnections[remoteUserId] = pc;
     if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
     pc.onicecandidate = (e) => {
-      if (e.candidate) socket.send(JSON.stringify({ type: 'ice_candidate', candidate: e.candidate, user_id: remoteUserId }));
+      if (e.candidate) socket.send(JSON.stringify({
+        type: 'ice_candidate',
+        candidate: e.candidate,
+        target_user_id: remoteUserId   // ← tell server who this ICE is for
+      }));
     };
     pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(remoteUserId, e.streams[0]); };
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
-    socket.send(JSON.stringify({ type: 'offer', offer, user_id: remoteUserId }));
+    socket.send(JSON.stringify({
+      type: 'offer',
+      offer,
+      target_user_id: remoteUserId     // ← tell server who this offer is for
+    }));
   }
   async function handleOffer(data) {
+    // Only process if we are the intended target
+    if (data.target_user_id != null && data.target_user_id != userId) return;
+    const senderId = data.user_id;
     const pc = new RTCPeerConnection(configuration);
-    peerConnections[data.user_id] = pc;
+    peerConnections[senderId] = pc;
     if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
     pc.onicecandidate = (e) => {
-      if (e.candidate) socket.send(JSON.stringify({ type: 'ice_candidate', candidate: e.candidate, user_id: data.user_id }));
+      if (e.candidate) socket.send(JSON.stringify({
+        type: 'ice_candidate',
+        candidate: e.candidate,
+        target_user_id: senderId        // ← ICE reply goes back to the offerer
+      }));
     };
-    pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(data.user_id, e.streams[0]); };
+    pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(senderId, e.streams[0]); };
     await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    socket.send(JSON.stringify({ type: 'answer', answer, user_id: data.user_id }));
+    socket.send(JSON.stringify({
+      type: 'answer',
+      answer,
+      target_user_id: senderId          // ← answer goes back to the offerer
+    }));
   }
   async function handleAnswer(data) {
+    // Only process if we are the intended target
+    if (data.target_user_id != null && data.target_user_id != userId) return;
     const pc = peerConnections[data.user_id];
     if (pc) await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
   }
   async function handleIceCandidate(data) {
+    // Only process if we are the intended target
+    if (data.target_user_id != null && data.target_user_id != userId) return;
     const pc = peerConnections[data.user_id];
     if (pc && data.candidate) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
   }
@@ -1498,10 +1523,13 @@
       case 'user_joined':
         if (data.user_id != userId) {
           if (isHost) {
+            // Host creates an offer to every student that joins
             if (data.user_id != hostId) addStudentBubble(data.user, data.user_id);
             createOffer(data.user_id);
           } else {
-            if (data.user_id != hostId) { addStudentBubble(data.user, data.user_id); createOffer(data.user_id); }
+            // Students only show other students' bubbles — NEVER create offers.
+            // The host will send us an offer; we respond via handleOffer.
+            if (data.user_id != hostId) addStudentBubble(data.user, data.user_id);
           }
           addChatMessage('System', `${data.user} joined the class`);
           updateParticipantCount();
@@ -1515,6 +1543,7 @@
         if (!isHost && data.user_id == hostId) showWaitingOverlay();
         break;
       case 'offer':
+        // Only handle if we are the target (sender excludes themselves via target_user_id)
         if (data.user_id != userId) handleOffer(data);
         break;
       case 'answer':
