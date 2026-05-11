@@ -1201,6 +1201,370 @@
             .awaClass-profile-container { display: flex; gap: 24px; }
             .awaClass-profile-content { flex: 1; }
         }
+
+        /* ═══════════════════════════════════════════
+           PRINT FORM MODAL (on-screen preview)
+        ═══════════════════════════════════════════ */
+        .awa-print-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 20000;
+            padding: 20px 12px 40px;
+            overflow-y: auto;
+        }
+        .awa-print-overlay.active { display: flex; }
+
+        .awa-print-modal-shell {
+            background: #f5f5f0;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 680px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+        }
+
+        .awa-print-modal-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            gap: 10px;
+        }
+
+        .awa-print-modal-toolbar-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f0f0f;
+            flex: 1;
+        }
+
+        .awa-print-toolbar-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+
+        .awa-print-toolbar-btn-primary {
+            background: #f97316;
+            color: #fff;
+        }
+        .awa-print-toolbar-btn-primary:hover { background: #ea6c0a; }
+
+        .awa-print-toolbar-btn-ghost {
+            background: #f2f2f2;
+            color: #333;
+        }
+        .awa-print-toolbar-btn-ghost:hover { background: #e5e5e5; }
+
+        /* ── The actual school form (A4-like) ── */
+        .awa-school-form {
+            background: #fff;
+            margin: 16px;
+            border-radius: 8px;
+            border: 2px solid #1a1a2e;
+            font-family: 'Times New Roman', Times, serif;
+            color: #000;
+            overflow: hidden;
+        }
+
+        .awa-sf-header {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .awa-sf-header-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid #f97316;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .awa-sf-header-text { flex: 1; }
+
+        .awa-sf-platform-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #f97316;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .awa-sf-form-title {
+            font-size: 13px;
+            color: rgba(255,255,255,0.75);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .awa-sf-serial {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            text-align: right;
+            font-family: monospace;
+        }
+
+        /* Passport photo box */
+        .awa-sf-body {
+            padding: 20px 24px;
+        }
+
+        .awa-sf-top-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .awa-sf-passport-box {
+            width: 110px;
+            height: 130px;
+            border: 2px solid #000;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .awa-sf-passport-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .awa-sf-passport-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.65);
+            color: #fff;
+            font-size: 9px;
+            text-align: center;
+            padding: 2px 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .awa-sf-name-section {
+            flex: 1;
+        }
+
+        .awa-sf-student-fullname {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+            border-bottom: 2px solid #000;
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .awa-sf-student-username {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .awa-sf-field-inline {
+            display: flex;
+            gap: 0;
+            margin-bottom: 8px;
+        }
+
+        .awa-sf-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #555;
+            min-width: 90px;
+            padding-top: 2px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .awa-sf-value {
+            font-size: 13px;
+            color: #000;
+            border-bottom: 1px solid #aaa;
+            flex: 1;
+            padding-bottom: 2px;
+            min-height: 18px;
+        }
+
+        /* Section divider */
+        .awa-sf-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #fff;
+            background: #1a1a2e;
+            padding: 5px 24px;
+            margin: 0 -24px 14px;
+        }
+
+        .awa-sf-fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 24px;
+            margin-bottom: 16px;
+        }
+
+        /* CBT stats table */
+        .awa-sf-stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .awa-sf-stats-table th {
+            background: #f2f2f2;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            color: #444;
+        }
+
+        .awa-sf-stats-table td {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            color: #000;
+        }
+
+        .awa-sf-stats-table tr:nth-child(even) td { background: #fafafa; }
+
+        /* Bottom stamp area */
+        .awa-sf-bottom-row {
+            display: flex;
+            gap: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 14px;
+            margin-top: 6px;
+        }
+
+        .awa-sf-sig-box {
+            flex: 1;
+            border-top: 1px solid #000;
+            padding-top: 4px;
+            font-size: 10px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 50px;
+            text-align: center;
+        }
+
+        .awa-sf-stamp-box {
+            width: 90px;
+            height: 70px;
+            border: 2px dashed #aaa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #aaa;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .awa-sf-footer {
+            background: #f7f7f7;
+            border-top: 2px solid #1a1a2e;
+            padding: 8px 24px;
+            font-size: 9.5px;
+            color: #666;
+            text-align: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* ═══════════════════════════════════════════
+           @media print  –  isolate the form card
+           Triggered by window.print() in awaPrintNow()
+        ═══════════════════════════════════════════ */
+        @media print {
+            /* Hide the entire page body */
+            body > * { display: none !important; }
+
+            /* Reveal only the print overlay */
+            body > #awaPrintOverlay { display: block !important; }
+
+            /* Remove the dark modal backdrop */
+            #awaPrintOverlay {
+                position: static !important;
+                background: none !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                display: block !important;
+            }
+
+            /* Remove modal chrome */
+            .awa-print-modal-shell {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                background: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            /* Hide the toolbar buttons */
+            .awa-print-modal-toolbar { display: none !important; }
+
+            /* The form card itself */
+            .awa-school-form {
+                margin: 0 !important;
+                border-radius: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Ensure coloured backgrounds print */
+            .awa-sf-header,
+            .awa-sf-section-title,
+            .awa-sf-footer,
+            .awa-sf-passport-label {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            @page { size: A4; margin: 10mm 12mm; }
+        }
+
     </style>
 </head>
 
@@ -1354,6 +1718,11 @@
             <span class="awaClass-profile-sheet-label">Edit Profile</span>
             <i class="fas fa-chevron-right awaClass-profile-sheet-arrow"></i>
         </button>
+        <button class="awaClass-profile-sheet-item" onclick="awaClassCloseMobileSheet(); setTimeout(awaPrintFormOpen, 200);">
+            <span class="awaClass-profile-sheet-icon"><i class="fas fa-print"></i></span>
+            <span class="awaClass-profile-sheet-label">Print Profile Form</span>
+            <i class="fas fa-chevron-right awaClass-profile-sheet-arrow"></i>
+        </button>
         <div class="awaClass-profile-sheet-divider"></div>
         <a href="{% url 'logout' %}" class="awaClass-profile-sheet-item awaClass-profile-sheet-item-danger">
             <span class="awaClass-profile-sheet-icon awaClass-profile-sheet-icon-danger"><i class="fas fa-sign-out-alt"></i></span>
@@ -1484,6 +1853,9 @@
                             {% if request.user == user %}
                             <button class="awaClass-profile-btn" id="awaClassProfileOpenEditBtn">
                                 <i class="fas fa-pen" style="font-size:11px;"></i> Edit profile
+                            </button>
+                            <button class="awaClass-profile-btn" onclick="awaPrintFormOpen()">
+                                <i class="fas fa-print" style="font-size:11px;"></i> Print Form
                             </button>
                             <button class="awaClass-profile-more-btn" id="awaClassProfileMoreBtn">
                                 <i class="fas fa-ellipsis-h"></i>
@@ -1688,6 +2060,167 @@
 
 
 </div>
+
+<!-- ══ PRINT PROFILE FORM MODAL ══ -->
+{% if request.user == user %}
+<div class="awa-print-overlay" id="awaPrintOverlay">
+    <div class="awa-print-modal-shell">
+
+        <!-- Toolbar (hidden on actual print) -->
+        <div class="awa-print-modal-toolbar">
+            <span class="awa-print-modal-toolbar-title"><i class="fas fa-print" style="color:#f97316;margin-right:6px;"></i>Student Profile Form — Preview</span>
+            <button class="awa-print-toolbar-btn awa-print-toolbar-btn-ghost" onclick="awaPrintFormClose()">
+                <i class="fas fa-times"></i> Close
+            </button>
+            <button class="awa-print-toolbar-btn awa-print-toolbar-btn-primary" onclick="awaPrintNow()">
+                <i class="fas fa-print"></i> Print / Save PDF
+            </button>
+        </div>
+
+        <!-- The school form itself -->
+        <div class="awa-school-form" id="awaPrintFormCard">
+
+            <!-- Header band -->
+            <div class="awa-sf-header">
+                <img src="{% static 'images/logo.jpg' %}" alt="awaClass" class="awa-sf-header-logo">
+                <div class="awa-sf-header-text">
+                    <div class="awa-sf-platform-name">awaClass</div>
+                    <div class="awa-sf-form-title">Student Biodata &amp; Academic Record Form</div>
+                </div>
+                <div class="awa-sf-serial">
+                    Form No: AC/{{ user.id|stringformat:"05d" }}<br>
+                    Date: <span id="awaPrintDate"></span>
+                </div>
+            </div>
+
+            <div class="awa-sf-body">
+
+                <!-- Top: passport + name -->
+                <div class="awa-sf-top-row">
+                    <div class="awa-sf-passport-box">
+                        <img src="{{ user.profile.picture.url }}" alt="Passport" class="awa-sf-passport-img" crossorigin="anonymous">
+                        <div class="awa-sf-passport-label">Passport Photo</div>
+                    </div>
+                    <div class="awa-sf-name-section">
+                        <div class="awa-sf-student-fullname">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="awa-sf-student-username">@{{ user.username }} &nbsp;·&nbsp; awaClass Student</div>
+                        <div class="awa-sf-field-inline">
+                            <span class="awa-sf-label">Gender</span>
+                            <span class="awa-sf-value">{{ profile.gender|default:"—" }}</span>
+                        </div>
+                        <div class="awa-sf-field-inline">
+                            <span class="awa-sf-label">Date of Birth</span>
+                            <span class="awa-sf-value">{{ profile.date_of_birth|date:"j F, Y"|default:"—" }}</span>
+                        </div>
+                        <div class="awa-sf-field-inline">
+                            <span class="awa-sf-label">Phone</span>
+                            <span class="awa-sf-value">{{ profile.phone|default:"—" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Academic Details -->
+                <div class="awa-sf-section-title">Academic Information</div>
+                <div class="awa-sf-fields-grid">
+                    <div class="awa-sf-field-inline">
+                        <span class="awa-sf-label">School</span>
+                        <span class="awa-sf-value">{{ profile.school|default:"—" }}</span>
+                    </div>
+                    <div class="awa-sf-field-inline">
+                        <span class="awa-sf-label">Class / Level</span>
+                        <span class="awa-sf-value">{{ profile.class_level|default:"—" }}</span>
+                    </div>
+                    <div class="awa-sf-field-inline">
+                        <span class="awa-sf-label">Specialization</span>
+                        <span class="awa-sf-value">{{ profile.specialization|default:"—" }}</span>
+                    </div>
+                    <div class="awa-sf-field-inline">
+                        <span class="awa-sf-label">Location</span>
+                        <span class="awa-sf-value">{{ profile.location|default:"—" }}</span>
+                    </div>
+                    <div class="awa-sf-field-inline" style="grid-column:1/-1;">
+                        <span class="awa-sf-label">Address</span>
+                        <span class="awa-sf-value">{{ profile.address|default:"—" }}</span>
+                    </div>
+                    <div class="awa-sf-field-inline" style="grid-column:1/-1;">
+                        <span class="awa-sf-label">Bio</span>
+                        <span class="awa-sf-value" style="font-style:italic;">{{ profile.bio|default:"—" }}</span>
+                    </div>
+                </div>
+
+                <!-- Section: CBT Performance -->
+                <div class="awa-sf-section-title">CBT Examination Record</div>
+                <table class="awa-sf-stats-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Exams Taken</th>
+                            <th>Avg Score (%)</th>
+                            <th>Best Score (%)</th>
+                            <th>Grade Band</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if subject_summaries %}
+                            {% for s in subject_summaries %}
+                            <tr>
+                                <td>{{ s.name }}</td>
+                                <td style="text-align:center;">{{ s.exams_taken }}</td>
+                                <td style="text-align:center;">{{ s.avg_pct }}%</td>
+                                <td style="text-align:center;">{{ s.best_pct|default:s.avg_pct }}%</td>
+                                <td style="text-align:center;">
+                                    {% if s.avg_pct >= 70 %}Distinction{% elif s.avg_pct >= 50 %}Credit{% else %}Below Average{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:#888;font-style:italic;padding:12px;">No exam records found</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:#f2f2f2;">
+                            <td><strong>Overall</strong></td>
+                            <td style="text-align:center;"><strong>{{ total_exams_taken|default:"0" }}</strong></td>
+                            <td style="text-align:center;"><strong>{{ avg_score|default:"0" }}%</strong></td>
+                            <td style="text-align:center;">—</td>
+                            <td style="text-align:center;"><strong>{{ total_points|default:"0" }} pts</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Member since + rank -->
+                <div style="display:flex;gap:24px;margin-bottom:14px;">
+                    <div class="awa-sf-field-inline" style="flex:1;">
+                        <span class="awa-sf-label">Member Since</span>
+                        <span class="awa-sf-value">{{ profile.created_at|date:"F j, Y" }}</span>
+                    </div>
+                    {% if best_rank %}
+                    <div class="awa-sf-field-inline" style="flex:1;">
+                        <span class="awa-sf-label">Best Rank</span>
+                        <span class="awa-sf-value">#{{ best_rank }}{% if best_rank_subject %} — {{ best_rank_subject }}{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Signature / Stamp row -->
+                <div class="awa-sf-bottom-row">
+                    <div class="awa-sf-sig-box" style="margin-top:40px;">Student Signature</div>
+                    <div class="awa-sf-sig-box" style="margin-top:40px;">Teacher / Supervisor</div>
+                    <div class="awa-sf-stamp-box">School<br>Official<br>Stamp</div>
+                </div>
+
+            </div><!-- /.awa-sf-body -->
+
+            <div class="awa-sf-footer">
+                This form was generated from awaClass · Nigeria's Digital Learning Platform · www.awaclass.com &nbsp;|&nbsp; Printed on <span class="awa-print-date-footer"></span>
+            </div>
+
+        </div><!-- /.awa-school-form -->
+    </div><!-- /.awa-print-modal-shell -->
+</div><!-- /.awa-print-overlay -->
+{% endif %}
 
 <!-- ══ EDIT PROFILE MODAL ══ -->
 <div class="awaClass-profile-edit-overlay" id="awaClassProfileEditModal">
@@ -1944,6 +2477,57 @@ window.addEventListener('load', function () {
         setTimeout(function() { el.style.width = w; }, 200);
     });
 });
+
+/* ══════════════════════════════════════════
+   PRINT FORM  –  preview modal + window.print()
+   Uses @media print CSS to isolate the form,
+   so no popup window is needed (avoids the
+   async popup-block on mobile browsers).
+══════════════════════════════════════════ */
+
+/* Show the on-screen preview modal */
+function awaPrintFormOpen() {
+    var overlay = document.getElementById('awaPrintOverlay');
+    if (!overlay) return;
+    var today = new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' });
+    var dateEl = document.getElementById('awaPrintDate');
+    if (dateEl) dateEl.textContent = today;
+    document.querySelectorAll('.awa-print-date-footer').forEach(function(el) { el.textContent = today; });
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function awaPrintFormClose() {
+    var overlay = document.getElementById('awaPrintOverlay');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+/* Trigger native print — @media print CSS hides everything except the form.
+   Called synchronously from a click handler so browsers never block it. */
+function awaPrintNow() {
+    var today = new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' });
+    var dateEl = document.getElementById('awaPrintDate');
+    if (dateEl) dateEl.textContent = today;
+    document.querySelectorAll('.awa-print-date-footer').forEach(function(el) { el.textContent = today; });
+
+    /* Make sure the overlay stays visible during printing */
+    var overlay = document.getElementById('awaPrintOverlay');
+    if (overlay && !overlay.classList.contains('active')) {
+        overlay.classList.add('active');
+    }
+
+    window.print();
+}
+
+/* Close on overlay backdrop click */
+(function () {
+    var overlay = document.getElementById('awaPrintOverlay');
+    if (!overlay) return;
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) awaPrintFormClose();
+    });
+})();
 </script>
 
 {% include 'footer.html' %}
