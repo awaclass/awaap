@@ -295,6 +295,7 @@ def update_profile(request, username):
         fname   = request.POST.get('fname')
         lname   = request.POST.get('lname')
         bio     = request.POST.get('bio')
+        gender  = request.POST.get('gender', '').strip()
         phone   = request.POST.get('phone')
         address        = request.POST.get('address')
         location       = request.POST.get('location', '').strip()
@@ -308,6 +309,7 @@ def update_profile(request, username):
             user.last_name  = lname
             user.save()
         if bio:            profile.bio            = bio
+        if gender:         profile.gender         = gender
         if phone:          profile.phone          = phone
         if address:        profile.address        = address
         if location:       profile.location       = location
@@ -340,15 +342,18 @@ def edit_profile(request):
     user    = request.user
     profile = user.profile
 
-    fname       = request.POST.get('fname', '').strip()
-    lname       = request.POST.get('lname', '').strip()
-    bio         = request.POST.get('bio', '').strip()
-    location    = request.POST.get('location', '').strip()
+    fname          = request.POST.get('fname', '').strip()
+    lname          = request.POST.get('lname', '').strip()
+    bio            = request.POST.get('bio', '').strip()
+    gender         = request.POST.get('gender', '').strip()
+    phone          = request.POST.get('phone', '').strip()
+    location       = request.POST.get('location', '').strip()
+    address        = request.POST.get('address', '').strip()
     school         = request.POST.get('school', '').strip()
     class_level    = request.POST.get('class_level', '').strip()
     specialization = request.POST.get('specialization', '').strip()
     dob            = request.POST.get('date_of_birth', '').strip()
-    image       = request.FILES.get('image')
+    image          = request.FILES.get('image')
 
     try:
         if fname:
@@ -359,8 +364,14 @@ def edit_profile(request):
 
         if bio:
             profile.bio = bio
+        if gender:
+            profile.gender = gender
+        if phone:
+            profile.phone = phone
         if location:
             profile.location = location
+        if address:
+            profile.address = address
         if image:
             profile.picture = image
 

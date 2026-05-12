@@ -174,6 +174,33 @@
       max-width: 240px;
     }
 
+    /* Audio unlock prompt */
+    .audio-unlock-prompt {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px 24px;
+      border-radius: 50px;
+      z-index: 10001;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid #f97316;
+      pointer-events: auto;
+      cursor: pointer;
+      animation: pulseGlow 2s infinite;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { border-color: #f97316; box-shadow: 0 0 0 0 rgba(249,115,22,0.4); }
+      50% { border-color: #ff9f4a; box-shadow: 0 0 0 8px rgba(249,115,22,0); }
+    }
+
     /* ─── STUDENT SELF BUBBLE (bottom-right or top-right) ─── */
     .self-bubble-container {
       position: absolute;
@@ -354,7 +381,6 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
       transition: all 0.2s ease;
-      /* ensures it stays on top of all content, even chat overlays */
       pointer-events: auto;
     }
 
@@ -481,8 +507,8 @@
     /* responsive adjustments */
     @media (max-width: 640px) {
       .self-bubble { width: 72px; height: 72px; }
+      .audio-unlock-prompt { font-size: 12px; padding: 10px 18px; bottom: 90px; white-space: nowrap; }
 
-      /* Scrollable horizontal controls bar on mobile */
       .controls-bar {
         bottom: 16px;
         left: 0;
@@ -494,46 +520,28 @@
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;          /* Firefox */
+        scrollbar-width: none;
         justify-content: flex-start;
         width: 100%;
         max-width: 100vw;
-        /* stretch pill border to full width edges */
         border-left: none;
         border-right: none;
         border-radius: 20px 20px 0 0;
       }
-      /* hide scrollbar on webkit */
       .controls-bar::-webkit-scrollbar { display: none; }
-
-      .control-group {
-        flex-shrink: 0;   /* prevent buttons from squishing */
-      }
-
-      .control-btn {
-        width: 46px;
-        height: 46px;
-        font-size: 18px;
-      }
+      .control-group { flex-shrink: 0; }
+      .control-btn { width: 46px; height: 46px; font-size: 18px; }
       .student-tray { top: 12px; right: 12px; }
       .student-bubble { width: 56px; height: 56px; }
       .control-group span { font-size: 8px; }
     }
 
-    /* for extra small devices, keep bar fully accessible */
     @media (max-width: 480px) {
-      .controls-bar {
-        gap: 8px;
-        padding: 8px 12px;
-      }
-      .control-btn {
-        width: 42px;
-        height: 42px;
-        font-size: 16px;
-      }
+      .controls-bar { gap: 8px; padding: 8px 12px; }
+      .control-btn { width: 42px; height: 42px; font-size: 16px; }
     }
 
-    /* ── REACTION PICKER ── */
+    /* reaction picker */
     .reaction-picker {
       position: fixed;
       bottom: 100px;
@@ -580,7 +588,7 @@
       100% { opacity: 0; transform: translateY(-160px) scale(1.4); }
     }
 
-    /* ── HAND RAISE NOTIFICATION ── */
+    /* hand raise notification */
     .hand-queue {
       position: fixed;
       top: 70px;
@@ -624,7 +632,7 @@
       pointer-events: auto;
     }
 
-    /* ── SIDEBAR TABS (Chat / Q&A) ── */
+    /* sidebar tabs */
     .sidebar-tabs {
       display: flex;
       border-bottom: 1px solid #2a2a2a;
@@ -652,7 +660,6 @@
     .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
     .tab-content.active { display: flex; }
 
-    /* unread dot on tab */
     .tab-dot {
       display: inline-block;
       width: 7px;
@@ -665,7 +672,7 @@
     }
     .tab-dot.show { display: inline-block; }
 
-    /* ── Q&A PANEL ── */
+    /* Q&A panel */
     .qa-list {
       flex: 1;
       padding: 12px;
@@ -751,7 +758,7 @@
       margin-top: 20px;
     }
 
-    /* ── POLL PANEL ── */
+    /* poll panel */
     .poll-overlay {
       position: fixed;
       bottom: 100px;
@@ -888,7 +895,6 @@
   <div class="host-stage" id="host-stage">
     <video id="host-video-element" autoplay playsinline></video>
 
-    <!-- Host audio is always unmuted for students; no optional prompt -->
     <div class="host-avatar-placeholder" id="host-placeholder">
       <div class="avatar-circle"><i class="fa-solid fa-chalkboard-user"></i></div>
       <span id="host-placeholder-name">Host</span>
@@ -896,6 +902,12 @@
     <div class="waiting-overlay" id="waiting-overlay">
       <div class="spinner"></div>
       <span>Waiting for host to start the stream...</span>
+    </div>
+
+    <!-- Audio unlock prompt for students -->
+    <div class="audio-unlock-prompt" id="audio-unlock-prompt" style="display: none;">
+      <i class="fa-solid fa-volume-up" style="margin-right: 8px; color: #f97316;"></i>
+      Tap anywhere to enable host audio 🔊
     </div>
 
     <!-- room info -->
@@ -926,7 +938,7 @@
     </div>
   </div>
 
-  <!-- FIXED CONTROLS BAR (never hidden, fixed relative to viewport) -->
+  <!-- FIXED CONTROLS BAR -->
   <div class="controls-bar">
     <div class="control-group"><button class="control-btn" id="toggle-video"><i class="fa-solid fa-video"></i></button><span>Camera</span></div>
     <div class="control-group"><button class="control-btn" id="toggle-audio"><i class="fa-solid fa-microphone"></i></button><span>Mic</span></div>
@@ -951,10 +963,10 @@
     <span class="reaction-emoji" data-emoji="🙋">🙋</span>
   </div>
 
-  <!-- HAND RAISE QUEUE (host sees this) -->
+  <!-- HAND RAISE QUEUE -->
   <div class="hand-queue" id="hand-queue"></div>
 
-  <!-- LIVE POLL DISPLAY (students see active poll here) -->
+  <!-- LIVE POLL DISPLAY -->
   <div class="poll-overlay" id="poll-overlay">
     <div class="poll-title-bar">
       <h4><i class="fa-solid fa-chart-simple"></i> Live Poll</h4>
@@ -983,13 +995,11 @@
   </div>
 
   <!-- chat + Q&A sidebar -->
-  <div class="chat-overlay" id="chat-overlay"></div>
   <div class="chat-sidebar" id="chat-sidebar">
     <div class="chat-header">
       <span><i class="fa-regular fa-comment"></i> Class Panel</span>
       <i class="fa-solid fa-xmark" id="close-chat" style="cursor:pointer;"></i>
     </div>
-    <!-- Tabs -->
     <div class="sidebar-tabs">
       <button class="sidebar-tab active" id="tab-chat" onclick="switchTab('chat')">
         Chat <span class="tab-dot" id="chat-dot"></span>
@@ -998,12 +1008,10 @@
         Q&amp;A <span class="tab-dot" id="qa-dot"></span>
       </button>
     </div>
-    <!-- Chat Tab -->
     <div class="tab-content active" id="tab-content-chat">
       <div class="chat-messages" id="chat-messages"><div class="chat-message"><strong>✨ System:</strong> Welcome to the live class</div></div>
       <div class="chat-input"><input type="text" id="chat-input" placeholder="Say something..."><button id="send-chat">Send</button></div>
     </div>
-    <!-- Q&A Tab -->
     <div class="tab-content" id="tab-content-qa">
       <div class="qa-list" id="qa-list">
         <div class="qa-empty" id="qa-empty"><i class="fa-solid fa-question-circle" style="font-size:28px;color:#333;margin-bottom:8px;display:block;"></i>No questions yet.<br>Students can ask questions here.</div>
@@ -1015,11 +1023,6 @@
     </div>
   </div>
   <div class="chat-overlay" id="chat-overlay"></div>
-  <div class="chat-sidebar" id="chat-sidebar">
-    <div class="chat-header"><span><i class="fa-regular fa-comment"></i> Class Chat</span><i class="fa-solid fa-xmark" id="close-chat" style="cursor:pointer;"></i></div>
-    <div class="chat-messages" id="chat-messages"><div class="chat-message"><strong>✨ System:</strong> Welcome to the live class</div></div>
-    <div class="chat-input"><input type="text" id="chat-input" placeholder="Ask something..."><button id="send-chat">Send</button></div>
-  </div>
 </div>
 
 <script>
@@ -1059,7 +1062,7 @@
   let pollVotes = {};
   let myVote = null;
   let activeSidebarTab = 'chat';
-  let questions = {};   // question_id -> { user, text, answered }
+  let questions = {};
 
   // DOM elements
   const hostVideoEl      = document.getElementById('host-video-element');
@@ -1074,27 +1077,49 @@
   const participantCountSpan = document.getElementById('participant-count');
   const sessionTitleSpan = document.getElementById('session-title-display');
   const hostDisplaySpan  = document.getElementById('host-display-name');
+  const audioUnlockPrompt = document.getElementById('audio-unlock-prompt');
 
   sessionTitleSpan.textContent = sessionTitle || 'Live Class';
   hostDisplaySpan.textContent  = hostUsername  || 'Host';
   document.getElementById('host-placeholder-name').textContent = hostUsername || 'Host';
-  // Note: hostVideoEl.muted is set per-call inside setHostVideo() and initLocalStream()
 
-  // ── VIDEO / STAGE HELPERS ──────────────────────────────────────────
-  // Tracks whether we've attached the auto-unmute listener
   let _autoUnmuteAttached = false;
 
+  function showAudioUnlockPrompt() {
+    if (audioUnlockPrompt && !isHost) {
+      audioUnlockPrompt.style.display = 'flex';
+      setTimeout(() => {
+        if (audioUnlockPrompt.style.display === 'flex') {
+          audioUnlockPrompt.style.opacity = '0';
+          setTimeout(() => {
+            if (audioUnlockPrompt.style.display === 'flex') audioUnlockPrompt.style.display = 'none';
+            audioUnlockPrompt.style.opacity = '';
+          }, 500);
+        }
+      }, 10000);
+    }
+  }
+
+  function hideAudioUnlockPrompt() {
+    if (audioUnlockPrompt) {
+      audioUnlockPrompt.style.opacity = '0';
+      setTimeout(() => audioUnlockPrompt.style.display = 'none', 300);
+    }
+  }
+
   function _ensureHostAudible() {
-    if (!hostVideoEl.muted) return; // already unmuted, nothing to do
+    if (!hostVideoEl.muted) return;
     hostVideoEl.muted = false;
     hostVideoEl.volume = 1.0;
     hostVideoEl.play().catch(e => console.log('Auto-unmute play error:', e));
+    hideAudioUnlockPrompt();
   }
 
   function _attachAutoUnmute() {
     if (_autoUnmuteAttached) return;
     _autoUnmuteAttached = true;
-    // Any interaction anywhere on the page triggers unmute once
+    showAudioUnlockPrompt();
+    
     const events = ['click', 'touchstart', 'keydown', 'pointerdown'];
     const handler = () => {
       _ensureHostAudible();
@@ -1111,37 +1136,43 @@
     waitingOverlay.style.display = 'none';
 
     if (isHost) {
-      // Host always mutes their own local preview to prevent echo
       hostVideoEl.muted = true;
+      hostVideoEl.volume = 0;
       hostVideoEl.play().catch(e => console.log('Host play error:', e));
     } else {
-      // Students MUST hear the host — no optional prompt.
-      // Reset so a new stream always gets a fresh unmute attempt.
       _autoUnmuteAttached = false;
       hostVideoEl.volume = 1.0;
       hostVideoEl.muted = false;
-      hostVideoEl.play().then(() => {
-        console.log('Student: host audio playing unmuted ✓');
-      }).catch(() => {
-        // Browser requires a prior user gesture before unmuted autoplay.
-        // Play muted (always succeeds) and auto-unmute the instant
-        // the student touches/clicks/taps ANYTHING on the page.
-        hostVideoEl.muted = true;
-        hostVideoEl.play().catch(e => console.log('Muted fallback error:', e));
-        _attachAutoUnmute();
-      });
+      
+      const playPromise = hostVideoEl.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log('✅ Student: Host audio playing unmuted successfully');
+            hideAudioUnlockPrompt();
+          })
+          .catch(error => {
+            console.log('⚠️ Autoplay blocked:', error.name);
+            hostVideoEl.muted = true;
+            hostVideoEl.play().catch(e => console.log('Muted playback error:', e));
+            _attachAutoUnmute();
+          });
+      }
     }
   }
+
   function showHostPlaceholder() {
     hostVideoEl.style.display = 'none';
     hostPlaceholder.style.display = 'flex';
     waitingOverlay.style.display = 'none';
   }
+
   function showWaitingOverlay() {
     hostVideoEl.style.display = 'none';
     hostPlaceholder.style.display = 'none';
     waitingOverlay.style.display = 'flex';
   }
+
   function showSelfBubble() {
     selfBubbleContainer.style.display = 'block';
     if (localStream) {
@@ -1154,6 +1185,7 @@
     }
     selfNameLabel.textContent = userName.length > 12 ? userName.slice(0,10)+'..' : userName;
   }
+
   function updateSelfMicIcon() {
     if (!selfMicIcon) return;
     if (isAudioEnabled) {
@@ -1165,13 +1197,13 @@
     }
   }
 
-  // ── STUDENT BUBBLES ───────────────────────────────────────────────
+  // Student bubbles
   function addStudentBubble(username, uid) {
     if (document.getElementById(`bubble-wrapper-${uid}`)) return;
     const wrapper = document.createElement('div');
     wrapper.className = 'student-bubble-wrapper';
     wrapper.id = `bubble-wrapper-${uid}`;
-    wrapper.dataset.micEnabled = '1'; // assume mic on by default
+    wrapper.dataset.micEnabled = '1';
     const bubble = document.createElement('div');
     bubble.className = 'student-bubble';
     bubble.id = `video-${uid}`;
@@ -1191,7 +1223,6 @@
     bubble.appendChild(avatarDiv);
     bubble.appendChild(mutedIcon);
 
-    // Teacher mic control overlay (only rendered if isHost)
     if (isHost) {
       const micCtrl = document.createElement('button');
       micCtrl.className = 'bubble-mic-ctrl';
@@ -1201,11 +1232,8 @@
       micCtrl.addEventListener('click', (e) => {
         e.stopPropagation();
         teacherToggleStudentMic(uid);
-        // Update ctrl icon optimistically
         const nowEnabled = wrapper.dataset.micEnabled === '1';
-        micCtrl.innerHTML = nowEnabled
-          ? '<i class="fa-solid fa-microphone-slash"></i>'
-          : '<i class="fa-solid fa-microphone"></i>';
+        micCtrl.innerHTML = nowEnabled ? '<i class="fa-solid fa-microphone-slash"></i>' : '<i class="fa-solid fa-microphone"></i>';
         micCtrl.classList.toggle('mic-ctrl-muted', nowEnabled);
       });
       bubble.appendChild(micCtrl);
@@ -1218,15 +1246,19 @@
     wrapper.appendChild(nameSpan);
     studentTray.appendChild(wrapper);
   }
+
   function removeStudentBubble(uid) {
     const wrapper = document.getElementById(`bubble-wrapper-${uid}`);
     if (wrapper) wrapper.remove();
     if (peerConnections[uid]) { peerConnections[uid].close(); delete peerConnections[uid]; }
   }
+
   function routeRemoteStream(remoteUserId, stream) {
     if (remoteUserId == hostId) {
-      // Ensure audio tracks from the host are enabled before handing off
-      stream.getAudioTracks().forEach(track => { track.enabled = true; });
+      stream.getAudioTracks().forEach(track => {
+        track.enabled = true;
+        console.log('Host audio track enabled');
+      });
       setHostVideo(stream);
     } else {
       const videoElem = document.getElementById(`video-element-${remoteUserId}`);
@@ -1238,7 +1270,7 @@
     }
   }
 
-  // ── WEBRTC ────────────────────────────────────────────────────────
+  // WebRTC signaling
   async function createOffer(remoteUserId) {
     const pc = new RTCPeerConnection(configuration);
     peerConnections[remoteUserId] = pc;
@@ -1247,7 +1279,7 @@
       if (e.candidate) socket.send(JSON.stringify({
         type: 'ice_candidate',
         candidate: e.candidate,
-        target_user_id: remoteUserId   // ← tell server who this ICE is for
+        target_user_id: remoteUserId
       }));
     };
     pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(remoteUserId, e.streams[0]); };
@@ -1256,11 +1288,11 @@
     socket.send(JSON.stringify({
       type: 'offer',
       offer,
-      target_user_id: remoteUserId     // ← tell server who this offer is for
+      target_user_id: remoteUserId
     }));
   }
+
   async function handleOffer(data) {
-    // Only process if we are the intended target
     if (data.target_user_id != null && data.target_user_id != userId) return;
     const senderId = data.user_id;
     const pc = new RTCPeerConnection(configuration);
@@ -1270,7 +1302,7 @@
       if (e.candidate) socket.send(JSON.stringify({
         type: 'ice_candidate',
         candidate: e.candidate,
-        target_user_id: senderId        // ← ICE reply goes back to the offerer
+        target_user_id: senderId
       }));
     };
     pc.ontrack = (e) => { if (e.streams?.[0]) routeRemoteStream(senderId, e.streams[0]); };
@@ -1280,27 +1312,44 @@
     socket.send(JSON.stringify({
       type: 'answer',
       answer,
-      target_user_id: senderId          // ← answer goes back to the offerer
+      target_user_id: senderId
     }));
   }
+
   async function handleAnswer(data) {
-    // Only process if we are the intended target
     if (data.target_user_id != null && data.target_user_id != userId) return;
     const pc = peerConnections[data.user_id];
     if (pc) await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
   }
+
   async function handleIceCandidate(data) {
-    // Only process if we are the intended target
     if (data.target_user_id != null && data.target_user_id != userId) return;
     const pc = peerConnections[data.user_id];
     if (pc && data.candidate) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
   }
+
   function updateRemoteMute(uid, enabled) {
     const icon = document.getElementById(`bubble-muted-${uid}`);
     if (icon) icon.style.display = enabled ? 'none' : 'flex';
   }
 
-  // ── SIDEBAR TABS ──────────────────────────────────────────────────
+  // Teacher mic control
+  function teacherToggleStudentMic(targetUserId) {
+    const wrapper = document.getElementById(`bubble-wrapper-${targetUserId}`);
+    const currentlyEnabled = wrapper ? wrapper.dataset.micEnabled !== '0' : true;
+    const newEnabled = !currentlyEnabled;
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        type: 'mic_control',
+        target_user_id: targetUserId,
+        enabled: newEnabled
+      }));
+    }
+    updateRemoteMute(targetUserId, newEnabled);
+    if (wrapper) wrapper.dataset.micEnabled = newEnabled ? '1' : '0';
+  }
+
+  // Sidebar tabs
   function switchTab(tab) {
     activeSidebarTab = tab;
     document.getElementById('tab-chat').classList.toggle('active', tab === 'chat');
@@ -1311,7 +1360,7 @@
     if (tab === 'qa')   document.getElementById('qa-dot').classList.remove('show');
   }
 
-  // ── REACTIONS ─────────────────────────────────────────────────────
+  // Reactions
   function burstEmoji(emoji) {
     const count = 4 + Math.floor(Math.random() * 4);
     for (let i = 0; i < count; i++) {
@@ -1326,6 +1375,7 @@
       }, i * 120);
     }
   }
+
   function sendReaction(emoji) {
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({ type: 'reaction', emoji }));
@@ -1334,7 +1384,7 @@
     document.getElementById('reaction-picker').classList.remove('open');
   }
 
-  // ── RAISE HAND ────────────────────────────────────────────────────
+  // Raise hand
   function toggleHand() {
     handRaised = !handRaised;
     const btn = document.getElementById('raise-hand-btn');
@@ -1343,6 +1393,7 @@
       socket.send(JSON.stringify({ type: 'raise_hand', raised: handRaised }));
     }
   }
+
   function showHandBadge(username, uid) {
     const queue = document.getElementById('hand-queue');
     if (document.getElementById(`hand-badge-${uid}`)) return;
@@ -1353,15 +1404,17 @@
       <button class="dismiss-hand" onclick="dismissHand(${uid})">✕</button>`;
     queue.appendChild(badge);
   }
+
   function dismissHand(uid) {
     const el = document.getElementById(`hand-badge-${uid}`);
     if (el) el.remove();
   }
+
   function clearHandBadge(uid) {
     dismissHand(uid);
   }
 
-  // ── Q&A ───────────────────────────────────────────────────────────
+  // Q&A
   function sendQuestion() {
     const input = document.getElementById('qa-input');
     const text = input.value.trim();
@@ -1372,6 +1425,7 @@
     }
     input.value = '';
   }
+
   function addQuestionToPanel(qid, username, text, isOwn) {
     questions[qid] = { user: username, text, answered: false };
     const list = document.getElementById('qa-list');
@@ -1392,17 +1446,18 @@
     `;
     list.appendChild(item);
     list.scrollTop = list.scrollHeight;
-    // Dot notification if on other tab
     if (activeSidebarTab !== 'qa') {
       document.getElementById('qa-dot').classList.add('show');
     }
   }
+
   function markAnswered(qid) {
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({ type: 'question_answered', question_id: qid }));
     }
     setQuestionAnswered(qid);
   }
+
   function setQuestionAnswered(qid) {
     const item = document.getElementById(`qa-${qid}`);
     if (item) {
@@ -1414,20 +1469,21 @@
     if (questions[qid]) questions[qid].answered = true;
   }
 
-  // ── POLLS ─────────────────────────────────────────────────────────
+  // Polls
   function openPollCreator() {
     document.getElementById('poll-creator').classList.add('open');
   }
+
   function closePollCreator() {
     document.getElementById('poll-creator').classList.remove('open');
     document.getElementById('poll-q-input').value = '';
-    // reset options
     const builder = document.getElementById('poll-options-builder');
     builder.innerHTML = `
-      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option A"><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
-      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option B"><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
+      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option A" value=""><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
+      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option B" value=""><button class="remove-opt" onclick="removePollOption(this)">✕</button></div>
     `;
   }
+
   function addPollOption() {
     const builder = document.getElementById('poll-options-builder');
     const letters = 'ABCDEFGH';
@@ -1438,11 +1494,13 @@
     row.innerHTML = `<input class="poll-opt-input" placeholder="Option ${letters[idx]}"><button class="remove-opt" onclick="removePollOption(this)">✕</button>`;
     builder.appendChild(row);
   }
+
   function removePollOption(btn) {
     const builder = document.getElementById('poll-options-builder');
     if (builder.children.length <= 2) return;
     btn.parentElement.remove();
   }
+
   function launchPoll() {
     const question = document.getElementById('poll-q-input').value.trim();
     const optionInputs = document.querySelectorAll('.poll-opt-input');
@@ -1457,6 +1515,7 @@
     }
     closePollCreator();
   }
+
   function showPoll(pollId, question, options) {
     activePoll = pollId;
     pollVotes = {};
@@ -1467,6 +1526,7 @@
     document.getElementById('poll-vote-count').textContent = '0 votes';
     document.getElementById('poll-overlay').classList.add('open');
   }
+
   function renderPollOptions(options) {
     const list = document.getElementById('poll-options-list');
     list.innerHTML = '';
@@ -1488,6 +1548,7 @@
       list.appendChild(div);
     });
   }
+
   function castVote(optionIndex) {
     if (myVote !== null || !activePoll) return;
     myVote = optionIndex;
@@ -1495,11 +1556,13 @@
     pollVotes[optionIndex] = (pollVotes[optionIndex] || 0) + 1;
     refreshPollDisplay();
   }
+
   function handlePollVote(pollId, optionIndex) {
     if (pollId !== activePoll) return;
     pollVotes[optionIndex] = (pollVotes[optionIndex] || 0) + 1;
     refreshPollDisplay();
   }
+
   function refreshPollDisplay() {
     const total = Object.values(pollVotes).reduce((a,b) => a+b, 0);
     document.getElementById('poll-vote-count').textContent = `${total} vote${total !== 1 ? 's' : ''}`;
@@ -1512,23 +1575,21 @@
       opt.querySelector('.opt-pct').textContent = pct + '%';
     });
   }
+
   function endPoll() {
     activePoll = null;
     document.getElementById('poll-overlay').classList.remove('open');
   }
 
-  // ── WEBSOCKET SIGNALING ───────────────────────────────────────────
+  // WebSocket signaling
   function handleSignalingData(data) {
     switch (data.type) {
       case 'user_joined':
         if (data.user_id != userId) {
           if (isHost) {
-            // Host creates an offer to every student that joins
             if (data.user_id != hostId) addStudentBubble(data.user, data.user_id);
             createOffer(data.user_id);
           } else {
-            // Students only show other students' bubbles — NEVER create offers.
-            // The host will send us an offer; we respond via handleOffer.
             if (data.user_id != hostId) addStudentBubble(data.user, data.user_id);
           }
           addChatMessage('System', `${data.user} joined the class`);
@@ -1543,7 +1604,6 @@
         if (!isHost && data.user_id == hostId) showWaitingOverlay();
         break;
       case 'offer':
-        // Only handle if we are the target (sender excludes themselves via target_user_id)
         if (data.user_id != userId) handleOffer(data);
         break;
       case 'answer':
@@ -1582,9 +1642,6 @@
         if (data.user_id != userId || isHost) {
           addQuestionToPanel(data.question_id, data.user, data.question, data.user_id === userId);
         }
-        if (!isHost && data.user_id === userId) {
-          // already added via send; just confirm
-        }
         break;
       case 'question_answered':
         setQuestionAnswered(data.question_id);
@@ -1603,10 +1660,7 @@
       case 'poll_end':
         endPoll();
         break;
-
-      // ── MIC CONTROL (teacher → student) ──────────────────────────
       case 'mic_control':
-        // Only the targeted student acts on this
         if (!isHost && data.target_user_id == userId) {
           const forcedEnabled = Boolean(data.enabled);
           toggleAudio(forcedEnabled);
@@ -1615,28 +1669,9 @@
             : '🔇 Your microphone was muted by the teacher.';
           addChatMessage('System', msg);
         }
-        // Everyone (including host) updates the bubble mute icon
         updateRemoteMute(data.target_user_id, data.enabled);
         break;
     }
-  }
-
-  // ── TEACHER MIC CONTROL HELPERS ──────────────────────────────────
-  function teacherToggleStudentMic(targetUserId) {
-    const wrapper = document.getElementById(`bubble-wrapper-${targetUserId}`);
-    // micEnabled defaults to '1' (assume on) unless we've tracked it
-    const currentlyEnabled = wrapper ? wrapper.dataset.micEnabled !== '0' : true;
-    const newEnabled = !currentlyEnabled;
-    if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({
-        type: 'mic_control',
-        target_user_id: targetUserId,
-        enabled: newEnabled
-      }));
-    }
-    // Optimistically update icon and state
-    updateRemoteMute(targetUserId, newEnabled);
-    if (wrapper) wrapper.dataset.micEnabled = newEnabled ? '1' : '0';
   }
 
   function initWebSocket() {
@@ -1668,7 +1703,7 @@
       const videoTracks = localStream.getVideoTracks();
       if (videoTracks.length > 0) videoTracks[0].enabled = isVideoEnabled;
       if (isHost) {
-        hostVideoEl.muted = true; // host always mutes their own local preview to prevent echo
+        hostVideoEl.muted = true;
         setHostVideo(localStream);
         selfBubbleContainer.style.display = 'none';
         studentTray.style.display = 'flex';
@@ -1694,6 +1729,7 @@
     btn.innerHTML = isVideoEnabled ? '<i class="fa-solid fa-video"></i>' : '<i class="fa-solid fa-video-slash"></i>';
     btn.classList.toggle('danger', !isVideoEnabled);
   }
+
   function updateAudioButtonUI() {
     const btn = document.getElementById('toggle-audio');
     btn.innerHTML = isAudioEnabled ? '<i class="fa-solid fa-microphone"></i>' : '<i class="fa-solid fa-microphone-slash"></i>';
@@ -1709,8 +1745,8 @@
     else if (isHost && isVideoEnabled && localStream) setHostVideo(localStream);
     if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'video_toggle', enabled: isVideoEnabled }));
   }
+
   function toggleAudio(forcedState) {
-    // forcedState: if provided (true/false), use it; otherwise toggle
     if (typeof forcedState === 'boolean') {
       isAudioEnabled = forcedState;
     } else {
@@ -1720,7 +1756,6 @@
     if (track) track.enabled = isAudioEnabled;
     updateAudioButtonUI();
     updateSelfMicIcon();
-    // 'audio_toggle' is the correct type that handleSignalingData listens for
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({ type: 'audio_toggle', enabled: isAudioEnabled }));
     }
@@ -1771,6 +1806,7 @@
       } catch (e) { console.error('Screen share error:', e); }
     } else { stopScreenShare(); }
   }
+
   function stopScreenShare() {
     if (screenStream) screenStream.getTracks().forEach(t => t.stop());
     const videoTrack = localStream.getVideoTracks()[0];
@@ -1795,56 +1831,55 @@
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
   }
+
   function escapeHtml(str) {
     if (!str) return '';
     return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
+
   function sendChatMessage() {
     const input = document.getElementById('chat-input');
     if (!input.value.trim()) return;
     socket.send(JSON.stringify({ type: 'chat_message', message: input.value }));
     input.value = '';
   }
+
   function leaveRoom() {
     if (localStream) localStream.getTracks().forEach(t => t.stop());
     if (screenStream) screenStream.getTracks().forEach(t => t.stop());
     if (socket) socket.close();
     window.location.href = "{% url 'live_room_list' %}";
   }
+
   function isMobile() {
     return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
 
-  // ── BOOT ─────────────────────────────────────────────────────────
+  // Bootstrap
   document.addEventListener('DOMContentLoaded', async () => {
     await initLocalStream();
     initWebSocket();
 
-    // Role-based UI
     if (isHost) {
       document.getElementById('flip-camera-group').style.display = isMobile() ? 'flex' : 'none';
       document.getElementById('poll-btn-group').style.display = 'flex';
       document.getElementById('mute-all-group').style.display = 'flex';
-      document.getElementById('raise-hand-group').style.display = 'none';  // host doesn't raise hand
-      // host doesn't need Q&A input
+      document.getElementById('raise-hand-group').style.display = 'none';
       document.getElementById('qa-input-area').style.display = 'none';
     } else {
       document.getElementById('screen-share-group').style.display = 'none';
       document.getElementById('poll-btn-group').style.display = 'none';
     }
 
-    // Controls
     document.getElementById('toggle-video').addEventListener('click', toggleVideo);
-    document.getElementById('toggle-audio').addEventListener('click', toggleAudio);
+    document.getElementById('toggle-audio').addEventListener('click', () => toggleAudio());
     document.getElementById('toggle-screen').addEventListener('click', toggleScreenShare);
     document.getElementById('leave-room').addEventListener('click', leaveRoom);
     const flipBtn = document.getElementById('flip-camera');
     if (flipBtn) flipBtn.addEventListener('click', flipCamera);
 
-    // Raise hand
     document.getElementById('raise-hand-btn').addEventListener('click', toggleHand);
 
-    // Reactions
     const reactBtn = document.getElementById('toggle-react');
     const picker = document.getElementById('reaction-picker');
     reactBtn.addEventListener('click', (e) => { e.stopPropagation(); picker.classList.toggle('open'); });
@@ -1854,17 +1889,14 @@
     document.addEventListener('click', () => picker.classList.remove('open'));
     picker.addEventListener('click', e => e.stopPropagation());
 
-    // Polls (host)
     document.getElementById('toggle-poll-creator')?.addEventListener('click', openPollCreator);
 
-    // Mute All (host)
     document.getElementById('mute-all-btn')?.addEventListener('click', () => {
       const wrappers = document.querySelectorAll('.student-bubble-wrapper');
       wrappers.forEach(wrapper => {
         const uid = wrapper.id.replace('bubble-wrapper-', '');
         const currentlyEnabled = wrapper.dataset.micEnabled !== '0';
         if (currentlyEnabled) {
-          // mute this student
           if (socket?.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ type: 'mic_control', target_user_id: uid, enabled: false }));
           }
@@ -1879,6 +1911,7 @@
       });
       addChatMessage('System', '🔇 You muted all students.');
     });
+
     document.getElementById('cancel-poll-btn').addEventListener('click', closePollCreator);
     document.getElementById('launch-poll-btn').addEventListener('click', launchPoll);
     document.getElementById('add-option-btn').addEventListener('click', addPollOption);
@@ -1890,7 +1923,6 @@
       }
     });
 
-    // Chat sidebar
     const chatSide = document.getElementById('chat-sidebar');
     const chatOver = document.getElementById('chat-overlay');
     document.getElementById('toggle-chat').onclick = () => { chatSide.classList.add('open'); chatOver.classList.add('active'); };
@@ -1899,7 +1931,6 @@
     document.getElementById('send-chat').onclick = sendChatMessage;
     document.getElementById('chat-input').addEventListener('keypress', e => { if (e.key === 'Enter') sendChatMessage(); });
 
-    // Q&A
     document.getElementById('send-qa').addEventListener('click', () => {
       const input = document.getElementById('qa-input');
       const text = input.value.trim();

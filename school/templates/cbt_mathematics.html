@@ -1053,6 +1053,82 @@
     .awaClass-cbt-intro-card { padding: 24px 16px; }
   }
 
+  /* ══════════════════════════════════════════════════
+     MOBILE PAGINATOR  (below question card, < 900px)
+  ══════════════════════════════════════════════════ */
+  .awaClass-cbt-mobile-pager {
+    display: none; /* shown only on mobile via JS when exam active */
+    flex-direction: column;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .awaClass-cbt-pager-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-start;
+  }
+
+  .awaClass-cbt-pg-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 8px;
+    border: 1.5px solid #e5e5e5;
+    background: #ffffff;
+    color: #3b82f6;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.14s;
+    user-select: none;
+  }
+
+  .awaClass-cbt-pg-btn:hover:not(:disabled):not(.ellipsis) {
+    background: #eff6ff;
+    border-color: #93c5fd;
+  }
+
+  .awaClass-cbt-pg-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .awaClass-cbt-pg-btn.answered:not(.active) {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .awaClass-cbt-pg-btn.ellipsis {
+    border-color: transparent;
+    background: transparent;
+    color: #9ca3af;
+    cursor: default;
+    min-width: 28px;
+  }
+
+  .awaClass-cbt-pg-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Hide the inline dots on mobile; show mobile pager instead */
+  @media (max-width: 899px) {
+    .awaClass-cbt-dots { display: none !important; }
+  }
+
 </style>
 </head>
 <body>
@@ -1191,6 +1267,11 @@
       </div>
       <div class="awaClass-cbt-q-text" id="qText"></div>
       <div class="awaClass-cbt-opts"   id="optsGrid"></div>
+    </div>
+
+    <!-- Mobile Paginator (shown below question on < 900px) -->
+    <div class="awaClass-cbt-mobile-pager" id="mobilePager">
+      <div class="awaClass-cbt-pager-row" id="pagerRow"></div>
     </div>
 
     <!-- Nav -->
@@ -1648,6 +1729,10 @@ function startExam(){
   document.getElementById('introWrap').style.display = 'none';
   document.getElementById('examBody').style.display  = 'block';
   document.body.classList.add('awaClass-exam-active');
+  // Show mobile pager on small screens
+  if(window.innerWidth < 900){
+    document.getElementById('mobilePager').style.display = 'flex';
+  }
   buildDots(); renderQ(); startTimer();
   startTime = Date.now();
 }
@@ -1697,6 +1782,64 @@ function refreshDots(){
       }
     }
   });
+  if(window.innerWidth < 900) refreshMobilePager();
+}
+
+/* ── mobile paginator ── */
+function refreshMobilePager(){
+  const total = activeQS.length;
+  const row   = document.getElementById('pagerRow');
+  if(!row) return;
+  row.innerHTML = '';
+
+  // Build a window of visible page numbers around cur
+  const WING = 3; // how many neighbours to show around current
+  const pages = [];
+  // always include first few, ellipsis, window around cur, ellipsis, last few
+  const addPage = (n) => { if(!pages.includes(n) && n>=0 && n<total) pages.push(n); };
+  for(let i=0;i<Math.min(3,total);i++) addPage(i);
+  for(let i=Math.max(0,cur-WING);i<=Math.min(total-1,cur+WING);i++) addPage(i);
+  for(let i=Math.max(0,total-3);i<total;i++) addPage(i);
+  pages.sort((a,b)=>a-b);
+
+  // Insert ellipsis gaps
+  const withEllipsis = [];
+  for(let k=0;k<pages.length;k++){
+    withEllipsis.push(pages[k]);
+    if(k+1<pages.length && pages[k+1]-pages[k]>1) withEllipsis.push('…');
+  }
+
+  // « prev arrow
+  const prev = document.createElement('button');
+  prev.className = 'awaClass-cbt-pg-btn';
+  prev.textContent = '«';
+  prev.disabled = cur === 0;
+  prev.onclick = () => goTo(cur - 1);
+  row.appendChild(prev);
+
+  // Page buttons + ellipsis
+  withEllipsis.forEach(p => {
+    const b = document.createElement('button');
+    if(p === '…'){
+      b.className = 'awaClass-cbt-pg-btn ellipsis';
+      b.textContent = '…';
+    } else {
+      b.className = 'awaClass-cbt-pg-btn' +
+        (p === cur ? ' active' : '') +
+        (answers[p] !== null ? ' answered' : '');
+      b.textContent = p + 1;
+      b.onclick = () => goTo(p);
+    }
+    row.appendChild(b);
+  });
+
+  // » next arrow
+  const next = document.createElement('button');
+  next.className = 'awaClass-cbt-pg-btn';
+  next.textContent = '»';
+  next.disabled = cur === total - 1;
+  next.onclick = () => goTo(cur + 1);
+  row.appendChild(next);
 }
 
 /* ── render question ── */
@@ -1748,6 +1891,7 @@ function pick(idx){
   });
   if(idx===q.a){ showToast(); fireConfetti(); }
   refreshDots(); updateProgress();
+  if(window.innerWidth < 900) refreshMobilePager();
 }
 
 /* ── navigate ── */
@@ -1966,6 +2110,16 @@ function calcPercent(){
     document.getElementById('awaClass-cExpr').textContent='';
   }catch(e){}
 }
+
+window.addEventListener('resize', () => {
+  const pager = document.getElementById('mobilePager');
+  if(!pager) return;
+  const examActive = document.getElementById('examBody').style.display === 'block';
+  if(examActive){
+    pager.style.display = window.innerWidth < 900 ? 'flex' : 'none';
+    if(window.innerWidth < 900) refreshMobilePager();
+  }
+});
 
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('calcOverlay').classList.contains('open')) return;

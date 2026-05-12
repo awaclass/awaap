@@ -2148,62 +2148,6 @@
                     </div>
                 </div>
 
-                <!-- Section: CBT Performance -->
-                <div class="awa-sf-section-title">CBT Examination Record</div>
-                <table class="awa-sf-stats-table">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Exams Taken</th>
-                            <th>Avg Score (%)</th>
-                            <th>Best Score (%)</th>
-                            <th>Grade Band</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if subject_summaries %}
-                            {% for s in subject_summaries %}
-                            <tr>
-                                <td>{{ s.name }}</td>
-                                <td style="text-align:center;">{{ s.exams_taken }}</td>
-                                <td style="text-align:center;">{{ s.avg_pct }}%</td>
-                                <td style="text-align:center;">{{ s.best_pct|default:s.avg_pct }}%</td>
-                                <td style="text-align:center;">
-                                    {% if s.avg_pct >= 70 %}Distinction{% elif s.avg_pct >= 50 %}Credit{% else %}Below Average{% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="5" style="text-align:center;color:#888;font-style:italic;padding:12px;">No exam records found</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                    <tfoot>
-                        <tr style="background:#f2f2f2;">
-                            <td><strong>Overall</strong></td>
-                            <td style="text-align:center;"><strong>{{ total_exams_taken|default:"0" }}</strong></td>
-                            <td style="text-align:center;"><strong>{{ avg_score|default:"0" }}%</strong></td>
-                            <td style="text-align:center;">—</td>
-                            <td style="text-align:center;"><strong>{{ total_points|default:"0" }} pts</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <!-- Member since + rank -->
-                <div style="display:flex;gap:24px;margin-bottom:14px;">
-                    <div class="awa-sf-field-inline" style="flex:1;">
-                        <span class="awa-sf-label">Member Since</span>
-                        <span class="awa-sf-value">{{ profile.created_at|date:"F j, Y" }}</span>
-                    </div>
-                    {% if best_rank %}
-                    <div class="awa-sf-field-inline" style="flex:1;">
-                        <span class="awa-sf-label">Best Rank</span>
-                        <span class="awa-sf-value">#{{ best_rank }}{% if best_rank_subject %} — {{ best_rank_subject }}{% endif %}</span>
-                    </div>
-                    {% endif %}
-                </div>
-
                 <!-- Signature / Stamp row -->
                 <div class="awa-sf-bottom-row">
                     <div class="awa-sf-sig-box" style="margin-top:40px;">Student Signature</div>
@@ -2275,6 +2219,23 @@
                     </div>
 
                     <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editGender">Gender</label>
+                        <select class="awaClass-profile-edit-form-input" id="awaClassProfileEditGender" name="gender">
+                            <option value="">— Select —</option>
+                            <option value="Male"           {% if profile.gender == 'Male'           %}selected{% endif %}>Male</option>
+                            <option value="Female"         {% if profile.gender == 'Female'         %}selected{% endif %}>Female</option>
+                            <option value="Non-binary"     {% if profile.gender == 'Non-binary'     %}selected{% endif %}>Non-binary</option>
+                            <option value="Prefer not to say" {% if profile.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editPhone">Phone Number</label>
+                        <input type="tel" class="awaClass-profile-edit-form-input" id="awaClassProfileEditPhone" name="phone"
+                               value="{{ profile.phone|default:'' }}" placeholder="e.g. 08012345678" maxlength="20">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
                         <label class="awaClass-profile-edit-form-label" for="editBio">Bio</label>
                         <textarea class="awaClass-profile-edit-form-textarea" id="awaClassProfileEditBio" name="bio"
                                   placeholder="Tell something about yourself" maxlength="300">{{ profile.bio|default:'' }}</textarea>
@@ -2285,6 +2246,12 @@
                         <label class="awaClass-profile-edit-form-label" for="editLocation">Location</label>
                         <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditLocation" name="location"
                                value="{{ profile.location|default:'' }}" placeholder="City, Country" maxlength="200">
+                    </div>
+
+                    <div class="awaClass-profile-edit-form-group">
+                        <label class="awaClass-profile-edit-form-label" for="editAddress">Address</label>
+                        <input type="text" class="awaClass-profile-edit-form-input" id="awaClassProfileEditAddress" name="address"
+                               value="{{ profile.address|default:'' }}" placeholder="Street / Town / State" maxlength="200">
                     </div>
 
                     <div class="awaClass-profile-edit-form-group">
