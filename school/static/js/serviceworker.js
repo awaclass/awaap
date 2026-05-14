@@ -1,28 +1,41 @@
 /**
  * awaClass Service Worker
  * Handles caching, offline fallback, and background sync
+ *
+ * v2 — Fixed offline page caching:
+ *   - Separated STATIC_ASSETS (files) from PAGE_ASSETS (HTML pages)
+ *   - PAGE_ASSETS now pre-cached into CACHE_PAGES at install (not CACHE_STATIC)
+ *   - Auth-required pages (/home, /cbt/*, etc.) are NOT pre-cached at install
+ *     because Django redirects unauthenticated requests — they get cached at
+ *     runtime the first time the logged-in user visits them online
+ *   - networkFirstWithOfflineFallback now uses global caches.match() so it
+ *     finds pages across ALL caches (CACHE_PAGES + CACHE_STATIC)
  */
 
-const APP_VERSION   = 'v1';
+const APP_VERSION   = 'v2';
 const CACHE_STATIC  = `awaclass-static-${APP_VERSION}`;
 const CACHE_PAGES   = `awaclass-pages-${APP_VERSION}`;
 const CACHE_IMAGES  = `awaclass-images-${APP_VERSION}`;
 const ALL_CACHES    = [CACHE_STATIC, CACHE_PAGES, CACHE_IMAGES];
 
-// ─── Core shell assets (cache on install) ────────────────────────────────────
+// ─── Static file assets (pre-cached into CACHE_STATIC on install) ────────────
+// Only include files that are always publicly accessible — no auth needed.
 const STATIC_ASSETS = [
-  '/',
-  '/home',
-  '/cbt/',
-  '/cbt/mathematics/',
-  '/cbt/physics/',
-  '/cbt/physics/topics/',
   '/static/css/dashboard.css',
   '/static/images/slide1.png',
   '/static/images/slide2.png',
   '/static/images/slide3.png',
   '/static/images/slide4.png',
-  // FontAwesome – cached at runtime; listed here so the SW knows about them
+  // FontAwesome and Google Fonts — cached at runtime via CDN_HOSTS rule
+];
+
+// ─── Public pages (pre-cached into CACHE_PAGES on install) ───────────────────
+// Only include pages Django will serve WITHOUT login (no 302 redirect).
+// Auth-required pages like /home, /cbt/* are cached at RUNTIME the first time
+// the logged-in user visits them — see networkFirstWithOfflineFallback().
+const PAGE_ASSETS = [
+  '/',          // landing / index — public
+  '/register',  // registration — public
 ];
 
 // ─── CDN hosts we cache at runtime ───────────────────────────────────────────
@@ -32,13 +45,13 @@ const CDN_HOSTS = [
   'cdnjs.cloudflare.com',
 ];
 
-// ─── Routes that should NEVER be served from cache ──────────────────────────
+// ─── Routes that should NEVER be served from cache ───────────────────────────
 const NETWORK_ONLY = [
   '/logout',
   '/post',
   '/cbt/submit/',
   '/chat/create/',
-  '/chat/post/',          // comment / like sub-paths
+  '/chat/post/',        // comment / like sub-paths
   '/live/',
   '/follow/',
   '/like/',
@@ -80,21 +93,35 @@ const OFFLINE_HTML = `<!DOCTYPE html>
 </html>`;
 
 // ═════════════════════════════════════════════════════════════════════════════
-// INSTALL — pre-cache shell assets
+// INSTALL — pre-cache shell assets and public pages into their correct caches
 // ═════════════════════════════════════════════════════════════════════════════
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_STATIC).then(async (cache) => {
-      // Cache each asset individually so a single failure doesn't break install
-      const results = await Promise.allSettled(
-        STATIC_ASSETS.map((url) => cache.add(url).catch(() => null))
-      );
-      results.forEach((r, i) => {
-        if (r.status === 'rejected') {
-          console.warn('[SW] Failed to pre-cache:', STATIC_ASSETS[i]);
-        }
-      });
-    })
+    Promise.all([
+      // Static files → CACHE_STATIC
+      caches.open(CACHE_STATIC).then(async (cache) => {
+        const results = await Promise.allSettled(
+          STATIC_ASSETS.map((url) => cache.add(url).catch(() => null))
+        );
+        results.forEach((r, i) => {
+          if (r.status === 'rejected') {
+            console.warn('[SW] Failed to pre-cache static asset:', STATIC_ASSETS[i]);
+          }
+        });
+      }),
+
+      // Public pages → CACHE_PAGES
+      caches.open(CACHE_PAGES).then(async (cache) => {
+        const results = await Promise.allSettled(
+          PAGE_ASSETS.map((url) => cache.add(url).catch(() => null))
+        );
+        results.forEach((r, i) => {
+          if (r.status === 'rejected') {
+            console.warn('[SW] Failed to pre-cache page:', PAGE_ASSETS[i]);
+          }
+        });
+      }),
+    ])
   );
   self.skipWaiting();
 });
@@ -125,7 +152,7 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Ignore non-GET, chrome-extension, and dev-server HMR requests
+  // Ignore non-GET, chrome-extension, and non-http(s) requests
   if (request.method !== 'GET') return;
   if (!['http:', 'https:'].includes(url.protocol)) return;
 
@@ -179,8 +206,9 @@ async function networkOnly(request) {
   }
 }
 
-/** Cache first → network fallback → null on failure */
+/** Cache first → network fallback → empty 408 on failure */
 async function cacheFirst(request, cacheName) {
+  // Global caches.match searches all caches — faster than opening a specific one
   const cached = await caches.match(request);
   if (cached) return cached;
 
@@ -196,24 +224,35 @@ async function cacheFirst(request, cacheName) {
   }
 }
 
-/** Network first → cache fallback → inline offline page */
+/**
+ * Network first → cache fallback → inline offline page
+ *
+ * KEY FIX: Uses global caches.match() (no specific cache arg) so it finds
+ * pages stored in CACHE_PAGES *or* CACHE_STATIC — whichever has them.
+ * Auth-required pages (/home, /cbt/*, etc.) are saved here at runtime the
+ * first time the user visits while online, so they're available next offline.
+ */
 async function networkFirstWithOfflineFallback(request) {
-  const cache = await caches.open(CACHE_PAGES);
-
   try {
     const response = await fetch(request);
+    // Save every successfully-loaded HTML page for offline use
     if (response.ok) {
+      const cache = await caches.open(CACHE_PAGES);
       cache.put(request, response.clone());
     }
     return response;
   } catch {
-    const cached = await caches.match(request);
+    // Search ALL caches globally — finds pages regardless of which cache they
+    // were stored in (runtime CACHE_PAGES or install-time CACHE_STATIC).
+    // ignoreSearch: true means /home?next=/ still matches /home in the cache.
+    const cached = await caches.match(request, { ignoreSearch: true });
     if (cached) return cached;
 
-    // Try the root cached page as a generic fallback
+    // Last resort: serve the landing page as a generic offline shell
     const rootCached = await caches.match('/');
     if (rootCached) return rootCached;
 
+    // Nothing cached at all — show the inline offline page
     return new Response(OFFLINE_HTML, {
       status: 503,
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
