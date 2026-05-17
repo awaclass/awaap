@@ -108,7 +108,19 @@
     box-shadow: 0 6px 18px rgba(139,92,246,.28);
   }
 
-  .awaClass-cbt-btn-start:hover {
+  .awaClass-cbt-autosubmit-notice {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+
+    .awaClass-cbt-btn-start:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(139,92,246,.38);
   }
@@ -1021,6 +1033,9 @@
           <div class="awaClass-cbt-il">Negative Mark</div>
         </div>
       </div>
+      <div class="awaClass-cbt-autosubmit-notice">
+        ⚠️ Switching tabs, minimising, or closing this window will <strong>automatically submit</strong> your exam.
+      </div>
       <button class="awaClass-cbt-btn-start" onclick="startExam()">▶ Start Exam</button>
     </div>
   </div>
@@ -1917,6 +1932,62 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Backspace') calcBack();
   else if(e.key==='Escape') toggleCalc();
   else if(e.key.toLowerCase()==='c') calcClear();
+});
+
+/* ═══════════════════════════════════════
+   AUTO-SUBMIT ON TAB HIDE / CLOSE
+   ─ Fires submitExam() silently whenever
+     the student hides the tab (switch tab,
+     minimise window) or closes it while
+     the exam is active and not yet submitted.
+═══════════════════════════════════════ */
+function examIsActive(){
+  return !submitted &&
+         document.getElementById('examBody') &&
+         document.getElementById('examBody').style.display === 'block';
+}
+
+/* 1. Tab hidden / window minimised → visibilitychange */
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden' && examIsActive()){
+    submitExam();
+  }
+});
+
+/* 2. Tab / window closing → beforeunload
+      We use sendBeacon so the POST still fires
+      even after the page starts tearing down.   */
+window.addEventListener('beforeunload', (e) => {
+  if(!examIsActive()) return;
+
+  /* Fire the score POST via sendBeacon with FormData
+     so Django's CSRF middleware accepts it natively. */
+  const timeUsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : (2 * 60 * 60 - timeLeft);
+  let correct = 0;
+  answers.forEach((a, i) => { if(a !== null && a === activeQS[i].a) correct++; });
+  const pct = Math.round((correct / activeQS.length) * 100);
+  let gradeKey = 'fail';
+  if(pct >= 75)      gradeKey = 'distinction';
+  else if(pct >= 60) gradeKey = 'credit';
+  else if(pct >= 50) gradeKey = 'pass';
+  else if(pct >= 40) gradeKey = 'nearly';
+
+  const fd = new FormData();
+  fd.append('subject',            'physics');
+  fd.append('score',              correct);
+  fd.append('total',              activeQS.length);
+  fd.append('percentage',         pct);
+  fd.append('grade',              gradeKey);
+  fd.append('time_used_sec',      timeUsed);
+  fd.append('auto_submitted',     'true');
+  fd.append('csrfmiddlewaretoken','{{ csrf_token }}');
+  navigator.sendBeacon("{% url 'cbt_submit' %}", fd);
+
+  submitted = true; /* prevent double-submit if visibilitychange also fired */
+
+  /* Show the browser's "Leave site?" dialog so the student knows */
+  e.preventDefault();
+  e.returnValue = 'Your exam has been automatically submitted because you left the page.';
 });
 </script>
 
