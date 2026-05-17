@@ -417,10 +417,10 @@ def post(request):
         subject = request.POST.get('subject')
         if title and about and video and subject:
             Post.objects.create(author=request.user, title=title, about=about, video=video, subject=subject)
-            messages.info(request, 'Video Upladed Successfully')
+            messages.success(request, 'Video uploaded successfully!')
             return redirect(request.META.get('HTTP_REFERER'))
         else:
-            messages.info(request, 'Please Fill all the Fields')
+            messages.error(request, 'Please fill all the fields.')
             return redirect(request.META.get('HTTP_REFERER'))
     videos = Post.objects.all().order_by('-created_at')
     return render(request, 'post.html', {'videos': videos})
@@ -462,13 +462,75 @@ def search(request):
 
 
 def mathematics(request):
-    videos = Post.objects.filter(subject__iexact='mathematics').order_by('-created_at')
+    # Show only the 3 most recent on the subject hub page
+    videos = Post.objects.filter(subject__iexact='mathematics').order_by('-created_at')[:3]
     return render(request, 'subjects/mathematics.html', {'videos': videos})
 
 
+def mathematics_videos(request):
+    """Full paginated / sortable video listing page for Mathematics."""
+    from datetime import timedelta
+    from django.utils import timezone
+
+    sort = request.GET.get('sort', 'newest')
+
+    qs = Post.objects.filter(subject__iexact='mathematics')
+
+    if sort == 'popular':
+        qs = qs.order_by('-view', '-created_at')
+    elif sort == 'liked':
+        from django.db.models import Count
+        qs = qs.annotate(like_count=Count('like')).order_by('-like_count', '-created_at')
+    else:  # newest (default)
+        qs = qs.order_by('-created_at')
+
+    # Tag videos posted in the last 7 days as "new"
+    cutoff = timezone.now() - timedelta(days=7)
+    for video in qs:
+        video.is_new = video.created_at >= cutoff
+
+    total_count = Post.objects.filter(subject__iexact='mathematics').count()
+
+    return render(request, 'subjects/mathematics_videos.html', {
+        'videos':      qs,
+        'total_count': total_count,
+        'sort':        sort,
+    })
+
+
 def physics(request):
-    videos = Post.objects.filter(subject__iexact='physics').order_by('-created_at')
-    return render(request, 'subjects/physics.html', {'videos': videos})
+    return render(request, 'subjects/physics.html')
+
+
+def physics_videos(request):
+    """Full paginated / sortable video listing page for Physics."""
+    from datetime import timedelta
+    from django.utils import timezone
+
+    sort = request.GET.get('sort', 'newest')
+
+    qs = Post.objects.filter(subject__iexact='physics')
+
+    if sort == 'popular':
+        qs = qs.order_by('-view', '-created_at')
+    elif sort == 'liked':
+        from django.db.models import Count
+        qs = qs.annotate(like_count=Count('like')).order_by('-like_count', '-created_at')
+    else:  # newest (default)
+        qs = qs.order_by('-created_at')
+
+    # Tag videos posted in the last 7 days as "new"
+    cutoff = timezone.now() - timedelta(days=7)
+    for video in qs:
+        video.is_new = video.created_at >= cutoff
+
+    total_count = Post.objects.filter(subject__iexact='physics').count()
+
+    return render(request, 'subjects/physics_videos.html', {
+        'videos':      qs,
+        'total_count': total_count,
+        'sort':        sort,
+    })
 
 
 def notifications(request):

@@ -1,0 +1,739 @@
+{% load humanize %}
+{% load time %}
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | Physics — Video Lessons</title>
+
+  <style>
+
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════════════ */
+    .awaClass-feed-page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+    @media (min-width: 768px) {
+      .awaClass-feed-page {
+        margin-left: 50px;
+      }
+    }
+
+    /* ── Back breadcrumb ── */
+    .awaClass-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--awaClass-text-light, #606060);
+    }
+    .awaClass-breadcrumb a {
+      color: #f97316;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: opacity 0.15s;
+    }
+    .awaClass-breadcrumb a:hover { opacity: 0.75; }
+    .awaClass-breadcrumb-sep { opacity: 0.4; }
+
+    /* ── Page header ── */
+    .awaClass-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
+      flex-wrap: wrap;
+    }
+    .awaClass-page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .awaClass-page-header-icon {
+      width: 48px; height: 48px;
+      background: #ffe4e6;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .awaClass-page-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--awaClass-text, #0f0f0f);
+      margin: 0 0 2px;
+      letter-spacing: -0.2px;
+    }
+    .awaClass-page-header p {
+      font-size: 13px;
+      color: var(--awaClass-text-light, #606060);
+      margin: 0;
+    }
+    .awaClass-video-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: #ffe4e6;
+      color: #f43f5e;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* ── Sort / filter bar ── */
+    .awaClass-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .awaClass-filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--awaClass-text-light, #606060);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .awaClass-sort-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1.5px solid #e5e5e5;
+      background: #fafafa;
+      cursor: pointer;
+      color: #606060;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .awaClass-sort-btn.active,
+    .awaClass-sort-btn:hover {
+      background: #f43f5e;
+      border-color: #f43f5e;
+      color: #fff;
+    }
+
+    /* ── Search input ── */
+    .awaClass-search-wrap {
+      margin-left: auto;
+      position: relative;
+    }
+    .awaClass-search-wrap i {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: #909090;
+      pointer-events: none;
+    }
+    .awaClass-search-input {
+      padding: 7px 12px 7px 32px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 20px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fafafa;
+      color: #0f0f0f;
+      outline: none;
+      width: 180px;
+      transition: border-color 0.15s, width 0.2s;
+    }
+    .awaClass-search-input:focus {
+      border-color: #f43f5e;
+      background: #fff;
+      width: 220px;
+    }
+    .awaClass-search-input::placeholder { color: #b0b0b0; }
+
+    /* ══════════════════════════════════════════════════
+       VIDEO GRID
+    ══════════════════════════════════════════════════ */
+    .awaClass-videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px 16px;
+    }
+
+    /* ── Single video card ── */
+    .awaClass-video-card {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Thumbnail */
+    .awaClass-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    /* Canvas thumbnail — replaces <video> */
+    .awaClass-thumb-wrap canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Skeleton shimmer shown before thumbnail is ready */
+    .awaClass-thumb-skeleton {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+      background-size: 200% 100%;
+      animation: awaSkeleton 1.4s infinite;
+    }
+    .awaClass-thumb-skeleton.hidden { display: none; }
+
+    @keyframes awaSkeleton {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Numbered badge top-left */
+    .awaClass-video-num {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+
+    /* Play overlay on hover */
+    .awaClass-play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.22);
+      opacity: 0;
+      transition: opacity 0.18s;
+      border-radius: 10px;
+    }
+    .awaClass-video-card:hover .awaClass-play-overlay { opacity: 1; }
+    .awaClass-play-circle {
+      width: 52px; height: 52px;
+      background: #f43f5e;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.18s;
+    }
+    .awaClass-video-card:hover .awaClass-play-circle { transform: scale(1.08); }
+    .awaClass-play-circle svg {
+      width: 22px; height: 22px;
+      fill: #fff;
+      margin-left: 3px;
+    }
+
+    /* Duration badge bottom-right */
+    .awaClass-duration-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      display: none; /* shown by JS once duration is known */
+    }
+
+    /* New badge */
+    .awaClass-new-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #f43f5e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Card info row ── */
+    .awaClass-card-info {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding-right: 4px;
+    }
+    .awaClass-card-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .awaClass-card-meta { flex: 1; min-width: 0; }
+    .awaClass-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--awaClass-text, #0f0f0f);
+      line-height: 1.4;
+      margin: 0 0 3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .awaClass-card-author {
+      font-size: 12px;
+      color: var(--awaClass-text-light, #606060);
+      font-weight: 500;
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .awaClass-card-stats {
+      font-size: 11px;
+      color: var(--awaClass-text-light, #606060);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+    }
+    .awaClass-card-stats i { margin-right: 3px; }
+
+    /* ── Hover lift ── */
+    .awaClass-video-card:hover .awaClass-thumb-wrap {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    /* ── Empty state ── */
+    .awaClass-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 72px 20px;
+    }
+    .awaClass-empty-icon {
+      font-size: 52px;
+      display: block;
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+    .awaClass-empty-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0 0 6px;
+    }
+    .awaClass-empty-sub {
+      font-size: 13px;
+      color: #909090;
+      margin: 0;
+    }
+
+    /* ── No search results ── */
+    #no-results {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 20px;
+      font-size: 14px;
+      color: #606060;
+    }
+    #no-results span {
+      display: block;
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE ≤ 640px  →  HORIZONTAL LIST LAYOUT
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .awaClass-feed-page {
+        padding: 12px 12px 48px;
+      }
+
+      .awaClass-filter-bar {
+        gap: 8px;
+      }
+
+      .awaClass-search-wrap {
+        margin-left: 0;
+        width: 100%;
+      }
+      .awaClass-search-input {
+        width: 100%;
+      }
+      .awaClass-search-input:focus {
+        width: 100%;
+      }
+
+      .awaClass-videos-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .awaClass-video-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
+      }
+      .awaClass-video-card:last-child { border-bottom: none; }
+
+      .awaClass-thumb-wrap {
+        flex-shrink: 0;
+        width: 130px;
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        margin-bottom: 0;
+      }
+      .awaClass-play-circle {
+        width: 34px; height: 34px;
+      }
+      .awaClass-play-circle svg {
+        width: 15px; height: 15px;
+      }
+      .awaClass-card-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .awaClass-card-avatar { display: none; }
+      .awaClass-card-title {
+        font-size: 13px;
+        -webkit-line-clamp: 3;
+      }
+      .awaClass-card-stats { font-size: 11px; gap: 6px; }
+    }
+
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="awaClass-feed-page">
+
+  <!-- Breadcrumb -->
+  <div class="awaClass-breadcrumb">
+    <a href="{% url 'physics' %}">
+      <i class="fa-solid fa-chevron-left fa-xs"></i> Physics
+    </a>
+    <span class="awaClass-breadcrumb-sep">/</span>
+    <span>Video Lessons</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="awaClass-page-header">
+    <div class="awaClass-page-header-left">
+      <div class="awaClass-page-header-icon">🎬</div>
+      <div>
+        <h1>Physics Video Lessons</h1>
+        <p>All uploaded lessons for Physics</p>
+      </div>
+    </div>
+    <span class="awaClass-video-count-badge">
+      <i class="fa-solid fa-play-circle fa-xs"></i>
+      {{ total_count }} video{{ total_count|pluralize }}
+    </span>
+  </div>
+
+  <!-- Filter / sort bar -->
+  <div class="awaClass-filter-bar">
+    <span class="awaClass-filter-label">Sort:</span>
+    <a href="?sort=newest" class="awaClass-sort-btn {% if sort == 'newest' or not sort %}active{% endif %}">
+      <i class="fa-regular fa-clock fa-xs"></i> Newest
+    </a>
+    <a href="?sort=popular" class="awaClass-sort-btn {% if sort == 'popular' %}active{% endif %}">
+      <i class="fa-regular fa-eye fa-xs"></i> Most Viewed
+    </a>
+    <a href="?sort=liked" class="awaClass-sort-btn {% if sort == 'liked' %}active{% endif %}">
+      <i class="fa-regular fa-heart fa-xs"></i> Most Liked
+    </a>
+
+    <!-- Live search -->
+    <div class="awaClass-search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input
+        type="text"
+        id="videoSearch"
+        class="awaClass-search-input"
+        placeholder="Search videos…"
+        autocomplete="off"
+        oninput="filterVideos(this.value)"
+      >
+    </div>
+  </div>
+
+  <!-- Videos grid -->
+  <div class="awaClass-videos-grid" id="videosGrid">
+
+    {% for video in videos %}
+    <a href="{% url 'post_detail' video.post_id %}"
+       class="awaClass-video-card"
+       data-title="{{ video.title|lower }}"
+       data-author="{{ video.author|lower }}">
+
+      <!-- Thumbnail -->
+      <div class="awaClass-thumb-wrap">
+
+        <!--
+          NO <video> tag here — we use a <canvas> instead.
+          The data-src attribute is read by the IntersectionObserver
+          which creates a temporary, off-screen video element, seeks
+          to 1 second, captures a single frame onto the canvas, then
+          immediately discards the video. Nothing is downloaded until
+          this card scrolls into the viewport, and the video file is
+          only touched long enough to grab one frame.
+        -->
+        <canvas
+          class="awaClass-thumb-canvas"
+          data-src="{{ video.video.url }}"
+          width="320"
+          height="180">
+        </canvas>
+
+        <!-- Shimmer placeholder shown while the frame is being grabbed -->
+        <div class="awaClass-thumb-skeleton"></div>
+
+        <!-- Numbered badge -->
+        <span class="awaClass-video-num">#{{ forloop.counter }}</span>
+
+        <!-- New badge (videos posted in last 7 days) -->
+        {% if video.is_new %}
+        <span class="awaClass-new-badge">New</span>
+        {% endif %}
+
+        <!-- Duration badge (populated by JS) -->
+        <span class="awaClass-duration-badge"></span>
+
+        <div class="awaClass-play-overlay">
+          <div class="awaClass-play-circle">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info row -->
+      <div class="awaClass-card-info">
+        <img
+          src="{{ video.author.profile.picture.url }}"
+          alt="{{ video.author }}"
+          class="awaClass-card-avatar"
+          loading="lazy">
+        <div class="awaClass-card-meta">
+          <p class="awaClass-card-title">{{ video.title }}</p>
+          <p class="awaClass-card-author">{{ video.author }}</p>
+          <div class="awaClass-card-stats">
+            <span><i class="fa-regular fa-eye"></i>{{ video.view|intcomma }} views</span>
+            <span><i class="fa-regular fa-heart"></i>{{ video.like.count|intcomma }}</span>
+            <span><i class="fa-regular fa-clock"></i>{{ video.created_at|insta_timesince }}</span>
+          </div>
+        </div>
+      </div>
+
+    </a>
+    {% empty %}
+
+    <div class="awaClass-empty">
+      <span class="awaClass-empty-icon">🎬</span>
+      <p class="awaClass-empty-title">No videos yet</p>
+      <p class="awaClass-empty-sub">Physics lesson videos will appear here once uploaded.</p>
+    </div>
+
+    {% endfor %}
+
+    <!-- No search results placeholder (hidden by default) -->
+    <div id="no-results">
+      <span>🔍</span>
+      No videos match your search.
+    </div>
+
+  </div>
+
+</div>
+
+{% include 'footer.html' %}
+
+<script>
+  /* ══════════════════════════════════════════════════════════
+     LAZY VIDEO THUMBNAIL GENERATOR
+     ─────────────────────────────────────────────────────────
+     Strategy:
+       1. IntersectionObserver watches every .awaClass-thumb-canvas
+          element. Nothing happens until a card enters the viewport.
+       2. When a card enters, a temporary <video> is created entirely
+          in memory (never added to the DOM). Its src is set, and we
+          wait for it to be seekable.
+       3. We seek to 1 s (or 0 if the video is shorter) and wait for
+          the seeked event.
+       4. We draw one frame onto the <canvas>, then null-out the video
+          src and discard the object — stopping all network activity.
+       5. The skeleton shimmer is hidden and the canvas becomes visible.
+       6. We also populate the duration badge while we have the video.
+     ══════════════════════════════════════════════════════════ */
+
+  (function () {
+    'use strict';
+
+    /* Concurrency cap — how many frame-grabs can run in parallel.
+       Keeps simultaneous network requests sane on slow connections. */
+    const MAX_CONCURRENT = 3;
+    let   running        = 0;
+    const queue          = [];
+
+    function formatDuration(seconds) {
+      const s = Math.floor(seconds);
+      const m = Math.floor(s / 60);
+      const h = Math.floor(m / 60);
+      const ss = String(s % 60).padStart(2, '0');
+      const mm = String(m % 60).padStart(2, '0');
+      return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`;
+    }
+
+    function grabFrame(canvas) {
+      return new Promise((resolve) => {
+        const src      = canvas.dataset.src;
+        const skeleton = canvas.previousElementSibling; /* .awaClass-thumb-skeleton */
+        const wrap     = canvas.parentElement;
+        const durBadge = wrap.querySelector('.awaClass-duration-badge');
+
+        /* Create a temporary in-memory video element */
+        const vid = document.createElement('video');
+        vid.muted        = true;
+        vid.playsInline  = true;
+        vid.preload      = 'metadata'; /* minimum needed to seek */
+        vid.crossOrigin  = 'anonymous';
+
+        function cleanup() {
+          /* Immediately stop all network activity */
+          vid.pause();
+          vid.removeAttribute('src');
+          vid.load(); /* abort pending requests */
+          running--;
+          resolve();
+          drainQueue();
+        }
+
+        vid.addEventListener('loadedmetadata', () => {
+          /* Seek to 1 s, or halfway if video is shorter */
+          vid.currentTime = Math.min(1, vid.duration * 0.1);
+
+          /* Show duration badge */
+          if (durBadge && vid.duration && isFinite(vid.duration)) {
+            durBadge.textContent = formatDuration(vid.duration);
+            durBadge.style.display = 'block';
+          }
+        });
+
+        vid.addEventListener('seeked', () => {
+          try {
+            const ctx = canvas.getContext('2d');
+            /* Draw the video frame into the canvas */
+            ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+            /* Hide skeleton once frame is painted */
+            if (skeleton) skeleton.classList.add('hidden');
+          } catch (e) {
+            /* Cross-origin or decode error — leave skeleton as fallback */
+          }
+          cleanup();
+        });
+
+        vid.addEventListener('error', cleanup);
+
+        /* Start loading — only metadata + a tiny bit around t=1s is fetched */
+        vid.src = src;
+        vid.load();
+      });
+    }
+
+    function drainQueue() {
+      while (running < MAX_CONCURRENT && queue.length > 0) {
+        const canvas = queue.shift();
+        running++;
+        grabFrame(canvas);
+      }
+    }
+
+    /* ── IntersectionObserver: trigger only when card is visible ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const canvas = entry.target;
+        observer.unobserve(canvas); /* only ever process each card once */
+
+        if (running < MAX_CONCURRENT) {
+          running++;
+          grabFrame(canvas);
+        } else {
+          queue.push(canvas);
+        }
+      });
+    }, {
+      rootMargin: '200px 0px', /* start loading 200 px before entering viewport */
+      threshold : 0
+    });
+
+    /* Observe every canvas thumbnail on the page */
+    document.querySelectorAll('.awaClass-thumb-canvas').forEach(canvas => {
+      observer.observe(canvas);
+    });
+  })();
+
+
+  /* ── Live video search ── */
+  function filterVideos(query) {
+    const q     = query.trim().toLowerCase();
+    const cards = document.querySelectorAll('.awaClass-video-card');
+    let   shown = 0;
+
+    cards.forEach(card => {
+      const title  = card.dataset.title  || '';
+      const author = card.dataset.author || '';
+      const match  = !q || title.includes(q) || author.includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+
+    document.getElementById('no-results').style.display = (shown === 0 && q) ? 'block' : 'none';
+  }
+</script>
+
+</body>
+</html>

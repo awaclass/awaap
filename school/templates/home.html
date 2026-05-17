@@ -102,7 +102,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      overflow: visible; /* must not clip tooltips */
+      overflow: visible;
       min-width: 0;
       width: 100%;
     }
@@ -126,7 +126,6 @@
       background: #ffffff;
       border: 1px solid #ebebeb;
       border-radius: 10px;
-      /* NO overflow:hidden — tooltip must escape the card bounds */
       transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
       cursor: pointer;
     }
@@ -213,7 +212,6 @@
     /* Section spacing */
     .section-spacing {
       margin-bottom: 28px;
-      padding-bottom: 8px; /* extra room for tooltip overflow below cards */
       overflow: visible;
     }
 
@@ -667,71 +665,6 @@
       cursor: pointer;
     }
 
-    /* ══════════════════════════════════════════════════
-       CARD TOOLTIPS
-    ══════════════════════════════════════════════════ */
-    .awaClass-feature-tile,
-    .awaClass-subject-tile {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Lift the hovered/tapped tile above all other sections */
-    .awaClass-feature-tile:hover,
-    .awaClass-subject-tile:hover,
-    .awaClass-feature-tile.tooltip-visible,
-    .awaClass-subject-tile.tooltip-visible {
-      z-index: 9999;
-    }
-
-    .awaClass-card-tooltip {
-      position: absolute;
-      top: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-6px);
-      background: rgba(15, 15, 15, 0.90);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 1.5;
-      text-align: center;
-      padding: 10px 14px;
-      border-radius: 9px;
-      width: max-content;
-      max-width: min(200px, calc(100vw - 32px));
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 9999;
-      white-space: normal;
-      /* Prevent tooltip from escaping viewport on edge cards */
-      margin-left: max(calc(-50vw + 50% + 16px), 0px);
-    }
-
-    /* Arrow pointing UP */
-    .awaClass-card-tooltip::before {
-      content: '';
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 7px solid transparent;
-      border-bottom-color: rgba(15, 15, 15, 0.90);
-    }
-
-    /* Show on hover (desktop) */
-    .awaClass-feature-tile:hover .awaClass-card-tooltip,
-    .awaClass-subject-tile:hover .awaClass-card-tooltip {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* Show on mobile tap via JS class */
-    .awaClass-feature-tile.tooltip-visible .awaClass-card-tooltip,
-    .awaClass-subject-tile.tooltip-visible .awaClass-card-tooltip {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
   </style>
 </head>
 <body>
@@ -751,7 +684,6 @@
       <div class="awaClass-features-grid">
         <!-- Live Classes Card -->
         <a href="{% url 'live_room_list' %}" class="awaClass-feature-tile">
-          <span class="awaClass-card-tooltip">Attend live coaching sessions where teachers break down NECO, WAEC & JAMB topics in real time — ask questions and get instant answers.</span>
           <div class="awaClass-feature-icon">
             <img src="{% static 'images/lives.png' %}" alt="Live Classes">
           </div>
@@ -760,7 +692,6 @@
 
         <!-- CBT Exams Card -->
         <a href="{% url 'cbt_subjects' %}" class="awaClass-feature-tile">
-          <span class="awaClass-card-tooltip">Test yourself with past NECO, WAEC & JAMB questions in a timed exam setting — build confidence and track your improvement over time.</span>
           <div class="awaClass-feature-icon">
             <img src="{% static 'images/cbt2.png' %}" alt="CBT Exams">
           </div>
@@ -774,14 +705,12 @@
       <h2 class="awaClass-section-title">Explore Subjects</h2>
       <div class="awaClass-subjects-grid">
         <a href="{% url 'mathematics' %}" class="awaClass-subject-tile">
-          <span class="awaClass-card-tooltip">Learn and understand Mathematics the right way — covering the full NECO, WAEC & JAMB syllabus with clear explanations, worked examples and practice questions.</span>
           <div class="awaClass-subject-icon">
             <img src="{% static 'images/maths.png' %}" alt="Mathematics">
           </div>
           <p class="awaClass-subject-name">Mathematics</p>
         </a>
         <a href="{% url 'physics' %}" class="awaClass-subject-tile">
-          <span class="awaClass-card-tooltip">Understand Physics concepts from the ground up — mechanics, waves, electricity and more, fully aligned with the NECO, WAEC & JAMB syllabus.</span>
           <div class="awaClass-subject-icon">
             <img src="{% static 'images/phy.png' %}" alt="Physics">
           </div>
@@ -830,7 +759,7 @@
 </div><!-- /.awaClass-home-wrapper -->
 
 <!-- ══════════════════════════════════════════
-     STUDENT SCORES MODAL (unchanged)
+     STUDENT SCORES MODAL
 ══════════════════════════════════════════ -->
 <div class="aw-modal-backdrop" id="awStudentModal" role="dialog" aria-modal="true" aria-labelledby="awModalName">
   <div class="aw-modal">
@@ -840,96 +769,188 @@
       Loading student data…
     </div>
     <div id="awModalContent" style="display:none;">
+
+      <!-- Header: avatar + name + meta + badges -->
       <div class="aw-modal-header">
         <img src="" alt="Avatar" class="aw-modal-avatar" id="awModalAvatar">
-        <div>
+        <div style="min-width:0;flex:1;">
           <p class="aw-modal-student-name" id="awModalName"></p>
           <p class="aw-modal-student-meta" id="awModalMeta"></p>
           <div class="aw-modal-badges" id="awModalBadges"></div>
         </div>
       </div>
-      <div class="aw-modal-stats">
-        <div class="aw-modal-stat">
-          <span class="aw-modal-stat-val accent" id="awStatPoints"></span>
-          <span class="aw-modal-stat-lbl">Points</span>
+
+      <!-- ── OVERALL view ── -->
+      <div id="awViewOverall">
+        <div class="aw-modal-stats">
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val accent" id="awStatPoints"></span>
+            <span class="aw-modal-stat-lbl">Points</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val" id="awStatAttempts"></span>
+            <span class="aw-modal-stat-lbl">Exams Taken</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val" id="awStatBest"></span>
+            <span class="aw-modal-stat-lbl">Best Score</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val" id="awStatAccuracy"></span>
+            <span class="aw-modal-stat-lbl">Accuracy</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val accent" id="awStatRating"></span>
+            <span class="aw-modal-stat-lbl">Rating</span>
+          </div>
         </div>
-        <div class="aw-modal-stat">
-          <span class="aw-modal-stat-val" id="awStatAttempts"></span>
-          <span class="aw-modal-stat-lbl">Exams Taken</span>
-        </div>
-        <div class="aw-modal-stat">
-          <span class="aw-modal-stat-val" id="awStatBest"></span>
-          <span class="aw-modal-stat-lbl">Best Score</span>
-        </div>
-        <div class="aw-modal-stat">
-          <span class="aw-modal-stat-val" id="awStatAccuracy"></span>
-          <span class="aw-modal-stat-lbl">Accuracy</span>
-        </div>
-        <div class="aw-modal-stat">
-          <span class="aw-modal-stat-val accent" id="awStatRating"></span>
-          <span class="aw-modal-stat-lbl">Rating</span>
+        <div class="aw-modal-body">
+          <p class="aw-modal-section-title">Subject Performance</p>
+          <div class="aw-subject-cards" id="awSubjectCards"></div>
+          <p class="aw-modal-section-title">Recent Exams</p>
+          <div class="aw-recent-table-wrap">
+            <table class="aw-recent-table">
+              <thead>
+                <tr><th>Subject</th><th>Score</th><th>Grade</th><th>Rating</th><th>Time</th><th>Date</th></tr>
+              </thead>
+              <tbody id="awRecentBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div class="aw-modal-body">
-        <p class="aw-modal-section-title">Subject Performance</p>
-        <div class="aw-subject-cards" id="awSubjectCards"></div>
-        <p class="aw-modal-section-title">Recent Exams</p>
-        <div class="aw-recent-table-wrap">
-        <table class="aw-recent-table">
-          <thead>
-            <tr><th>Subject</th><th>Score</th><th>Grade</th><th>Rating</th><th>Time</th><th>Date</th></tr>
-          </thead>
-          <tbody id="awRecentBody"></tbody>
-        </table>
+
+      <!-- ── SUBJECT view (Mathematics / Physics) ── -->
+      <div id="awViewSubject" style="display:none;">
+
+        <!-- Subject context pill -->
+        <div style="padding:10px 20px 0;">
+          <span class="aw-subject-context-pill" id="awSubjectPill"></span>
+        </div>
+
+        <!-- 4 subject-specific stats -->
+        <div class="aw-modal-stats" style="border-top:1px solid #f0f0f0;margin-top:10px;">
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val accent" id="awSubStatBest"></span>
+            <span class="aw-modal-stat-lbl">Best %</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val" id="awSubStatAvg"></span>
+            <span class="aw-modal-stat-lbl">Avg %</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val" id="awSubStatAttempts"></span>
+            <span class="aw-modal-stat-lbl">Attempts</span>
+          </div>
+          <div class="aw-modal-stat">
+            <span class="aw-modal-stat-val accent" id="awSubStatRating"></span>
+            <span class="aw-modal-stat-lbl">Rating</span>
+          </div>
+        </div>
+
+        <div class="aw-modal-body">
+          <!-- Expanded subject performance card -->
+          <p class="aw-modal-section-title" id="awSubjectCardTitle">Performance</p>
+          <div class="aw-subject-cards" id="awSubjectCardSingle"></div>
+
+          <!-- Subject-only recent exams (no Subject column) -->
+          <p class="aw-modal-section-title">Recent Exams</p>
+          <div class="aw-recent-table-wrap">
+            <table class="aw-recent-table">
+              <thead>
+                <tr><th>Score</th><th>Grade</th><th>Rating</th><th>Time</th><th>Date</th></tr>
+              </thead>
+              <tbody id="awSubRecentBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+
+    </div><!-- /#awModalContent -->
   </div>
 </div>
+
+<style>
+  .aw-subject-context-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #f97316;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 100px;
+    padding: 3px 10px;
+  }
+</style>
 
 <script>
 (function () {
   'use strict';
 
-  const backdrop  = document.getElementById('awStudentModal');
-  const closeBtn  = document.getElementById('awModalClose');
-  const loading   = document.getElementById('awModalLoading');
-  const content   = document.getElementById('awModalContent');
+  const backdrop = document.getElementById('awStudentModal');
+  const closeBtn = document.getElementById('awModalClose');
+  const loading  = document.getElementById('awModalLoading');
+  const content  = document.getElementById('awModalContent');
 
+  // The active leaderboard subject ('overall' | 'mathematics' | 'physics')
+  // Updated whenever the user changes the leaderboard dropdown.
+  let activeSubject = 'overall';
+
+  /* ── helpers ─────────────────────────────────────────────────── */
   function setText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
   }
 
-  function openModal() {
-    backdrop.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  function openModal()  { backdrop.classList.add('open');    document.body.style.overflow = 'hidden'; }
+  function closeModal() { backdrop.classList.remove('open'); document.body.style.overflow = ''; }
+  function showLoading() { loading.style.display = 'block'; content.style.display = 'none'; }
+  function showContent() { loading.style.display = 'none';  content.style.display = 'block'; }
+
+  function showView(which) {
+    // which = 'overall' | 'subject'
+    document.getElementById('awViewOverall').style.display = (which === 'overall') ? 'block' : 'none';
+    document.getElementById('awViewSubject').style.display = (which === 'subject') ? 'block' : 'none';
   }
 
-  function closeModal() {
-    backdrop.classList.remove('open');
-    document.body.style.overflow = '';
+  /* ── build a subject performance card element ────────────────── */
+  function buildSubjectCard(sub) {
+    const card = document.createElement('div');
+    card.className = 'aw-subject-card';
+    card.innerHTML =
+      '<div class="aw-subject-card-top">' +
+        '<span class="aw-subject-card-name">' + sub.subject + '</span>' +
+        '<span class="aw-subject-grade-pill" style="background:' + sub.grade_color + '">' + sub.best_grade + '</span>' +
+      '</div>' +
+      '<div class="aw-subject-bar-wrap"><div class="aw-subject-bar" style="width:' + sub.best_pct + '%"></div></div>' +
+      '<div class="aw-subject-meta">' +
+        '<span>Best: <strong>' + sub.best_score + '/' + sub.best_total + ' (' + sub.best_pct + '%)</strong></span>' +
+        '<span>Avg: <strong>' + sub.avg_pct + '%</strong></span>' +
+        '<span>Rating: <strong>' + sub.subject_rating + '/100</strong></span>' +
+        '<span>Time eff: <strong>' + sub.best_time_eff + '%</strong></span>' +
+        '<span>Attempts: <strong>' + sub.attempts + '</strong></span>' +
+        '<span>Best time: <strong>' + sub.time_display + '</strong></span>' +
+        '<span>Last: <strong>' + sub.last_taken + '</strong></span>' +
+      '</div>';
+    return card;
   }
 
-  function showLoading() {
-    loading.style.display  = 'block';
-    content.style.display  = 'none';
-  }
-
-  function showContent() {
-    loading.style.display  = 'none';
-    content.style.display  = 'block';
-  }
-
-  function populateModal(data) {
+  /* ── populate modal ───────────────────────────────────────────── */
+  function populateModal(data, subject) {
     const s = data.student;
+
+    /* --- shared header (always shown) --- */
     document.getElementById('awModalAvatar').src = s.picture_url;
     setText('awModalName', s.full_name || s.username);
     const metaParts = [];
-    if (s.grade) metaParts.push(s.grade);
     if (s.specialization) metaParts.push(s.specialization);
-    if (s.school_type) metaParts.push(s.school_type);
+    if (s.grade)          metaParts.push(s.grade);
+    if (s.school_type)    metaParts.push(s.school_type);
     setText('awModalMeta', metaParts.join(' · ') || '@' + s.username);
+
     const badgesEl = document.getElementById('awModalBadges');
     badgesEl.innerHTML = '';
     const levelBadge = document.createElement('span');
@@ -940,117 +961,167 @@
     uBadge.className = 'aw-modal-badge';
     uBadge.textContent = '@' + s.username;
     badgesEl.appendChild(uBadge);
-    setText('awStatPoints',   s.points.toLocaleString());
-    setText('awStatAttempts', s.total_attempts);
-    setText('awStatBest',     s.best_score + '%');
-    const accuracy = s.total_questions > 0 ? Math.round((s.total_correct / s.total_questions) * 100) + '%' : '—';
-    setText('awStatAccuracy', accuracy);
-    setText('awStatRating',   s.overall_rating + '/100');
-    const cardsEl = document.getElementById('awSubjectCards');
-    cardsEl.innerHTML = '';
-    if (!data.subjects.length) {
-      cardsEl.innerHTML = '<p style="font-size:13px;color:#aaa;margin:0;">No exams taken yet.</p>';
+
+    /* ════════════════════════════════════════
+       OVERALL VIEW
+    ════════════════════════════════════════ */
+    if (subject === 'overall') {
+      showView('overall');
+
+      setText('awStatPoints',   s.points.toLocaleString());
+      setText('awStatAttempts', s.total_attempts);
+      setText('awStatBest',     s.best_score + '%');
+      const accuracy = s.total_questions > 0
+        ? Math.round((s.total_correct / s.total_questions) * 100) + '%'
+        : '—';
+      setText('awStatAccuracy', accuracy);
+      setText('awStatRating',   s.overall_rating + '/100');
+
+      /* subject cards */
+      const cardsEl = document.getElementById('awSubjectCards');
+      cardsEl.innerHTML = '';
+      if (!data.subjects.length) {
+        cardsEl.innerHTML = '<p style="font-size:13px;color:#aaa;margin:0;">No exams taken yet.</p>';
+      } else {
+        data.subjects.forEach(function (sub) { cardsEl.appendChild(buildSubjectCard(sub)); });
+      }
+
+      /* recent exams table (all subjects) */
+      const tbody = document.getElementById('awRecentBody');
+      tbody.innerHTML = '';
+      if (!data.recent_exams.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#aaa;padding:12px 0;text-align:center;">No recent exams.</td></tr>';
+      } else {
+        data.recent_exams.forEach(function (ex) {
+          const tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + ex.subject + '</td>' +
+            '<td><strong>' + ex.score + '</strong>/' + ex.total +
+              ' <span style="color:#aaa">(' + ex.percentage + '%)</span></td>' +
+            '<td><span class="aw-recent-grade">' + ex.grade + '</span></td>' +
+            '<td><strong>' + ex.rating + '</strong><span style="color:#aaa">/100</span></td>' +
+            '<td>' + ex.time_display + '</td>' +
+            '<td style="color:#909090">' + ex.taken_at + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+    /* ════════════════════════════════════════
+       SUBJECT VIEW  (mathematics | physics)
+    ════════════════════════════════════════ */
     } else {
-      data.subjects.forEach(function (sub) {
-        const card = document.createElement('div');
-        card.className = 'aw-subject-card';
-        card.innerHTML =
-          '<div class="aw-subject-card-top">' +
-            '<span class="aw-subject-card-name">' + sub.subject + '</span>' +
-            '<span class="aw-subject-grade-pill" style="background:' + sub.grade_color + '">' + sub.best_grade + '</span>' +
-          '</div>' +
-          '<div class="aw-subject-bar-wrap"><div class="aw-subject-bar" style="width:' + sub.best_pct + '%"></div></div>' +
-          '<div class="aw-subject-meta">' +
-            '<span>Best: <strong>' + sub.best_score + '/' + sub.best_total + ' (' + sub.best_pct + '%)</strong></span>' +
-            '<span>Avg: <strong>' + sub.avg_pct + '%</strong></span>' +
-            '<span>Rating: <strong>' + sub.subject_rating + '/100</strong></span>' +
-            '<span>Time eff: <strong>' + sub.best_time_eff + '%</strong></span>' +
-            '<span>Attempts: <strong>' + sub.attempts + '</strong></span>' +
-            '<span>Best time: <strong>' + sub.time_display + '</strong></span>' +
-            '<span>Last: <strong>' + sub.last_taken + '</strong></span>' +
-          '</div>';
-        cardsEl.appendChild(card);
+      showView('subject');
+
+      const label = subject.charAt(0).toUpperCase() + subject.slice(1);
+
+      /* subject context pill */
+      setText('awSubjectPill', '📚 ' + label + ' · Subject View');
+
+      /* find this subject's data */
+      const sub = data.subjects.find(function (x) {
+        return x.subject.toLowerCase() === subject.toLowerCase();
       });
+
+      if (!sub) {
+        /* student has never taken this subject */
+        setText('awSubStatBest',     '—');
+        setText('awSubStatAvg',      '—');
+        setText('awSubStatAttempts', '0');
+        setText('awSubStatRating',   '—');
+        document.getElementById('awSubjectCardSingle').innerHTML =
+          '<p style="font-size:13px;color:#aaa;margin:0;">No ' + label + ' exams taken yet.</p>';
+        document.getElementById('awSubRecentBody').innerHTML =
+          '<tr><td colspan="5" style="color:#aaa;padding:12px 0;text-align:center;">No ' + label + ' exams yet.</td></tr>';
+      } else {
+        setText('awSubStatBest',     sub.best_pct + '%');
+        setText('awSubStatAvg',      sub.avg_pct + '%');
+        setText('awSubStatAttempts', sub.attempts);
+        setText('awSubStatRating',   sub.subject_rating + '/100');
+
+        /* single subject card */
+        const cardWrap = document.getElementById('awSubjectCardSingle');
+        cardWrap.innerHTML = '';
+        cardWrap.appendChild(buildSubjectCard(sub));
+
+        /* recent exams filtered to this subject only */
+        const filtered = data.recent_exams.filter(function (ex) {
+          return ex.subject.toLowerCase() === subject.toLowerCase();
+        });
+        const tbody = document.getElementById('awSubRecentBody');
+        tbody.innerHTML = '';
+        if (!filtered.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" style="color:#aaa;padding:12px 0;text-align:center;">No recent ' + label + ' exams.</td></tr>';
+        } else {
+          filtered.forEach(function (ex) {
+            const tr = document.createElement('tr');
+            tr.innerHTML =
+              '<td><strong>' + ex.score + '</strong>/' + ex.total +
+                ' <span style="color:#aaa">(' + ex.percentage + '%)</span></td>' +
+              '<td><span class="aw-recent-grade">' + ex.grade + '</span></td>' +
+              '<td><strong>' + ex.rating + '</strong><span style="color:#aaa">/100</span></td>' +
+              '<td>' + ex.time_display + '</td>' +
+              '<td style="color:#909090">' + ex.taken_at + '</td>';
+            tbody.appendChild(tr);
+          });
+        }
+      }
     }
-    const tbody = document.getElementById('awRecentBody');
-    tbody.innerHTML = '';
-    if (!data.recent_exams.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="color:#aaa;padding:12px 0;">No recent exams.</span></td>' +
-          '<td><span class="aw-recent-grade">' + ex.grade + '</span></td>' +
-          '<td><strong>' + ex.rating + '</strong><span style="color:#aaa">/100</span></td>' +
-          '<td>' + ex.time_display + '</span></td>' +
-          '<td style="color:#909090">' + ex.taken_at + '</span></td>';
-        tbody.appendChild(tr);
-      });
-    }
+
     showContent();
   }
 
-  function loadStudentModal(username) {
+  /* ── fetch & open ─────────────────────────────────────────────── */
+  function loadStudentModal(username, subject) {
     openModal();
     showLoading();
-    const url = '/student-scores/' + username + '/';
-    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function (data) {
-      if (data.ok) populateModal(data);
-      else loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Failed to load data.</p>';
-    })
-    .catch(function (err) {
-      loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Error: ' + err.message + '</p>';
-    });
+    fetch('/student-scores/' + username + '/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        if (data.ok) populateModal(data, subject);
+        else loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Failed to load data.</p>';
+      })
+      .catch(function (err) {
+        loading.innerHTML = '<p style="color:#dc2626;padding:20px;text-align:center;">Error: ' + err.message + '</p>';
+      });
   }
 
+  /* ── leaderboard dropdown — track active subject ──────────────── */
   document.querySelectorAll('.awaClass-leaderboard-card').forEach(function (card) {
     var select = card.querySelector('[data-lb-select]');
     if (!select) return;
     select.addEventListener('change', function () {
-      var tab = this.value;
+      activeSubject = this.value;                          // keep global in sync
       card.querySelectorAll('.awaClass-lb-panel').forEach(function (p) { p.classList.remove('active'); });
-      var panel = card.querySelector('[data-lb-panel="' + tab + '"]');
+      var panel = card.querySelector('[data-lb-panel="' + activeSubject + '"]');
       if (panel) panel.classList.add('active');
     });
   });
 
+  /* ── click on any leaderboard row ────────────────────────────── */
   document.addEventListener('click', function (e) {
     const item = e.target.closest('.awaClass-lb-item[data-username]');
-    if (item) {
-      e.preventDefault();
-      const username = item.dataset.username;
-      if (username && username.trim() !== '') loadStudentModal(username.trim());
-    }
+    if (!item) return;
+    e.preventDefault();
+    const username = (item.dataset.username || '').trim();
+    if (!username) return;
+
+    /* find which leaderboard card this row belongs to, read its dropdown */
+    const card   = item.closest('.awaClass-leaderboard-card');
+    const select = card ? card.querySelector('[data-lb-select]') : null;
+    const subject = select ? select.value : activeSubject;
+
+    loadStudentModal(username, subject);
   });
 
+  /* ── close handlers ──────────────────────────────────────────── */
   closeBtn.addEventListener('click', closeModal);
   backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeModal(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
-  /* ── Mobile tooltip: tap card to show, tap elsewhere to hide ── */
-  document.querySelectorAll('.awaClass-feature-tile, .awaClass-subject-tile').forEach(function (tile) {
-    tile.addEventListener('click', function (e) {
-      var alreadyVisible = tile.classList.contains('tooltip-visible');
-      /* hide all others */
-      document.querySelectorAll('.awaClass-feature-tile.tooltip-visible, .awaClass-subject-tile.tooltip-visible').forEach(function (t) {
-        t.classList.remove('tooltip-visible');
-      });
-      if (!alreadyVisible) {
-        e.preventDefault();           /* first tap: show tooltip, don't navigate */
-        tile.classList.add('tooltip-visible');
-      }
-      /* second tap (not prevented): follows the href naturally */
-    });
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest('.awaClass-feature-tile') && !e.target.closest('.awaClass-subject-tile')) {
-      document.querySelectorAll('.awaClass-feature-tile.tooltip-visible, .awaClass-subject-tile.tooltip-visible').forEach(function (t) {
-        t.classList.remove('tooltip-visible');
-      });
-    }
-  });
 })();
 </script>
 

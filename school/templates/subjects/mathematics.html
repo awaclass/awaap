@@ -136,6 +136,18 @@
     }
     .awaClass-feature-card--topics:hover { border-color: #a855f7; }
 
+    /* Video Lessons card */
+    .awaClass-feature-card--video {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      text-decoration: none;
+      color: inherit;
+    }
+    .awaClass-feature-card--video::before {
+      background: radial-gradient(circle at top right, #f43f5e, transparent 70%);
+    }
+    .awaClass-feature-card--video:hover { border-color: #f43f5e; }
+
     .awaClass-feature-icon {
       width: 42px;
       height: 42px;
@@ -150,6 +162,7 @@
     .awaClass-feature-card--cbt      .awaClass-feature-icon { background: #dbeafe; }
     .awaClass-feature-card--chat     .awaClass-feature-icon { background: #dcfce7; }
     .awaClass-feature-card--topics   .awaClass-feature-icon { background: #f3e8ff; }
+    .awaClass-feature-card--video    .awaClass-feature-icon { background: #ffe4e6; }
 
     .awaClass-feature-label {
       font-size: 14px;
@@ -176,27 +189,12 @@
     .awaClass-feature-card--cbt      .awaClass-feature-arrow { color: #3b82f6; }
     .awaClass-feature-card--chat     .awaClass-feature-arrow { color: #22c55e; }
     .awaClass-feature-card--topics   .awaClass-feature-arrow { color: #a855f7; }
+    .awaClass-feature-card--video    .awaClass-feature-arrow { color: #f43f5e; }
+
 
     /* ══════════════════════════════════════════════════
-       SECTION DIVIDER
+       VIDEO CARD
     ══════════════════════════════════════════════════ */
-    .awaClass-section-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--awaClass-text-light, #606060);
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      margin: 0 0 14px;
-    }
-
-    /* ══════════════════════════════════════════════════
-       VIDEO GRID
-    ══════════════════════════════════════════════════ */
-    .awaClass-videos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px 16px;
-    }
 
     /* ── Single video card ── */
     .awaClass-video-card {
@@ -298,20 +296,6 @@
       margin: 0;
     }
     .awaClass-card-stats i { margin-right: 3px; }
-
-    /* ── Empty state ── */
-    .awaClass-empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 56px 20px;
-      font-size: 15px;
-      color: var(--awaClass-text-light, #606060);
-    }
-    .awaClass-empty span {
-      display: block;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
 
     /* ══════════════════════════════════════════════════
        SYLLABUS MODAL
@@ -592,95 +576,6 @@
         gap: 10px;
       }
 
-      /* Switch grid → single-column flex list */
-      .awaClass-videos-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
-
-      /* Each card becomes a horizontal row */
-      .awaClass-video-card {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--awaClass-border, #e5e5e5);
-      }
-      .awaClass-video-card:last-child {
-        border-bottom: none;
-      }
-
-      /* Thumbnail: fixed width, no bottom margin */
-      .awaClass-thumb-wrap {
-        flex-shrink: 0;
-        width: 120px;
-        aspect-ratio: 16 / 9;
-        border-radius: 6px;
-        margin-bottom: 0;
-        overflow: hidden;
-      }
-
-      /* Play overlay circle smaller on mobile */
-      .awaClass-play-circle {
-        width: 32px;
-        height: 32px;
-      }
-      .awaClass-play-circle svg {
-        width: 14px;
-        height: 14px;
-      }
-
-      /* Info sits beside the thumbnail */
-      .awaClass-card-info {
-        flex: 1;
-        min-width: 0;
-        padding-right: 4px;
-        align-items: flex-start;
-      }
-
-      /* Hide avatar on mobile */
-      .awaClass-card-avatar {
-        display: none;
-      }
-
-      .awaClass-card-meta {
-        width: 100%;
-      }
-
-      .awaClass-card-title {
-        font-size: 13px;
-        -webkit-line-clamp: 3;
-      }
-
-      .awaClass-card-author {
-        font-size: 12px;
-      }
-
-      .awaClass-card-stats {
-        font-size: 11px;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-
-      .awaClass-videos-grid {
-        counter-reset: video-item;
-      }
-      .awaClass-video-card {
-        counter-increment: video-item;
-        position: relative;
-      }
-      .awaClass-video-card::before {
-        content: counter(video-item) ".";
-        position: absolute;
-        top: 10px;
-        right: 2px;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--awaClass-text-light, #606060);
-        line-height: 1;
-      }
-
     }
 
   </style>
@@ -742,59 +637,19 @@
       </div>
       <span class="awaClass-feature-arrow">Join <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </a>
-   
 
-  </div>
-
-  <!-- Videos section label -->
-  <p class="awaClass-section-label">Video Lessons</p>
-
-  <!-- Videos grid -->
-  <div class="awaClass-videos-grid">
-
-    {% for video in videos %}
-    <a href="{% url 'post_detail' video.post_id %}" class="awaClass-video-card">
-
-      <!-- Thumbnail -->
-      <div class="awaClass-thumb-wrap">
-        <video preload="metadata" muted playsinline>
-          <source src="{{ video.video.url }}#t=0.5" type="video/mp4">
-        </video>
-        <div class="awaClass-play-overlay">
-          <div class="awaClass-play-circle">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-        </div>
+    <!-- ── NEW: Video Lessons card ── -->
+    <a href="{% url 'mathematics_videos' %}" class="awaClass-feature-card awaClass-feature-card--video">
+      <div class="awaClass-feature-icon">🎬</div>
+      <div>
+        <p class="awaClass-feature-label">Video Lessons</p>
+        <p class="awaClass-feature-sub">Watch all maths lessons</p>
       </div>
-
-      <!-- Info row -->
-      <div class="awaClass-card-info">
-        <img
-          src="{{ video.author.profile.picture.url }}"
-          alt="{{ video.author }}"
-          class="awaClass-card-avatar">
-        <div class="awaClass-card-meta">
-          <p class="awaClass-card-title">{{ video.title }}</p>
-          <p class="awaClass-card-author">{{ video.author }}</p>
-          <div class="awaClass-card-stats">
-            <span><i class="fa-regular fa-eye"></i>{{ video.view|intcomma }} views</span>
-            <span><i class="fa-regular fa-heart"></i>{{ video.like.count|intcomma }}</span>
-            <span><i class="fa-regular fa-clock"></i>{{ video.created_at|insta_timesince }}</span>
-          </div>
-        </div>
-      </div>
-
+      <span class="awaClass-feature-arrow">Watch <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </a>
-    {% empty %}
-
-    <div class="awaClass-empty">
-      <span>🎬</span>
-      No Mathematics videos yet. Be the first to post!
-    </div>
-
-    {% endfor %}
 
   </div>
+
 </div>
 
 <!-- ══════════════════════════════════════════════════
@@ -914,15 +769,14 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Find subject of formula; apply factor and remainder theorems; multiply and divide polynomials (degree ≤ 3); factorize by regrouping, difference of two squares, perfect squares and cubics; solve simultaneous equations (one linear, one quadratic); interpret graphs of polynomials including maxima and minima.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Find factors of polynomials; apply factor and remainder theorems; multiply and divide polynomials; solve cubic equations.</div>
             <ul>
               <li>Change of subject of formula</li>
               <li>Factor and remainder theorems</li>
-              <li>Factorisation of polynomials of degree not exceeding 3</li>
+              <li>Factorization of polynomials degree not exceeding 3</li>
               <li>Multiplication and division of polynomials</li>
-              <li>Roots of polynomials not exceeding degree 3</li>
-              <li>Simultaneous equations — one linear, one quadratic</li>
-              <li>Graphs of polynomials of degree not greater than 3</li>
+              <li>Roots of cubic equations (related to coefficients)</li>
+              <li>Partial fractions</li>
             </ul>
           </div>
         </div>
@@ -934,13 +788,9 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving direct, inverse, joint and partial variations; solve problems on percentage increase and decrease in variation.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving direct, inverse, partial and joint variations.</div>
             <ul>
-              <li>Direct variation</li>
-              <li>Inverse variation</li>
-              <li>Joint variation</li>
-              <li>Partial variation</li>
-              <li>Percentage increase and decrease</li>
+              <li>Direct, inverse, partial and joint variation</li>
             </ul>
           </div>
         </div>
@@ -952,10 +802,10 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems on linear and quadratic inequalities; interpret graphs of inequalities.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems on linear and quadratic inequalities in one variable.</div>
             <ul>
               <li>Analytical and graphical solutions of linear inequalities</li>
-              <li>Quadratic inequalities with integral roots only</li>
+              <li>Quadratic inequalities in one variable and their graphs</li>
             </ul>
           </div>
         </div>
@@ -963,15 +813,14 @@
         <div class="awaClass-syl-topic">
           <div class="awaClass-syl-topic-head" onclick="toggleTopic(this)">
             <span class="awaClass-syl-topic-num">4</span>
-            <span class="awaClass-syl-topic-name">Progression (AP &amp; GP)</span>
+            <span class="awaClass-syl-topic-name">Progression</span>
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine the nth term of a progression; compute the sum of AP and GP; find sum to infinity of a given GP.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving AP and GP.</div>
             <ul>
-              <li>nth term of a progression</li>
-              <li>Sum of Arithmetic Progression (AP)</li>
-              <li>Sum of Geometric Progression (GP) and sum to infinity</li>
+              <li>nth term of AP and GP</li>
+              <li>Sum of AP and GP; sum of infinite GP; divergent and convergent series</li>
             </ul>
           </div>
         </div>
@@ -985,8 +834,8 @@
           <div class="awaClass-syl-topic-body">
             <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Solve problems involving closure, commutativity, associativity and distributivity; solve problems involving identity and inverse elements.</div>
             <ul>
-              <li>Properties of closure, commutativity, associativity and distributivity</li>
-              <li>Identity and inverse elements (simple cases only)</li>
+              <li>Properties: closure, commutativity, associativity, distributivity</li>
+              <li>Identity and inverse elements</li>
             </ul>
           </div>
         </div>
@@ -998,18 +847,19 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Perform basic operations (×, +, −, ÷) on matrices; calculate determinants; compute inverses of 2×2 matrices.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Perform basic operations on matrices; calculate determinants; find inverses of 2×2 matrices; solve simultaneous linear equations using matrices.</div>
             <ul>
-              <li>Algebra of matrices not exceeding 3×3</li>
-              <li>Determinants of matrices not exceeding 3×3</li>
-              <li>Inverses of 2×2 matrices (excluding quadratic and higher degree equations)</li>
+              <li>Matrix algebra (addition, subtraction, scalar multiplication, multiplication)</li>
+              <li>Determinants of matrices up to 3 × 3</li>
+              <li>Inverse of 2 × 2 matrix</li>
+              <li>Solution of simultaneous equations using matrices</li>
             </ul>
           </div>
         </div>
 
       </div><!-- /syl-algebra -->
 
-      <!-- ── Geometry ── -->
+      <!-- ── Geometry & Trigonometry ── -->
       <div class="awaClass-syl-section" id="syl-geometry">
 
         <div class="awaClass-syl-topic open">
@@ -1019,12 +869,12 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify various types of lines and angles; solve problems involving polygons; calculate angles using circle theorems; identify construction procedures of special angles (30°, 45°, 60°, 75°, 90°, etc.).</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify various types of lines and angles; solve problems involving polygons; calculate angles using circle theorems; identify and describe various congruent and similar figures.</div>
             <ul>
               <li>Properties of angles and lines</li>
               <li>Polygons: triangles, quadrilaterals and general polygons</li>
-              <li>Circles: angle properties, cyclic quadrilaterals and intersecting chords</li>
-              <li>Construction of special angles</li>
+              <li>Circles: angle properties, cyclic quadrilaterals, inscribed circle and circumscribed circles</li>
+              <li>Construction</li>
             </ul>
           </div>
         </div>
@@ -1036,13 +886,12 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate perimeters and areas of triangles, quadrilaterals, circles and composites; find arc length, chord, perimeters and areas of sectors/segments; calculate total surface areas and volumes of cuboids, cylinders, cones, pyramids, prisms, spheres and composites; determine distance between two points on Earth's surface.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate the perimeters and areas of triangles, quadrilaterals, circles; find the surface area and volume of 3D shapes.</div>
             <ul>
-              <li>Lengths and areas of plane geometrical figures</li>
-              <li>Lengths of arcs and chords of a circle</li>
-              <li>Perimeters and areas of sectors and segments of circles</li>
-              <li>Surface areas and volumes of simple solids and composite figures</li>
-              <li>The earth as a sphere — longitudes and latitudes</li>
+              <li>Lengths and areas of plane figures</li>
+              <li>Lengths of arcs and chords; perimeters and areas of sectors and segments</li>
+              <li>Surface areas and volumes of solids (cuboids, cylinders, cones, pyramids, spheres and composite figures)</li>
+              <li>Areas and volumes of similar figures and objects</li>
             </ul>
           </div>
         </div>
@@ -1054,10 +903,9 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Identify and interpret loci relating to parallel lines, perpendicular bisectors, angle bisectors and circles.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine the locus of moving points; solve problems involving loci.</div>
             <ul>
-              <li>Locus in 2 dimensions based on geometric principles relating to lines and curves</li>
-              <li>Loci for parallel lines, perpendicular bisectors, angle bisectors and circles</li>
+              <li>Locus in 2 dimensions based on geometric principles including intersection of loci</li>
             </ul>
           </div>
         </div>
@@ -1069,12 +917,12 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine midpoint and gradient of a line segment; find distance between two points; identify conditions for parallelism and perpendicularity; find equation of a line in two-point form, point-slope form, slope-intercept form and general form.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Determine midpoints and distances; find gradients and equations of lines; determine intersections and conditions for parallel and perpendicular lines.</div>
             <ul>
               <li>Midpoint and gradient of a line segment</li>
               <li>Distance between two points</li>
               <li>Parallel and perpendicular lines</li>
-              <li>Equations of straight lines (all forms)</li>
+              <li>Equations of straight lines</li>
             </ul>
           </div>
         </div>
@@ -1086,21 +934,22 @@
             <i class="fa-solid fa-chevron-down awaClass-syl-topic-chevron"></i>
           </div>
           <div class="awaClass-syl-topic-body">
-            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate sin, cos and tan for angles −360° ≤ θ ≤ 360°; apply special angles (30°, 45°, 60°, 75°, 90°, 105°, 135°); solve problems on elevation, depression and bearings; apply trig formulae to find areas of triangles; solve problems involving sine and cosine graphs.</div>
+            <div class="awaClass-syl-objective">🎯 <strong>Objectives:</strong> Calculate the sine, cosine and tangent of angles; apply the sine and cosine rules; solve elevation and bearing problems; use graphs to determine trig functions.</div>
             <ul>
-              <li>Trigonometrical ratios of angles (−360° to 360°)</li>
+              <li>Trig ratios of angles (0° – 360°)</li>
+              <li>Graphs of sine, cosine and tangent</li>
+              <li>Sine and cosine rules</li>
               <li>Angles of elevation and depression</li>
-              <li>Bearings</li>
-              <li>Areas and solutions of triangles</li>
-              <li>Graphs of sine and cosine</li>
-              <li>Sine rule and cosine formula</li>
+              <li>Bearings and distances</li>
+              <li>Areas of triangles</li>
+              <li>Solving trigonometric equations</li>
             </ul>
           </div>
         </div>
 
       </div><!-- /syl-geometry -->
 
-      <!-- ── Statistics & Probability ── -->
+      <!-- ── Statistics ── -->
       <div class="awaClass-syl-section" id="syl-statistics">
 
         <div class="awaClass-syl-topic open">
