@@ -12,6 +12,12 @@ urlpatterns = [
     path('postcomment/<uuid:post_id>', views.post_comment, name="post_comment"),
     path('mathematics', views.mathematics, name='mathematics'),
     path('mathematics/videos/', views.mathematics_videos, name='mathematics_videos'),
+    # ── Add these to your urlpatterns list in urls.py ──
+# (Place them near the other subject/learn URLs)
+
+    path('mathematics/learn/',              views.math_learn,        name='math_learn'),
+    path('mathematics/learn/<slug:topic_key>/', views.math_topic_learn, name='math_topic_learn'),
+
     path('physics', views.physics, name='physics'),
     path('physics/videos/', views.physics_videos, name='physics_videos'),
     path('comment_like/<uuid:comment_id>', views.comment_like, name="comment_like"),

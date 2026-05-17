@@ -461,12 +461,6 @@ def search(request):
     return render(request, 'search.html')
 
 
-def mathematics(request):
-    # Show only the 3 most recent on the subject hub page
-    videos = Post.objects.filter(subject__iexact='mathematics').order_by('-created_at')[:3]
-    return render(request, 'subjects/mathematics.html', {'videos': videos})
-
-
 def mathematics_videos(request):
     """Full paginated / sortable video listing page for Mathematics."""
     from datetime import timedelta
@@ -1201,3 +1195,284 @@ def resolve_post(request, post_id):
         })
 
     return redirect('chat_post_detail', post_id=post_id)
+    
+# ── Add these imports at the top of views.py if not already present ──
+# from school.models import ..., TopicProgress   ← add TopicProgress here
+
+# ── Paste these functions into views.py ──────────────────────────
+
+
+# Complete JAMB Mathematics syllabus topic definitions
+MATH_SYLLABUS = {
+    'sections': [
+        {
+            'key': 'number',
+            'label': 'Number & Numeration',
+            'topics': [
+                ('number_bases',       '🔢', 'Number Bases',                       'Operations in bases 2–10; conversion including fractional parts'),
+                ('fractions_decimals', '🔣', 'Fractions, Decimals & Percentages',  'Significant figures, percentage errors, profit & loss, VAT'),
+                ('indices_logarithms', '📐', 'Indices, Logarithms & Surds',        'Laws of indices, scientific notation, surds rationalization'),
+                ('sets',               '⭕', 'Sets',                               'Types of sets, union, intersection, Venn diagrams (up to 3 sets)'),
+            ]
+        },
+        {
+            'key': 'algebra',
+            'label': 'Algebra',
+            'topics': [
+                ('polynomials',        '📊', 'Polynomials',                        'Factor & remainder theorems, factorization, partial fractions'),
+                ('variation',          '↔️', 'Variation',                          'Direct, inverse, partial and joint variation'),
+                ('inequalities',       '⚖️', 'Inequalities',                       'Linear and quadratic inequalities in one variable'),
+                ('progressions',       '📈', 'Progressions',                       'Arithmetic & geometric progressions, sum to infinity'),
+                ('binary-operations',  '🔁', 'Binary Operations',                 'Properties: closure, commutativity, associativity, identity, inverse'),
+                ('matrices',           '🔲', 'Matrices & Determinants',            'Operations on matrices; determinant of 2×2 matrix'),
+                ('coordinate-geometry','📉', 'Coordinate Geometry',               'Straight line, gradient, distance, midpoint, circle'),
+            ]
+        },
+        {
+            'key': 'geometry',
+            'label': 'Geometry & Trigonometry',
+            'topics': [
+                ('euclidean-geometry', '📐', 'Euclidean Geometry',                 'Angles, triangles, polygons — properties & proofs'),
+                ('mensuration',        '📏', 'Mensuration',                        'Areas and volumes of plane shapes and solids'),
+                ('locus',              '🎯', 'Locus',                              'Locus in 2D including intersection of loci'),
+                ('construction',       '🔧', 'Construction',                       'Bisection, angle construction, inscribed figures'),
+                ('trigonometry',       '📐', 'Trigonometry',                       'Sine, cosine, tangent; angles 0–360°; bearings'),
+                ('elevation-depression','👁️', 'Angles of Elevation & Depression',  'Real-life applications and problems'),
+                ('vectors',            '➡️', 'Vectors in 2D',                      'Addition, scalar multiplication, resultant'),
+            ]
+        },
+        {
+            'key': 'statistics',
+            'label': 'Statistics & Probability',
+            'topics': [
+                ('data-representation', '📊', 'Representation of Data',            'Frequency tables, histograms, bar charts, pie charts'),
+                ('measures-location',   '📍', 'Measures of Location',              'Mean, mode, median; ogive; quartiles and percentiles'),
+                ('measures-dispersion', '📉', 'Measures of Dispersion',            'Range, mean deviation, variance, standard deviation'),
+                ('permutation-combination','🃏','Permutation & Combination',       'Linear/circular arrangements, repeated objects'),
+                ('probability',         '🎲', 'Probability',                       'Addition & multiplication of probabilities'),
+            ]
+        },
+        {
+            'key': 'calculus',
+            'label': 'Introductory Calculus',
+            'topics': [
+                ('differentiation',     '∂', 'Differentiation',                    'Limit of a function; differentiate algebraic & trig functions'),
+                ('application-diff',    '📈', 'Application of Differentiation',    'Rate of change, maxima and minima'),
+                ('integration',         '∫', 'Integration',                        'Algebraic & trig functions; area under the curve'),
+            ]
+        },
+    ]
+}
+
+# Unlocking order — a topic unlocks when the previous one in the flat list is completed
+MATH_TOPIC_ORDER = [
+    topic_key
+    for section in MATH_SYLLABUS['sections']
+    for topic_key, *_ in section['topics']
+]
+
+
+def _get_topic_state(topic_key, completed_set, unlocked_set):
+    """
+    Returns a dict with card_class, row_class, badge_class, pct, status, unlocked.
+    completed_set  → set of topic_keys the user has finished
+    unlocked_set   → set of topic_keys the user may attempt
+    """
+    if topic_key in completed_set:
+        return {'status': 'completed', 'card_class': 'done',   'row_class': 'done',   'badge_class': 'done',   'pct': 100, 'unlocked': True}
+    if topic_key in unlocked_set:
+        return {'status': 'not_started', 'card_class': 'active', 'row_class': 'active', 'badge_class': 'active', 'pct': 0,   'unlocked': True}
+    return {'status': 'locked',    'card_class': 'locked', 'row_class': 'locked', 'badge_class': 'locked', 'pct': 0,   'unlocked': False}
+
+
+def _build_learn_context(user):
+    """
+    Builds the full context dict for math_learn view.
+    """
+    from school.models import TopicProgress
+
+    completed_set = set()
+    if user.is_authenticated:
+        completed_set = set(
+            TopicProgress.objects.filter(
+                user=user, subject='mathematics', status='completed'
+            ).values_list('topic_key', flat=True)
+        )
+
+    # Compute unlocked set: topic 0 always unlocked; subsequent ones unlock when previous is done
+    unlocked_set = set()
+    for i, key in enumerate(MATH_TOPIC_ORDER):
+        if i == 0:
+            unlocked_set.add(key)
+        elif MATH_TOPIC_ORDER[i - 1] in completed_set:
+            unlocked_set.add(key)
+
+    topics = {}
+    for key in MATH_TOPIC_ORDER:
+        topics[key] = _get_topic_state(key, completed_set, unlocked_set)
+
+    # Chapter XP / completion %
+    chapter_xp = {}
+    chapter_pct = {}
+    chapter_done = {}
+    for section in MATH_SYLLABUS['sections']:
+        skey = section['key']
+        total = len(section['topics'])
+        done = sum(1 for tk, *_ in section['topics'] if tk in completed_set)
+        chapter_xp[skey]   = done * 10
+        chapter_pct[skey]  = round(done / total * 100) if total else 0
+        chapter_done[skey] = done == total
+
+    total_xp = len(completed_set) * 10
+    max_xp   = len(MATH_TOPIC_ORDER) * 10
+    xp_pct   = round(total_xp / max_xp * 100) if max_xp else 0
+
+    # Build per-section topic lists for template
+    # number_topics includes pre-resolved topic state so template needs no custom filter
+    number_topics = [
+        (tk, icon, name, desc, _get_topic_state(tk, completed_set, unlocked_set))
+        for tk, icon, name, desc in MATH_SYLLABUS['sections'][0]['topics']
+    ]
+    algebra_topics    = MATH_SYLLABUS['sections'][1]['topics']
+    geometry_topics   = MATH_SYLLABUS['sections'][2]['topics']
+    statistics_topics = MATH_SYLLABUS['sections'][3]['topics']
+    calculus_topics   = MATH_SYLLABUS['sections'][4]['topics']
+
+    return {
+        'topics':            topics,
+        'chapter_xp':        chapter_xp,
+        'chapter_pct':       chapter_pct,
+        'chapter_done':      chapter_done,
+        'total_xp':          total_xp,
+        'max_xp':            max_xp,
+        'xp_pct':            xp_pct,
+        'number_topics':     number_topics,
+        'algebra_topics':    algebra_topics,
+        'geometry_topics':   geometry_topics,
+        'statistics_topics': statistics_topics,
+        'calculus_topics':   calculus_topics,
+    }
+
+
+@login_required
+def math_learn(request):
+    """Full learning path page for Mathematics."""
+    context = _build_learn_context(request.user)
+    return render(request, 'subjects/math_learn.html', context)
+
+
+@login_required
+def math_topic_learn(request, topic_key):
+    """
+    Individual topic lesson page.
+    Marks the topic as completed (or in_progress) via POST.
+    """
+    from school.models import TopicProgress
+    from django.utils import timezone
+
+    # Resolve meta
+    topic_meta = None
+    for section in MATH_SYLLABUS['sections']:
+        for entry in section['topics']:
+            if entry[0] == topic_key:
+                topic_meta = entry
+                section_label = section['label']
+                break
+        if topic_meta:
+            break
+
+    if not topic_meta:
+        from django.http import Http404
+        raise Http404("Topic not found")
+
+    topic_icon, topic_name, topic_desc = topic_meta[1], topic_meta[2], topic_meta[3]
+
+    # Check unlocking
+    idx = MATH_TOPIC_ORDER.index(topic_key)
+    completed_set = set(
+        TopicProgress.objects.filter(
+            user=request.user, subject='mathematics', status='completed'
+        ).values_list('topic_key', flat=True)
+    )
+    is_unlocked = (idx == 0) or (MATH_TOPIC_ORDER[idx - 1] in completed_set)
+
+    if not is_unlocked:
+        messages.info(request, 'Complete the previous topic first to unlock this lesson.')
+        return redirect('math_learn')
+
+    # Handle lesson completion (POST from the lesson page)
+    if request.method == 'POST' and request.POST.get('action') == 'complete':
+        tp, _ = TopicProgress.objects.get_or_create(
+            user=request.user, subject='mathematics', topic_key=topic_key,
+            defaults={'topic_name': topic_name, 'section': section_label}
+        )
+        if tp.status != 'completed':
+            tp.status       = 'completed'
+            tp.xp_earned    = 10
+            tp.completed_at = timezone.now()
+            tp.topic_name   = topic_name
+            tp.section      = section_label
+            tp.save()
+            messages.success(request, f'🎉 "{topic_name}" completed! +10 XP earned.')
+        return redirect('math_learn')
+
+    # Get or create progress row
+    tp, _ = TopicProgress.objects.get_or_create(
+        user=request.user, subject='mathematics', topic_key=topic_key,
+        defaults={'topic_name': topic_name, 'section': section_label, 'status': 'in_progress'}
+    )
+    if tp.status == 'not_started':
+        tp.status = 'in_progress'
+        tp.save()
+
+    # Next topic
+    next_key  = MATH_TOPIC_ORDER[idx + 1] if idx + 1 < len(MATH_TOPIC_ORDER) else None
+    prev_key  = MATH_TOPIC_ORDER[idx - 1] if idx > 0 else None
+
+    return render(request, 'subjects/math_topic_lesson.html', {
+        'topic_key':    topic_key,
+        'topic_name':   topic_name,
+        'topic_icon':   topic_icon,
+        'topic_desc':   topic_desc,
+        'section_label': section_label,
+        'tp':           tp,
+        'next_key':     next_key,
+        'prev_key':     prev_key,
+        'topic_num':    idx + 1,
+        'topic_total':  len(MATH_TOPIC_ORDER),
+    })
+
+
+# ── Also update the mathematics() view to pass learn_topics ──
+def mathematics(request):
+    """Mathematics subject hub — now also passes learn_topics for the grid."""
+    from school.models import TopicProgress
+
+    videos = Post.objects.filter(subject__iexact='mathematics').order_by('-created_at')[:3]
+
+    # Build learn_topics for the grid preview (first 8 topics)
+    learn_topics = {}
+    if request.user.is_authenticated:
+        completed = set(
+            TopicProgress.objects.filter(
+                user=request.user, subject='mathematics', status='completed'
+            ).values_list('topic_key', flat=True)
+        )
+        preview_keys = MATH_TOPIC_ORDER[:8]
+        for i, key in enumerate(preview_keys):
+            if key in completed:
+                learn_topics[key] = {'card_class': 'done',   'pct': 100, 'icon': 'fa-circle-check'}
+            elif i == 0 or MATH_TOPIC_ORDER[i - 1] in completed:
+                learn_topics[key] = {'card_class': 'active', 'pct': 0,   'icon': 'fa-play'}
+            else:
+                learn_topics[key] = {'card_class': 'locked', 'pct': 0,   'icon': 'fa-lock'}
+    else:
+        preview_keys = MATH_TOPIC_ORDER[:8]
+        for i, key in enumerate(preview_keys):
+            learn_topics[key] = {'card_class': 'active' if i == 0 else 'locked', 'pct': 0, 'icon': 'fa-play' if i == 0 else 'fa-lock'}
+
+    return render(request, 'subjects/mathematics.html', {
+        'videos':       videos,
+        'learn_topics': learn_topics,
+    })
+  

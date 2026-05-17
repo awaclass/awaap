@@ -466,3 +466,42 @@ class ClassPostComment(models.Model):
         elif self.audio:
             return "🎵 Audio attachment"
         return "Empty comment"
+        
+        
+        
+
+# ── Topic Learning Progress ───────────────────────────────────────
+# Paste this at the BOTTOM of your existing models.py
+
+class TopicProgress(models.Model):
+    """
+    Tracks per-user progress on each learn topic.
+    One row per (user, subject, topic_key) — upserted when a lesson is completed.
+    """
+    SUBJECT_CHOICES = [
+        ('mathematics', 'Mathematics'),
+        ('physics',     'Physics'),
+    ]
+    STATUS_CHOICES = [
+        ('not_started', 'Not Started'),
+        ('in_progress', 'In Progress'),
+        ('completed',   'Completed'),
+    ]
+
+    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='topic_progress')
+    subject     = models.CharField(max_length=30, choices=SUBJECT_CHOICES, default='mathematics')
+    # topic_key is a short slug e.g. "number-bases", "polynomials", "differentiation"
+    topic_key   = models.CharField(max_length=80)
+    topic_name  = models.CharField(max_length=200, blank=True)  # display name snapshot
+    section     = models.CharField(max_length=100, blank=True)  # e.g. "Number & Numeration"
+    status      = models.CharField(max_length=15, choices=STATUS_CHOICES, default='not_started')
+    xp_earned   = models.PositiveIntegerField(default=0)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    updated_at  = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['user', 'subject', 'topic_key']
+        ordering = ['subject', 'section', 'topic_key']
+
+    def __str__(self):
+        return f"{self.user.username} – {self.subject} – {self.topic_key} ({self.status})"

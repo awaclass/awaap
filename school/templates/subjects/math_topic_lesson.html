@@ -1,0 +1,1246 @@
+{% load static %}
+{% load school_extras %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | {{ topic_name }}</title>
+
+  <style>
+    :root {
+      --teal:       #14b8a6;
+      --teal-light: #ccfbf1;
+      --teal-bg:    #f0fdf9;
+      --orange:     #f97316;
+      --orange-bg:  #fff8f0;
+      --orange-light: #ffedd5;
+      --blue:       #3b82f6;
+      --blue-bg:    #eff6ff;
+      --purple:     #a855f7;
+      --purple-bg:  #fdf4ff;
+      --red:        #ef4444;
+      --green:      #22c55e;
+      --green-bg:   #f0fdf4;
+      --ink:        #0f0f0f;
+      --muted:      #606060;
+      --border:     #e5e5e5;
+      --surface:    #fafafa;
+      --white:      #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; color: var(--ink); }
+
+    /* ── Page shell ── */
+    .lesson-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 16px 100px;
+    }
+    @media (min-width: 768px) { .lesson-page { margin-left: 50px; } }
+
+    /* ── Breadcrumb ── */
+    .lesson-breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .lesson-breadcrumb a { color: var(--teal); text-decoration: none; font-weight: 600; }
+    .lesson-breadcrumb a:hover { text-decoration: underline; }
+
+    /* ── Topic hero ── */
+    .lesson-hero {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 24px 18px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .lesson-hero::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle at top right, var(--teal-light) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-top { display: flex; align-items: flex-start; gap: 14px; }
+    .hero-icon {
+      font-size: 32px;
+      width: 56px; height: 56px;
+      background: var(--teal-bg);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .hero-info { flex: 1; }
+    .hero-section { font-size: 11px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.6px; margin: 0 0 3px; }
+    .hero-title { font-size: 22px; font-weight: 800; color: var(--ink); margin: 0 0 4px; line-height: 1.2; }
+    .hero-desc { font-size: 13px; color: var(--muted); margin: 0; }
+    .hero-meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .hero-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px;
+    }
+    .badge-xp    { background: var(--teal-light); color: var(--teal); }
+    .badge-topic { background: #f0f0f0; color: var(--muted); }
+    .badge-step  { background: var(--orange-light); color: var(--orange); }
+
+    /* ── Step progress bar ── */
+    .lesson-steps-bar {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .steps-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .steps-label span:last-child { color: var(--teal); }
+    .steps-track {
+      display: flex; gap: 6px; align-items: center;
+    }
+    .step-pip {
+      flex: 1; height: 6px; border-radius: 6px;
+      background: var(--border);
+      transition: background 0.4s;
+    }
+    .step-pip.pip-done   { background: var(--teal); }
+    .step-pip.pip-active { background: var(--orange); }
+    .steps-tabs {
+      display: flex; gap: 6px; margin-top: 12px;
+    }
+    .step-tab {
+      flex: 1; padding: 6px 4px; border-radius: 10px;
+      font-size: 11px; font-weight: 700; text-align: center;
+      border: 1.5px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      cursor: default;
+      transition: all 0.2s;
+    }
+    .step-tab.tab-done   { background: var(--teal-bg); border-color: var(--teal); color: var(--teal); }
+    .step-tab.tab-active { background: var(--orange-bg); border-color: var(--orange); color: var(--orange); }
+
+    /* ── Lesson panels ── */
+    .lesson-panel { display: none; }
+    .lesson-panel.panel-active { display: block; }
+
+    /* ── Content card ── */
+    .content-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .content-card h2 {
+      font-size: 17px; font-weight: 800; color: var(--ink);
+      margin: 0 0 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .content-card h3 {
+      font-size: 15px; font-weight: 700; color: var(--ink);
+      margin: 18px 0 8px;
+    }
+    .content-card p { font-size: 14px; line-height: 1.7; color: #333; margin: 0 0 12px; }
+    .content-card ul, .content-card ol {
+      font-size: 14px; line-height: 1.7; color: #333;
+      padding-left: 20px; margin: 0 0 12px;
+    }
+    .content-card li { margin-bottom: 5px; }
+
+    /* Highlight boxes */
+    .info-box {
+      border-radius: 12px; padding: 14px 16px; margin: 14px 0;
+      font-size: 13.5px; line-height: 1.6;
+    }
+    .info-box.box-teal   { background: var(--teal-bg);  border-left: 4px solid var(--teal); }
+    .info-box.box-orange { background: var(--orange-bg); border-left: 4px solid var(--orange); }
+    .info-box.box-blue   { background: var(--blue-bg);   border-left: 4px solid var(--blue); }
+    .info-box.box-purple { background: var(--purple-bg); border-left: 4px solid var(--purple); }
+    .info-box strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
+
+    /* Formula block */
+    .formula-block {
+      background: #1e1e2e; color: #cdd6f4;
+      border-radius: 12px; padding: 16px 20px;
+      font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8;
+      margin: 14px 0; overflow-x: auto;
+    }
+    .formula-block .f-comment { color: #6c7086; }
+    .formula-block .f-accent  { color: #89dceb; }
+    .formula-block .f-val     { color: #a6e3a1; }
+
+    /* Example box */
+    .example-box {
+      border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 16px;
+      margin: 14px 0;
+    }
+    .example-box .ex-label {
+      font-size: 11px; font-weight: 700; color: var(--orange);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px;
+    }
+    .example-box .ex-q { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .example-box .ex-steps { font-size: 13.5px; color: #444; line-height: 1.7; }
+    .example-box .ex-answer {
+      background: var(--teal-bg); border-radius: 8px;
+      padding: 8px 12px; margin-top: 10px;
+      font-size: 13.5px; font-weight: 700; color: var(--teal);
+    }
+
+    /* Key points grid */
+    .key-points {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px; margin: 14px 0;
+    }
+    .key-point {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .key-point .kp-icon { font-size: 20px; margin-bottom: 6px; }
+    .key-point .kp-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .key-point .kp-body  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Quiz panel ── */
+    .quiz-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .quiz-header h2 { font-size: 17px; font-weight: 800; margin: 0; }
+    .quiz-counter { font-size: 13px; font-weight: 700; color: var(--teal); }
+
+    .quiz-q {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 20px 22px; margin-bottom: 14px;
+    }
+    .quiz-q-text { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 14px; line-height: 1.5; }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer; font-size: 14px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .quiz-option:hover:not(.opt-locked) { border-color: var(--teal); background: var(--teal-bg); }
+    .quiz-option.opt-selected { border-color: var(--blue); background: var(--blue-bg); }
+    .quiz-option.opt-correct  { border-color: var(--green); background: var(--green-bg); }
+    .quiz-option.opt-wrong    { border-color: var(--red); background: #fff5f5; }
+    .quiz-option.opt-locked   { cursor: default; }
+    .quiz-option .opt-letter {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--border); color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .opt-selected .opt-letter { background: var(--blue); color: #fff; }
+    .opt-correct  .opt-letter { background: var(--green); color: #fff; }
+    .opt-wrong    .opt-letter { background: var(--red);   color: #fff; }
+
+    .quiz-feedback {
+      padding: 10px 14px; border-radius: 10px; margin-top: 10px;
+      font-size: 13.5px; font-weight: 600; display: none;
+    }
+    .feedback-correct { background: var(--green-bg); color: #15803d; }
+    .feedback-wrong   { background: #fff5f5; color: #dc2626; }
+
+    .quiz-nav { display: flex; gap: 10px; margin-top: 8px; }
+    .btn-quiz-check {
+      flex: 1; padding: 12px; border-radius: 12px;
+      background: var(--teal); color: #fff;
+      border: none; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-quiz-check:disabled { opacity: 0.4; cursor: default; }
+    .btn-quiz-next {
+      flex: 1; padding: 12px; border-radius: 12px;
+      background: var(--orange); color: #fff;
+      border: none; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: none;
+      transition: opacity 0.15s;
+    }
+
+    /* Score summary */
+    .score-summary {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 16px; padding: 28px 24px; text-align: center;
+      display: none;
+    }
+    .score-ring {
+      width: 90px; height: 90px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 900;
+      margin: 0 auto 14px;
+    }
+    .ring-great  { background: var(--teal-bg);   color: var(--teal);   border: 4px solid var(--teal); }
+    .ring-ok     { background: var(--orange-bg);  color: var(--orange); border: 4px solid var(--orange); }
+    .ring-poor   { background: #fff5f5;           color: var(--red);    border: 4px solid var(--red); }
+    .score-label { font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+    .score-sub   { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+    /* ── Action buttons ── */
+    .lesson-actions {
+      display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+    }
+    .btn-primary {
+      flex: 1; min-width: 140px;
+      padding: 14px 20px; border-radius: 14px;
+      background: var(--teal); color: #fff;
+      border: none; font-size: 15px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(20,184,166,0.3); }
+    .btn-secondary {
+      flex: 1; min-width: 120px;
+      padding: 14px 20px; border-radius: 14px;
+      background: var(--white); color: var(--ink);
+      border: 1.5px solid var(--border); font-size: 15px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: border-color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-complete {
+      width: 100%; padding: 16px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--teal) 0%, #0d9488 100%);
+      color: #fff; border: none; font-size: 16px; font-weight: 800;
+      cursor: pointer; margin-top: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-complete:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(20,184,166,0.35); }
+
+    /* ── Nav footer ── */
+    .lesson-nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 100;
+    }
+    .nav-bar-inner { max-width: 860px; margin: 0 auto; display: flex; width: 100%; justify-content: space-between; align-items: center; }
+    .nav-btn {
+      padding: 9px 18px; border-radius: 10px;
+      background: var(--white); border: 1.5px solid var(--border);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      text-decoration: none; color: var(--ink);
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .nav-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .nav-btn:disabled, .nav-btn.disabled { opacity: 0.35; pointer-events: none; }
+    .nav-center { text-align: center; }
+    .nav-center .nc-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .nav-center .nc-val   { font-size: 13px; color: var(--ink); font-weight: 700; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .content-card { padding: 16px; }
+      .hero-title { font-size: 18px; }
+      .key-points { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="lesson-page">
+
+  <!-- Breadcrumb -->
+  <div class="lesson-breadcrumb">
+    <a href="{% url 'math_learn' %}"><i class="fa-solid fa-arrow-left"></i> Learn Mathematics</a>
+    <span>/</span>
+    <span>{{ section_label }}</span>
+    <span>/</span>
+    <span>{{ topic_name }}</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="lesson-hero">
+    <div class="hero-top">
+      <div class="hero-icon">{{ topic_icon }}</div>
+      <div class="hero-info">
+        <p class="hero-section">{{ section_label }}</p>
+        <h1 class="hero-title">{{ topic_name }}</h1>
+        <p class="hero-desc">{{ topic_desc }}</p>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span class="hero-badge badge-xp">⚡ +10 XP on completion</span>
+      <span class="hero-badge badge-topic">Topic {{ topic_num }} of {{ topic_total }}</span>
+      <span class="hero-badge badge-step" id="heroStepBadge">Step 1 of 3</span>
+    </div>
+  </div>
+
+  <!-- Step progress bar -->
+  <div class="lesson-steps-bar">
+    <div class="steps-label">
+      <span>Your Progress</span>
+      <span id="stepsLabelRight">Step 1 of 3</span>
+    </div>
+    <div class="steps-track">
+      <div class="step-pip pip-active" id="pip0"></div>
+      <div class="step-pip"           id="pip1"></div>
+      <div class="step-pip"           id="pip2"></div>
+    </div>
+    <div class="steps-tabs">
+      <div class="step-tab tab-active" id="tab0">📖 Learn</div>
+      <div class="step-tab"           id="tab1">💡 Examples</div>
+      <div class="step-tab"           id="tab2">✅ Quiz</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PANEL 0 — LESSON CONTENT  (topic-specific via JS)
+  ══════════════════════════════════════════════════════ -->
+  <div class="lesson-panel panel-active" id="panel0">
+    <div class="content-card" id="lessonContent">
+      <!-- Filled by JS based on topic_key -->
+      <p style="color:var(--muted);text-align:center;padding:40px 0;">Loading lesson…</p>
+    </div>
+    <div class="lesson-actions">
+      <button class="btn-primary" onclick="goStep(1)">
+        Next: Examples <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PANEL 1 — WORKED EXAMPLES
+  ══════════════════════════════════════════════════════ -->
+  <div class="lesson-panel" id="panel1">
+    <div class="content-card" id="examplesContent">
+      <p style="color:var(--muted);text-align:center;padding:40px 0;">Loading examples…</p>
+    </div>
+    <div class="lesson-actions">
+      <button class="btn-secondary" onclick="goStep(0)"><i class="fa-solid fa-arrow-left"></i> Review Lesson</button>
+      <button class="btn-primary"   onclick="goStep(2)">Start Quiz <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       PANEL 2 — QUIZ
+  ══════════════════════════════════════════════════════ -->
+  <div class="lesson-panel" id="panel2">
+    <div class="quiz-header">
+      <h2>📝 Quick Quiz</h2>
+      <span class="quiz-counter" id="quizCounter">Q 1 / 4</span>
+    </div>
+
+    <!-- Questions injected here by JS -->
+    <div id="quizQuestions"></div>
+
+    <!-- Score summary (shown after last question) -->
+    <div class="score-summary" id="scoreSummary">
+      <div class="score-ring" id="scoreRing"></div>
+      <div class="score-label" id="scoreLabel"></div>
+      <div class="score-sub"   id="scoreSub"></div>
+
+      <!-- Complete form -->
+      <form method="POST" action="{% url 'math_topic_learn' topic_key %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="complete">
+        <button type="submit" class="btn-complete" id="completeBtn" style="display:none;">
+          🎉 Mark Complete &amp; Earn XP
+        </button>
+      </form>
+
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="retakeQuiz()" style="flex:0 1 auto;min-width:120px;">
+          <i class="fa-solid fa-rotate-right"></i> Retake Quiz
+        </button>
+        <button class="btn-secondary" onclick="goStep(0)" style="flex:0 1 auto;min-width:120px;">
+          <i class="fa-solid fa-book-open"></i> Review Lesson
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /lesson-page -->
+
+<!-- Fixed bottom nav -->
+<div class="lesson-nav-bar">
+  <div class="nav-bar-inner">
+    {% if prev_key %}
+    <a href="{% url 'math_topic_learn' prev_key %}" class="nav-btn">
+      <i class="fa-solid fa-chevron-left"></i> Previous
+    </a>
+    {% else %}
+    <span class="nav-btn disabled"><i class="fa-solid fa-chevron-left"></i> Previous</span>
+    {% endif %}
+
+    <div class="nav-center">
+      <div class="nc-label">Current Topic</div>
+      <div class="nc-val">{{ topic_num }} / {{ topic_total }}</div>
+    </div>
+
+    {% if next_key %}
+    <a href="{% url 'math_topic_learn' next_key %}" class="nav-btn" id="nextTopicBtn">
+      Next <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    {% else %}
+    <a href="{% url 'math_learn' %}" class="nav-btn">
+      <i class="fa-solid fa-flag-checkered"></i> Finish
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   TOPIC CONTENT DATABASE
+   All 26 JAMB Mathematics topics
+══════════════════════════════════════════════ */
+const TOPICS = {
+
+  /* ── NUMBER & NUMERATION ──────────────────── */
+
+  'number_bases': {
+    lesson: `
+      <h2>🔢 Number Bases</h2>
+      <p>We normally count in <strong>base 10</strong> (decimal), using digits 0–9. But numbers can be expressed in any base — especially base 2 (binary) and base 8 (octal) which appear heavily in JAMB.</p>
+      <div class="info-box box-teal"><strong>Key Idea</strong>In base <em>n</em>, each digit position represents a power of <em>n</em>. The rightmost digit is n⁰, the next is n¹, then n², and so on.</div>
+      <h3>Converting FROM base n TO base 10</h3>
+      <p>Multiply each digit by its place value (power of the base) and add everything up.</p>
+      <div class="formula-block">1101₂ = 1×2³ + 1×2² + 0×2¹ + 1×2⁰<br>       = 8 + 4 + 0 + 1 = <span class="f-val">13₁₀</span></div>
+      <h3>Converting FROM base 10 TO base n</h3>
+      <p>Repeatedly divide by <em>n</em> and collect remainders from bottom to top.</p>
+      <div class="formula-block">13 ÷ 2 = 6 remainder <span class="f-val">1</span><br>6  ÷ 2 = 3 remainder <span class="f-val">0</span><br>3  ÷ 2 = 1 remainder <span class="f-val">1</span><br>1  ÷ 2 = 0 remainder <span class="f-val">1</span><br><span class="f-comment">Read remainders upward → 1101₂</span></div>
+      <h3>Arithmetic in other bases</h3>
+      <p>Add/subtract column by column. When a column overflows the base, carry 1 to the next column.</p>
+      <div class="info-box box-orange"><strong>JAMB Tip</strong>Questions often ask you to convert, then perform one operation. Always convert to base 10 first if you are unsure.</div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">2️⃣</div><div class="kp-title">Binary (Base 2)</div><div class="kp-body">Digits: 0, 1. Used in computers.</div></div>
+        <div class="key-point"><div class="kp-icon">8️⃣</div><div class="kp-title">Octal (Base 8)</div><div class="kp-body">Digits: 0–7. Group binary in 3s.</div></div>
+        <div class="key-point"><div class="kp-icon">🔟</div><div class="kp-title">Decimal (Base 10)</div><div class="kp-body">Our everyday number system.</div></div>
+        <div class="key-point"><div class="kp-icon">🔡</div><div class="kp-title">Hex (Base 16)</div><div class="kp-body">Digits: 0–9, A–F.</div></div>
+      </div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Convert to decimal</div><div class="ex-q">Convert 10110₂ to base 10.</div><div class="ex-steps">= 1×2⁴ + 0×2³ + 1×2² + 1×2¹ + 0×2⁰<br>= 16 + 0 + 4 + 2 + 0</div><div class="ex-answer">= 22₁₀</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Convert to binary</div><div class="ex-q">Convert 25₁₀ to base 2.</div><div class="ex-steps">25÷2=12 r<b>1</b>, 12÷2=6 r<b>0</b>, 6÷2=3 r<b>0</b>, 3÷2=1 r<b>1</b>, 1÷2=0 r<b>1</b><br>Read remainders upward:</div><div class="ex-answer">= 11001₂</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Addition in base 2</div><div class="ex-q">Evaluate 1011₂ + 110₂.</div><div class="ex-steps">Line up: 1011 + 0110<br>Rightmost: 1+0=1; next: 1+1=10 write 0 carry 1; next: 0+1+1(carry)=10 write 0 carry 1; next: 1+0+1(carry)=10 write 0 carry 1; carry gives extra 1</div><div class="ex-answer">= 10001₂</div></div>`,
+    questions: [
+      { q:'What is 1010₂ in base 10?', opts:['8','10','12','14'], ans:1 },
+      { q:'Convert 19₁₀ to binary.', opts:['10011₂','10101₂','11001₂','10001₂'], ans:0 },
+      { q:'Evaluate 101₂ + 11₂.', opts:['111₂','1000₂','110₂','1010₂'], ans:1 },
+      { q:'What digit can appear in base 6?', opts:['6','7','5','8'], ans:2 },
+    ]
+  },
+
+  'fractions_decimals': {
+    lesson: `
+      <h2>🔣 Fractions, Decimals & Percentages</h2>
+      <p>These three forms all express parts of a whole. JAMB tests conversions, significant figures, percentage error, profit & loss, and VAT.</p>
+      <h3>Significant Figures (s.f.)</h3>
+      <div class="info-box box-teal"><strong>Rule</strong>Count from the first non-zero digit. Round at the required position — the next digit decides whether to round up or keep.</div>
+      <div class="formula-block">0.004782 to 2 s.f. → 0.0048<br>35 640 to 3 s.f.   → 35 600</div>
+      <h3>Percentage Error</h3>
+      <div class="formula-block">% error = (|approximate − exact| / exact) × 100</div>
+      <h3>Profit & Loss</h3>
+      <div class="formula-block">% Profit = (Profit / Cost Price) × 100<br>% Loss   = (Loss   / Cost Price) × 100<br>Selling Price = CP × (1 + %Profit/100)</div>
+      <h3>VAT</h3>
+      <p>Value Added Tax is a percentage added to the price of goods. In Nigeria VAT is typically <strong>7.5%</strong>.</p>
+      <div class="formula-block">Price after VAT = Original Price × 1.075</div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Fraction → Decimal</div><div class="kp-body">Divide numerator by denominator.</div></div>
+        <div class="key-point"><div class="kp-icon">💯</div><div class="kp-title">Decimal → %</div><div class="kp-body">Multiply by 100.</div></div>
+        <div class="key-point"><div class="kp-icon">📉</div><div class="kp-title">Discount</div><div class="kp-body">SP = MP × (1 − discount%/100)</div></div>
+        <div class="key-point"><div class="kp-icon">🏷️</div><div class="kp-title">VAT</div><div class="kp-body">Add 7.5% of original price.</div></div>
+      </div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Significant Figures</div><div class="ex-q">Round 0.007368 to 2 significant figures.</div><div class="ex-steps">First non-zero digit is 7 (3rd decimal place). Second s.f. is 3. Next digit is 6 ≥ 5, so round up.</div><div class="ex-answer">= 0.0074</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Profit</div><div class="ex-q">A trader buys an item for ₦4,000 and sells it for ₦5,200. Find the percentage profit.</div><div class="ex-steps">Profit = 5200 − 4000 = ₦1200<br>% Profit = (1200/4000) × 100</div><div class="ex-answer">= 30%</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — VAT</div><div class="ex-q">Find the price of a phone worth ₦80,000 after VAT at 7.5%.</div><div class="ex-steps">VAT amount = 7.5% × 80000 = ₦6,000<br>Total = 80000 + 6000</div><div class="ex-answer">= ₦86,000</div></div>`,
+    questions: [
+      { q:'Round 0.006785 to 2 significant figures.', opts:['0.0068','0.0067','0.007','0.00678'], ans:0 },
+      { q:'A dress bought for ₦2,000 is sold for ₦2,500. What is the profit percentage?', opts:['20%','25%','30%','15%'], ans:1 },
+      { q:'Convert 3/8 to a decimal.', opts:['0.375','0.38','0.3','0.25'], ans:0 },
+      { q:'If VAT is 7.5%, what is the VAT on goods worth ₦40,000?', opts:['₦3,000','₦3,500','₦4,000','₦2,500'], ans:0 },
+    ]
+  },
+
+  'indices_logarithms': {
+    lesson: `
+      <h2>📐 Indices, Logarithms & Surds</h2>
+      <h3>Laws of Indices</h3>
+      <div class="formula-block">aᵐ × aⁿ = aᵐ⁺ⁿ<br>aᵐ ÷ aⁿ = aᵐ⁻ⁿ<br>(aᵐ)ⁿ   = aᵐⁿ<br>a⁰      = 1<br>a⁻ⁿ     = 1/aⁿ<br>a^(1/n) = ⁿ√a</div>
+      <h3>Logarithms</h3>
+      <div class="info-box box-teal"><strong>Definition</strong>log_b(x) = y  ↔  bʸ = x<br>log₁₀ is written simply as "log". logₑ is "ln".</div>
+      <div class="formula-block">log(AB)   = log A + log B<br>log(A/B)  = log A − log B<br>log(Aⁿ)   = n log A<br>log_b(b)  = 1<br>log_b(1)  = 0</div>
+      <h3>Surds</h3>
+      <p>A surd is an irrational root that cannot be simplified to a whole number, e.g. √2, √3, √5.</p>
+      <div class="formula-block">√a × √a   = a<br>√(a/b)    = √a / √b<br>Rationalise: multiply by conjugate<br>1/(a+√b) × (a−√b)/(a−√b)</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Indices</div><div class="ex-q">Simplify 2⁵ ÷ 2² × 2³.</div><div class="ex-steps">= 2^(5−2+3) = 2⁶</div><div class="ex-answer">= 64</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Logarithms</div><div class="ex-q">Given log 2 = 0.301, find log 8.</div><div class="ex-steps">log 8 = log 2³ = 3 log 2 = 3 × 0.301</div><div class="ex-answer">= 0.903</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Surds</div><div class="ex-q">Rationalise 1/(√3 + 1).</div><div class="ex-steps">Multiply by (√3−1)/(√3−1): numerator = √3−1, denominator = 3−1 = 2</div><div class="ex-answer">= (√3−1)/2</div></div>`,
+    questions: [
+      { q:'Simplify 3⁴ ÷ 3².', opts:['9','81','3','27'], ans:0 },
+      { q:'If log 5 = 0.699, find log 25.', opts:['0.349','1.398','0.845','1.699'], ans:1 },
+      { q:'Simplify (√5)².', opts:['25','5','√25','10'], ans:1 },
+      { q:'What is 4^(−1/2)?', opts:['1/2','−2','2','1/4'], ans:0 },
+    ]
+  },
+
+  'sets': {
+    lesson: `
+      <h2>⭕ Sets</h2>
+      <p>A <strong>set</strong> is a well-defined collection of distinct objects called <em>elements</em>.</p>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">∅</div><div class="kp-title">Empty Set</div><div class="kp-body">No elements. Denoted {} or ∅.</div></div>
+        <div class="key-point"><div class="kp-icon">⊂</div><div class="kp-title">Subset</div><div class="kp-body">A ⊆ B: every element of A is in B.</div></div>
+        <div class="key-point"><div class="kp-icon">∪</div><div class="kp-title">Union</div><div class="kp-body">A ∪ B: elements in A OR B (or both).</div></div>
+        <div class="key-point"><div class="kp-icon">∩</div><div class="kp-title">Intersection</div><div class="kp-body">A ∩ B: elements in both A AND B.</div></div>
+      </div>
+      <h3>Venn Diagram Formula (2 sets)</h3>
+      <div class="formula-block">n(A ∪ B) = n(A) + n(B) − n(A ∩ B)</div>
+      <h3>Three-Set Formula</h3>
+      <div class="formula-block">n(A∪B∪C) = n(A)+n(B)+n(C) − n(A∩B) − n(B∩C) − n(A∩C) + n(A∩B∩C)</div>
+      <div class="info-box box-orange"><strong>JAMB Tip</strong>Draw the Venn diagram first. Fill in the innermost region (A∩B∩C) first, then work outward.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Union & Intersection</div><div class="ex-q">A = {1,2,3,4}, B = {3,4,5,6}. Find A∪B and A∩B.</div><div class="ex-steps">A∪B = all elements in either: {1,2,3,4,5,6}<br>A∩B = common elements: {3,4}</div><div class="ex-answer">A∪B = {1,2,3,4,5,6},  A∩B = {3,4}</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Venn Diagram</div><div class="ex-q">In a class of 40, 25 study Maths, 20 study Physics, and 10 study both. How many study neither?</div><div class="ex-steps">n(M∪P) = 25 + 20 − 10 = 35<br>Neither = 40 − 35</div><div class="ex-answer">= 5 students</div></div>`,
+    questions: [
+      { q:'If A = {a,b,c} and B = {b,c,d,e}, what is A∩B?', opts:['{b,c}','{a,b,c,d,e}','{a}','{d,e}'], ans:0 },
+      { q:'In a group of 50, 30 like football, 25 like basketball, 10 like both. How many like neither?', opts:['5','10','15','20'], ans:0 },
+      { q:'How many subsets does the set {x, y} have?', opts:['2','3','4','5'], ans:2 },
+      { q:'What is the complement of the universal set?', opts:['∅','The universal set itself','All elements','Undefined'], ans:0 },
+    ]
+  },
+
+  /* ── ALGEBRA ──────────────────────────────── */
+
+  'polynomials': {
+    lesson: `
+      <h2>📊 Polynomials</h2>
+      <p>A <strong>polynomial</strong> is an expression of the form aₙxⁿ + … + a₁x + a₀.</p>
+      <h3>Factor Theorem</h3>
+      <div class="info-box box-teal"><strong>Theorem</strong>(x − a) is a factor of f(x) if and only if f(a) = 0.</div>
+      <h3>Remainder Theorem</h3>
+      <div class="formula-block">When f(x) is divided by (x − a), remainder = f(a).</div>
+      <h3>Partial Fractions</h3>
+      <p>Split a fraction with a polynomial denominator into simpler fractions:</p>
+      <div class="formula-block">A/(x−a) + B/(x−b) + ...  then solve for A, B, etc.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Remainder Theorem</div><div class="ex-q">Find the remainder when x³ − 2x + 5 is divided by (x − 2).</div><div class="ex-steps">f(2) = 8 − 4 + 5</div><div class="ex-answer">Remainder = 9</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Factor Theorem</div><div class="ex-q">Is (x − 1) a factor of x³ − 3x² + 3x − 1?</div><div class="ex-steps">f(1) = 1 − 3 + 3 − 1 = 0. Yes!</div><div class="ex-answer">(x−1) IS a factor.</div></div>`,
+    questions: [
+      { q:'If f(x) = x² − 5x + 6, find f(2).', opts:['0','2','4','-2'], ans:0 },
+      { q:'The remainder when x³ + 2x − 1 is divided by (x+1) is:', opts:['-4','0','4','-2'], ans:0 },
+      { q:'Which of the following is a factor of x² − 4?', opts:['(x+2)','(x−1)','(x+3)','(2x−1)'], ans:0 },
+      { q:'Factorize completely: x² − 7x + 12.', opts:['(x−3)(x−4)','(x+3)(x+4)','(x−3)(x+4)','(x+3)(x−4)'], ans:0 },
+    ]
+  },
+
+  'variation': {
+    lesson: `
+      <h2>↔️ Variation</h2>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📈</div><div class="kp-title">Direct</div><div class="kp-body">y ∝ x  →  y = kx</div></div>
+        <div class="key-point"><div class="kp-icon">📉</div><div class="kp-title">Inverse</div><div class="kp-body">y ∝ 1/x  →  y = k/x</div></div>
+        <div class="key-point"><div class="kp-icon">🔀</div><div class="kp-title">Joint</div><div class="kp-body">y ∝ xz  →  y = kxz</div></div>
+        <div class="key-point"><div class="kp-icon">➕</div><div class="kp-title">Partial</div><div class="kp-body">y = a + bx</div></div>
+      </div>
+      <div class="info-box box-teal"><strong>Method</strong>1. Write the variation statement. 2. Introduce the constant k. 3. Substitute known values to find k. 4. Use k to answer the question.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Direct Variation</div><div class="ex-q">y varies directly as x. When x = 5, y = 15. Find y when x = 8.</div><div class="ex-steps">y = kx → 15 = 5k → k = 3<br>y = 3 × 8</div><div class="ex-answer">y = 24</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Inverse Variation</div><div class="ex-q">y varies inversely as x². When x = 2, y = 3. Find y when x = 3.</div><div class="ex-steps">y = k/x² → 3 = k/4 → k = 12<br>y = 12/9</div><div class="ex-answer">y = 4/3</div></div>`,
+    questions: [
+      { q:'y varies directly as x. If y = 12 when x = 4, find y when x = 7.', opts:['21','18','28','14'], ans:0 },
+      { q:'y ∝ 1/x. If y = 6 when x = 2, find x when y = 3.', opts:['4','3','6','12'], ans:0 },
+      { q:'Which equation represents joint variation?', opts:['y = kxz','y = k/x','y = kx²','y = a + bx'], ans:0 },
+      { q:'If p varies inversely as q and p = 4 when q = 3, find p when q = 6.', opts:['2','8','12','1'], ans:0 },
+    ]
+  },
+
+  'inequalities': {
+    lesson: `
+      <h2>⚖️ Inequalities</h2>
+      <p>Inequalities work like equations, with one critical rule: <strong>multiplying or dividing by a negative number reverses the inequality sign.</strong></p>
+      <h3>Linear Inequalities</h3>
+      <div class="formula-block">3x − 4 > 8  →  3x > 12  →  x > 4</div>
+      <h3>Quadratic Inequalities</h3>
+      <p>Factorize, find roots, then test intervals on a number line.</p>
+      <div class="formula-block">x² − 5x + 6 < 0<br>(x−2)(x−3) < 0<br>Roots: x = 2, x = 3<br>Solution: 2 < x < 3</div>
+      <div class="info-box box-orange"><strong>Number Line Tip</strong>If the product of two factors is negative, one factor is positive and the other negative. Test which interval satisfies this.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Solve: 2x + 3 ≤ 11</div><div class="ex-steps">2x ≤ 8 → x ≤ 4</div><div class="ex-answer">x ≤ 4</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Solve: x² − x − 6 > 0</div><div class="ex-steps">(x−3)(x+2) > 0. Roots: 3, −2<br>Product > 0 when both same sign: x < −2 or x > 3</div><div class="ex-answer">x < −2 or x > 3</div></div>`,
+    questions: [
+      { q:'Solve: 3x − 5 ≥ 7', opts:['x ≥ 4','x ≤ 4','x ≥ 2','x > 4'], ans:0 },
+      { q:'Solve: x² − 4 < 0', opts:['−2 < x < 2','x > 2','x < −2','x < 2'], ans:0 },
+      { q:'If −2x > 6, then:', opts:['x < −3','x > −3','x > 3','x < 3'], ans:0 },
+      { q:'What is the solution set of |x| ≤ 3?', opts:['−3 ≤ x ≤ 3','x ≥ 3','x ≤ −3','x > 3'], ans:0 },
+    ]
+  },
+
+  'progressions': {
+    lesson: `
+      <h2>📈 Progressions</h2>
+      <h3>Arithmetic Progression (AP)</h3>
+      <div class="formula-block">nth term:  Tₙ = a + (n−1)d<br>Sum of n:  Sₙ = n/2 [2a + (n−1)d]<br>           Sₙ = n/2 (first + last)</div>
+      <h3>Geometric Progression (GP)</h3>
+      <div class="formula-block">nth term:  Tₙ = arⁿ⁻¹<br>Sum of n:  Sₙ = a(rⁿ−1)/(r−1)  [r ≠ 1]<br>Sum to ∞:  S∞  = a/(1−r)        [|r| < 1]</div>
+      <div class="info-box box-teal"><strong>Key</strong>AP has a common DIFFERENCE (d). GP has a common RATIO (r).</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — AP</div><div class="ex-q">Find the 10th term of 3, 7, 11, 15, …</div><div class="ex-steps">a = 3, d = 4<br>T₁₀ = 3 + (10−1)×4 = 3 + 36</div><div class="ex-answer">= 39</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — GP Sum to Infinity</div><div class="ex-q">Find the sum to infinity of 8, 4, 2, 1, …</div><div class="ex-steps">a = 8, r = 1/2<br>S∞ = 8/(1−1/2) = 8/(1/2)</div><div class="ex-answer">= 16</div></div>`,
+    questions: [
+      { q:'The 5th term of an AP with first term 2 and common difference 3 is:', opts:['14','17','11','8'], ans:0 },
+      { q:'Find the sum of the first 5 terms of the GP: 2, 6, 18, …', opts:['242','123','182','244'], ans:0 },
+      { q:'The common ratio of the GP 5, 10, 20, 40 is:', opts:['2','5','4','10'], ans:0 },
+      { q:'Sum to infinity of 1 + 1/3 + 1/9 + … is:', opts:['3/2','2','3','1/2'], ans:2 },
+    ]
+  },
+
+  'binary-operations': {
+    lesson: `
+      <h2>🔁 Binary Operations</h2>
+      <p>A <strong>binary operation</strong> ∗ combines two elements of a set to give another element.</p>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Closure</div><div class="kp-body">a∗b ∈ S for all a,b ∈ S.</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Commutative</div><div class="kp-body">a∗b = b∗a.</div></div>
+        <div class="key-point"><div class="kp-icon">🔗</div><div class="kp-title">Associative</div><div class="kp-body">(a∗b)∗c = a∗(b∗c).</div></div>
+        <div class="key-point"><div class="kp-icon">1️⃣</div><div class="kp-title">Identity</div><div class="kp-body">a∗e = e∗a = a.</div></div>
+      </div>
+      <div class="info-box box-teal"><strong>Inverse</strong>For each a, there exists a⁻¹ such that a∗a⁻¹ = e (identity).</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">If a∗b = 2a + b − 1, find 3∗4 and the identity element.</div><div class="ex-steps">3∗4 = 2(3)+4−1 = 6+4−1 = 9<br>Identity: a∗e = a → 2a+e−1 = a → e = 1−a+a = 1</div><div class="ex-answer">3∗4 = 9; identity e = 1</div></div>`,
+    questions: [
+      { q:'If p∗q = p + q + pq, find 2∗3.', opts:['11','10','5','6'], ans:0 },
+      { q:'An operation ∗ is commutative if:', opts:['a∗b = b∗a','(a∗b)∗c = a∗(b∗c)','a∗e = a','a∗a⁻¹ = e'], ans:0 },
+      { q:'If a∗b = 3a − b, find 5∗2.', opts:['13','17','11','7'], ans:0 },
+      { q:'The identity element for ∗ where a∗b = a + b − 2 is:', opts:['2','0','1','-2'], ans:0 },
+    ]
+  },
+
+  'matrices': {
+    lesson: `
+      <h2>🔲 Matrices & Determinants</h2>
+      <h3>Matrix Operations</h3>
+      <div class="formula-block">Addition: add corresponding elements<br>Scalar mult: multiply every element by the scalar<br>Matrix mult: row × column dot product</div>
+      <h3>2×2 Determinant</h3>
+      <div class="formula-block">|A| = |a b|  =  ad − bc<br>      |c d|</div>
+      <h3>Inverse of a 2×2 Matrix</h3>
+      <div class="formula-block">A⁻¹ = (1/|A|) × |d  −b|<br>                   |−c   a|</div>
+      <div class="info-box box-orange"><strong>Note</strong>A matrix has no inverse (singular) if |A| = 0.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Determinant</div><div class="ex-q">Find det of [[3,1],[2,4]].</div><div class="ex-steps">= (3)(4) − (1)(2) = 12 − 2</div><div class="ex-answer">= 10</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Inverse</div><div class="ex-q">Find the inverse of [[2,1],[5,3]].</div><div class="ex-steps">|A| = 6−5 = 1<br>A⁻¹ = [[3,−1],[−5,2]]</div><div class="ex-answer">A⁻¹ = [[3,−1],[−5,2]]</div></div>`,
+    questions: [
+      { q:'det([[4,2],[3,1]]) = ?', opts:['-2','10','2','-10'], ans:0 },
+      { q:'Matrix multiplication AB is possible when:', opts:['Columns of A = Rows of B','Rows of A = Columns of B','A and B are square','A = B'], ans:0 },
+      { q:'If det([[x,1],[3,2]]) = 5, find x.', opts:['4','3','2','1'], ans:0 },
+      { q:'A 2×3 matrix multiplied by a 3×2 matrix gives a matrix of order:', opts:['2×2','3×3','2×3','3×2'], ans:0 },
+    ]
+  },
+
+  'coordinate-geometry': {
+    lesson: `
+      <h2>📉 Coordinate Geometry</h2>
+      <div class="formula-block">Distance:  d = √[(x₂−x₁)² + (y₂−y₁)²]<br>Midpoint:  M = ((x₁+x₂)/2, (y₁+y₂)/2)<br>Gradient:  m = (y₂−y₁)/(x₂−x₁)<br>Line:      y − y₁ = m(x − x₁)</div>
+      <h3>Circle</h3>
+      <div class="formula-block">Centre (a,b), radius r: (x−a)² + (y−b)² = r²<br>General form: x² + y² + 2gx + 2fy + c = 0<br>Centre = (−g, −f),  r = √(g² + f² − c)</div>
+      <div class="info-box box-teal"><strong>Parallel lines</strong>Same gradient. Perpendicular lines: m₁ × m₂ = −1.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Distance</div><div class="ex-q">Find the distance between (1,2) and (4,6).</div><div class="ex-steps">d = √[(4−1)²+(6−2)²] = √[9+16] = √25</div><div class="ex-answer">= 5</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Equation of a line</div><div class="ex-q">Line through (2,3) with gradient 4.</div><div class="ex-steps">y − 3 = 4(x − 2) → y = 4x − 5</div><div class="ex-answer">y = 4x − 5</div></div>`,
+    questions: [
+      { q:'Distance between (0,0) and (3,4) is:', opts:['5','7','25','12'], ans:0 },
+      { q:'Midpoint of (2,4) and (8,12) is:', opts:['(5,8)','(6,8)','(4,8)','(5,6)'], ans:0 },
+      { q:'Gradient of line joining (1,3) and (3,7) is:', opts:['2','4','1','3'], ans:0 },
+      { q:'Two lines are perpendicular if their gradients multiply to:', opts:['-1','0','1','2'], ans:0 },
+    ]
+  },
+
+  /* ── GEOMETRY & TRIG ──────────────────────── */
+
+  'euclidean-geometry': {
+    lesson: `
+      <h2>📐 Euclidean Geometry</h2>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📏</div><div class="kp-title">Angles on a line</div><div class="kp-body">Sum = 180°</div></div>
+        <div class="key-point"><div class="kp-icon">🔺</div><div class="kp-title">Triangle</div><div class="kp-body">Angles sum to 180°</div></div>
+        <div class="key-point"><div class="kp-icon">⬛</div><div class="kp-title">Polygon (n sides)</div><div class="kp-body">Interior sum = (n−2)×180°</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Exterior angles</div><div class="kp-body">Sum of exterior = 360°</div></div>
+      </div>
+      <div class="formula-block">Each interior angle of regular n-gon = (n−2)×180° / n<br>Each exterior angle = 360°/n</div>
+      <div class="info-box box-teal"><strong>Parallel lines</strong>Alternate angles equal. Co-interior (same-side) angles add to 180°. Corresponding angles equal.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find each interior angle of a regular hexagon.</div><div class="ex-steps">(6−2)×180°/6 = 720/6</div><div class="ex-answer">= 120°</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">In a triangle, two angles are 65° and 73°. Find the third.</div><div class="ex-steps">180 − 65 − 73</div><div class="ex-answer">= 42°</div></div>`,
+    questions: [
+      { q:'Sum of interior angles of a pentagon is:', opts:['540°','360°','720°','450°'], ans:0 },
+      { q:'Each interior angle of a regular octagon is:', opts:['135°','120°','150°','45°'], ans:0 },
+      { q:'An exterior angle of a triangle equals:', opts:['Sum of the two non-adjacent interior angles','180° − the adjacent interior angle','The adjacent interior angle','90°'], ans:0 },
+      { q:'Number of sides of a polygon with interior angle sum 1080° is:', opts:['8','6','10','7'], ans:0 },
+    ]
+  },
+
+  'mensuration': {
+    lesson: `
+      <h2>📏 Mensuration</h2>
+      <div class="formula-block"><span class="f-comment">-- Plane shapes --</span><br>Rectangle:   A = lw,   P = 2(l+w)<br>Triangle:    A = ½bh<br>Circle:      A = πr²,  C = 2πr<br>Trapezium:   A = ½(a+b)h<br><br><span class="f-comment">-- Solids --</span><br>Cuboid:      V = lwh<br>Cylinder:    V = πr²h<br>Cone:        V = ⅓πr²h,  l = √(r²+h²)<br>Sphere:      V = (4/3)πr³, A = 4πr²<br>Pyramid:     V = ⅓ × base area × h</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find the volume of a cylinder with r = 7cm, h = 10cm. (π ≈ 22/7)</div><div class="ex-steps">V = πr²h = 22/7 × 49 × 10</div><div class="ex-answer">= 1540 cm³</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">A cone has base radius 6cm and height 8cm. Find the slant height.</div><div class="ex-steps">l = √(r²+h²) = √(36+64) = √100</div><div class="ex-answer">= 10 cm</div></div>`,
+    questions: [
+      { q:'Area of a circle with diameter 14cm is: (π=22/7)', opts:['154 cm²','44 cm²','616 cm²','88 cm²'], ans:0 },
+      { q:'Volume of a sphere with r = 3cm is: (π = 22/7)', opts:['113.14 cm³','36π cm³','36 cm³','12π cm³'], ans:1 },
+      { q:'Total surface area of a closed cylinder r=7, h=10 (π=22/7):', opts:['748 cm²','440 cm²','308 cm²','154 cm²'], ans:0 },
+      { q:'Volume of a pyramid with base area 30cm² and height 9cm is:', opts:['90 cm³','270 cm³','45 cm³','60 cm³'], ans:0 },
+    ]
+  },
+
+  'locus': {
+    lesson: `
+      <h2>🎯 Locus</h2>
+      <p>A <strong>locus</strong> is the set of all points satisfying a given condition.</p>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⭕</div><div class="kp-title">Fixed distance from point</div><div class="kp-body">Locus is a circle.</div></div>
+        <div class="key-point"><div class="kp-icon">↔️</div><div class="kp-title">Equidistant from 2 points</div><div class="kp-body">Perpendicular bisector of the line joining them.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Equidistant from 2 lines</div><div class="kp-body">Angle bisector.</div></div>
+        <div class="key-point"><div class="kp-icon">➡️</div><div class="kp-title">Fixed distance from a line</div><div class="kp-body">Two parallel lines.</div></div>
+      </div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Describe the locus of a point equidistant from points A and B.</div><div class="ex-steps">All such points lie on the perpendicular bisector of AB.</div><div class="ex-answer">Perpendicular bisector of AB.</div></div>`,
+    questions: [
+      { q:'Locus of points at distance r from a fixed point is a:', opts:['Circle','Line','Ellipse','Arc'], ans:0 },
+      { q:'Locus equidistant from two parallel lines is:', opts:['A line parallel to them, midway between','A circle','The two lines themselves','Perpendicular bisector'], ans:0 },
+      { q:'Locus equidistant from two intersecting lines is:', opts:['Angle bisectors','Parallel lines','A circle','Perpendicular bisector'], ans:0 },
+      { q:'The locus of a point on a circumference of a circle subtending a right angle on a chord is:', opts:['A semicircle','A full circle','An arc','A chord'], ans:0 },
+    ]
+  },
+
+  'construction': {
+    lesson: `
+      <h2>🔧 Construction</h2>
+      <p>Geometric constructions use only a compass and a straightedge (ruler with no markings).</p>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">✂️</div><div class="kp-title">Bisect a line</div><div class="kp-body">Open compass >½ length, draw arcs from each end.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Bisect an angle</div><div class="kp-body">Arc from vertex, then arcs from the two intersection points.</div></div>
+        <div class="key-point"><div class="kp-icon">60°</div><div class="kp-title">60° angle</div><div class="kp-body">Draw equilateral triangle arc.</div></div>
+        <div class="key-point"><div class="kp-icon">⊥</div><div class="kp-title">Perpendicular from a point</div><div class="kp-body">Two arcs on the line, then bisect.</div></div>
+      </div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">How do you construct a 90° angle?</div><div class="ex-steps">1. Construct a 60° angle.<br>2. Bisect the remaining 120° to get 60°.<br>OR: construct perpendicular bisector of a line (gives 90° directly).</div><div class="ex-answer">Perpendicular bisector gives 90°.</div></div>`,
+    questions: [
+      { q:'To construct 45°, you first construct:', opts:['90°','60°','30°','120°'], ans:0 },
+      { q:'A perpendicular bisector meets the original line at:', opts:['90°','45°','60°','30°'], ans:0 },
+      { q:'To bisect an angle of 80°, each new angle is:', opts:['40°','20°','60°','80°'], ans:0 },
+      { q:'To construct 30° you bisect a:', opts:['60° angle','90° angle','120° angle','45° angle'], ans:0 },
+    ]
+  },
+
+  'trigonometry': {
+    lesson: `
+      <h2>📐 Trigonometry</h2>
+      <div class="formula-block">sin θ = Opposite / Hypotenuse<br>cos θ = Adjacent / Hypotenuse<br>tan θ = Opposite / Adjacent<br><br><span class="f-comment">-- Special angles --</span><br>sin 30° = 1/2,   cos 30° = √3/2, tan 30° = 1/√3<br>sin 45° = 1/√2, cos 45° = 1/√2, tan 45° = 1<br>sin 60° = √3/2, cos 60° = 1/2,  tan 60° = √3</div>
+      <div class="info-box box-teal"><strong>CAST Rule</strong>Quadrant I: All positive. II: Sin positive. III: Tan positive. IV: Cos positive.</div>
+      <div class="formula-block"><span class="f-comment">-- Identities --</span><br>sin²θ + cos²θ = 1<br>tan θ = sin θ / cos θ</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find sin 150°.</div><div class="ex-steps">150° is in Q2; reference angle = 30°. Sin is positive in Q2.<br>sin 150° = sin 30°</div><div class="ex-answer">= 1/2</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">If sin θ = 3/5, find cos θ and tan θ.</div><div class="ex-steps">cos θ = 4/5 (Pythagoras: 5²=3²+4²)<br>tan θ = sin/cos = (3/5)/(4/5)</div><div class="ex-answer">cos θ = 4/5,  tan θ = 3/4</div></div>`,
+    questions: [
+      { q:'cos 60° equals:', opts:['1/2','√3/2','1/√2','√3'], ans:0 },
+      { q:'sin²30° + cos²30° =', opts:['1','0','1/2','3/4'], ans:0 },
+      { q:'tan 45° =', opts:['1','√3','1/2','0'], ans:0 },
+      { q:'In which quadrant is cos negative and sin positive?', opts:['Q2','Q1','Q3','Q4'], ans:0 },
+    ]
+  },
+
+  'elevation-depression': {
+    lesson: `
+      <h2>👁️ Angles of Elevation & Depression</h2>
+      <p><strong>Angle of elevation:</strong> angle from the horizontal looking UP to an object.</p>
+      <p><strong>Angle of depression:</strong> angle from the horizontal looking DOWN to an object.</p>
+      <div class="info-box box-teal"><strong>Key</strong>Angle of elevation from A to B = Angle of depression from B to A (alternate angles, parallel lines).</div>
+      <div class="formula-block">tan(elevation) = height / horizontal distance<br>sin(elevation) = height / slant distance</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">A tower is 50m tall. A point on the ground is 50m from the base. Find the angle of elevation.</div><div class="ex-steps">tan θ = 50/50 = 1 → θ = arctan(1)</div><div class="ex-answer">θ = 45°</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">From the top of a 30m building, the angle of depression to a car is 60°. How far is the car?</div><div class="ex-steps">tan 60° = 30/d → d = 30/tan60° = 30/√3 = 10√3</div><div class="ex-answer">≈ 17.3 m</div></div>`,
+    questions: [
+      { q:'From 100m away, the angle of elevation to a tree top is 30°. Height of tree:', opts:['100/√3 m','100√3 m','50 m','200 m'], ans:0 },
+      { q:'Angle of elevation and angle of depression between same two points are:', opts:['Equal','Supplementary','Complementary','Different'], ans:0 },
+      { q:'If a ladder of length 10m makes 60° with the ground, its height on the wall:', opts:['5√3 m','5 m','10 m','√3 m'], ans:0 },
+      { q:'tan(30°) =', opts:['1/√3','√3','1','1/2'], ans:0 },
+    ]
+  },
+
+  'vectors': {
+    lesson: `
+      <h2>➡️ Vectors in 2D</h2>
+      <p>A <strong>vector</strong> has both magnitude and direction. Written as <b>a</b> = (x, y) or xi + yj.</p>
+      <div class="formula-block">Addition:        a + b = (x₁+x₂, y₁+y₂)<br>Scalar mult:     ka   = (kx, ky)<br>Magnitude:       |a|  = √(x² + y²)<br>Unit vector:     â    = a / |a|</div>
+      <div class="info-box box-teal"><strong>Position Vector</strong>Vector from origin O to point P = OP.</div>
+      <div class="formula-block">If M is midpoint of AB:<br>OM = ½(OA + OB)</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">If a = (3,4), find |a| and the unit vector.</div><div class="ex-steps">|a| = √(9+16) = 5<br>â = (3/5, 4/5)</div><div class="ex-answer">|a| = 5,  â = (0.6, 0.8)</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Add vectors (2,−1) and (−3,4).</div><div class="ex-steps">(2+(−3), −1+4)</div><div class="ex-answer">= (−1, 3)</div></div>`,
+    questions: [
+      { q:'Magnitude of vector (5,12) is:', opts:['13','17','169','7'], ans:0 },
+      { q:'Sum of (3,−2) and (−1,5) is:', opts:['(2,3)','(4,3)','(2,7)','(4,7)'], ans:0 },
+      { q:'Unit vector of (0,4) is:', opts:['(0,1)','(0,4)','(1,0)','(0,2)'], ans:0 },
+      { q:'If a = 2i − 3j and b = i + j, find a − b.', opts:['i − 4j','3i − 2j','i − 2j','3i − 4j'], ans:0 },
+    ]
+  },
+
+  /* ── STATISTICS & PROBABILITY ─────────────── */
+
+  'data-representation': {
+    lesson: `
+      <h2>📊 Representation of Data</h2>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📋</div><div class="kp-title">Frequency Table</div><div class="kp-body">Tally marks, frequencies, cumulative frequency.</div></div>
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Bar Chart</div><div class="kp-body">Bars of equal width, height = frequency.</div></div>
+        <div class="key-point"><div class="kp-icon">🔲</div><div class="kp-title">Histogram</div><div class="kp-body">Area = frequency. No gaps between bars.</div></div>
+        <div class="key-point"><div class="kp-icon">🥧</div><div class="kp-title">Pie Chart</div><div class="kp-body">Angle = (frequency/total) × 360°</div></div>
+      </div>
+      <div class="formula-block">Pie chart angle = (f / Σf) × 360°<br>Frequency density = frequency / class width</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Pie Chart</div><div class="ex-q">In a class of 40, 10 students play football. What angle represents football in a pie chart?</div><div class="ex-steps">(10/40) × 360°</div><div class="ex-answer">= 90°</div></div>`,
+    questions: [
+      { q:'In a pie chart, a sector for 20 out of 80 students subtends an angle of:', opts:['90°','60°','72°','45°'], ans:0 },
+      { q:'In a histogram, the area of each bar represents:', opts:['Frequency','Class width','Frequency density','Class boundary'], ans:0 },
+      { q:'Which chart is best for showing parts of a whole?', opts:['Pie chart','Bar chart','Histogram','Scatter plot'], ans:0 },
+      { q:'Cumulative frequency is the:', opts:['Running total of frequencies','Middle frequency','Highest frequency','Frequency density'], ans:0 },
+    ]
+  },
+
+  'measures-location': {
+    lesson: `
+      <h2>📍 Measures of Location</h2>
+      <div class="formula-block">Mean     = Σfx / Σf<br>Median   = middle value (arrange in order)<br>Mode     = most frequent value<br>Q1 (Lower quartile) = 25th percentile<br>Q3 (Upper quartile) = 75th percentile<br>IQR = Q3 − Q1</div>
+      <div class="info-box box-teal"><strong>Ogive</strong>Cumulative frequency curve. Used to estimate median, quartiles and percentiles.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Mean</div><div class="ex-q">Find the mean of 5, 7, 9, 11, 13.</div><div class="ex-steps">Σx = 45, n = 5<br>Mean = 45/5</div><div class="ex-answer">= 9</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Median</div><div class="ex-q">Find the median of 3, 7, 2, 9, 5, 1, 8.</div><div class="ex-steps">Arranged: 1,2,3,5,7,8,9. Middle (4th) value</div><div class="ex-answer">= 5</div></div>`,
+    questions: [
+      { q:'Mean of 4, 6, 8, 10, 12 is:', opts:['8','6','10','7'], ans:0 },
+      { q:'Median of 2, 5, 7, 9, 11, 14 is:', opts:['8','7','9','6'], ans:0 },
+      { q:'Mode of 3, 5, 3, 7, 5, 3, 9 is:', opts:['3','5','7','9'], ans:0 },
+      { q:'IQR = Q3 − Q1 is a measure of:', opts:['Spread','Central tendency','Skewness','Symmetry'], ans:0 },
+    ]
+  },
+
+  'measures-dispersion': {
+    lesson: `
+      <h2>📉 Measures of Dispersion</h2>
+      <div class="formula-block">Range            = Max − Min<br>Mean deviation   = Σ|x − x̄| / n<br>Variance (σ²)   = Σ(x − x̄)² / n<br>Std deviation(σ) = √Variance<br><br><span class="f-comment">-- Shortcut for variance --</span><br>σ² = (Σx²/n) − x̄²</div>
+      <div class="info-box box-orange"><strong>Interpretation</strong>Low standard deviation → data clustered near the mean. High → data spread out.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find the variance of 2, 4, 4, 4, 5, 5, 7, 9.</div><div class="ex-steps">x̄ = 40/8 = 5<br>Σ(x−x̄)² = 9+1+1+1+0+0+4+16 = 32<br>Variance = 32/8</div><div class="ex-answer">= 4, SD = 2</div></div>`,
+    questions: [
+      { q:'Range of 4, 7, 2, 9, 14, 3 is:', opts:['12','10','11','14'], ans:0 },
+      { q:'Standard deviation is the square root of:', opts:['Variance','Mean deviation','Range','IQR'], ans:0 },
+      { q:'If all data values are equal, the standard deviation is:', opts:['0','1','Undefined','Equal to mean'], ans:0 },
+      { q:'Which measure is most affected by extreme values?', opts:['Mean','Mode','Median','IQR'], ans:0 },
+    ]
+  },
+
+  'permutation-combination': {
+    lesson: `
+      <h2>🃏 Permutation & Combination</h2>
+      <div class="formula-block">Permutation (order matters):<br>  nPr = n! / (n−r)!<br><br>Combination (order doesn't matter):<br>  nCr = n! / [r!(n−r)!]</div>
+      <div class="info-box box-teal"><strong>Key distinction</strong>Selecting a committee → Combination. Arranging books on a shelf → Permutation.</div>
+      <div class="formula-block">Circular arrangements: (n−1)!<br>With identical objects: n! / (p! q! …)</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Combination</div><div class="ex-q">In how many ways can 3 students be chosen from 7?</div><div class="ex-steps">7C3 = 7!/(3!×4!) = (7×6×5)/(3×2×1)</div><div class="ex-answer">= 35 ways</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Permutation</div><div class="ex-q">How many 3-letter arrangements from 5 different letters?</div><div class="ex-steps">5P3 = 5!/(5−3)! = 5!/2! = 120/2</div><div class="ex-answer">= 60 arrangements</div></div>`,
+    questions: [
+      { q:'5P2 =', opts:['20','10','15','60'], ans:0 },
+      { q:'6C2 =', opts:['15','30','12','18'], ans:0 },
+      { q:'Number of arrangements of 4 people in a circle:', opts:['6','24','12','4'], ans:0 },
+      { q:'In how many ways can a committee of 2 be chosen from 8 people?', opts:['28','56','16','64'], ans:0 },
+    ]
+  },
+
+  'probability': {
+    lesson: `
+      <h2>🎲 Probability</h2>
+      <div class="formula-block">P(E) = (No. of favourable outcomes) / (Total outcomes)<br>0 ≤ P(E) ≤ 1<br>P(E') = 1 − P(E)   [complement]</div>
+      <h3>Addition Rule</h3>
+      <div class="formula-block">P(A∪B) = P(A) + P(B) − P(A∩B)<br>If mutually exclusive: P(A∪B) = P(A) + P(B)</div>
+      <h3>Multiplication Rule</h3>
+      <div class="formula-block">P(A∩B) = P(A) × P(B|A)<br>If independent: P(A∩B) = P(A) × P(B)</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">A bag has 3 red and 5 blue balls. Find P(red).</div><div class="ex-steps">P(red) = 3/(3+5)</div><div class="ex-answer">= 3/8</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Two fair dice are thrown. Find P(sum = 7).</div><div class="ex-steps">Favourable: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = 6 outcomes. Total = 36.</div><div class="ex-answer">= 6/36 = 1/6</div></div>`,
+    questions: [
+      { q:'P(rolling a 4 on a fair die) =', opts:['1/6','1/4','1/3','4/6'], ans:0 },
+      { q:'If P(A) = 0.4 and P(B) = 0.3, and A,B are independent, P(A∩B) =', opts:['0.12','0.7','0.1','0.04'], ans:0 },
+      { q:'P(E) = 1 means the event is:', opts:['Certain','Impossible','Likely','Unlikely'], ans:0 },
+      { q:"P(A') when P(A) = 0.65 is:", opts:['0.35','0.65','1.65','0'], ans:0 },
+    ]
+  },
+
+  /* ── CALCULUS ─────────────────────────────── */
+
+  'differentiation': {
+    lesson: `
+      <h2>∂ Differentiation</h2>
+      <p>Differentiation finds the <strong>rate of change</strong> (gradient) of a function at any point.</p>
+      <div class="formula-block"><span class="f-comment">-- Power Rule --</span><br>d/dx(xⁿ)    = nxⁿ⁻¹<br>d/dx(c)     = 0    (constant)<br>d/dx(axⁿ)   = anxⁿ⁻¹<br><br><span class="f-comment">-- Trig functions --</span><br>d/dx(sin x) = cos x<br>d/dx(cos x) = −sin x<br>d/dx(tan x) = sec²x</div>
+      <div class="info-box box-teal"><strong>Notation</strong>f'(x) = dy/dx = derivative of y with respect to x.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Differentiate y = 3x⁴ − 2x² + 7.</div><div class="ex-steps">dy/dx = 12x³ − 4x + 0</div><div class="ex-answer">= 12x³ − 4x</div></div>
+      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Find the gradient of y = x³ − 3x at x = 2.</div><div class="ex-steps">dy/dx = 3x² − 3<br>At x=2: 3(4)−3 = 12−3</div><div class="ex-answer">= 9</div></div>`,
+    questions: [
+      { q:'Derivative of x⁵ is:', opts:['5x⁴','5x','x⁴','4x⁵'], ans:0 },
+      { q:'d/dx(7) =', opts:['0','7','1','7x'], ans:0 },
+      { q:'Derivative of sin x is:', opts:['cos x','-cos x','sin x','-sin x'], ans:0 },
+      { q:'Gradient of y = x² − 4x at x = 3 is:', opts:['2','6','-2','10'], ans:0 },
+    ]
+  },
+
+  'application-diff': {
+    lesson: `
+      <h2>📈 Application of Differentiation</h2>
+      <h3>Rate of Change</h3>
+      <div class="formula-block">dy/dx gives the rate of change of y w.r.t. x<br>d²y/dx² is the second derivative</div>
+      <h3>Maxima and Minima</h3>
+      <div class="formula-block">Step 1: Find dy/dx<br>Step 2: Set dy/dx = 0  (stationary points)<br>Step 3: Find d²y/dx²<br>  If d²y/dx² > 0 → Minimum<br>  If d²y/dx² < 0 → Maximum</div>
+      <div class="info-box box-orange"><strong>JAMB Tip</strong>Word problems: form an equation for the quantity, differentiate, set = 0, solve.</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1 — Turning Points</div><div class="ex-q">Find the turning point of y = x² − 6x + 5.</div><div class="ex-steps">dy/dx = 2x − 6 = 0 → x = 3<br>y = 9−18+5 = −4<br>d²y/dx² = 2 > 0 → minimum</div><div class="ex-answer">Minimum at (3, −4)</div></div>`,
+    questions: [
+      { q:'Stationary points occur when dy/dx =', opts:['0','1','-1','undefined'], ans:0 },
+      { q:'If d²y/dx² > 0 at a stationary point, it is a:', opts:['Minimum','Maximum','Point of inflection','Saddle point'], ans:0 },
+      { q:'The maximum of y = −x² + 4x − 1 occurs at x =', opts:['2','4','−1','1'], ans:0 },
+      { q:'Rate of change of y = 3t² + 2 with respect to t at t = 2 is:', opts:['12','6','14','10'], ans:0 },
+    ]
+  },
+
+  'integration': {
+    lesson: `
+      <h2>∫ Integration</h2>
+      <p>Integration is the reverse of differentiation. It finds areas under curves.</p>
+      <div class="formula-block"><span class="f-comment">-- Power Rule --</span><br>∫xⁿ dx = xⁿ⁺¹/(n+1) + C   (n ≠ −1)<br>∫k dx  = kx + C<br><br><span class="f-comment">-- Trig --</span><br>∫sin x dx = −cos x + C<br>∫cos x dx =  sin x + C<br><br><span class="f-comment">-- Definite integral --</span><br>∫ₐᵇ f(x) dx = [F(x)]ₐᵇ = F(b) − F(a)</div>
+      <div class="info-box box-teal"><strong>Area under curve</strong>Area = ∫ₐᵇ f(x) dx  (always take absolute value for area)</div>`,
+    examples: `
+      <h2>💡 Worked Examples</h2>
+      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Integrate 4x³ + 2x.</div><div class="ex-steps">= 4x⁴/4 + 2x²/2 + C</div><div class="ex-answer">= x⁴ + x² + C</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Definite Integral</div><div class="ex-q">Evaluate ∫₁³ (3x²) dx.</div><div class="ex-steps">[x³]₁³ = 27 − 1</div><div class="ex-answer">= 26</div></div>`,
+    questions: [
+      { q:'∫6x² dx =', opts:['2x³ + C','3x² + C','6x³ + C','x³ + C'], ans:0 },
+      { q:'∫₀² 2x dx =', opts:['4','2','8','0'], ans:0 },
+      { q:'∫cos x dx =', opts:['sin x + C','-sin x + C','tan x + C','-cos x + C'], ans:0 },
+      { q:'∫5 dx =', opts:['5x + C','5 + C','0','x + C'], ans:0 },
+    ]
+  },
+};
+
+/* ══════════════════════════════════════════════
+   STEP MANAGEMENT
+══════════════════════════════════════════════ */
+const TOPIC_KEY = "{{ topic_key }}";
+const topic = TOPICS[TOPIC_KEY] || {
+  lesson: '<h2>📖 Lesson Content</h2><p>Content for this topic is coming soon. Check back shortly.</p>',
+  examples: '<h2>💡 Worked Examples</h2><p>Examples for this topic are coming soon.</p>',
+  questions: [
+    { q:'Sample question for this topic.', opts:['Option A','Option B','Option C','Option D'], ans:0 }
+  ]
+};
+
+let currentStep = 0;
+const TOTAL_STEPS = 3;
+
+function updateStepUI(step) {
+  // Hide all panels
+  document.querySelectorAll('.lesson-panel').forEach(p => p.classList.remove('panel-active'));
+  document.getElementById('panel' + step).classList.add('panel-active');
+
+  // Update pips
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const pip = document.getElementById('pip' + i);
+    const tab = document.getElementById('tab' + i);
+    pip.className = 'step-pip';
+    tab.className = 'step-tab';
+    if (i < step) { pip.classList.add('pip-done'); tab.classList.add('tab-done'); }
+    else if (i === step) { pip.classList.add('pip-active'); tab.classList.add('tab-active'); }
+  }
+
+  // Update labels
+  const labels = ['Step 1 of 3 · Read the Lesson', 'Step 2 of 3 · Study Examples', 'Step 3 of 3 · Complete the Quiz'];
+  document.getElementById('stepsLabelRight').textContent = labels[step];
+  document.getElementById('heroStepBadge').textContent = 'Step ' + (step+1) + ' of 3';
+  currentStep = step;
+}
+
+function goStep(step) {
+  updateStepUI(step);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Inject lesson & example content ── */
+document.getElementById('lessonContent').innerHTML  = topic.lesson;
+document.getElementById('examplesContent').innerHTML = topic.examples;
+
+/* ══════════════════════════════════════════════
+   QUIZ ENGINE
+══════════════════════════════════════════════ */
+const questions = topic.questions;
+let quizIndex   = 0;
+let score       = 0;
+let answered    = false;
+
+function renderQuestion() {
+  const q = questions[quizIndex];
+  if (!q) { showScore(); return; }
+  answered = false;
+
+  document.getElementById('quizCounter').textContent = 'Q ' + (quizIndex + 1) + ' / ' + questions.length;
+
+  const container = document.getElementById('quizQuestions');
+  const letters = ['A', 'B', 'C', 'D'];
+
+  container.innerHTML = `
+    <div class="quiz-q" id="currentQ">
+      <p class="quiz-q-text">${q.q}</p>
+      <div class="quiz-options">
+        ${q.opts.map((opt, i) => `
+          <div class="quiz-option" id="opt${i}" onclick="selectOpt(${i})">
+            <div class="opt-letter">${letters[i]}</div>
+            <span>${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="feedback"></div>
+      <div class="quiz-nav">
+        <button class="btn-quiz-check" id="checkBtn" disabled onclick="checkAnswer()">Check Answer</button>
+        <button class="btn-quiz-next"  id="nextBtn"  onclick="nextQuestion()">
+          ${quizIndex + 1 < questions.length ? 'Next Question →' : 'See Results'}
+        </button>
+      </div>
+    </div>`;
+}
+
+let selectedOpt = null;
+
+function selectOpt(i) {
+  if (answered) return;
+  selectedOpt = i;
+  document.querySelectorAll('.quiz-option').forEach((el, idx) => {
+    el.className = 'quiz-option' + (idx === i ? ' opt-selected' : '');
+  });
+  document.getElementById('checkBtn').disabled = false;
+}
+
+function checkAnswer() {
+  if (answered || selectedOpt === null) return;
+  answered = true;
+  const q   = questions[quizIndex];
+  const fb  = document.getElementById('feedback');
+  const correct = q.ans;
+
+  document.querySelectorAll('.quiz-option').forEach(el => el.classList.add('opt-locked'));
+  document.getElementById('opt' + correct).classList.add('opt-correct');
+
+  if (selectedOpt === correct) {
+    score++;
+    fb.textContent = '✅ Correct! Well done.';
+    fb.className   = 'quiz-feedback feedback-correct';
+  } else {
+    document.getElementById('opt' + selectedOpt).classList.add('opt-wrong');
+    fb.textContent = '❌ The correct answer is ' + ['A','B','C','D'][correct] + ': ' + q.opts[correct];
+    fb.className   = 'quiz-feedback feedback-wrong';
+  }
+  fb.style.display = 'block';
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display  = 'block';
+}
+
+function nextQuestion() {
+  quizIndex++;
+  selectedOpt = null;
+  if (quizIndex < questions.length) {
+    renderQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function showScore() {
+  document.getElementById('quizQuestions').style.display = 'none';
+  document.getElementById('quizCounter').style.display   = 'none';
+  const summary = document.getElementById('scoreSummary');
+  summary.style.display = 'block';
+
+  const pct  = Math.round((score / questions.length) * 100);
+  const ring = document.getElementById('scoreRing');
+  ring.textContent = pct + '%';
+
+  if (pct >= 75) {
+    ring.className = 'score-ring ring-great';
+    document.getElementById('scoreLabel').textContent = '🎉 Excellent Work!';
+    document.getElementById('scoreSub').textContent   = `You got ${score} out of ${questions.length} correct. You're ready to complete this topic.`;
+    document.getElementById('completeBtn').style.display = 'flex';
+  } else if (pct >= 50) {
+    ring.className = 'score-ring ring-ok';
+    document.getElementById('scoreLabel').textContent = '👍 Good Effort!';
+    document.getElementById('scoreSub').textContent   = `You got ${score} out of ${questions.length} correct. Review the lesson and try again for full XP.`;
+    document.getElementById('completeBtn').style.display = 'flex';
+  } else {
+    ring.className = 'score-ring ring-poor';
+    document.getElementById('scoreLabel').textContent = '📚 Keep Studying';
+    document.getElementById('scoreSub').textContent   = `You got ${score} out of ${questions.length}. Review the lesson and examples before retaking.`;
+  }
+}
+
+function retakeQuiz() {
+  quizIndex   = 0;
+  score       = 0;
+  answered    = false;
+  selectedOpt = null;
+  document.getElementById('quizQuestions').style.display = '';
+  document.getElementById('quizCounter').style.display   = '';
+  document.getElementById('scoreSummary').style.display  = 'none';
+  renderQuestion();
+}
+
+/* ── Init ── */
+renderQuestion();
+</script>
+
+{% include 'footer.html' %}
+</body>
+</html>

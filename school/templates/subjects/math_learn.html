@@ -1,0 +1,724 @@
+{% load humanize %}
+{% load static %}
+{% load school_extras %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <title>awaClass | Learn Mathematics</title>
+
+  <style>
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════════════ */
+    .awaClass-feed-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+    }
+    @media (min-width: 768px) {
+      .awaClass-feed-page { margin-left: 50px; }
+    }
+
+    /* ── Page header ── */
+    .awaClass-page-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .awaClass-page-header-icon { font-size: 28px; line-height: 1; }
+    .awaClass-page-header h1 {
+      font-size: 20px; font-weight: 700;
+      color: #0f0f0f; margin: 0 0 2px; letter-spacing: -0.2px;
+    }
+    .awaClass-page-header p { font-size: 13px; color: #606060; margin: 0; }
+
+    /* ── XP Progress bar strip ── */
+    .awaClass-xp-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f0fdf9;
+      border: 1.5px solid #99f6e4;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+    }
+    .awaClass-xp-icon {
+      width: 40px; height: 40px;
+      background: #ccfbf1;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .awaClass-xp-info { flex: 1; }
+    .awaClass-xp-label {
+      font-size: 12px; font-weight: 700;
+      color: #0d9488; margin: 0 0 4px;
+      display: flex; justify-content: space-between;
+    }
+    .awaClass-xp-bar {
+      height: 8px; background: #e5e5e5;
+      border-radius: 6px; overflow: hidden;
+    }
+    .awaClass-xp-bar-fill {
+      height: 100%; background: #14b8a6;
+      border-radius: 6px;
+      transition: width 0.8s cubic-bezier(0.34,1.1,0.64,1);
+    }
+    .awaClass-xp-total {
+      font-size: 18px; font-weight: 800;
+      color: #14b8a6; white-space: nowrap;
+    }
+    .awaClass-xp-total span { font-size: 11px; font-weight: 600; color: #606060; display: block; text-align: right; }
+
+    /* ══════════════════════════════════════════════════
+       CHAPTER / SECTION LAYOUT
+    ══════════════════════════════════════════════════ */
+    .awaClass-chapter { margin-bottom: 36px; }
+
+    /* Chapter header band */
+    .awaClass-chapter-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .awaClass-chapter-head::before {
+      content: '';
+      position: absolute; inset: 0;
+      opacity: 0.10;
+      pointer-events: none;
+    }
+
+    /* Per-chapter colours */
+    .ch-number    { background: #fff8f0; border: 1.5px solid #fed7aa; }
+    .ch-number    .awaClass-chapter-num  { background: #f97316; }
+    .ch-number    .awaClass-chapter-icon { background: #ffedd5; }
+    .ch-number::before { background: radial-gradient(circle at right,#f97316,transparent 70%); }
+
+    .ch-algebra   { background: #f0f7ff; border: 1.5px solid #bfdbfe; }
+    .ch-algebra   .awaClass-chapter-num  { background: #3b82f6; }
+    .ch-algebra   .awaClass-chapter-icon { background: #dbeafe; }
+    .ch-algebra::before { background: radial-gradient(circle at right,#3b82f6,transparent 70%); }
+
+    .ch-geometry  { background: #fdf4ff; border: 1.5px solid #e9d5ff; }
+    .ch-geometry  .awaClass-chapter-num  { background: #a855f7; }
+    .ch-geometry  .awaClass-chapter-icon { background: #f3e8ff; }
+    .ch-geometry::before { background: radial-gradient(circle at right,#a855f7,transparent 70%); }
+
+    .ch-statistics { background: #f0fdf4; border: 1.5px solid #bbf7d0; }
+    .ch-statistics .awaClass-chapter-num  { background: #22c55e; }
+    .ch-statistics .awaClass-chapter-icon { background: #dcfce7; }
+    .ch-statistics::before { background: radial-gradient(circle at right,#22c55e,transparent 70%); }
+
+    .ch-calculus  { background: #fff1f2; border: 1.5px solid #fecdd3; }
+    .ch-calculus  .awaClass-chapter-num  { background: #f43f5e; }
+    .ch-calculus  .awaClass-chapter-icon { background: #ffe4e6; }
+    .ch-calculus::before { background: radial-gradient(circle at right,#f43f5e,transparent 70%); }
+
+    .awaClass-chapter-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      color: #fff; font-size: 13px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .awaClass-chapter-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .awaClass-chapter-info { flex: 1; }
+    .awaClass-chapter-title {
+      font-size: 15px; font-weight: 800;
+      color: #0f0f0f; margin: 0 0 1px;
+    }
+    .awaClass-chapter-sub  { font-size: 12px; color: #606060; margin: 0; }
+    .awaClass-chapter-xp {
+      font-size: 12px; font-weight: 700;
+      color: #14b8a6;
+      background: #ccfbf1;
+      border-radius: 20px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════════════════
+       LESSON CARD LIST
+    ══════════════════════════════════════════════════ */
+    .awaClass-topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-left: 14px;
+    }
+
+    .awaClass-topic-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Vertical connector line */
+    .awaClass-topic-row:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 52px;
+      bottom: -10px;
+      width: 2px;
+      background: #e5e5e5;
+      z-index: 0;
+    }
+    .awaClass-topic-row.row-done:not(:last-child)::before     { background: #14b8a6; }
+    .awaClass-topic-row.row-progress:not(:last-child)::before { background: #3b82f6; }
+    .awaClass-topic-row.row-active:not(:last-child)::before   { background: #f97316; }
+
+    /* ── Node circle ── */
+    .awaClass-topic-node {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 6px;
+      z-index: 1;
+      border: 2px solid #e5e5e5;
+      background: #fff;
+      transition: transform 0.15s;
+    }
+
+    /* completed — teal */
+    .row-done     .awaClass-topic-node {
+      background: #14b8a6;
+      border-color: #14b8a6;
+      color: #fff;
+    }
+    /* in_progress — blue with pulse ring */
+    .row-progress .awaClass-topic-node {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+      box-shadow: 0 0 0 4px #dbeafe;
+      animation: nodeGlow 2s ease-in-out infinite;
+    }
+    @keyframes nodeGlow {
+      0%, 100% { box-shadow: 0 0 0 4px #dbeafe; }
+      50%       { box-shadow: 0 0 0 7px #bfdbfe; }
+    }
+    /* not_started / active — orange */
+    .row-active   .awaClass-topic-node {
+      background: #f97316;
+      border-color: #f97316;
+      color: #fff;
+      box-shadow: 0 0 0 4px #ffedd5;
+    }
+    /* locked — grey */
+    .row-locked   .awaClass-topic-node {
+      background: #f5f5f5;
+      border-color: #e5e5e5;
+      color: #c0c0c0;
+    }
+
+    /* ── Lesson card ── */
+    .awaClass-topic-card {
+      flex: 1;
+      margin-left: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1.5px solid #e5e5e5;
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .awaClass-topic-card:hover:not(.card-locked) {
+      transform: translateX(3px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    /* State colours */
+    .awaClass-topic-card.card-done     { border-color: #14b8a6; background: #f0fdf9; }
+    .awaClass-topic-card.card-progress { border-color: #3b82f6; background: #eff6ff; }
+    .awaClass-topic-card.card-active   { border-color: #f97316; background: #fff8f0; }
+    .awaClass-topic-card.card-locked   { opacity: 0.5; cursor: not-allowed; pointer-events: none; background: #fafafa; }
+
+    .awaClass-topic-card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+      background: #f0f0f0;
+    }
+    .card-done     .awaClass-topic-card-icon { background: #ccfbf1; }
+    .card-progress .awaClass-topic-card-icon { background: #dbeafe; }
+    .card-active   .awaClass-topic-card-icon { background: #ffedd5; }
+
+    .awaClass-topic-card-body  { flex: 1; min-width: 0; }
+    .awaClass-topic-card-name  {
+      font-size: 14px; font-weight: 700;
+      color: #0f0f0f; margin: 0 0 2px;
+    }
+    .card-locked .awaClass-topic-card-name { color: #909090; }
+
+    .awaClass-topic-card-sub {
+      font-size: 12px; color: #606060; margin: 0 0 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Progress bar inside card */
+    .awaClass-topic-card-bar {
+      height: 4px; background: #e5e5e5;
+      border-radius: 4px; overflow: hidden;
+    }
+    .awaClass-topic-card-bar-fill     { height: 100%; border-radius: 4px; background: #14b8a6; }
+    .card-progress .awaClass-topic-card-bar-fill { background: #3b82f6; }
+    .card-active   .awaClass-topic-card-bar-fill { background: #f97316; }
+
+    /* Right column — XP chip + badge */
+    .awaClass-topic-card-right {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 6px;
+      flex-shrink: 0;
+    }
+    .awaClass-topic-xp {
+      font-size: 11px; font-weight: 700;
+      color: #14b8a6; background: #ccfbf1;
+      border-radius: 20px; padding: 2px 8px;
+    }
+    .card-locked   .awaClass-topic-xp { color: #909090; background: #f0f0f0; }
+    .card-active   .awaClass-topic-xp { color: #f97316; background: #ffedd5; }
+    .card-progress .awaClass-topic-xp { color: #3b82f6; background: #dbeafe; }
+
+    /* ── Status badge ── */
+    .awaClass-topic-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .badge-done     { background: #14b8a6; color: #fff; }
+    .badge-progress { background: #3b82f6; color: #fff; }
+    .badge-active   { background: #f97316; color: #fff; }
+    .badge-locked   { background: #e5e5e5; color: #909090; }
+
+    /* ══════════════════════════════════════════════════
+       MILESTONE BANNER
+    ══════════════════════════════════════════════════ */
+    .awaClass-milestone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: linear-gradient(90deg, #f97316 0%, #fbbf24 100%);
+      border-radius: 14px;
+      margin: -4px 0 14px 54px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .awaClass-feed-page { padding: 12px 12px 80px; }
+      .awaClass-topic-card-sub { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+{% include 'sidebar.html' %}
+
+<div class="awaClass-feed-page">
+
+  <!-- Page header -->
+  <div class="awaClass-page-header">
+    <div class="awaClass-page-header-icon">🚀</div>
+    <div>
+      <h1>Learn Mathematics</h1>
+      <p>Complete topics to earn XP and unlock the next lesson</p>
+    </div>
+  </div>
+
+  <!-- XP Strip -->
+  <div class="awaClass-xp-strip">
+    <div class="awaClass-xp-icon">⚡</div>
+    <div class="awaClass-xp-info">
+      <div class="awaClass-xp-label">
+        <span>Your Learning XP</span>
+        <span>{{ total_xp }} / {{ max_xp }} XP</span>
+      </div>
+      <div class="awaClass-xp-bar">
+        <div class="awaClass-xp-bar-fill" style="width:{{ xp_pct }}%"></div>
+      </div>
+    </div>
+    <div class="awaClass-xp-total">
+      {{ total_xp }}
+      <span>XP earned</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       CHAPTER 1: NUMBER & NUMERATION
+  ══════════════════════════════════════════════════════ -->
+  <div class="awaClass-chapter">
+    <div class="awaClass-chapter-head ch-number">
+      <span class="awaClass-chapter-num">1</span>
+      <div class="awaClass-chapter-icon">🔢</div>
+      <div class="awaClass-chapter-info">
+        <p class="awaClass-chapter-title">Number &amp; Numeration</p>
+        <p class="awaClass-chapter-sub">4 topics · {{ chapter_xp.number }} / 40 XP</p>
+      </div>
+      <span class="awaClass-chapter-xp">{{ chapter_pct.number }}%</span>
+    </div>
+
+    <div class="awaClass-topic-list">
+
+      {% for topic_key, icon, name, desc, t in number_topics %}
+      <div class="awaClass-topic-row row-{{ t.row_class|default:'locked' }}">
+        <div class="awaClass-topic-node">
+          {% if t.status == 'completed' %}
+            <i class="fa-solid fa-check"></i>
+          {% elif t.status == 'in_progress' %}
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          {% elif t.unlocked %}
+            <i class="fa-solid fa-play"></i>
+          {% else %}
+            <i class="fa-solid fa-lock"></i>
+          {% endif %}
+        </div>
+        <a href="{% url 'math_topic_learn' topic_key %}"
+           class="awaClass-topic-card card-{{ t.card_class|default:'locked' }}">
+          <div class="awaClass-topic-card-icon">{{ icon }}</div>
+          <div class="awaClass-topic-card-body">
+            <p class="awaClass-topic-card-name">{{ name }}</p>
+            <p class="awaClass-topic-card-sub">{{ desc }}</p>
+            <div class="awaClass-topic-card-bar">
+              <div class="awaClass-topic-card-bar-fill" style="width:{{ t.pct|default:0 }}%"></div>
+            </div>
+          </div>
+          <div class="awaClass-topic-card-right">
+            <span class="awaClass-topic-xp">XP +10</span>
+            <span class="awaClass-topic-badge badge-{{ t.badge_class|default:'locked' }}">
+              {% if t.status == 'completed' %}
+                ✓ Done
+              {% elif t.status == 'in_progress' %}
+                ▶ Resume
+              {% elif t.unlocked %}
+                Start
+              {% else %}
+                🔒 Locked
+              {% endif %}
+            </span>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div><!-- /chapter number -->
+
+  <!-- Milestone: Number done -->
+  {% if chapter_done.number %}
+  <div class="awaClass-milestone">
+    🏆 Number &amp; Numeration Complete! Algebra unlocked.
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════
+       CHAPTER 2: ALGEBRA
+  ══════════════════════════════════════════════════════ -->
+  <div class="awaClass-chapter">
+    <div class="awaClass-chapter-head ch-algebra">
+      <span class="awaClass-chapter-num">2</span>
+      <div class="awaClass-chapter-icon">📊</div>
+      <div class="awaClass-chapter-info">
+        <p class="awaClass-chapter-title">Algebra</p>
+        <p class="awaClass-chapter-sub">7 topics · {{ chapter_xp.algebra }} / 70 XP</p>
+      </div>
+      <span class="awaClass-chapter-xp">{{ chapter_pct.algebra }}%</span>
+    </div>
+
+    <div class="awaClass-topic-list">
+
+      {% for topic_key, icon, name, desc in algebra_topics %}
+      {% with t=topics|safe_get:topic_key %}
+      <div class="awaClass-topic-row row-{{ t.row_class|default:'locked' }}">
+        <div class="awaClass-topic-node">
+          {% if t.status == 'completed' %}
+            <i class="fa-solid fa-check"></i>
+          {% elif t.status == 'in_progress' %}
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          {% elif t.unlocked %}
+            <i class="fa-solid fa-play"></i>
+          {% else %}
+            <i class="fa-solid fa-lock"></i>
+          {% endif %}
+        </div>
+        <a href="{% url 'math_topic_learn' topic_key %}"
+           class="awaClass-topic-card card-{{ t.card_class|default:'locked' }}">
+          <div class="awaClass-topic-card-icon">{{ icon }}</div>
+          <div class="awaClass-topic-card-body">
+            <p class="awaClass-topic-card-name">{{ name }}</p>
+            <p class="awaClass-topic-card-sub">{{ desc }}</p>
+            <div class="awaClass-topic-card-bar">
+              <div class="awaClass-topic-card-bar-fill" style="width:{{ t.pct|default:0 }}%"></div>
+            </div>
+          </div>
+          <div class="awaClass-topic-card-right">
+            <span class="awaClass-topic-xp">XP +10</span>
+            <span class="awaClass-topic-badge badge-{{ t.badge_class|default:'locked' }}">
+              {% if t.status == 'completed' %}
+                ✓ Done
+              {% elif t.status == 'in_progress' %}
+                ▶ Resume
+              {% elif t.unlocked %}
+                Start
+              {% else %}
+                🔒 Locked
+              {% endif %}
+            </span>
+          </div>
+        </a>
+      </div>
+      {% endwith %}
+      {% endfor %}
+
+    </div>
+  </div><!-- /chapter algebra -->
+
+  <!-- Milestone: Algebra done -->
+  {% if chapter_done.algebra %}
+  <div class="awaClass-milestone">
+    🏆 Algebra Complete! Geometry &amp; Trigonometry unlocked.
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════
+       CHAPTER 3: GEOMETRY & TRIGONOMETRY
+  ══════════════════════════════════════════════════════ -->
+  <div class="awaClass-chapter">
+    <div class="awaClass-chapter-head ch-geometry">
+      <span class="awaClass-chapter-num">3</span>
+      <div class="awaClass-chapter-icon">📐</div>
+      <div class="awaClass-chapter-info">
+        <p class="awaClass-chapter-title">Geometry &amp; Trigonometry</p>
+        <p class="awaClass-chapter-sub">7 topics · {{ chapter_xp.geometry }} / 70 XP</p>
+      </div>
+      <span class="awaClass-chapter-xp">{{ chapter_pct.geometry }}%</span>
+    </div>
+
+    <div class="awaClass-topic-list">
+      {% for topic_key, icon, name, desc in geometry_topics %}
+      {% with t=topics|safe_get:topic_key %}
+      <div class="awaClass-topic-row row-{{ t.row_class|default:'locked' }}">
+        <div class="awaClass-topic-node">
+          {% if t.status == 'completed' %}
+            <i class="fa-solid fa-check"></i>
+          {% elif t.status == 'in_progress' %}
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          {% elif t.unlocked %}
+            <i class="fa-solid fa-play"></i>
+          {% else %}
+            <i class="fa-solid fa-lock"></i>
+          {% endif %}
+        </div>
+        <a href="{% url 'math_topic_learn' topic_key %}"
+           class="awaClass-topic-card card-{{ t.card_class|default:'locked' }}">
+          <div class="awaClass-topic-card-icon">{{ icon }}</div>
+          <div class="awaClass-topic-card-body">
+            <p class="awaClass-topic-card-name">{{ name }}</p>
+            <p class="awaClass-topic-card-sub">{{ desc }}</p>
+            <div class="awaClass-topic-card-bar">
+              <div class="awaClass-topic-card-bar-fill" style="width:{{ t.pct|default:0 }}%"></div>
+            </div>
+          </div>
+          <div class="awaClass-topic-card-right">
+            <span class="awaClass-topic-xp">XP +10</span>
+            <span class="awaClass-topic-badge badge-{{ t.badge_class|default:'locked' }}">
+              {% if t.status == 'completed' %}
+                ✓ Done
+              {% elif t.status == 'in_progress' %}
+                ▶ Resume
+              {% elif t.unlocked %}
+                Start
+              {% else %}
+                🔒 Locked
+              {% endif %}
+            </span>
+          </div>
+        </a>
+      </div>
+      {% endwith %}
+      {% endfor %}
+    </div>
+  </div><!-- /chapter geometry -->
+
+  <!-- Milestone: Geometry done -->
+  {% if chapter_done.geometry %}
+  <div class="awaClass-milestone">
+    🏆 Geometry &amp; Trigonometry Complete! Statistics unlocked.
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════
+       CHAPTER 4: STATISTICS & PROBABILITY
+  ══════════════════════════════════════════════════════ -->
+  <div class="awaClass-chapter">
+    <div class="awaClass-chapter-head ch-statistics">
+      <span class="awaClass-chapter-num">4</span>
+      <div class="awaClass-chapter-icon">📊</div>
+      <div class="awaClass-chapter-info">
+        <p class="awaClass-chapter-title">Statistics &amp; Probability</p>
+        <p class="awaClass-chapter-sub">5 topics · {{ chapter_xp.statistics }} / 50 XP</p>
+      </div>
+      <span class="awaClass-chapter-xp">{{ chapter_pct.statistics }}%</span>
+    </div>
+
+    <div class="awaClass-topic-list">
+      {% for topic_key, icon, name, desc in statistics_topics %}
+      {% with t=topics|safe_get:topic_key %}
+      <div class="awaClass-topic-row row-{{ t.row_class|default:'locked' }}">
+        <div class="awaClass-topic-node">
+          {% if t.status == 'completed' %}
+            <i class="fa-solid fa-check"></i>
+          {% elif t.status == 'in_progress' %}
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          {% elif t.unlocked %}
+            <i class="fa-solid fa-play"></i>
+          {% else %}
+            <i class="fa-solid fa-lock"></i>
+          {% endif %}
+        </div>
+        <a href="{% url 'math_topic_learn' topic_key %}"
+           class="awaClass-topic-card card-{{ t.card_class|default:'locked' }}">
+          <div class="awaClass-topic-card-icon">{{ icon }}</div>
+          <div class="awaClass-topic-card-body">
+            <p class="awaClass-topic-card-name">{{ name }}</p>
+            <p class="awaClass-topic-card-sub">{{ desc }}</p>
+            <div class="awaClass-topic-card-bar">
+              <div class="awaClass-topic-card-bar-fill" style="width:{{ t.pct|default:0 }}%"></div>
+            </div>
+          </div>
+          <div class="awaClass-topic-card-right">
+            <span class="awaClass-topic-xp">XP +10</span>
+            <span class="awaClass-topic-badge badge-{{ t.badge_class|default:'locked' }}">
+              {% if t.status == 'completed' %}
+                ✓ Done
+              {% elif t.status == 'in_progress' %}
+                ▶ Resume
+              {% elif t.unlocked %}
+                Start
+              {% else %}
+                🔒 Locked
+              {% endif %}
+            </span>
+          </div>
+        </a>
+      </div>
+      {% endwith %}
+      {% endfor %}
+    </div>
+  </div><!-- /chapter statistics -->
+
+  <!-- Milestone: Statistics done -->
+  {% if chapter_done.statistics %}
+  <div class="awaClass-milestone">
+    🏆 Statistics &amp; Probability Complete! Calculus unlocked.
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════
+       CHAPTER 5: CALCULUS
+  ══════════════════════════════════════════════════════ -->
+  <div class="awaClass-chapter">
+    <div class="awaClass-chapter-head ch-calculus">
+      <span class="awaClass-chapter-num">5</span>
+      <div class="awaClass-chapter-icon">∫</div>
+      <div class="awaClass-chapter-info">
+        <p class="awaClass-chapter-title">Introductory Calculus</p>
+        <p class="awaClass-chapter-sub">3 topics · {{ chapter_xp.calculus }} / 30 XP</p>
+      </div>
+      <span class="awaClass-chapter-xp">{{ chapter_pct.calculus }}%</span>
+    </div>
+
+    <div class="awaClass-topic-list">
+      {% for topic_key, icon, name, desc in calculus_topics %}
+      {% with t=topics|safe_get:topic_key %}
+      <div class="awaClass-topic-row row-{{ t.row_class|default:'locked' }}">
+        <div class="awaClass-topic-node">
+          {% if t.status == 'completed' %}
+            <i class="fa-solid fa-check"></i>
+          {% elif t.status == 'in_progress' %}
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          {% elif t.unlocked %}
+            <i class="fa-solid fa-play"></i>
+          {% else %}
+            <i class="fa-solid fa-lock"></i>
+          {% endif %}
+        </div>
+        <a href="{% url 'math_topic_learn' topic_key %}"
+           class="awaClass-topic-card card-{{ t.card_class|default:'locked' }}">
+          <div class="awaClass-topic-card-icon">{{ icon }}</div>
+          <div class="awaClass-topic-card-body">
+            <p class="awaClass-topic-card-name">{{ name }}</p>
+            <p class="awaClass-topic-card-sub">{{ desc }}</p>
+            <div class="awaClass-topic-card-bar">
+              <div class="awaClass-topic-card-bar-fill" style="width:{{ t.pct|default:0 }}%"></div>
+            </div>
+          </div>
+          <div class="awaClass-topic-card-right">
+            <span class="awaClass-topic-xp">XP +10</span>
+            <span class="awaClass-topic-badge badge-{{ t.badge_class|default:'locked' }}">
+              {% if t.status == 'completed' %}
+                ✓ Done
+              {% elif t.status == 'in_progress' %}
+                ▶ Resume
+              {% elif t.unlocked %}
+                Start
+              {% else %}
+                🔒 Locked
+              {% endif %}
+            </span>
+          </div>
+        </a>
+      </div>
+      {% endwith %}
+      {% endfor %}
+    </div>
+  </div><!-- /chapter calculus -->
+
+  <!-- Milestone: All done -->
+  {% if chapter_done.calculus %}
+  <div class="awaClass-milestone" style="background: linear-gradient(90deg,#14b8a6 0%,#6366f1 100%);">
+    🎓 All Topics Complete! You've mastered Mathematics. {{ total_xp }} XP earned!
+  </div>
+  {% endif %}
+
+</div><!-- /awaClass-feed-page -->
+
+{% include 'footer.html' %}
+
+</body>
+</html>

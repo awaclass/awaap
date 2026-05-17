@@ -562,6 +562,183 @@
     }
     .awaClass-modal-cta:hover { background: #ea6c0a; }
 
+    /* Learn card */
+    .awaClass-feature-card--learn {
+      background: #f0fdf9;
+      border-color: #99f6e4;
+      text-decoration: none;
+      color: inherit;
+    }
+    .awaClass-feature-card--learn::before {
+      background: radial-gradient(circle at top right, #14b8a6, transparent 70%);
+    }
+    .awaClass-feature-card--learn:hover { border-color: #14b8a6; }
+    .awaClass-feature-card--learn .awaClass-feature-icon { background: #ccfbf1; }
+    .awaClass-feature-card--learn .awaClass-feature-arrow { color: #14b8a6; }
+
+    /* ══════════════════════════════════════════════════
+       START LEARNING SECTION
+    ══════════════════════════════════════════════════ */
+    .awaClass-learn-section {
+      margin-top: 10px;
+      margin-bottom: 32px;
+    }
+    .awaClass-learn-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .awaClass-learn-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f0f0f;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .awaClass-learn-section-title span {
+      font-size: 13px;
+      font-weight: 500;
+      color: #606060;
+    }
+    .awaClass-learn-view-all {
+      font-size: 13px;
+      font-weight: 600;
+      color: #14b8a6;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .awaClass-learn-view-all:hover { color: #0d9488; }
+
+    /* Chapter/section strip */
+    .awaClass-learn-chapter {
+      margin-bottom: 24px;
+    }
+    .awaClass-learn-chapter-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #909090;
+      margin: 0 0 10px;
+      padding: 0 2px;
+    }
+
+    /* Topic lesson cards grid */
+    .awaClass-learn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 640px) {
+      .awaClass-learn-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (min-width: 960px) {
+      .awaClass-learn-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .awaClass-lesson-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 12px;
+      border-radius: 14px;
+      border: 1.5px solid #e5e5e5;
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .awaClass-lesson-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    /* Status variants */
+    .awaClass-lesson-card--done {
+      border-color: #14b8a6;
+      background: #f0fdf9;
+    }
+    .awaClass-lesson-card--active {
+      border-color: #f97316;
+      background: #fff8f0;
+    }
+    .awaClass-lesson-card--locked {
+      opacity: 0.55;
+      pointer-events: none;
+      background: #fafafa;
+    }
+
+    .awaClass-lesson-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+    .awaClass-lesson-card--done  .awaClass-lesson-icon { background: #ccfbf1; }
+    .awaClass-lesson-card--active .awaClass-lesson-icon { background: #ffedd5; }
+
+    .awaClass-lesson-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f0f0f;
+      line-height: 1.35;
+      flex: 1;
+    }
+    .awaClass-lesson-card--locked .awaClass-lesson-name { color: #909090; }
+
+    .awaClass-lesson-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .awaClass-lesson-xp {
+      font-size: 11px;
+      font-weight: 700;
+      color: #14b8a6;
+      background: #ccfbf1;
+      border-radius: 20px;
+      padding: 2px 8px;
+    }
+    .awaClass-lesson-card--locked .awaClass-lesson-xp { color: #909090; background: #f0f0f0; }
+    .awaClass-lesson-card--active .awaClass-lesson-xp { color: #f97316; background: #ffedd5; }
+
+    .awaClass-lesson-status-icon {
+      font-size: 12px;
+      color: #14b8a6;
+    }
+    .awaClass-lesson-card--locked .awaClass-lesson-status-icon { color: #c0c0c0; }
+    .awaClass-lesson-card--active .awaClass-lesson-status-icon { color: #f97316; }
+
+    /* XP progress bar inside done cards */
+    .awaClass-lesson-bar {
+      height: 3px;
+      border-radius: 3px;
+      background: #e5e5e5;
+      overflow: hidden;
+    }
+    .awaClass-lesson-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: #14b8a6;
+      transition: width 0.5s ease;
+    }
+    .awaClass-lesson-card--active .awaClass-lesson-bar-fill { background: #f97316; }
+
     /* ══════════════════════════════════════════════════
        MOBILE  ≤ 640px  →  HORIZONTAL LIST LAYOUT
     ══════════════════════════════════════════════════ */
@@ -638,7 +815,17 @@
       <span class="awaClass-feature-arrow">Join <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </a>
 
-    <!-- ── NEW: Video Lessons card ── -->
+    <!-- ── Start Learning card ── -->
+    <a href="{% url 'math_learn' %}" class="awaClass-feature-card awaClass-feature-card--learn">
+      <div class="awaClass-feature-icon">🚀</div>
+      <div>
+        <p class="awaClass-feature-label">Start Learning</p>
+        <p class="awaClass-feature-sub">Topic-by-topic lessons</p>
+      </div>
+      <span class="awaClass-feature-arrow">Learn <i class="fa-solid fa-arrow-right fa-xs"></i></span>
+    </a>
+
+    <!-- ── Video Lessons card ── -->
     <a href="{% url 'mathematics_videos' %}" class="awaClass-feature-card awaClass-feature-card--video">
       <div class="awaClass-feature-icon">🎬</div>
       <div>
@@ -648,9 +835,140 @@
       <span class="awaClass-feature-arrow">Watch <i class="fa-solid fa-arrow-right fa-xs"></i></span>
     </a>
 
-  </div>
+  </div><!-- /feature-row -->
 
-</div>
+  <!-- ══════════════════════════════════════════════════
+       START LEARNING GRID
+  ══════════════════════════════════════════════════ -->
+  <div class="awaClass-learn-section">
+
+    <div class="awaClass-learn-section-header">
+      <p class="awaClass-learn-section-title">🚀 Start Learning <span>JAMB Syllabus</span></p>
+      <a href="{% url 'math_learn' %}" class="awaClass-learn-view-all">View all <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+    </div>
+
+    <!-- Chapter 1: Number & Numeration -->
+    <div class="awaClass-learn-chapter">
+      <p class="awaClass-learn-chapter-label">Number &amp; Numeration</p>
+      <div class="awaClass-learn-grid">
+
+        <!-- Topic 1 — always unlocked (entry point) -->
+        <a href="{% url 'math_learn' %}?topic=number-bases"
+           class="awaClass-lesson-card awaClass-lesson-card--{{ learn_topics.number_bases.card_class|default:'active' }}">
+          <div class="awaClass-lesson-icon">🔢</div>
+          <p class="awaClass-lesson-name">Number Bases</p>
+          <div class="awaClass-lesson-bar">
+            <div class="awaClass-lesson-bar-fill" style="width:{{ learn_topics.number_bases.pct|default:0 }}%"></div>
+          </div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid {{ learn_topics.number_bases.icon|default:'fa-play' }} awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+        <a href="{% url 'math_learn' %}?topic=fractions-decimals"
+           class="awaClass-lesson-card awaClass-lesson-card--{{ learn_topics.fractions_decimals.card_class|default:'locked' }}">
+          <div class="awaClass-lesson-icon">🔣</div>
+          <p class="awaClass-lesson-name">Fractions &amp; Decimals</p>
+          <div class="awaClass-lesson-bar">
+            <div class="awaClass-lesson-bar-fill" style="width:{{ learn_topics.fractions_decimals.pct|default:0 }}%"></div>
+          </div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid {{ learn_topics.fractions_decimals.icon|default:'fa-lock' }} awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+        <a href="{% url 'math_learn' %}?topic=indices-logarithms"
+           class="awaClass-lesson-card awaClass-lesson-card--{{ learn_topics.indices_logarithms.card_class|default:'locked' }}">
+          <div class="awaClass-lesson-icon">📐</div>
+          <p class="awaClass-lesson-name">Indices &amp; Logs</p>
+          <div class="awaClass-lesson-bar">
+            <div class="awaClass-lesson-bar-fill" style="width:{{ learn_topics.indices_logarithms.pct|default:0 }}%"></div>
+          </div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid {{ learn_topics.indices_logarithms.icon|default:'fa-lock' }} awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+        <a href="{% url 'math_learn' %}?topic=sets"
+           class="awaClass-lesson-card awaClass-lesson-card--{{ learn_topics.sets.card_class|default:'locked' }}">
+          <div class="awaClass-lesson-icon">⭕</div>
+          <p class="awaClass-lesson-name">Sets</p>
+          <div class="awaClass-lesson-bar">
+            <div class="awaClass-lesson-bar-fill" style="width:{{ learn_topics.sets.pct|default:0 }}%"></div>
+          </div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid {{ learn_topics.sets.icon|default:'fa-lock' }} awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+      </div>
+    </div><!-- /chapter number -->
+
+    <!-- Chapter 2: Algebra (preview — locked until Number section done) -->
+    <div class="awaClass-learn-chapter">
+      <p class="awaClass-learn-chapter-label">Algebra</p>
+      <div class="awaClass-learn-grid">
+
+        <a href="{% url 'math_learn' %}?topic=polynomials"
+           class="awaClass-lesson-card awaClass-lesson-card--{{ learn_topics.polynomials.card_class|default:'locked' }}">
+          <div class="awaClass-lesson-icon">📊</div>
+          <p class="awaClass-lesson-name">Polynomials</p>
+          <div class="awaClass-lesson-bar">
+            <div class="awaClass-lesson-bar-fill" style="width:{{ learn_topics.polynomials.pct|default:0 }}%"></div>
+          </div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid {{ learn_topics.polynomials.icon|default:'fa-lock' }} awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+        <a href="{% url 'math_learn' %}?topic=variation"
+           class="awaClass-lesson-card awaClass-lesson-card--locked">
+          <div class="awaClass-lesson-icon">↔️</div>
+          <p class="awaClass-lesson-name">Variation</p>
+          <div class="awaClass-lesson-bar"><div class="awaClass-lesson-bar-fill" style="width:0%"></div></div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid fa-lock awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+        <a href="{% url 'math_learn' %}?topic=inequalities"
+           class="awaClass-lesson-card awaClass-lesson-card--locked">
+          <div class="awaClass-lesson-icon">⚖️</div>
+          <p class="awaClass-lesson-name">Inequalities</p>
+          <div class="awaClass-lesson-bar"><div class="awaClass-lesson-bar-fill" style="width:0%"></div></div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid fa-lock awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+        <a href="{% url 'math_learn' %}?topic=progressions"
+           class="awaClass-lesson-card awaClass-lesson-card--locked">
+          <div class="awaClass-lesson-icon">📈</div>
+          <p class="awaClass-lesson-name">Progressions</p>
+          <div class="awaClass-lesson-bar"><div class="awaClass-lesson-bar-fill" style="width:0%"></div></div>
+          <div class="awaClass-lesson-meta">
+            <span class="awaClass-lesson-xp">XP +10</span>
+            <i class="fa-solid fa-lock awaClass-lesson-status-icon"></i>
+          </div>
+        </a>
+
+      </div>
+    </div><!-- /chapter algebra -->
+
+    <a href="{% url 'math_learn' %}" class="awaClass-modal-cta" style="display:inline-flex; margin-top:4px;">
+      <i class="fa-solid fa-bolt fa-xs"></i> View Full Learning Path
+    </a>
+
+  </div><!-- /learn-section -->
+
+</div><!-- /awaClass-feed-page -->
 
 <!-- ══════════════════════════════════════════════════
      SYLLABUS MODAL
