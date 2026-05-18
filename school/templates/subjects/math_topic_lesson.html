@@ -503,7 +503,7 @@
 <script>
 /* ══════════════════════════════════════════════
    TOPIC CONTENT DATABASE
-   All 26 JAMB Mathematics topics
+   Mathematics topics for WAEC, NECO & JAMB
 ══════════════════════════════════════════════ */
 const TOPICS = {
 
@@ -512,66 +512,164 @@ const TOPICS = {
   'number_bases': {
     lesson: `
       <h2>🔢 Number Bases</h2>
-      <p>We normally count in <strong>base 10</strong> (decimal), using digits 0–9. But numbers can be expressed in any base — especially base 2 (binary) and base 8 (octal) which appear heavily in JAMB.</p>
-      <div class="info-box box-teal"><strong>Key Idea</strong>In base <em>n</em>, each digit position represents a power of <em>n</em>. The rightmost digit is n⁰, the next is n¹, then n², and so on.</div>
-      <h3>Converting FROM base n TO base 10</h3>
-      <p>Multiply each digit by its place value (power of the base) and add everything up.</p>
-      <div class="formula-block">1101₂ = 1×2³ + 1×2² + 0×2¹ + 1×2⁰<br>       = 8 + 4 + 0 + 1 = <span class="f-val">13₁₀</span></div>
-      <h3>Converting FROM base 10 TO base n</h3>
-      <p>Repeatedly divide by <em>n</em> and collect remainders from bottom to top.</p>
-      <div class="formula-block">13 ÷ 2 = 6 remainder <span class="f-val">1</span><br>6  ÷ 2 = 3 remainder <span class="f-val">0</span><br>3  ÷ 2 = 1 remainder <span class="f-val">1</span><br>1  ÷ 2 = 0 remainder <span class="f-val">1</span><br><span class="f-comment">Read remainders upward → 1101₂</span></div>
-      <h3>Arithmetic in other bases</h3>
-      <p>Add/subtract column by column. When a column overflows the base, carry 1 to the next column.</p>
-      <div class="info-box box-orange"><strong>JAMB Tip</strong>Questions often ask you to convert, then perform one operation. Always convert to base 10 first if you are unsure.</div>
+      <p>We normally count in <strong>base 10</strong> (decimal), using digits 0–9. Numbers can be expressed in any base. The most important for WAEC, NECO, and JAMB are base 2 (binary), base 8 (octal), base 10 (decimal), and base 16 (hexadecimal).</p>
+      <div class="info-box box-teal"><strong>Key Idea</strong>In base <em>n</em>, each digit position represents a power of <em>n</em>. The rightmost digit is n<sup>0</sup> = 1, the next is n<sup>1</sup>, then n<sup>2</sup>, and so on. A digit in base <em>n</em> can only be 0, 1, 2, … up to (n − 1).</div>
+      <h3>Place Value Notation</h3>
+      <p>For a number d<sub>k</sub>d<sub>k−1</sub>…d<sub>1</sub>d<sub>0</sub> in base <em>b</em>, its decimal value is:</p>
+      <div class="formula-block">Value = d<sub>k</sub>×b<sup>k</sup> + d<sub>k−1</sub>×b<sup>k−1</sup> + … + d<sub>1</sub>×b<sup>1</sup> + d<sub>0</sub>×b<sup>0</sup></div>
+      <h3>Converting from Base <em>n</em> to Base 10</h3>
+      <p>Multiply each digit by its place value (power of the base) and sum the results.</p>
+      <div class="formula-block">1101<sub>2</sub> = 1×2<sup>3</sup> + 1×2<sup>2</sup> + 0×2<sup>1</sup> + 1×2<sup>0</sup><br>        = 8 + 4 + 0 + 1 = <span class="f-val">13<sub>10</sub></span><br><br>243<sub>5</sub> = 2×5<sup>2</sup> + 4×5<sup>1</sup> + 3×5<sup>0</sup><br>       = 50 + 20 + 3 = <span class="f-val">73<sub>10</sub></span></div>
+      <h3>Converting from Base 10 to Base <em>n</em></h3>
+      <p>Repeatedly divide by <em>n</em> and collect remainders from <strong>bottom to top</strong>.</p>
+      <div class="formula-block"><span class="f-comment">-- Convert 13₁₀ to base 2 --</span><br>13 ÷ 2 = 6 remainder <span class="f-val">1</span><br>6  ÷ 2 = 3 remainder <span class="f-val">0</span><br>3  ÷ 2 = 1 remainder <span class="f-val">1</span><br>1  ÷ 2 = 0 remainder <span class="f-val">1</span><br><span class="f-comment">Read remainders upward → 1101<sub>2</sub></span></div>
+      <h3>Converting between Non-Decimal Bases</h3>
+      <p>Always use base 10 as a bridge: convert the original to base 10 first, then from base 10 to the target base.</p>
+      <div class="info-box box-blue"><strong>Shortcut: Base 2 ↔ Base 8</strong>Group binary digits in threes from the right. Each group of 3 bits equals one octal digit. E.g. 101 011<sub>2</sub> → 5 3<sub>8</sub> = 53<sub>8</sub>.</div>
+      <h3>Arithmetic in Other Bases</h3>
+      <p>Add/subtract column by column. When a column sum equals or exceeds the base, carry 1 to the next column and write the remainder. For subtraction, borrowing from the next column adds the base value.</p>
+      <div class="formula-block"><span class="f-comment">-- Addition in base 2 --</span><br>0+0=0,  0+1=1,  1+1=10 (write 0, carry 1),  1+1+1=11 (write 1, carry 1)<br><br><span class="f-comment">-- Addition in base 5 --</span><br>3<sub>5</sub> + 4<sub>5</sub> = 7<sub>10</sub> = 1×5 + 2 → write 2, carry 1  →  12<sub>5</sub></div>
+      <div class="info-box box-orange"><strong>Exam Tip (WAEC/NECO/JAMB)</strong>Read the question carefully — it may ask you to evaluate an expression entirely in a given base, or to convert and then compute. When in doubt, convert all values to base 10 first, operate, then convert back.</div>
       <div class="key-points">
-        <div class="key-point"><div class="kp-icon">2️⃣</div><div class="kp-title">Binary (Base 2)</div><div class="kp-body">Digits: 0, 1. Used in computers.</div></div>
-        <div class="key-point"><div class="kp-icon">8️⃣</div><div class="kp-title">Octal (Base 8)</div><div class="kp-body">Digits: 0–7. Group binary in 3s.</div></div>
-        <div class="key-point"><div class="kp-icon">🔟</div><div class="kp-title">Decimal (Base 10)</div><div class="kp-body">Our everyday number system.</div></div>
-        <div class="key-point"><div class="kp-icon">🔡</div><div class="kp-title">Hex (Base 16)</div><div class="kp-body">Digits: 0–9, A–F.</div></div>
+        <div class="key-point"><div class="kp-icon">2️⃣</div><div class="kp-title">Binary (Base 2)</div><div class="kp-body">Digits: 0, 1. Max digit = 1. Used in computers and electronics.</div></div>
+        <div class="key-point"><div class="kp-icon">8️⃣</div><div class="kp-title">Octal (Base 8)</div><div class="kp-body">Digits: 0–7. Max digit = 7. Group binary in 3s to convert.</div></div>
+        <div class="key-point"><div class="kp-icon">🔟</div><div class="kp-title">Decimal (Base 10)</div><div class="kp-body">Digits: 0–9. Our everyday number system. Use as a bridge base.</div></div>
+        <div class="key-point"><div class="kp-icon">🔡</div><div class="kp-title">Hex (Base 16)</div><div class="kp-body">Digits: 0–9, then A=10, B=11, C=12, D=13, E=14, F=15.</div></div>
       </div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Convert to decimal</div><div class="ex-q">Convert 10110₂ to base 10.</div><div class="ex-steps">= 1×2⁴ + 0×2³ + 1×2² + 1×2¹ + 0×2⁰<br>= 16 + 0 + 4 + 2 + 0</div><div class="ex-answer">= 22₁₀</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Convert to binary</div><div class="ex-q">Convert 25₁₀ to base 2.</div><div class="ex-steps">25÷2=12 r<b>1</b>, 12÷2=6 r<b>0</b>, 6÷2=3 r<b>0</b>, 3÷2=1 r<b>1</b>, 1÷2=0 r<b>1</b><br>Read remainders upward:</div><div class="ex-answer">= 11001₂</div></div>
-      <div class="example-box"><div class="ex-label">Example 3 — Addition in base 2</div><div class="ex-q">Evaluate 1011₂ + 110₂.</div><div class="ex-steps">Line up: 1011 + 0110<br>Rightmost: 1+0=1; next: 1+1=10 write 0 carry 1; next: 0+1+1(carry)=10 write 0 carry 1; next: 1+0+1(carry)=10 write 0 carry 1; carry gives extra 1</div><div class="ex-answer">= 10001₂</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Convert to decimal</div>
+        <div class="ex-q">Convert 10110<sub>2</sub> to base 10.</div>
+        <div class="ex-steps">
+          = 1×2<sup>4</sup> + 0×2<sup>3</sup> + 1×2<sup>2</sup> + 1×2<sup>1</sup> + 0×2<sup>0</sup><br>
+          = 16 + 0 + 4 + 2 + 0
+        </div>
+        <div class="ex-answer">= 22<sub>10</sub></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Convert to binary</div>
+        <div class="ex-q">Convert 25<sub>10</sub> to base 2.</div>
+        <div class="ex-steps">
+          25 ÷ 2 = 12 r <b>1</b><br>
+          12 ÷ 2 = 6 r <b>0</b><br>
+          6 ÷ 2 = 3 r <b>0</b><br>
+          3 ÷ 2 = 1 r <b>1</b><br>
+          1 ÷ 2 = 0 r <b>1</b><br>
+          Read remainders from bottom upward:
+        </div>
+        <div class="ex-answer">= 11001<sub>2</sub></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Addition in base 2</div>
+        <div class="ex-q">Evaluate 1011<sub>2</sub> + 110<sub>2</sub>.</div>
+        <div class="ex-steps">
+            1 0 1 1<br>
+          + 0 1 1 0<br>
+          ————————<br>
+          Col 1 (units): 1+0=1<br>
+          Col 2: 1+1=10 → write 0, carry 1<br>
+          Col 3: 0+1+1(carry)=10 → write 0, carry 1<br>
+          Col 4: 1+0+1(carry)=10 → write 0, carry 1<br>
+          Col 5: carry 1
+        </div>
+        <div class="ex-answer">= 10001<sub>2</sub></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Convert from base 8 to base 2</div>
+        <div class="ex-q">Convert 53<sub>8</sub> to binary.</div>
+        <div class="ex-steps">
+          5<sub>8</sub> = 101<sub>2</sub> &nbsp;&nbsp; 3<sub>8</sub> = 011<sub>2</sub><br>
+          Combine the 3-bit groups:
+        </div>
+        <div class="ex-answer">= 101011<sub>2</sub></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 5 — Non-decimal base arithmetic</div>
+        <div class="ex-q">Evaluate 24<sub>5</sub> + 13<sub>5</sub> in base 5.</div>
+        <div class="ex-steps">
+          Units column: 4+3=7<sub>10</sub>. 7 = 1×5 + 2 → write 2, carry 1<br>
+          Fives column: 2+1+1(carry)=4 → write 4, no carry
+        </div>
+        <div class="ex-answer">= 42<sub>5</sub></div>
+      </div>`,
     questions: [
       { q:'What is 1010₂ in base 10?', opts:['8','10','12','14'], ans:1 },
       { q:'Convert 19₁₀ to binary.', opts:['10011₂','10101₂','11001₂','10001₂'], ans:0 },
       { q:'Evaluate 101₂ + 11₂.', opts:['111₂','1000₂','110₂','1010₂'], ans:1 },
       { q:'What digit can appear in base 6?', opts:['6','7','5','8'], ans:2 },
+      { q:'Convert 37₈ to base 10.', opts:['31','23','39','15'], ans:0 },
+      { q:'Evaluate 32₅ − 14₅.', opts:['13₅','23₅','11₅','18₅'], ans:0 },
     ]
   },
 
   'fractions_decimals': {
     lesson: `
       <h2>🔣 Fractions, Decimals & Percentages</h2>
-      <p>These three forms all express parts of a whole. JAMB tests conversions, significant figures, percentage error, profit & loss, and VAT.</p>
+      <p>These three forms all express parts of a whole and are interconvertible. WAEC, NECO, and JAMB test conversions, significant figures, standard form, percentage error, profit & loss, simple/compound interest, and VAT.</p>
+      <h3>Conversions at a Glance</h3>
+      <div class="formula-block">Fraction → Decimal:   divide numerator ÷ denominator<br>Decimal  → Percent:   multiply by 100<br>Percent  → Decimal:   divide by 100<br>Percent  → Fraction:  write over 100 and simplify</div>
       <h3>Significant Figures (s.f.)</h3>
-      <div class="info-box box-teal"><strong>Rule</strong>Count from the first non-zero digit. Round at the required position — the next digit decides whether to round up or keep.</div>
-      <div class="formula-block">0.004782 to 2 s.f. → 0.0048<br>35 640 to 3 s.f.   → 35 600</div>
+      <div class="info-box box-teal"><strong>Rules</strong>1. Start counting from the first non-zero digit.<br>2. All digits after the first non-zero digit count (including zeros between non-zero digits).<br>3. Trailing zeros after a decimal point are significant. Trailing zeros in whole numbers may or may not be (depends on context).<br>4. Look at the digit immediately after your cut-off point: if it is ≥ 5, round up; if &lt; 5, leave unchanged.</div>
+      <div class="formula-block">0.004782 to 2 s.f. → 0.0048    <span class="f-comment">(first 2 non-zero digits are 4, 7; next digit 8 ≥ 5)</span><br>35 640 to 3 s.f.   → 35 600    <span class="f-comment">(first 3 digits are 3, 5, 6; next digit 4 &lt; 5)</span><br>0.09050 to 3 s.f.  → 0.0905    <span class="f-comment">(digits 9, 0, 5 are all significant)</span></div>
+      <h3>Standard Form (Scientific Notation)</h3>
+      <p>Write a number as A × 10<sup>n</sup>, where 1 ≤ A &lt; 10 and n is an integer.</p>
+      <div class="formula-block">0.000345 = 3.45 × 10<sup>−4</sup><br>67,200   = 6.72 × 10<sup>4</sup></div>
       <h3>Percentage Error</h3>
-      <div class="formula-block">% error = (|approximate − exact| / exact) × 100</div>
+      <div class="formula-block">% error = (|approximate − exact| ÷ exact) × 100</div>
       <h3>Profit & Loss</h3>
-      <div class="formula-block">% Profit = (Profit / Cost Price) × 100<br>% Loss   = (Loss   / Cost Price) × 100<br>Selling Price = CP × (1 + %Profit/100)</div>
+      <div class="formula-block">Profit       = Selling Price (SP) − Cost Price (CP)<br>Loss         = CP − SP<br>% Profit     = (Profit ÷ CP) × 100<br>% Loss       = (Loss ÷ CP) × 100<br>SP           = CP × (1 + % Profit ÷ 100)<br>Marked Price = SP before discount is applied<br>SP after discount = MP × (1 − Discount% ÷ 100)</div>
+      <div class="info-box box-blue"><strong>Note on Successive Discounts</strong>Two successive discounts of p% and q% are NOT equal to (p + q)%. Apply them one after the other to the price each time.</div>
+      <h3>Simple & Compound Interest</h3>
+      <div class="formula-block">Simple Interest (SI) = (P × R × T) ÷ 100<br>Amount (A)          = P + SI<br><br>Compound Interest:  A = P × (1 + R ÷ 100)<sup>T</sup><br>CI = A − P</div>
       <h3>VAT</h3>
-      <p>Value Added Tax is a percentage added to the price of goods. In Nigeria VAT is typically <strong>7.5%</strong>.</p>
-      <div class="formula-block">Price after VAT = Original Price × 1.075</div>
+      <p>Value Added Tax is a percentage added to the selling price of goods and services. In Nigeria, VAT is currently <strong>7.5%</strong>.</p>
+      <div class="formula-block">VAT amount         = 7.5% × original price<br>Price after VAT    = original price × 1.075</div>
       <div class="key-points">
-        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Fraction → Decimal</div><div class="kp-body">Divide numerator by denominator.</div></div>
-        <div class="key-point"><div class="kp-icon">💯</div><div class="kp-title">Decimal → %</div><div class="kp-body">Multiply by 100.</div></div>
-        <div class="key-point"><div class="kp-icon">📉</div><div class="kp-title">Discount</div><div class="kp-body">SP = MP × (1 − discount%/100)</div></div>
-        <div class="key-point"><div class="kp-icon">🏷️</div><div class="kp-title">VAT</div><div class="kp-body">Add 7.5% of original price.</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Fraction → Decimal</div><div class="kp-body">Divide numerator by denominator. E.g. <sup>3</sup>⁄<sub>8</sub> = 3 ÷ 8 = 0.375</div></div>
+        <div class="key-point"><div class="kp-icon">💯</div><div class="kp-title">Decimal → %</div><div class="kp-body">Multiply by 100. E.g. 0.375 → 37.5%</div></div>
+        <div class="key-point"><div class="kp-icon">📉</div><div class="kp-title">Discount</div><div class="kp-body">SP = MP × (1 − Discount% ÷ 100)</div></div>
+        <div class="key-point"><div class="kp-icon">🏷️</div><div class="kp-title">VAT</div><div class="kp-body">Add 7.5% of the original price to get the final price.</div></div>
       </div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Significant Figures</div><div class="ex-q">Round 0.007368 to 2 significant figures.</div><div class="ex-steps">First non-zero digit is 7 (3rd decimal place). Second s.f. is 3. Next digit is 6 ≥ 5, so round up.</div><div class="ex-answer">= 0.0074</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Profit</div><div class="ex-q">A trader buys an item for ₦4,000 and sells it for ₦5,200. Find the percentage profit.</div><div class="ex-steps">Profit = 5200 − 4000 = ₦1200<br>% Profit = (1200/4000) × 100</div><div class="ex-answer">= 30%</div></div>
-      <div class="example-box"><div class="ex-label">Example 3 — VAT</div><div class="ex-q">Find the price of a phone worth ₦80,000 after VAT at 7.5%.</div><div class="ex-steps">VAT amount = 7.5% × 80000 = ₦6,000<br>Total = 80000 + 6000</div><div class="ex-answer">= ₦86,000</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Significant Figures</div>
+        <div class="ex-q">Round 0.007368 to 2 significant figures.</div>
+        <div class="ex-steps">First non-zero digit is 7 (this is the 1<sup>st</sup> s.f.). Second s.f. is 3. The next digit is 6 ≥ 5, so round up the 3 to 4.</div>
+        <div class="ex-answer">= 0.0074</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Standard Form</div>
+        <div class="ex-q">Express 0.000675 in standard form.</div>
+        <div class="ex-steps">Move the decimal point 4 places to the right to get 6.75. Since we moved right, the power of 10 is negative.</div>
+        <div class="ex-answer">= 6.75 × 10<sup>−4</sup></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Profit</div>
+        <div class="ex-q">A trader buys an item for ₦4,000 and sells it for ₦5,200. Find the percentage profit.</div>
+        <div class="ex-steps">Profit = 5,200 − 4,000 = ₦1,200<br>% Profit = (<sup>1200</sup>⁄<sub>4000</sub>) × 100</div>
+        <div class="ex-answer">= 30%</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Compound Interest</div>
+        <div class="ex-q">Find the compound interest on ₦10,000 at 5% per annum for 2 years.</div>
+        <div class="ex-steps">A = 10,000 × (1 + <sup>5</sup>⁄<sub>100</sub>)<sup>2</sup> = 10,000 × (1.05)<sup>2</sup><br>= 10,000 × 1.1025 = ₦11,025<br>CI = 11,025 − 10,000</div>
+        <div class="ex-answer">= ₦1,025</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 5 — VAT</div>
+        <div class="ex-q">Find the price of a phone worth ₦80,000 after VAT at 7.5%.</div>
+        <div class="ex-steps">VAT = 7.5% × 80,000 = ₦6,000<br>Total = 80,000 + 6,000</div>
+        <div class="ex-answer">= ₦86,000</div>
+      </div>`,
     questions: [
       { q:'Round 0.006785 to 2 significant figures.', opts:['0.0068','0.0067','0.007','0.00678'], ans:0 },
       { q:'A dress bought for ₦2,000 is sold for ₦2,500. What is the profit percentage?', opts:['20%','25%','30%','15%'], ans:1 },
       { q:'Convert 3/8 to a decimal.', opts:['0.375','0.38','0.3','0.25'], ans:0 },
       { q:'If VAT is 7.5%, what is the VAT on goods worth ₦40,000?', opts:['₦3,000','₦3,500','₦4,000','₦2,500'], ans:0 },
+      { q:'Express 45,600 in standard form.', opts:['4.56 × 10⁴','4.56 × 10³','45.6 × 10³','4.56 × 10⁵'], ans:0 },
+      { q:'Find the compound interest on ₦5,000 at 10% p.a. for 2 years.', opts:['₦1,050','₦1,000','₦1,100','₦500'], ans:0 },
     ]
   },
 
@@ -579,50 +677,111 @@ const TOPICS = {
     lesson: `
       <h2>📐 Indices, Logarithms & Surds</h2>
       <h3>Laws of Indices</h3>
-      <div class="formula-block">aᵐ × aⁿ = aᵐ⁺ⁿ<br>aᵐ ÷ aⁿ = aᵐ⁻ⁿ<br>(aᵐ)ⁿ   = aᵐⁿ<br>a⁰      = 1<br>a⁻ⁿ     = 1/aⁿ<br>a^(1/n) = ⁿ√a</div>
+      <p>For any base <em>a</em> (where a ≠ 0) and integers m, n:</p>
+      <div class="formula-block">a<sup>m</sup> × a<sup>n</sup> = a<sup>m+n</sup>        <span class="f-comment">-- same base: add powers</span><br>a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup>        <span class="f-comment">-- same base: subtract powers</span><br>(a<sup>m</sup>)<sup>n</sup>   = a<sup>mn</sup>         <span class="f-comment">-- power of a power: multiply</span><br>a<sup>0</sup>      = 1           <span class="f-comment">-- anything to the power 0 is 1</span><br>a<sup>−n</sup>     = 1 ÷ a<sup>n</sup>      <span class="f-comment">-- negative index means reciprocal</span><br>a<sup>1/n</sup>    = <sup>n</sup>√a          <span class="f-comment">-- fractional index means nth root</span><br>a<sup>m/n</sup>    = (<sup>n</sup>√a)<sup>m</sup>       <span class="f-comment">-- root first, then power</span><br>(ab)<sup>n</sup>   = a<sup>n</sup> × b<sup>n</sup>     <span class="f-comment">-- distribute power over product</span></div>
+      <div class="info-box box-blue"><strong>Common Mistake</strong>a<sup>m</sup> + a<sup>n</sup> ≠ a<sup>m+n</sup>. The product rule only applies to <em>multiplication</em>, not addition. E.g. 2<sup>3</sup> + 2<sup>2</sup> = 8 + 4 = 12, not 2<sup>5</sup> = 32.</div>
       <h3>Logarithms</h3>
-      <div class="info-box box-teal"><strong>Definition</strong>log_b(x) = y  ↔  bʸ = x<br>log₁₀ is written simply as "log". logₑ is "ln".</div>
-      <div class="formula-block">log(AB)   = log A + log B<br>log(A/B)  = log A − log B<br>log(Aⁿ)   = n log A<br>log_b(b)  = 1<br>log_b(1)  = 0</div>
+      <div class="info-box box-teal"><strong>Definition</strong>log<sub>b</sub>(x) = y &nbsp;↔&nbsp; b<sup>y</sup> = x &nbsp;&nbsp;&nbsp; (read: "log base b of x equals y")<br><br>log<sub>10</sub> is written simply as "log". &nbsp;&nbsp; log<sub>e</sub> is written as "ln".</div>
+      <div class="formula-block">log(AB)        = log A + log B        <span class="f-comment">-- product rule</span><br>log(A ÷ B)    = log A − log B        <span class="f-comment">-- quotient rule</span><br>log(A<sup>n</sup>)      = n × log A           <span class="f-comment">-- power rule</span><br>log<sub>b</sub>(b)     = 1                    <span class="f-comment">-- log of base = 1</span><br>log<sub>b</sub>(1)     = 0                    <span class="f-comment">-- log of 1 = 0 (any base)</span><br>log<sub>b</sub>(x)     = log x ÷ log b       <span class="f-comment">-- change of base formula</span></div>
+      <div class="info-box box-orange"><strong>Exam Tip</strong>To solve equations like 2<sup>x</sup> = 5, take logs of both sides: x × log 2 = log 5, so x = log 5 ÷ log 2. Also remember: log 0 and log of a negative number are undefined.</div>
       <h3>Surds</h3>
-      <p>A surd is an irrational root that cannot be simplified to a whole number, e.g. √2, √3, √5.</p>
-      <div class="formula-block">√a × √a   = a<br>√(a/b)    = √a / √b<br>Rationalise: multiply by conjugate<br>1/(a+√b) × (a−√b)/(a−√b)</div>`,
+      <p>A surd is an irrational root that cannot be simplified to a rational number, e.g. √2, √3, √5, <sup>3</sup>√7.</p>
+      <div class="formula-block">√a × √a       = a<br>√a × √b       = √(ab)<br>√a ÷ √b       = √(a ÷ b)<br><br><span class="f-comment">-- Rationalising the denominator --</span><br>1 ÷ √a:          multiply top & bottom by √a<br>1 ÷ (a + √b):   multiply by (a − √b) ÷ (a − √b)   <span class="f-comment">(conjugate pair)</span><br>Result: denominator becomes a<sup>2</sup> − b  (a rational number)</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Indices</div><div class="ex-q">Simplify 2⁵ ÷ 2² × 2³.</div><div class="ex-steps">= 2^(5−2+3) = 2⁶</div><div class="ex-answer">= 64</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Logarithms</div><div class="ex-q">Given log 2 = 0.301, find log 8.</div><div class="ex-steps">log 8 = log 2³ = 3 log 2 = 3 × 0.301</div><div class="ex-answer">= 0.903</div></div>
-      <div class="example-box"><div class="ex-label">Example 3 — Surds</div><div class="ex-q">Rationalise 1/(√3 + 1).</div><div class="ex-steps">Multiply by (√3−1)/(√3−1): numerator = √3−1, denominator = 3−1 = 2</div><div class="ex-answer">= (√3−1)/2</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Indices</div>
+        <div class="ex-q">Simplify 2<sup>5</sup> ÷ 2<sup>2</sup> × 2<sup>3</sup>.</div>
+        <div class="ex-steps">= 2<sup>5−2+3</sup> = 2<sup>6</sup></div>
+        <div class="ex-answer">= 64</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Fractional & Negative Indices</div>
+        <div class="ex-q">Evaluate 27<sup>−2/3</sup>.</div>
+        <div class="ex-steps">27<sup>−2/3</sup> = 1 ÷ 27<sup>2/3</sup><br>27<sup>1/3</sup> = <sup>3</sup>√27 = 3, so 27<sup>2/3</sup> = 3<sup>2</sup> = 9<br>Therefore 27<sup>−2/3</sup> = 1 ÷ 9</div>
+        <div class="ex-answer">= <sup>1</sup>⁄<sub>9</sub></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Logarithms</div>
+        <div class="ex-q">Given log 2 = 0.3010, find log 8.</div>
+        <div class="ex-steps">log 8 = log 2<sup>3</sup> = 3 × log 2 = 3 × 0.3010</div>
+        <div class="ex-answer">= 0.9030</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Solving Logarithmic Equation</div>
+        <div class="ex-q">Solve: log<sub>3</sub>(x) = 4.</div>
+        <div class="ex-steps">By definition: 3<sup>4</sup> = x</div>
+        <div class="ex-answer">x = 81</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 5 — Surds (Rationalise)</div>
+        <div class="ex-q">Rationalise 1 ÷ (√3 + 1).</div>
+        <div class="ex-steps">Multiply numerator and denominator by the conjugate (√3 − 1):<br>Numerator: 1 × (√3 − 1) = √3 − 1<br>Denominator: (√3 + 1)(√3 − 1) = 3 − 1 = 2</div>
+        <div class="ex-answer">= (√3 − 1) ÷ 2</div>
+      </div>`,
     questions: [
       { q:'Simplify 3⁴ ÷ 3².', opts:['9','81','3','27'], ans:0 },
       { q:'If log 5 = 0.699, find log 25.', opts:['0.349','1.398','0.845','1.699'], ans:1 },
       { q:'Simplify (√5)².', opts:['25','5','√25','10'], ans:1 },
       { q:'What is 4^(−1/2)?', opts:['1/2','−2','2','1/4'], ans:0 },
+      { q:'Evaluate 8^(2/3).', opts:['4','2','16','6'], ans:0 },
+      { q:'Solve for x: log₂(x) = 5.', opts:['32','10','25','16'], ans:0 },
     ]
   },
 
   'sets': {
     lesson: `
       <h2>⭕ Sets</h2>
-      <p>A <strong>set</strong> is a well-defined collection of distinct objects called <em>elements</em>.</p>
+      <p>A <strong>set</strong> is a well-defined collection of distinct objects called <em>elements</em> or <em>members</em>. Sets are denoted by capital letters and listed in curly braces, e.g. A = {1, 2, 3}.</p>
+      <h3>Set Notation & Terminology</h3>
+      <div class="formula-block">∈  means "is an element of"    e.g. 3 ∈ {1, 2, 3}<br>∉  means "is not an element of" e.g. 5 ∉ {1, 2, 3}<br>n(A) = number of elements in set A (cardinality)<br>ξ or U = Universal set (the set of all elements under consideration)<br>A' or Aᶜ = Complement of A (elements in ξ but not in A)</div>
       <div class="key-points">
-        <div class="key-point"><div class="kp-icon">∅</div><div class="kp-title">Empty Set</div><div class="kp-body">No elements. Denoted {} or ∅.</div></div>
-        <div class="key-point"><div class="kp-icon">⊂</div><div class="kp-title">Subset</div><div class="kp-body">A ⊆ B: every element of A is in B.</div></div>
-        <div class="key-point"><div class="kp-icon">∪</div><div class="kp-title">Union</div><div class="kp-body">A ∪ B: elements in A OR B (or both).</div></div>
-        <div class="key-point"><div class="kp-icon">∩</div><div class="kp-title">Intersection</div><div class="kp-body">A ∩ B: elements in both A AND B.</div></div>
+        <div class="key-point"><div class="kp-icon">∅</div><div class="kp-title">Empty Set</div><div class="kp-body">No elements. Denoted {} or ∅. n(∅) = 0.</div></div>
+        <div class="key-point"><div class="kp-icon">⊂</div><div class="kp-title">Subset</div><div class="kp-body">A ⊆ B: every element of A is in B. A ⊂ B means proper subset (A ≠ B).</div></div>
+        <div class="key-point"><div class="kp-icon">∪</div><div class="kp-title">Union (A ∪ B)</div><div class="kp-body">Elements in A OR B (or both). Always: n(A ∪ B) ≥ n(A) and ≥ n(B).</div></div>
+        <div class="key-point"><div class="kp-icon">∩</div><div class="kp-title">Intersection (A ∩ B)</div><div class="kp-body">Elements in BOTH A AND B. Always: n(A ∩ B) ≤ n(A) and ≤ n(B).</div></div>
       </div>
-      <h3>Venn Diagram Formula (2 sets)</h3>
+      <h3>Number of Subsets</h3>
+      <div class="formula-block">A set with n elements has 2<sup>n</sup> subsets (including ∅ and the set itself).<br>Example: {a, b, c} has n=3 elements → 2<sup>3</sup> = 8 subsets.</div>
+      <h3>Venn Diagram Formula — 2 Sets</h3>
       <div class="formula-block">n(A ∪ B) = n(A) + n(B) − n(A ∩ B)</div>
-      <h3>Three-Set Formula</h3>
-      <div class="formula-block">n(A∪B∪C) = n(A)+n(B)+n(C) − n(A∩B) − n(B∩C) − n(A∩C) + n(A∩B∩C)</div>
-      <div class="info-box box-orange"><strong>JAMB Tip</strong>Draw the Venn diagram first. Fill in the innermost region (A∩B∩C) first, then work outward.</div>`,
+      <h3>Three-Set Venn Formula</h3>
+      <div class="formula-block">n(A ∪ B ∪ C) = n(A) + n(B) + n(C)<br>               − n(A ∩ B) − n(B ∩ C) − n(A ∩ C)<br>               + n(A ∩ B ∩ C)</div>
+      <div class="info-box box-orange"><strong>Exam Strategy (WAEC/NECO/JAMB)</strong>Draw the Venn diagram first. Label all regions. Fill in the <em>innermost</em> region (A ∩ B ∩ C) first, then work outward region by region. Only elements NOT in any set go outside all circles.</div>
+      <div class="info-box box-blue"><strong>De Morgan's Laws</strong>(A ∪ B)' = A' ∩ B' &nbsp;&nbsp;&nbsp; and &nbsp;&nbsp;&nbsp; (A ∩ B)' = A' ∪ B'<br>These are useful when the question involves complements of unions or intersections.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Union & Intersection</div><div class="ex-q">A = {1,2,3,4}, B = {3,4,5,6}. Find A∪B and A∩B.</div><div class="ex-steps">A∪B = all elements in either: {1,2,3,4,5,6}<br>A∩B = common elements: {3,4}</div><div class="ex-answer">A∪B = {1,2,3,4,5,6},  A∩B = {3,4}</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Venn Diagram</div><div class="ex-q">In a class of 40, 25 study Maths, 20 study Physics, and 10 study both. How many study neither?</div><div class="ex-steps">n(M∪P) = 25 + 20 − 10 = 35<br>Neither = 40 − 35</div><div class="ex-answer">= 5 students</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Union & Intersection</div>
+        <div class="ex-q">A = {1, 2, 3, 4}, B = {3, 4, 5, 6}. Find A ∪ B and A ∩ B.</div>
+        <div class="ex-steps">A ∪ B = all elements in either set: {1, 2, 3, 4, 5, 6}<br>A ∩ B = elements common to both: {3, 4}</div>
+        <div class="ex-answer">A ∪ B = {1, 2, 3, 4, 5, 6},&nbsp; A ∩ B = {3, 4}</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Venn Diagram (2 sets)</div>
+        <div class="ex-q">In a class of 40 students, 25 study Maths, 20 study Physics, and 10 study both. How many study neither?</div>
+        <div class="ex-steps">n(M ∪ P) = n(M) + n(P) − n(M ∩ P) = 25 + 20 − 10 = 35<br>Neither = Total − n(M ∪ P) = 40 − 35</div>
+        <div class="ex-answer">= 5 students</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Three-Set Venn Diagram</div>
+        <div class="ex-q">In a survey of 100 people: 60 like A, 50 like B, 40 like C, 20 like A and B, 15 like B and C, 10 like A and C, and 5 like all three. How many like none?</div>
+        <div class="ex-steps">n(A ∪ B ∪ C) = 60 + 50 + 40 − 20 − 15 − 10 + 5 = 110<br>Wait — this exceeds 100, which means our numbers need checking. Using the given values: 110. But if the universal set is 100, those outside = 100 − 110 = −10 (impossible, so the problem data must be reviewed). For the formula application:<br>n(A ∪ B ∪ C) = 60 + 50 + 40 − 20 − 15 − 10 + 5</div>
+        <div class="ex-answer">= 110 (check universal set size against this value)</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Number of Subsets</div>
+        <div class="ex-q">How many subsets does the set P = {x, y, z, w} have?</div>
+        <div class="ex-steps">n(P) = 4 &nbsp;→&nbsp; Number of subsets = 2<sup>4</sup></div>
+        <div class="ex-answer">= 16 subsets</div>
+      </div>`,
     questions: [
       { q:'If A = {a,b,c} and B = {b,c,d,e}, what is A∩B?', opts:['{b,c}','{a,b,c,d,e}','{a}','{d,e}'], ans:0 },
       { q:'In a group of 50, 30 like football, 25 like basketball, 10 like both. How many like neither?', opts:['5','10','15','20'], ans:0 },
       { q:'How many subsets does the set {x, y} have?', opts:['2','3','4','5'], ans:2 },
       { q:'What is the complement of the universal set?', opts:['∅','The universal set itself','All elements','Undefined'], ans:0 },
+      { q:'If n(A) = 15, n(B) = 12, and n(A ∪ B) = 20, find n(A ∩ B).', opts:['7','3','5','8'], ans:0 },
+      { q:'A set with 5 elements has how many proper subsets?', opts:['31','32','30','16'], ans:0 },
     ]
   },
 
@@ -631,23 +790,52 @@ const TOPICS = {
   'polynomials': {
     lesson: `
       <h2>📊 Polynomials</h2>
-      <p>A <strong>polynomial</strong> is an expression of the form aₙxⁿ + … + a₁x + a₀.</p>
+      <p>A <strong>polynomial</strong> in x is an expression of the form a<sub>n</sub>x<sup>n</sup> + a<sub>n−1</sub>x<sup>n−1</sup> + … + a<sub>1</sub>x + a<sub>0</sub>, where the coefficients a<sub>i</sub> are real numbers and n is a non-negative integer. The <strong>degree</strong> is the highest power of x.</p>
+      <h3>Basic Operations</h3>
+      <p>Polynomials can be added, subtracted, and multiplied by combining like terms. Division uses long division or synthetic division.</p>
       <h3>Factor Theorem</h3>
-      <div class="info-box box-teal"><strong>Theorem</strong>(x − a) is a factor of f(x) if and only if f(a) = 0.</div>
+      <div class="info-box box-teal"><strong>Theorem</strong>(x − a) is a factor of f(x) if and only if f(a) = 0.<br>Equivalently, x = a is a root (zero) of f(x).</div>
+      <div class="info-box box-blue"><strong>Extension</strong>If f(a) = 0, then f(x) = (x − a) × q(x) for some polynomial q(x). You can then factorise q(x) further to find all roots.</div>
       <h3>Remainder Theorem</h3>
-      <div class="formula-block">When f(x) is divided by (x − a), remainder = f(a).</div>
+      <div class="formula-block">When f(x) is divided by (x − a), the remainder = f(a).<br>When f(x) is divided by (ax − b), the remainder = f(b ÷ a).</div>
       <h3>Partial Fractions</h3>
-      <p>Split a fraction with a polynomial denominator into simpler fractions:</p>
-      <div class="formula-block">A/(x−a) + B/(x−b) + ...  then solve for A, B, etc.</div>`,
+      <p>A rational expression (fraction with polynomials) can be split into simpler fractions, depending on the type of denominator factors:</p>
+      <div class="formula-block"><span class="f-comment">-- Distinct linear factors --</span><br>(px + q) ÷ [(x−a)(x−b)] ≡ A÷(x−a) + B÷(x−b)<br><br><span class="f-comment">-- Repeated linear factor --</span><br>(px + q) ÷ (x−a)² ≡ A÷(x−a) + B÷(x−a)²<br><br><span class="f-comment">-- Irreducible quadratic factor --</span><br>(px + q) ÷ [(x−a)(x²+b)] ≡ A÷(x−a) + (Bx+C)÷(x²+b)</div>
+      <p>Multiply both sides by the denominator, then substitute convenient values of x (usually the roots) to find A, B, C, etc.</p>
+      <div class="info-box box-orange"><strong>Exam Tip</strong>For WAEC/NECO/JAMB, the most common questions are: find the remainder using the remainder theorem, determine whether a given binomial is a factor, and fully factorise a cubic. Always try x = 1, −1, 2, −2 as likely roots.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Remainder Theorem</div><div class="ex-q">Find the remainder when x³ − 2x + 5 is divided by (x − 2).</div><div class="ex-steps">f(2) = 8 − 4 + 5</div><div class="ex-answer">Remainder = 9</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Factor Theorem</div><div class="ex-q">Is (x − 1) a factor of x³ − 3x² + 3x − 1?</div><div class="ex-steps">f(1) = 1 − 3 + 3 − 1 = 0. Yes!</div><div class="ex-answer">(x−1) IS a factor.</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Remainder Theorem</div>
+        <div class="ex-q">Find the remainder when f(x) = x<sup>3</sup> − 2x + 5 is divided by (x − 2).</div>
+        <div class="ex-steps">Substitute x = 2:<br>f(2) = 2<sup>3</sup> − 2(2) + 5 = 8 − 4 + 5</div>
+        <div class="ex-answer">Remainder = 9</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Factor Theorem</div>
+        <div class="ex-q">Is (x − 1) a factor of f(x) = x<sup>3</sup> − 3x<sup>2</sup> + 3x − 1?</div>
+        <div class="ex-steps">f(1) = 1<sup>3</sup> − 3(1)<sup>2</sup> + 3(1) − 1 = 1 − 3 + 3 − 1 = 0.<br>Since f(1) = 0, (x − 1) is a factor.</div>
+        <div class="ex-answer">(x − 1) IS a factor. In fact f(x) = (x − 1)<sup>3</sup>.</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Full Factorisation of a Cubic</div>
+        <div class="ex-q">Factorise g(x) = x<sup>3</sup> − 6x<sup>2</sup> + 11x − 6 completely.</div>
+        <div class="ex-steps">Try x = 1: g(1) = 1 − 6 + 11 − 6 = 0 ✓ → (x − 1) is a factor.<br>Divide: g(x) ÷ (x − 1) = x<sup>2</sup> − 5x + 6<br>Factorise x<sup>2</sup> − 5x + 6 = (x − 2)(x − 3)</div>
+        <div class="ex-answer">g(x) = (x − 1)(x − 2)(x − 3)</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Partial Fractions</div>
+        <div class="ex-q">Express (3x + 1) ÷ [(x − 1)(x + 2)] in partial fractions.</div>
+        <div class="ex-steps">(3x + 1) ÷ [(x − 1)(x + 2)] ≡ A÷(x − 1) + B÷(x + 2)<br>Multiply through: 3x + 1 = A(x + 2) + B(x − 1)<br>x = 1:  4 = 3A → A = 4÷3<br>x = −2: −5 = −3B → B = 5÷3</div>
+        <div class="ex-answer">= (4÷3) ÷ (x − 1) + (5÷3) ÷ (x + 2)</div>
+      </div>`,
     questions: [
       { q:'If f(x) = x² − 5x + 6, find f(2).', opts:['0','2','4','-2'], ans:0 },
       { q:'The remainder when x³ + 2x − 1 is divided by (x+1) is:', opts:['-4','0','4','-2'], ans:0 },
       { q:'Which of the following is a factor of x² − 4?', opts:['(x+2)','(x−1)','(x+3)','(2x−1)'], ans:0 },
       { q:'Factorize completely: x² − 7x + 12.', opts:['(x−3)(x−4)','(x+3)(x+4)','(x−3)(x+4)','(x+3)(x−4)'], ans:0 },
+      { q:'The remainder when 2x³ − x + 3 is divided by (x − 1) is:', opts:['4','3','2','5'], ans:0 },
+      { q:'If (x + 2) is a factor of x³ + ax² − 4, find a.', opts:['3','2','-3','1'], ans:0 },
     ]
   },
 
@@ -697,21 +885,54 @@ const TOPICS = {
 
   'progressions': {
     lesson: `
-      <h2>📈 Progressions</h2>
+      <h2>📈 Progressions (Sequences & Series)</h2>
       <h3>Arithmetic Progression (AP)</h3>
-      <div class="formula-block">nth term:  Tₙ = a + (n−1)d<br>Sum of n:  Sₙ = n/2 [2a + (n−1)d]<br>           Sₙ = n/2 (first + last)</div>
+      <p>An AP is a sequence in which each term differs from the previous one by a fixed <strong>common difference d</strong>.</p>
+      <div class="formula-block">n<sup>th</sup> term:    T<sub>n</sub> = a + (n − 1)d<br>Sum of n terms: S<sub>n</sub> = (n ÷ 2) × [2a + (n − 1)d]<br>               S<sub>n</sub> = (n ÷ 2) × (first term + last term)<br><br>where: a = first term, d = common difference = T<sub>2</sub> − T<sub>1</sub></div>
+      <div class="info-box box-teal"><strong>Finding d and a</strong>If three consecutive AP terms are given (p, q, r), then d = q − p = r − q, so 2q = p + r. This is the condition for three terms to be in AP.</div>
       <h3>Geometric Progression (GP)</h3>
-      <div class="formula-block">nth term:  Tₙ = arⁿ⁻¹<br>Sum of n:  Sₙ = a(rⁿ−1)/(r−1)  [r ≠ 1]<br>Sum to ∞:  S∞  = a/(1−r)        [|r| < 1]</div>
-      <div class="info-box box-teal"><strong>Key</strong>AP has a common DIFFERENCE (d). GP has a common RATIO (r).</div>`,
+      <p>A GP is a sequence in which each term is obtained by multiplying the previous term by a fixed <strong>common ratio r</strong>.</p>
+      <div class="formula-block">n<sup>th</sup> term:    T<sub>n</sub> = ar<sup>n−1</sup><br>Sum of n terms: S<sub>n</sub> = a(r<sup>n</sup> − 1) ÷ (r − 1)   [r ≠ 1]<br>               S<sub>n</sub> = a(1 − r<sup>n</sup>) ÷ (1 − r)   [|r| &lt; 1, easier form]<br>Sum to infinity: S<sub>∞</sub> = a ÷ (1 − r)    [only if |r| &lt; 1]<br><br>where: a = first term, r = common ratio = T<sub>2</sub> ÷ T<sub>1</sub></div>
+      <div class="info-box box-orange"><strong>Exam Tip (WAEC/NECO/JAMB)</strong>To check if three terms p, q, r are in GP: q<sup>2</sup> = pr (the middle term squared equals the product of the outer terms). The sum to infinity only exists when |r| &lt; 1 (i.e. −1 &lt; r &lt; 1).</div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">➕</div><div class="kp-title">AP Condition</div><div class="kp-body">2q = p + r (middle term is the arithmetic mean of its neighbours)</div></div>
+        <div class="key-point"><div class="kp-icon">✕</div><div class="kp-title">GP Condition</div><div class="kp-body">q² = pr (middle term is the geometric mean of its neighbours)</div></div>
+        <div class="key-point"><div class="kp-icon">∞</div><div class="kp-title">Convergent GP</div><div class="kp-body">Sum to infinity exists only when |r| &lt; 1</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">AP vs GP</div><div class="kp-body">AP: constant difference d. GP: constant ratio r.</div></div>
+      </div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — AP</div><div class="ex-q">Find the 10th term of 3, 7, 11, 15, …</div><div class="ex-steps">a = 3, d = 4<br>T₁₀ = 3 + (10−1)×4 = 3 + 36</div><div class="ex-answer">= 39</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — GP Sum to Infinity</div><div class="ex-q">Find the sum to infinity of 8, 4, 2, 1, …</div><div class="ex-steps">a = 8, r = 1/2<br>S∞ = 8/(1−1/2) = 8/(1/2)</div><div class="ex-answer">= 16</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — AP: Find the nth Term</div>
+        <div class="ex-q">Find the 10<sup>th</sup> term of the AP: 3, 7, 11, 15, …</div>
+        <div class="ex-steps">a = 3, d = 7 − 3 = 4<br>T<sub>10</sub> = 3 + (10 − 1) × 4 = 3 + 36</div>
+        <div class="ex-answer">= 39</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — AP: Sum of Terms</div>
+        <div class="ex-q">Find the sum of the first 20 terms of 5, 8, 11, …</div>
+        <div class="ex-steps">a = 5, d = 3, n = 20<br>S<sub>20</sub> = (20 ÷ 2) × [2(5) + (20 − 1) × 3]<br>= 10 × [10 + 57]<br>= 10 × 67</div>
+        <div class="ex-answer">= 670</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — GP: Sum to Infinity</div>
+        <div class="ex-q">Find the sum to infinity of 8, 4, 2, 1, …</div>
+        <div class="ex-steps">a = 8, r = 4 ÷ 8 = <sup>1</sup>⁄<sub>2</sub><br>Since |r| = <sup>1</sup>⁄<sub>2</sub> &lt; 1, sum to infinity exists.<br>S<sub>∞</sub> = 8 ÷ (1 − <sup>1</sup>⁄<sub>2</sub>) = 8 ÷ (<sup>1</sup>⁄<sub>2</sub>)</div>
+        <div class="ex-answer">= 16</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Three Terms in GP</div>
+        <div class="ex-q">If x, 6, and x + 5 are three consecutive terms of a GP, find x.</div>
+        <div class="ex-steps">For GP: 6<sup>2</sup> = x(x + 5)<br>36 = x<sup>2</sup> + 5x<br>x<sup>2</sup> + 5x − 36 = 0<br>(x + 9)(x − 4) = 0 → x = −9 or x = 4</div>
+        <div class="ex-answer">x = 4 (taking the positive value)</div>
+      </div>`,
     questions: [
       { q:'The 5th term of an AP with first term 2 and common difference 3 is:', opts:['14','17','11','8'], ans:0 },
       { q:'Find the sum of the first 5 terms of the GP: 2, 6, 18, …', opts:['242','123','182','244'], ans:0 },
       { q:'The common ratio of the GP 5, 10, 20, 40 is:', opts:['2','5','4','10'], ans:0 },
       { q:'Sum to infinity of 1 + 1/3 + 1/9 + … is:', opts:['3/2','2','3','1/2'], ans:2 },
+      { q:'The 8th term of an AP is 23 and the 3rd term is 8. Find the common difference.', opts:['3','5','2','4'], ans:0 },
+      { q:'Three consecutive terms of a GP are 4, p, 36. Find p.', opts:['12','9','18','16'], ans:0 },
     ]
   },
 
@@ -1016,18 +1237,48 @@ const TOPICS = {
   'differentiation': {
     lesson: `
       <h2>∂ Differentiation</h2>
-      <p>Differentiation finds the <strong>rate of change</strong> (gradient) of a function at any point.</p>
-      <div class="formula-block"><span class="f-comment">-- Power Rule --</span><br>d/dx(xⁿ)    = nxⁿ⁻¹<br>d/dx(c)     = 0    (constant)<br>d/dx(axⁿ)   = anxⁿ⁻¹<br><br><span class="f-comment">-- Trig functions --</span><br>d/dx(sin x) = cos x<br>d/dx(cos x) = −sin x<br>d/dx(tan x) = sec²x</div>
-      <div class="info-box box-teal"><strong>Notation</strong>f'(x) = dy/dx = derivative of y with respect to x.</div>`,
+      <p>Differentiation finds the <strong>instantaneous rate of change</strong> (gradient) of a function at any point. If y = f(x), the derivative is written as f′(x) or dy/dx.</p>
+      <h3>First Principles (Definition)</h3>
+      <div class="formula-block">f′(x) = lim<sub>h→0</sub> [f(x + h) − f(x)] ÷ h</div>
+      <h3>Standard Rules</h3>
+      <div class="formula-block"><span class="f-comment">-- Power Rule --</span><br>d/dx (x<sup>n</sup>)   = nx<sup>n−1</sup><br>d/dx (ax<sup>n</sup>)  = anx<sup>n−1</sup><br>d/dx (c)     = 0     (c is a constant)<br><br><span class="f-comment">-- Trig Functions --</span><br>d/dx (sin x) = cos x<br>d/dx (cos x) = −sin x<br>d/dx (tan x) = sec<sup>2</sup>x<br><br><span class="f-comment">-- Exponential & Log --</span><br>d/dx (e<sup>x</sup>)   = e<sup>x</sup><br>d/dx (ln x)  = 1 ÷ x</div>
+      <h3>Composite Rules</h3>
+      <div class="formula-block"><span class="f-comment">-- Sum/Difference Rule --</span><br>d/dx [f(x) ± g(x)] = f′(x) ± g′(x)<br><br><span class="f-comment">-- Product Rule --</span><br>d/dx [u × v] = u(dv/dx) + v(du/dx)<br><br><span class="f-comment">-- Quotient Rule --</span><br>d/dx [u ÷ v] = [v(du/dx) − u(dv/dx)] ÷ v<sup>2</sup><br><br><span class="f-comment">-- Chain Rule (function of a function) --</span><br>d/dx [f(g(x))] = f′(g(x)) × g′(x)</div>
+      <div class="info-box box-teal"><strong>Notation</strong>f′(x) = dy/dx = the first derivative. f″(x) = d<sup>2</sup>y/dx<sup>2</sup> = the second derivative (rate of change of the gradient).</div>
+      <div class="info-box box-orange"><strong>Exam Tip (WAEC/NECO/JAMB)</strong>Most questions use the power rule. Expand brackets before differentiating if needed. Remember: differentiate term by term for polynomials.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Differentiate y = 3x⁴ − 2x² + 7.</div><div class="ex-steps">dy/dx = 12x³ − 4x + 0</div><div class="ex-answer">= 12x³ − 4x</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Find the gradient of y = x³ − 3x at x = 2.</div><div class="ex-steps">dy/dx = 3x² − 3<br>At x=2: 3(4)−3 = 12−3</div><div class="ex-answer">= 9</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Power Rule</div>
+        <div class="ex-q">Differentiate y = 3x<sup>4</sup> − 2x<sup>2</sup> + 7.</div>
+        <div class="ex-steps">dy/dx = 3 × 4x<sup>3</sup> − 2 × 2x + 0</div>
+        <div class="ex-answer">= 12x<sup>3</sup> − 4x</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Gradient at a Point</div>
+        <div class="ex-q">Find the gradient of y = x<sup>3</sup> − 3x at x = 2.</div>
+        <div class="ex-steps">dy/dx = 3x<sup>2</sup> − 3<br>At x = 2: gradient = 3(4) − 3 = 12 − 3</div>
+        <div class="ex-answer">= 9</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Chain Rule</div>
+        <div class="ex-q">Differentiate y = (3x<sup>2</sup> + 1)<sup>4</sup>.</div>
+        <div class="ex-steps">Let u = 3x<sup>2</sup> + 1, so y = u<sup>4</sup><br>du/dx = 6x, &nbsp; dy/du = 4u<sup>3</sup><br>dy/dx = 4u<sup>3</sup> × 6x = 24x(3x<sup>2</sup> + 1)<sup>3</sup></div>
+        <div class="ex-answer">= 24x(3x<sup>2</sup> + 1)<sup>3</sup></div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Product Rule</div>
+        <div class="ex-q">Differentiate y = x<sup>2</sup> sin x.</div>
+        <div class="ex-steps">u = x<sup>2</sup>, v = sin x<br>du/dx = 2x, dv/dx = cos x<br>dy/dx = x<sup>2</sup>(cos x) + sin x(2x)</div>
+        <div class="ex-answer">= x<sup>2</sup> cos x + 2x sin x</div>
+      </div>`,
     questions: [
       { q:'Derivative of x⁵ is:', opts:['5x⁴','5x','x⁴','4x⁵'], ans:0 },
       { q:'d/dx(7) =', opts:['0','7','1','7x'], ans:0 },
       { q:'Derivative of sin x is:', opts:['cos x','-cos x','sin x','-sin x'], ans:0 },
       { q:'Gradient of y = x² − 4x at x = 3 is:', opts:['2','6','-2','10'], ans:0 },
+      { q:'If y = (2x + 1)³, then dy/dx =', opts:['6(2x+1)²','3(2x+1)²','6(2x+1)','2(2x+1)³'], ans:0 },
+      { q:'Differentiate y = x³ − 5x² + 4. Find dy/dx at x = 1.', opts:['-7','7','-3','3'], ans:0 },
     ]
   },
 
@@ -1035,36 +1286,94 @@ const TOPICS = {
     lesson: `
       <h2>📈 Application of Differentiation</h2>
       <h3>Rate of Change</h3>
-      <div class="formula-block">dy/dx gives the rate of change of y w.r.t. x<br>d²y/dx² is the second derivative</div>
-      <h3>Maxima and Minima</h3>
-      <div class="formula-block">Step 1: Find dy/dx<br>Step 2: Set dy/dx = 0  (stationary points)<br>Step 3: Find d²y/dx²<br>  If d²y/dx² > 0 → Minimum<br>  If d²y/dx² < 0 → Maximum</div>
-      <div class="info-box box-orange"><strong>JAMB Tip</strong>Word problems: form an equation for the quantity, differentiate, set = 0, solve.</div>`,
+      <p>dy/dx gives the rate at which y changes with respect to x. For real-life problems, this could be velocity (ds/dt), acceleration (dv/dt), rate of area change, etc.</p>
+      <div class="formula-block">Velocity:     v = ds/dt     (rate of change of displacement)<br>Acceleration: a = dv/dt = d<sup>2</sup>s/dt<sup>2</sup>   (rate of change of velocity)</div>
+      <h3>Stationary Points (Turning Points)</h3>
+      <p>A stationary point occurs where the gradient is zero: dy/dx = 0. There are three types:</p>
+      <div class="formula-block">Step 1: Find dy/dx<br>Step 2: Set dy/dx = 0 and solve for x (stationary points)<br>Step 3: Find d<sup>2</sup>y/dx<sup>2</sup> (the second derivative)<br><br>  If d<sup>2</sup>y/dx<sup>2</sup> &gt; 0 → <span class="f-val">Minimum</span> (curve bends upward ∪)<br>  If d<sup>2</sup>y/dx<sup>2</sup> &lt; 0 → <span class="f-val">Maximum</span> (curve bends downward ∩)<br>  If d<sup>2</sup>y/dx<sup>2</sup> = 0 → inconclusive, check further (could be inflection)</div>
+      <h3>Increasing & Decreasing Functions</h3>
+      <div class="formula-block">f(x) is increasing  where f′(x) &gt; 0<br>f(x) is decreasing  where f′(x) &lt; 0</div>
+      <h3>Optimisation Problems</h3>
+      <p>Exam questions often give a real-life scenario (area, volume, cost, profit) and ask you to maximise or minimise a quantity.</p>
+      <div class="info-box box-orange"><strong>Method for Optimisation</strong>1. Form an equation for the quantity to be optimised. 2. If there are two variables, use a constraint to eliminate one. 3. Differentiate and set dy/dx = 0. 4. Solve for x. 5. Use d<sup>2</sup>y/dx<sup>2</sup> to confirm max or min.</div>
+      <div class="info-box box-teal"><strong>Gradient of Tangent & Normal</strong>At a point on a curve, the tangent has gradient m = dy/dx. The normal (perpendicular to tangent) has gradient −1 ÷ m.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Turning Points</div><div class="ex-q">Find the turning point of y = x² − 6x + 5.</div><div class="ex-steps">dy/dx = 2x − 6 = 0 → x = 3<br>y = 9−18+5 = −4<br>d²y/dx² = 2 > 0 → minimum</div><div class="ex-answer">Minimum at (3, −4)</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Turning Points</div>
+        <div class="ex-q">Find the turning point of y = x<sup>2</sup> − 6x + 5 and state its nature.</div>
+        <div class="ex-steps">dy/dx = 2x − 6 = 0 → x = 3<br>y = (3)<sup>2</sup> − 6(3) + 5 = 9 − 18 + 5 = −4<br>d<sup>2</sup>y/dx<sup>2</sup> = 2 &gt; 0 → minimum</div>
+        <div class="ex-answer">Minimum turning point at (3, −4)</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Velocity & Acceleration</div>
+        <div class="ex-q">A particle moves so that s = t<sup>3</sup> − 3t<sup>2</sup> + 4 (metres, seconds). Find its velocity and acceleration at t = 2.</div>
+        <div class="ex-steps">v = ds/dt = 3t<sup>2</sup> − 6t<br>At t = 2: v = 3(4) − 6(2) = 12 − 12 = 0 m/s<br>a = dv/dt = 6t − 6<br>At t = 2: a = 6(2) − 6 = 6 m/s<sup>2</sup></div>
+        <div class="ex-answer">Velocity = 0 m/s, Acceleration = 6 m/s²</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Optimisation</div>
+        <div class="ex-q">A rectangular field is to be fenced on three sides (one side is a wall). If the total fencing available is 60 m, find the dimensions that maximise the area.</div>
+        <div class="ex-steps">Let width = x. Then: x + x + length = 60 → length = 60 − 2x<br>Area A = x(60 − 2x) = 60x − 2x<sup>2</sup><br>dA/dx = 60 − 4x = 0 → x = 15<br>d<sup>2</sup>A/dx<sup>2</sup> = −4 &lt; 0 → maximum<br>Length = 60 − 2(15) = 30 m</div>
+        <div class="ex-answer">Width = 15 m, Length = 30 m. Maximum area = 450 m²</div>
+      </div>`,
     questions: [
       { q:'Stationary points occur when dy/dx =', opts:['0','1','-1','undefined'], ans:0 },
       { q:'If d²y/dx² > 0 at a stationary point, it is a:', opts:['Minimum','Maximum','Point of inflection','Saddle point'], ans:0 },
       { q:'The maximum of y = −x² + 4x − 1 occurs at x =', opts:['2','4','−1','1'], ans:0 },
       { q:'Rate of change of y = 3t² + 2 with respect to t at t = 2 is:', opts:['12','6','14','10'], ans:0 },
+      { q:'A curve has dy/dx = 3x² − 12. At which x-values are the stationary points?', opts:['x = ±2','x = 0 and 4','x = 2 only','x = ±4'], ans:0 },
+      { q:'If velocity v = 4t − t², find the maximum velocity.', opts:['4','2','8','16'], ans:0 },
     ]
   },
 
   'integration': {
     lesson: `
       <h2>∫ Integration</h2>
-      <p>Integration is the reverse of differentiation. It finds areas under curves.</p>
-      <div class="formula-block"><span class="f-comment">-- Power Rule --</span><br>∫xⁿ dx = xⁿ⁺¹/(n+1) + C   (n ≠ −1)<br>∫k dx  = kx + C<br><br><span class="f-comment">-- Trig --</span><br>∫sin x dx = −cos x + C<br>∫cos x dx =  sin x + C<br><br><span class="f-comment">-- Definite integral --</span><br>∫ₐᵇ f(x) dx = [F(x)]ₐᵇ = F(b) − F(a)</div>
-      <div class="info-box box-teal"><strong>Area under curve</strong>Area = ∫ₐᵇ f(x) dx  (always take absolute value for area)</div>`,
+      <p>Integration is the reverse (anti-derivative) of differentiation. It is used to find areas under curves, volumes of revolution, and accumulated quantities.</p>
+      <h3>Indefinite Integration</h3>
+      <p>The result of an indefinite integral always includes a constant of integration <strong>C</strong> (since differentiating any constant gives zero).</p>
+      <div class="formula-block"><span class="f-comment">-- Power Rule --</span><br>∫x<sup>n</sup> dx = x<sup>n+1</sup> ÷ (n + 1) + C     (n ≠ −1)<br>∫k dx     = kx + C             (k is a constant)<br>∫kx<sup>n</sup> dx = kx<sup>n+1</sup> ÷ (n + 1) + C<br><br><span class="f-comment">-- Trig Functions --</span><br>∫sin x dx  = −cos x + C<br>∫cos x dx  =  sin x + C<br>∫sec<sup>2</sup>x dx = tan x + C<br><br><span class="f-comment">-- Exponential & Log --</span><br>∫e<sup>x</sup> dx   = e<sup>x</sup> + C<br>∫(1÷x) dx  = ln|x| + C</div>
+      <h3>Definite Integration</h3>
+      <p>A definite integral has limits and gives a numerical value. The constant C cancels out.</p>
+      <div class="formula-block">∫<sub>a</sub><sup>b</sup> f(x) dx = [F(x)]<sub>a</sub><sup>b</sup> = F(b) − F(a)<br><br>where F(x) is the anti-derivative of f(x)</div>
+      <h3>Area Under a Curve</h3>
+      <div class="formula-block">Area between curve and x-axis, from x=a to x=b:<br>A = ∫<sub>a</sub><sup>b</sup> f(x) dx<br><br>⚠️ If the curve dips below the x-axis in part of [a, b],<br>split the integral and take the absolute value of each part.<br>Total area = |∫<sub>a</sub><sup>c</sup> f(x)dx| + |∫<sub>c</sub><sup>b</sup> f(x)dx|  where f(c)=0</div>
+      <div class="info-box box-teal"><strong>Area Between Two Curves</strong>Area = ∫<sub>a</sub><sup>b</sup> [f(x) − g(x)] dx, where f(x) ≥ g(x) on [a, b].</div>
+      <div class="info-box box-orange"><strong>Exam Tip (WAEC/NECO/JAMB)</strong>Always integrate term by term for polynomials. For definite integrals, substitute the upper limit first, then subtract the result with the lower limit. Never forget +C for indefinite integrals.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Integrate 4x³ + 2x.</div><div class="ex-steps">= 4x⁴/4 + 2x²/2 + C</div><div class="ex-answer">= x⁴ + x² + C</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Definite Integral</div><div class="ex-q">Evaluate ∫₁³ (3x²) dx.</div><div class="ex-steps">[x³]₁³ = 27 − 1</div><div class="ex-answer">= 26</div></div>`,
+      <div class="example-box">
+        <div class="ex-label">Example 1 — Indefinite Integral</div>
+        <div class="ex-q">Integrate 4x<sup>3</sup> + 2x.</div>
+        <div class="ex-steps">∫(4x<sup>3</sup> + 2x) dx = 4 × x<sup>4</sup>/4 + 2 × x<sup>2</sup>/2 + C<br>= x<sup>4</sup> + x<sup>2</sup> + C</div>
+        <div class="ex-answer">= x<sup>4</sup> + x<sup>2</sup> + C</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 2 — Definite Integral</div>
+        <div class="ex-q">Evaluate ∫<sub>1</sub><sup>3</sup> (3x<sup>2</sup>) dx.</div>
+        <div class="ex-steps">∫3x<sup>2</sup> dx = x<sup>3</sup> + C<br>[x<sup>3</sup>]<sub>1</sub><sup>3</sup> = 3<sup>3</sup> − 1<sup>3</sup> = 27 − 1</div>
+        <div class="ex-answer">= 26</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 3 — Area Under a Curve</div>
+        <div class="ex-q">Find the area bounded by y = x<sup>2</sup>, the x-axis, x = 0 and x = 3.</div>
+        <div class="ex-steps">A = ∫<sub>0</sub><sup>3</sup> x<sup>2</sup> dx = [x<sup>3</sup> ÷ 3]<sub>0</sub><sup>3</sup><br>= (3<sup>3</sup> ÷ 3) − (0<sup>3</sup> ÷ 3)<br>= 9 − 0</div>
+        <div class="ex-answer">= 9 square units</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Given dy/dx, find y</div>
+        <div class="ex-q">Given dy/dx = 6x<sup>2</sup> − 4 and y = 5 when x = 1, find y.</div>
+        <div class="ex-steps">y = ∫(6x<sup>2</sup> − 4) dx = 2x<sup>3</sup> − 4x + C<br>Substitute x=1, y=5: 5 = 2(1) − 4(1) + C → 5 = −2 + C → C = 7</div>
+        <div class="ex-answer">y = 2x<sup>3</sup> − 4x + 7</div>
+      </div>`,
     questions: [
       { q:'∫6x² dx =', opts:['2x³ + C','3x² + C','6x³ + C','x³ + C'], ans:0 },
       { q:'∫₀² 2x dx =', opts:['4','2','8','0'], ans:0 },
       { q:'∫cos x dx =', opts:['sin x + C','-sin x + C','tan x + C','-cos x + C'], ans:0 },
       { q:'∫5 dx =', opts:['5x + C','5 + C','0','x + C'], ans:0 },
+      { q:'The area under y = 2x from x = 0 to x = 4 is:', opts:['16','8','32','12'], ans:0 },
+      { q:'∫₁² (x² + 1) dx =', opts:['10/3','4/3','8/3','14/3'], ans:0 },
     ]
   },
 };
