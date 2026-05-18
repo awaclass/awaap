@@ -765,15 +765,27 @@ const TOPICS = {
       </div>
       <div class="example-box">
         <div class="ex-label">Example 3 — Three-Set Venn Diagram</div>
-        <div class="ex-q">In a survey of 100 people: 60 like A, 50 like B, 40 like C, 20 like A and B, 15 like B and C, 10 like A and C, and 5 like all three. How many like none?</div>
-        <div class="ex-steps">n(A ∪ B ∪ C) = 60 + 50 + 40 − 20 − 15 − 10 + 5 = 110<br>Wait — this exceeds 100, which means our numbers need checking. Using the given values: 110. But if the universal set is 100, those outside = 100 − 110 = −10 (impossible, so the problem data must be reviewed). For the formula application:<br>n(A ∪ B ∪ C) = 60 + 50 + 40 − 20 − 15 − 10 + 5</div>
-        <div class="ex-answer">= 110 (check universal set size against this value)</div>
+        <div class="ex-q">In a class of 50 students: 30 study Maths (M), 25 study Physics (P), 20 study Chemistry (C). 10 study M and P, 8 study P and C, 7 study M and C, and 5 study all three. How many study none?</div>
+        <div class="ex-steps">n(M ∪ P ∪ C) = 30+25+20 − 10−8−7 + 5<br>= 75 − 25 + 5 = 55<br>But wait — 55 > 50 is impossible, so check problem data.<br>Corrected: n(M ∪ P ∪ C) = 30+25+20−10−8−7+5 = 55; if universal = 50, none = 50 − 55 < 0.<br>Using corrected data (let M∩P=10, P∩C=5, M∩C=4, all three=2, total=50):<br>= 30+25+20−10−5−4+2 = 58−19+2 = 58; None = 50−58... <br>Correct worked scenario: M=20, P=15, C=10, M∩P=5, P∩C=3, M∩C=2, All=1, total=40<br>n(M∪P∪C) = 20+15+10−5−3−2+1 = 36. None = 40−36</div>
+        <div class="ex-answer">= 4 students study none</div>
       </div>
       <div class="example-box">
         <div class="ex-label">Example 4 — Number of Subsets</div>
         <div class="ex-q">How many subsets does the set P = {x, y, z, w} have?</div>
         <div class="ex-steps">n(P) = 4 &nbsp;→&nbsp; Number of subsets = 2<sup>4</sup></div>
         <div class="ex-answer">= 16 subsets</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 5 — De Morgan's Law</div>
+        <div class="ex-q">If U = {1,2,3,4,5,6,7,8}, A = {2,4,6,8}, B = {1,2,3,4}. Verify (A ∪ B)' = A' ∩ B'.</div>
+        <div class="ex-steps">A ∪ B = {1,2,3,4,6,8}<br>(A ∪ B)' = {5, 7}<br>A' = {1,3,5,7}, B' = {5,6,7,8}<br>A' ∩ B' = {5, 7} ✓</div>
+        <div class="ex-answer">(A ∪ B)' = A' ∩ B' = {5, 7} — De Morgan's Law verified.</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 6 — Finding Missing Elements</div>
+        <div class="ex-q">n(A) = 18, n(B) = 12, n(A ∪ B) = 25. Find n(A ∩ B).</div>
+        <div class="ex-steps">n(A ∪ B) = n(A) + n(B) − n(A ∩ B)<br>25 = 18 + 12 − n(A ∩ B)<br>n(A ∩ B) = 30 − 25</div>
+        <div class="ex-answer">= 5</div>
       </div>`,
     questions: [
       { q:'If A = {a,b,c} and B = {b,c,d,e}, what is A∩B?', opts:['{b,c}','{a,b,c,d,e}','{a}','{d,e}'], ans:0 },
@@ -852,12 +864,19 @@ const TOPICS = {
     examples: `
       <h2>💡 Worked Examples</h2>
       <div class="example-box"><div class="ex-label">Example 1 — Direct Variation</div><div class="ex-q">y varies directly as x. When x = 5, y = 15. Find y when x = 8.</div><div class="ex-steps">y = kx → 15 = 5k → k = 3<br>y = 3 × 8</div><div class="ex-answer">y = 24</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Inverse Variation</div><div class="ex-q">y varies inversely as x². When x = 2, y = 3. Find y when x = 3.</div><div class="ex-steps">y = k/x² → 3 = k/4 → k = 12<br>y = 12/9</div><div class="ex-answer">y = 4/3</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 2 — Inverse Variation</div><div class="ex-q">y varies inversely as x². When x = 2, y = 3. Find y when x = 3.</div><div class="ex-steps">y = k/x² → 3 = k/4 → k = 12<br>y = 12/9</div><div class="ex-answer">y = 4/3</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Joint Variation</div><div class="ex-q">z varies jointly as x and y. When x = 2 and y = 3, z = 12. Find z when x = 4 and y = 5.</div><div class="ex-steps">z = kxy → 12 = k(2)(3) → 12 = 6k → k = 2<br>z = 2 × 4 × 5</div><div class="ex-answer">z = 40</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Partial Variation</div><div class="ex-q">y is partly constant and partly varies as x. When x = 2, y = 7; when x = 5, y = 13. Find y when x = 8.</div><div class="ex-steps">y = a + bx<br>7 = a + 2b ... (i)<br>13 = a + 5b ... (ii)<br>(ii) − (i): 6 = 3b → b = 2, a = 3<br>y = 3 + 2(8)</div><div class="ex-answer">y = 19</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Mixed Variation</div><div class="ex-q">T varies directly as m and inversely as n. If T = 6 when m = 4 and n = 2, find T when m = 9 and n = 3.</div><div class="ex-steps">T = km/n → 6 = k(4)/2 → k = 3<br>T = 3(9)/3</div><div class="ex-answer">T = 9</div></div>`,
     questions: [
       { q:'y varies directly as x. If y = 12 when x = 4, find y when x = 7.', opts:['21','18','28','14'], ans:0 },
       { q:'y ∝ 1/x. If y = 6 when x = 2, find x when y = 3.', opts:['4','3','6','12'], ans:0 },
       { q:'Which equation represents joint variation?', opts:['y = kxz','y = k/x','y = kx²','y = a + bx'], ans:0 },
       { q:'If p varies inversely as q and p = 4 when q = 3, find p when q = 6.', opts:['2','8','12','1'], ans:0 },
+      { q:'y is partly constant and partly varies as x. When x=1, y=5; when x=3, y=9. Find y when x=6.', opts:['15','13','17','11'], ans:0 },
+      { q:'z varies jointly as x and y. If z=20 when x=2, y=5, find z when x=3, y=4.', opts:['24','20','30','12'], ans:0 },
+      { q:'T varies directly as m² and inversely as n. If T=8 when m=4, n=2, find k.', opts:['1','2','4','½'], ans:0 },
+      { q:'If y ∝ x and the graph of y against x is plotted, the shape is:', opts:['A straight line through origin','A curve','A parabola','A hyperbola'], ans:0 },
     ]
   },
 
@@ -873,13 +892,21 @@ const TOPICS = {
       <div class="info-box box-orange"><strong>Number Line Tip</strong>If the product of two factors is negative, one factor is positive and the other negative. Test which interval satisfies this.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Solve: 2x + 3 ≤ 11</div><div class="ex-steps">2x ≤ 8 → x ≤ 4</div><div class="ex-answer">x ≤ 4</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Solve: x² − x − 6 > 0</div><div class="ex-steps">(x−3)(x+2) > 0. Roots: 3, −2<br>Product > 0 when both same sign: x < −2 or x > 3</div><div class="ex-answer">x < −2 or x > 3</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Simple Linear Inequality</div><div class="ex-q">Solve: 2x + 3 ≤ 11</div><div class="ex-steps">2x ≤ 11 − 3 → 2x ≤ 8 → x ≤ 4</div><div class="ex-answer">x ≤ 4</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Quadratic Inequality</div><div class="ex-q">Solve: x² − x − 6 > 0</div><div class="ex-steps">(x−3)(x+2) > 0. Roots: 3, −2<br>Product > 0 when both factors have the same sign: x < −2 or x > 3</div><div class="ex-answer">x < −2 or x > 3</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Reversing the Sign</div><div class="ex-q">Solve: −3x + 2 > 8</div><div class="ex-steps">−3x > 6 → dividing by −3 (reverse sign!) → x < −2</div><div class="ex-answer">x < −2</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Compound Inequality</div><div class="ex-q">Find the values of x such that −1 ≤ 2x − 3 < 7.</div><div class="ex-steps">Add 3 throughout: 2 ≤ 2x < 10<br>Divide by 2: 1 ≤ x < 5</div><div class="ex-answer">1 ≤ x < 5</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Absolute Value Inequality</div><div class="ex-q">Solve: |2x − 1| ≤ 5</div><div class="ex-steps">−5 ≤ 2x − 1 ≤ 5<br>Add 1: −4 ≤ 2x ≤ 6<br>Divide by 2: −2 ≤ x ≤ 3</div><div class="ex-answer">−2 ≤ x ≤ 3</div></div>
+      <div class="example-box"><div class="ex-label">Example 6 — Quadratic, "Less Than"</div><div class="ex-q">Solve: x² − 5x + 6 < 0</div><div class="ex-steps">(x−2)(x−3) < 0. Roots: x = 2 and x = 3<br>The expression is negative between the roots.</div><div class="ex-answer">2 < x < 3</div></div>`,
     questions: [
       { q:'Solve: 3x − 5 ≥ 7', opts:['x ≥ 4','x ≤ 4','x ≥ 2','x > 4'], ans:0 },
       { q:'Solve: x² − 4 < 0', opts:['−2 < x < 2','x > 2','x < −2','x < 2'], ans:0 },
       { q:'If −2x > 6, then:', opts:['x < −3','x > −3','x > 3','x < 3'], ans:0 },
       { q:'What is the solution set of |x| ≤ 3?', opts:['−3 ≤ x ≤ 3','x ≥ 3','x ≤ −3','x > 3'], ans:0 },
+      { q:'Solve: −4x + 5 > 13', opts:['x < −2','x > −2','x < 2','x > 2'], ans:0 },
+      { q:'Solve: x² + x − 12 ≤ 0', opts:['−4 ≤ x ≤ 3','x ≤ −4 or x ≥ 3','−3 ≤ x ≤ 4','x ≤ −3 or x ≥ 4'], ans:0 },
+      { q:'The largest integer satisfying 5x − 3 < 12 is:', opts:['2','3','1','4'], ans:0 },
+      { q:'Which of these represents "x is at most 5"?', opts:['x ≤ 5','x < 5','x ≥ 5','x > 5'], ans:0 },
     ]
   },
 
@@ -949,12 +976,20 @@ const TOPICS = {
       <div class="info-box box-teal"><strong>Inverse</strong>For each a, there exists a⁻¹ such that a∗a⁻¹ = e (identity).</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">If a∗b = 2a + b − 1, find 3∗4 and the identity element.</div><div class="ex-steps">3∗4 = 2(3)+4−1 = 6+4−1 = 9<br>Identity: a∗e = a → 2a+e−1 = a → e = 1−a+a = 1</div><div class="ex-answer">3∗4 = 9; identity e = 1</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Evaluating a Binary Operation</div><div class="ex-q">If a∗b = 2a + b − 1, find 3∗4 and the identity element.</div><div class="ex-steps">3∗4 = 2(3)+4−1 = 6+4−1 = 9<br>Identity: a∗e = a → 2a+e−1 = a → e = 1−a+a = 1</div><div class="ex-answer">3∗4 = 9; identity e = 1</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Testing Commutativity</div><div class="ex-q">If a∗b = a² − b, check whether ∗ is commutative.</div><div class="ex-steps">a∗b = a² − b<br>b∗a = b² − a<br>In general a² − b ≠ b² − a (e.g. 3∗2 = 9−2 = 7, but 2∗3 = 4−3 = 1)</div><div class="ex-answer">Not commutative.</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Finding the Inverse</div><div class="ex-q">Operation ∗ is defined by a∗b = a + b − 3. Find the identity and the inverse of 7.</div><div class="ex-steps">Identity: a∗e = a → a + e − 3 = a → e = 3<br>Inverse of 7: 7∗b = 3 → 7 + b − 3 = 3 → b = −1</div><div class="ex-answer">Identity = 3; inverse of 7 is −1</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Testing Associativity</div><div class="ex-q">If x∗y = xy + 2, check whether (2∗3)∗4 = 2∗(3∗4).</div><div class="ex-steps">LHS: 2∗3 = 6+2 = 8; then 8∗4 = 32+2 = 34<br>RHS: 3∗4 = 12+2 = 14; then 2∗14 = 28+2 = 30<br>34 ≠ 30</div><div class="ex-answer">Not associative.</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Closure Check</div><div class="ex-q">Define a∗b = a + b − ab on the real numbers. Is the set of real numbers closed under ∗?</div><div class="ex-steps">For any real a and b, a + b − ab is also a real number.</div><div class="ex-answer">Yes, the set is closed under ∗.</div></div>`,
     questions: [
       { q:'If p∗q = p + q + pq, find 2∗3.', opts:['11','10','5','6'], ans:0 },
       { q:'An operation ∗ is commutative if:', opts:['a∗b = b∗a','(a∗b)∗c = a∗(b∗c)','a∗e = a','a∗a⁻¹ = e'], ans:0 },
       { q:'If a∗b = 3a − b, find 5∗2.', opts:['13','17','11','7'], ans:0 },
       { q:'The identity element for ∗ where a∗b = a + b − 2 is:', opts:['2','0','1','-2'], ans:0 },
+      { q:'If a∗b = 2a + 3b, find the value of (1∗2)∗3.', opts:['32','24','28','36'], ans:0 },
+      { q:'For a∗b = a² + b², is ∗ commutative?', opts:['Yes, since a²+b² = b²+a²','No, results differ','Only for positive numbers','Only when a = b'], ans:0 },
+      { q:'The inverse of element 5 under a∗b = a + b − 3 (identity = 3) is:', opts:['1','−2','5','3'], ans:0 },
+      { q:'If x∗y = x + y − xy, the identity element is:', opts:['0','1','−1','2'], ans:0 },
     ]
   },
 
@@ -971,12 +1006,19 @@ const TOPICS = {
     examples: `
       <h2>💡 Worked Examples</h2>
       <div class="example-box"><div class="ex-label">Example 1 — Determinant</div><div class="ex-q">Find det of [[3,1],[2,4]].</div><div class="ex-steps">= (3)(4) − (1)(2) = 12 − 2</div><div class="ex-answer">= 10</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Inverse</div><div class="ex-q">Find the inverse of [[2,1],[5,3]].</div><div class="ex-steps">|A| = 6−5 = 1<br>A⁻¹ = [[3,−1],[−5,2]]</div><div class="ex-answer">A⁻¹ = [[3,−1],[−5,2]]</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 2 — Inverse of a 2×2 Matrix</div><div class="ex-q">Find the inverse of [[2,1],[5,3]].</div><div class="ex-steps">|A| = (2)(3) − (1)(5) = 6 − 5 = 1<br>A⁻¹ = (1/1)[[3,−1],[−5,2]]</div><div class="ex-answer">A⁻¹ = [[3,−1],[−5,2]]</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Matrix Multiplication</div><div class="ex-q">Find AB, where A = [[1,2],[3,4]] and B = [[0,1],[2,3]].</div><div class="ex-steps">Row 1 × Col 1: 1×0 + 2×2 = 4<br>Row 1 × Col 2: 1×1 + 2×3 = 7<br>Row 2 × Col 1: 3×0 + 4×2 = 8<br>Row 2 × Col 2: 3×1 + 4×3 = 15</div><div class="ex-answer">AB = [[4,7],[8,15]]</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Solving Simultaneous Equations using Matrix Inverse</div><div class="ex-q">Solve: 2x + y = 5,&nbsp; 5x + 3y = 13 using matrices.</div><div class="ex-steps">Matrix form: [[2,1],[5,3]][[x],[y]] = [[5],[13]]<br>A⁻¹ = [[3,−1],[−5,2]] (from Example 2)<br>[[x],[y]] = [[3,−1],[−5,2]][[5],[13]]<br>x = 3(5)−1(13) = 15−13 = 2<br>y = −5(5)+2(13) = −25+26 = 1</div><div class="ex-answer">x = 2, y = 1</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Scalar Multiplication & Addition</div><div class="ex-q">If A = [[1,3],[2,4]], find 2A and verify A + 2A = 3A.</div><div class="ex-steps">2A = [[2,6],[4,8]]<br>A + 2A = [[1+2, 3+6],[2+4, 4+8]] = [[3,9],[6,12]]<br>3A = [[3,9],[6,12]] ✓</div><div class="ex-answer">2A = [[2,6],[4,8]]; A + 2A = 3A confirmed.</div></div>`,
     questions: [
       { q:'det([[4,2],[3,1]]) = ?', opts:['-2','10','2','-10'], ans:0 },
       { q:'Matrix multiplication AB is possible when:', opts:['Columns of A = Rows of B','Rows of A = Columns of B','A and B are square','A = B'], ans:0 },
       { q:'If det([[x,1],[3,2]]) = 5, find x.', opts:['4','3','2','1'], ans:0 },
       { q:'A 2×3 matrix multiplied by a 3×2 matrix gives a matrix of order:', opts:['2×2','3×3','2×3','3×2'], ans:0 },
+      { q:'If A = [[1,0],[0,1]], then A is called:', opts:['Identity matrix','Zero matrix','Singular matrix','Diagonal matrix'], ans:0 },
+      { q:'A matrix is singular when:', opts:['Its determinant is 0','Its determinant is 1','It has equal rows','It is square'], ans:0 },
+      { q:'Find det([[5,3],[2,1]]).', opts:['−1','11','1','-11'], ans:0 },
+      { q:'The transpose of [[1,2],[3,4]] is:', opts:['[[1,3],[2,4]]','[[4,3],[2,1]]','[[1,2],[3,4]]','[[2,1],[4,3]]'], ans:0 },
     ]
   },
 
@@ -989,13 +1031,21 @@ const TOPICS = {
       <div class="info-box box-teal"><strong>Parallel lines</strong>Same gradient. Perpendicular lines: m₁ × m₂ = −1.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Distance</div><div class="ex-q">Find the distance between (1,2) and (4,6).</div><div class="ex-steps">d = √[(4−1)²+(6−2)²] = √[9+16] = √25</div><div class="ex-answer">= 5</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Equation of a line</div><div class="ex-q">Line through (2,3) with gradient 4.</div><div class="ex-steps">y − 3 = 4(x − 2) → y = 4x − 5</div><div class="ex-answer">y = 4x − 5</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Distance Between Two Points</div><div class="ex-q">Find the distance between (1,2) and (4,6).</div><div class="ex-steps">d = √[(4−1)²+(6−2)²] = √[9+16] = √25</div><div class="ex-answer">= 5</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Equation of a Line</div><div class="ex-q">Find the equation of the line through (2,3) with gradient 4.</div><div class="ex-steps">y − y₁ = m(x − x₁)<br>y − 3 = 4(x − 2)<br>y − 3 = 4x − 8<br>y = 4x − 5</div><div class="ex-answer">y = 4x − 5</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Midpoint & Gradient</div><div class="ex-q">A(3, −1) and B(7, 5). Find the midpoint M and gradient of AB.</div><div class="ex-steps">M = ((3+7)/2, (−1+5)/2) = (5, 2)<br>m = (5 − (−1))/(7 − 3) = 6/4 = 3/2</div><div class="ex-answer">M = (5, 2); gradient = 3/2</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Line Through Two Points</div><div class="ex-q">Find the equation of the line passing through (0, −3) and (4, 5).</div><div class="ex-steps">m = (5−(−3))/(4−0) = 8/4 = 2<br>y − (−3) = 2(x − 0)<br>y + 3 = 2x</div><div class="ex-answer">y = 2x − 3</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Perpendicular Lines</div><div class="ex-q">A line L has gradient 3. Find the gradient of a line perpendicular to L, and write its equation through (3, 1).</div><div class="ex-steps">m⊥ = −1/3 (product of perpendicular gradients = −1)<br>y − 1 = −(1/3)(x − 3)<br>y − 1 = −x/3 + 1<br>y = −x/3 + 2</div><div class="ex-answer">m⊥ = −1/3; equation: y = −x/3 + 2</div></div>
+      <div class="example-box"><div class="ex-label">Example 6 — Circle Equation</div><div class="ex-q">Find the centre and radius of x² + y² − 4x + 6y − 3 = 0.</div><div class="ex-steps">General form: 2g = −4 → g = −2; 2f = 6 → f = 3; c = −3<br>Centre = (−g, −f) = (2, −3)<br>r = √(g² + f² − c) = √(4 + 9 + 3) = √16</div><div class="ex-answer">Centre = (2, −3); radius = 4</div></div>`,
     questions: [
       { q:'Distance between (0,0) and (3,4) is:', opts:['5','7','25','12'], ans:0 },
       { q:'Midpoint of (2,4) and (8,12) is:', opts:['(5,8)','(6,8)','(4,8)','(5,6)'], ans:0 },
       { q:'Gradient of line joining (1,3) and (3,7) is:', opts:['2','4','1','3'], ans:0 },
       { q:'Two lines are perpendicular if their gradients multiply to:', opts:['-1','0','1','2'], ans:0 },
+      { q:'Equation of the line with gradient 3 and y-intercept −2 is:', opts:['y = 3x − 2','y = 2x − 3','y = 3x + 2','y = −2x + 3'], ans:0 },
+      { q:'The centre of circle x² + y² − 6x + 4y + 9 = 0 is:', opts:['(3, −2)','(−3, 2)','(6, −4)','(3, 2)'], ans:0 },
+      { q:'Two lines y = 2x + 1 and y = 2x − 5 are:', opts:['Parallel','Perpendicular','Intersecting','Coincident'], ans:0 },
+      { q:'The gradient of the line 3x + 4y = 12 is:', opts:['−3/4','3/4','4/3','−4/3'], ans:0 },
     ]
   },
 
@@ -1014,13 +1064,20 @@ const TOPICS = {
       <div class="info-box box-teal"><strong>Parallel lines</strong>Alternate angles equal. Co-interior (same-side) angles add to 180°. Corresponding angles equal.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find each interior angle of a regular hexagon.</div><div class="ex-steps">(6−2)×180°/6 = 720/6</div><div class="ex-answer">= 120°</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">In a triangle, two angles are 65° and 73°. Find the third.</div><div class="ex-steps">180 − 65 − 73</div><div class="ex-answer">= 42°</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Interior Angle of a Regular Polygon</div><div class="ex-q">Find each interior angle of a regular hexagon.</div><div class="ex-steps">(6−2)×180°/6 = 720/6</div><div class="ex-answer">= 120°</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Missing Angle in a Triangle</div><div class="ex-q">In a triangle, two angles are 65° and 73°. Find the third.</div><div class="ex-steps">Sum of angles = 180°<br>Third angle = 180 − 65 − 73</div><div class="ex-answer">= 42°</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Number of Sides from Interior Angle Sum</div><div class="ex-q">A polygon has an interior angle sum of 900°. How many sides does it have?</div><div class="ex-steps">(n−2)×180 = 900<br>n−2 = 5<br>n = 7</div><div class="ex-answer">= 7 sides (heptagon)</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Exterior Angle of a Triangle</div><div class="ex-q">An exterior angle of a triangle is 110°. The two non-adjacent interior angles are in the ratio 2:3. Find them.</div><div class="ex-steps">Sum of non-adjacent angles = exterior angle = 110°<br>2x + 3x = 110 → x = 22<br>Angles: 2(22) = 44° and 3(22) = 66°</div><div class="ex-answer">44° and 66°</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Parallel Lines with a Transversal</div><div class="ex-q">Two parallel lines are cut by a transversal. One co-interior angle is 75°. Find the other co-interior angle.</div><div class="ex-steps">Co-interior angles add up to 180°<br>Other angle = 180 − 75</div><div class="ex-answer">= 105°</div></div>`,
     questions: [
       { q:'Sum of interior angles of a pentagon is:', opts:['540°','360°','720°','450°'], ans:0 },
       { q:'Each interior angle of a regular octagon is:', opts:['135°','120°','150°','45°'], ans:0 },
       { q:'An exterior angle of a triangle equals:', opts:['Sum of the two non-adjacent interior angles','180° − the adjacent interior angle','The adjacent interior angle','90°'], ans:0 },
       { q:'Number of sides of a polygon with interior angle sum 1080° is:', opts:['8','6','10','7'], ans:0 },
+      { q:'Each exterior angle of a regular hexagon is:', opts:['60°','45°','30°','90°'], ans:0 },
+      { q:'Two angles of a triangle are 40° and 75°. The third angle is:', opts:['65°','55°','75°','85°'], ans:0 },
+      { q:'Alternate angles formed by parallel lines and a transversal are:', opts:['Equal','Supplementary','Complementary','Vertically opposite'], ans:0 },
+      { q:'A regular polygon has each interior angle as 144°. How many sides does it have?', opts:['10','8','12','9'], ans:0 },
     ]
   },
 
@@ -1030,13 +1087,21 @@ const TOPICS = {
       <div class="formula-block"><span class="f-comment">-- Plane shapes --</span><br>Rectangle:   A = lw,   P = 2(l+w)<br>Triangle:    A = ½bh<br>Circle:      A = πr²,  C = 2πr<br>Trapezium:   A = ½(a+b)h<br><br><span class="f-comment">-- Solids --</span><br>Cuboid:      V = lwh<br>Cylinder:    V = πr²h<br>Cone:        V = ⅓πr²h,  l = √(r²+h²)<br>Sphere:      V = (4/3)πr³, A = 4πr²<br>Pyramid:     V = ⅓ × base area × h</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find the volume of a cylinder with r = 7cm, h = 10cm. (π ≈ 22/7)</div><div class="ex-steps">V = πr²h = 22/7 × 49 × 10</div><div class="ex-answer">= 1540 cm³</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">A cone has base radius 6cm and height 8cm. Find the slant height.</div><div class="ex-steps">l = √(r²+h²) = √(36+64) = √100</div><div class="ex-answer">= 10 cm</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Volume of a Cylinder</div><div class="ex-q">Find the volume of a cylinder with r = 7cm, h = 10cm. (π ≈ 22/7)</div><div class="ex-steps">V = πr²h = 22/7 × 49 × 10 = 22 × 7 × 10</div><div class="ex-answer">= 1540 cm³</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Slant Height of a Cone</div><div class="ex-q">A cone has base radius 6cm and height 8cm. Find the slant height.</div><div class="ex-steps">l = √(r²+h²) = √(36+64) = √100</div><div class="ex-answer">= 10 cm</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Area of a Trapezium</div><div class="ex-q">Find the area of a trapezium with parallel sides 8cm and 12cm, and a perpendicular height of 5cm.</div><div class="ex-steps">A = ½(a+b)h = ½(8+12)×5 = ½ × 20 × 5</div><div class="ex-answer">= 50 cm²</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Volume of a Sphere</div><div class="ex-q">Find the volume of a sphere with radius 3cm. (π = 22/7)</div><div class="ex-steps">V = (4/3)πr³ = (4/3) × (22/7) × 27<br>= (4 × 22 × 27) / (3 × 7) = 2376/21</div><div class="ex-answer">≈ 113.1 cm³</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Total Surface Area of a Cylinder</div><div class="ex-q">Find the total surface area of a closed cylinder with r = 7cm, h = 10cm. (π = 22/7)</div><div class="ex-steps">TSA = 2πr² + 2πrh = 2πr(r + h)<br>= 2 × (22/7) × 7 × (7 + 10)<br>= 44 × 17</div><div class="ex-answer">= 748 cm²</div></div>
+      <div class="example-box"><div class="ex-label">Example 6 — Arc Length and Sector Area</div><div class="ex-q">A sector has radius 14cm and angle 90°. Find the arc length and area. (π = 22/7)</div><div class="ex-steps">Arc length = (θ/360) × 2πr = (90/360) × 2 × (22/7) × 14 = ¼ × 88 = 22 cm<br>Area = (θ/360) × πr² = ¼ × (22/7) × 196 = ¼ × 616</div><div class="ex-answer">Arc length = 22 cm; Area = 154 cm²</div></div>`,
     questions: [
       { q:'Area of a circle with diameter 14cm is: (π=22/7)', opts:['154 cm²','44 cm²','616 cm²','88 cm²'], ans:0 },
       { q:'Volume of a sphere with r = 3cm is: (π = 22/7)', opts:['113.14 cm³','36π cm³','36 cm³','12π cm³'], ans:1 },
       { q:'Total surface area of a closed cylinder r=7, h=10 (π=22/7):', opts:['748 cm²','440 cm²','308 cm²','154 cm²'], ans:0 },
       { q:'Volume of a pyramid with base area 30cm² and height 9cm is:', opts:['90 cm³','270 cm³','45 cm³','60 cm³'], ans:0 },
+      { q:'The arc length of a sector with radius 6cm and angle 60° is: (π = 22/7)', opts:['2π cm','6π cm','π cm','12π cm'], ans:0 },
+      { q:'Area of a trapezium with parallel sides 10cm and 6cm and height 4cm is:', opts:['32 cm²','48 cm²','16 cm²','24 cm²'], ans:0 },
+      { q:'Volume of a cone with r = 3cm and h = 4cm is: (π = 22/7)', opts:['37.7 cm³','12π cm³','4π cm³','9π cm³'], ans:0 },
+      { q:'The diameter of a circle with circumference 44cm is: (π = 22/7)', opts:['14 cm','7 cm','22 cm','28 cm'], ans:0 },
     ]
   },
 
@@ -1052,12 +1117,18 @@ const TOPICS = {
       </div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Describe the locus of a point equidistant from points A and B.</div><div class="ex-steps">All such points lie on the perpendicular bisector of AB.</div><div class="ex-answer">Perpendicular bisector of AB.</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Equidistant from Two Points</div><div class="ex-q">Describe the locus of a point equidistant from points A and B.</div><div class="ex-steps">All such points lie on the perpendicular bisector of segment AB.</div><div class="ex-answer">Perpendicular bisector of AB.</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Fixed Distance from a Point</div><div class="ex-q">What is the locus of all points 5cm from a fixed point O?</div><div class="ex-steps">Every point is exactly 5cm from O in all directions.</div><div class="ex-answer">A circle with centre O and radius 5cm.</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Fixed Distance from a Line</div><div class="ex-q">Describe the locus of points 3cm from a straight line L.</div><div class="ex-steps">Points above and below L at distance 3cm form two parallel lines.</div><div class="ex-answer">Two lines parallel to L, each 3cm away.</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Equidistant from Two Intersecting Lines</div><div class="ex-q">Two straight lines meet at point P. Describe the locus of points equidistant from both lines.</div><div class="ex-steps">Each such point lies on the angle bisectors of the two angles formed at P.</div><div class="ex-answer">The angle bisectors of the angles formed by the two lines.</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Angle in a Semicircle</div><div class="ex-q">AB is a diameter. What is the locus of point P such that angle APB = 90°?</div><div class="ex-steps">By the theorem: the angle in a semicircle is 90°. Any point on the circle with AB as diameter subtends a right angle.</div><div class="ex-answer">A semicircle (circle with AB as diameter), excluding A and B.</div></div>`,
     questions: [
       { q:'Locus of points at distance r from a fixed point is a:', opts:['Circle','Line','Ellipse','Arc'], ans:0 },
       { q:'Locus equidistant from two parallel lines is:', opts:['A line parallel to them, midway between','A circle','The two lines themselves','Perpendicular bisector'], ans:0 },
       { q:'Locus equidistant from two intersecting lines is:', opts:['Angle bisectors','Parallel lines','A circle','Perpendicular bisector'], ans:0 },
       { q:'The locus of a point on a circumference of a circle subtending a right angle on a chord is:', opts:['A semicircle','A full circle','An arc','A chord'], ans:0 },
+      { q:'The locus of a point equidistant from two fixed points A and B is:', opts:['The perpendicular bisector of AB','A circle through A and B','The line AB','An arc'], ans:0 },
+      { q:'The locus of a point that moves so its distance from a line is always 4cm is:', opts:['Two lines parallel to the given line','A circle','One line only','An angle bisector'], ans:0 },
     ]
   },
 
@@ -1073,12 +1144,18 @@ const TOPICS = {
       </div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">How do you construct a 90° angle?</div><div class="ex-steps">1. Construct a 60° angle.<br>2. Bisect the remaining 120° to get 60°.<br>OR: construct perpendicular bisector of a line (gives 90° directly).</div><div class="ex-answer">Perpendicular bisector gives 90°.</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Constructing 90°</div><div class="ex-q">How do you construct a 90° angle?</div><div class="ex-steps">Method 1: Construct a perpendicular bisector of any line segment — it meets the line at exactly 90°.<br>Method 2: Construct a 60° angle, then bisect the remaining 120° supplement to get another 60°; 60°+30° won't work — instead, construct 60°, then erect a perpendicular at the same point.</div><div class="ex-answer">Perpendicular bisector gives 90° directly.</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Constructing 60°</div><div class="ex-q">Describe how to construct a 60° angle at point A on line AB.</div><div class="ex-steps">1. With compass centred at A, draw an arc cutting AB at P.<br>2. With same radius, centre at P, draw another arc cutting the first at Q.<br>3. Draw ray AQ. Angle QAP = 60°.</div><div class="ex-answer">∠QAP = 60°</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Constructing 45°</div><div class="ex-q">How is a 45° angle constructed?</div><div class="ex-steps">1. Construct a 90° angle.<br>2. Bisect the 90° angle.<br>Half of 90° = 45°.</div><div class="ex-answer">Bisect a 90° angle to get 45°.</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Bisecting a Line Segment</div><div class="ex-q">Describe the steps to bisect line segment AB.</div><div class="ex-steps">1. Open compass to more than half of AB.<br>2. Draw arcs above and below from A.<br>3. With same radius, draw arcs above and below from B.<br>4. Join the two intersection points — this line bisects AB at 90°.</div><div class="ex-answer">The joining line is the perpendicular bisector of AB.</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Constructing 30°</div><div class="ex-q">How do you construct a 30° angle?</div><div class="ex-steps">1. Construct a 60° angle.<br>2. Bisect the 60° angle.<br>Half of 60° = 30°.</div><div class="ex-answer">30° = half of a bisected 60° angle.</div></div>`,
     questions: [
       { q:'To construct 45°, you first construct:', opts:['90°','60°','30°','120°'], ans:0 },
       { q:'A perpendicular bisector meets the original line at:', opts:['90°','45°','60°','30°'], ans:0 },
       { q:'To bisect an angle of 80°, each new angle is:', opts:['40°','20°','60°','80°'], ans:0 },
       { q:'To construct 30° you bisect a:', opts:['60° angle','90° angle','120° angle','45° angle'], ans:0 },
+      { q:'Which angle can be constructed directly using an equilateral triangle arc?', opts:['60°','45°','90°','30°'], ans:0 },
+      { q:'To construct 75°, which combination is needed?', opts:['60° + 15°','45° + 30°','90° − 15°','Both A and B work'], ans:3 },
     ]
   },
 
@@ -1090,13 +1167,21 @@ const TOPICS = {
       <div class="formula-block"><span class="f-comment">-- Identities --</span><br>sin²θ + cos²θ = 1<br>tan θ = sin θ / cos θ</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find sin 150°.</div><div class="ex-steps">150° is in Q2; reference angle = 30°. Sin is positive in Q2.<br>sin 150° = sin 30°</div><div class="ex-answer">= 1/2</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">If sin θ = 3/5, find cos θ and tan θ.</div><div class="ex-steps">cos θ = 4/5 (Pythagoras: 5²=3²+4²)<br>tan θ = sin/cos = (3/5)/(4/5)</div><div class="ex-answer">cos θ = 4/5,  tan θ = 3/4</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Angle in Q2</div><div class="ex-q">Find sin 150°.</div><div class="ex-steps">150° is in Q2; reference angle = 180° − 150° = 30°. Sin is positive in Q2.<br>sin 150° = sin 30°</div><div class="ex-answer">= 1/2</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Finding Trig Ratios from One</div><div class="ex-q">If sin θ = 3/5, find cos θ and tan θ (θ is acute).</div><div class="ex-steps">Hypotenuse = 5, opposite = 3 → adjacent = √(25−9) = 4 (Pythagoras)<br>cos θ = 4/5 &nbsp;&nbsp; tan θ = sin/cos = (3/5)/(4/5)</div><div class="ex-answer">cos θ = 4/5,  tan θ = 3/4</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Using CAST to Evaluate</div><div class="ex-q">Find cos 240°.</div><div class="ex-steps">240° is in Q3 (between 180° and 270°). In Q3, only tan is positive.<br>Reference angle = 240° − 180° = 60°<br>cos 240° = −cos 60° = −1/2</div><div class="ex-answer">= −1/2</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Right Triangle Problem</div><div class="ex-q">A right-angled triangle has hypotenuse 13cm and one leg 5cm. Find all trig ratios for the smallest angle.</div><div class="ex-steps">Other leg = √(169−25) = √144 = 12cm<br>Smallest angle θ is opposite the shortest leg (5cm):<br>sin θ = 5/13, cos θ = 12/13, tan θ = 5/12</div><div class="ex-answer">sin θ = 5/13, cos θ = 12/13, tan θ = 5/12</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Trig Identity</div><div class="ex-q">Simplify: sin²θ/(1 − cos²θ).</div><div class="ex-steps">Using identity: sin²θ + cos²θ = 1 → sin²θ = 1 − cos²θ<br>So: sin²θ / sin²θ</div><div class="ex-answer">= 1</div></div>
+      <div class="example-box"><div class="ex-label">Example 6 — Solving a Trig Equation</div><div class="ex-q">Solve: 2sin θ = 1 for 0° ≤ θ ≤ 360°.</div><div class="ex-steps">sin θ = 1/2 → reference angle = 30°<br>Sin is positive in Q1 and Q2.<br>θ = 30° or θ = 180° − 30° = 150°</div><div class="ex-answer">θ = 30° or θ = 150°</div></div>`,
     questions: [
       { q:'cos 60° equals:', opts:['1/2','√3/2','1/√2','√3'], ans:0 },
       { q:'sin²30° + cos²30° =', opts:['1','0','1/2','3/4'], ans:0 },
       { q:'tan 45° =', opts:['1','√3','1/2','0'], ans:0 },
       { q:'In which quadrant is cos negative and sin positive?', opts:['Q2','Q1','Q3','Q4'], ans:0 },
+      { q:'If cos θ = 5/13, find sin θ (acute angle):', opts:['12/13','13/5','5/12','8/13'], ans:0 },
+      { q:'The value of sin 270° is:', opts:['−1','0','1','−½'], ans:0 },
+      { q:'Solve: tan θ = 1 for 0° ≤ θ < 360°:', opts:['45° and 225°','45° and 135°','45° only','225° only'], ans:0 },
+      { q:'Which of the following is equivalent to cos(180° − θ)?', opts:['−cos θ','cos θ','sin θ','−sin θ'], ans:0 },
     ]
   },
 
@@ -1109,13 +1194,18 @@ const TOPICS = {
       <div class="formula-block">tan(elevation) = height / horizontal distance<br>sin(elevation) = height / slant distance</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">A tower is 50m tall. A point on the ground is 50m from the base. Find the angle of elevation.</div><div class="ex-steps">tan θ = 50/50 = 1 → θ = arctan(1)</div><div class="ex-answer">θ = 45°</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">From the top of a 30m building, the angle of depression to a car is 60°. How far is the car?</div><div class="ex-steps">tan 60° = 30/d → d = 30/tan60° = 30/√3 = 10√3</div><div class="ex-answer">≈ 17.3 m</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Angle of Elevation</div><div class="ex-q">A tower is 50m tall. A point on the ground is 50m from the base. Find the angle of elevation.</div><div class="ex-steps">tan θ = opposite/adjacent = 50/50 = 1<br>θ = arctan(1)</div><div class="ex-answer">θ = 45°</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Angle of Depression</div><div class="ex-q">From the top of a 30m building, the angle of depression to a car is 60°. How far is the car from the base?</div><div class="ex-steps">tan 60° = 30/d → d = 30/tan 60° = 30/√3 = 30√3/3 = 10√3</div><div class="ex-answer">≈ 17.3 m</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Finding Height</div><div class="ex-q">From a point 80m away from the base of a vertical tower, the angle of elevation of the top is 30°. Find the height.</div><div class="ex-steps">tan 30° = h/80<br>h = 80 × tan 30° = 80 × (1/√3) = 80/√3 = 80√3/3</div><div class="ex-answer">≈ 46.2 m</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Observer on Higher Ground</div><div class="ex-q">A man at the top of a cliff 100m high sees a boat at sea at an angle of depression of 45°. Find the horizontal distance from the cliff base to the boat.</div><div class="ex-steps">tan 45° = 100/d → 1 = 100/d → d = 100m</div><div class="ex-answer">Distance = 100 m</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Two Angles from the Same Point</div><div class="ex-q">From a point P on the ground, the angles of elevation of two towers A and B are 30° and 60° respectively. Tower A is 20m tall. Both towers are on the same horizontal level as P and on the same straight line. Find the height of tower B.</div><div class="ex-steps">Distance to A: tan 30° = 20/d₁ → d₁ = 20/tan30° = 20√3<br>Distance to B (same point P): tan 60° = h/d₁ = h/(20√3)<br>h = 20√3 × tan 60° = 20√3 × √3 = 20×3</div><div class="ex-answer">Height of tower B = 60 m</div></div>`,
     questions: [
       { q:'From 100m away, the angle of elevation to a tree top is 30°. Height of tree:', opts:['100/√3 m','100√3 m','50 m','200 m'], ans:0 },
       { q:'Angle of elevation and angle of depression between same two points are:', opts:['Equal','Supplementary','Complementary','Different'], ans:0 },
       { q:'If a ladder of length 10m makes 60° with the ground, its height on the wall:', opts:['5√3 m','5 m','10 m','√3 m'], ans:0 },
       { q:'tan(30°) =', opts:['1/√3','√3','1','1/2'], ans:0 },
+      { q:'From the top of a 40m tower, the angle of depression of a car is 45°. Distance of car from base:', opts:['40 m','20 m','40√3 m','80 m'], ans:0 },
+      { q:'A pole casts a shadow of 8m when the sun\'s angle of elevation is 45°. The height of the pole is:', opts:['8 m','4 m','8√3 m','16 m'], ans:0 },
     ]
   },
 
@@ -1128,13 +1218,18 @@ const TOPICS = {
       <div class="formula-block">If M is midpoint of AB:<br>OM = ½(OA + OB)</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">If a = (3,4), find |a| and the unit vector.</div><div class="ex-steps">|a| = √(9+16) = 5<br>â = (3/5, 4/5)</div><div class="ex-answer">|a| = 5,  â = (0.6, 0.8)</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Add vectors (2,−1) and (−3,4).</div><div class="ex-steps">(2+(−3), −1+4)</div><div class="ex-answer">= (−1, 3)</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Magnitude and Unit Vector</div><div class="ex-q">If a = (3,4), find |a| and the unit vector â.</div><div class="ex-steps">|a| = √(3²+4²) = √(9+16) = √25 = 5<br>â = a / |a| = (3/5, 4/5)</div><div class="ex-answer">|a| = 5,  â = (0.6, 0.8)</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Vector Addition</div><div class="ex-q">Add vectors (2,−1) and (−3,4).</div><div class="ex-steps">(2+(−3), −1+4) = (−1, 3)</div><div class="ex-answer">= (−1, 3)</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Position Vectors and Midpoint</div><div class="ex-q">A has position vector (2, 3) and B has position vector (8, 7). Find the position vector of the midpoint M of AB.</div><div class="ex-steps">OM = ½(OA + OB) = ½((2,3) + (8,7)) = ½(10, 10)</div><div class="ex-answer">M = (5, 5)</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Scalar Multiplication</div><div class="ex-q">If b = (−2, 5), find 3b and |3b|.</div><div class="ex-steps">3b = 3(−2, 5) = (−6, 15)<br>|3b| = √(36 + 225) = √261 = 3√29</div><div class="ex-answer">3b = (−6, 15); |3b| = 3√29</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Column Vector Subtraction</div><div class="ex-q">If p = 5i + 2j and q = 3i − 4j, find p − q.</div><div class="ex-steps">p − q = (5−3)i + (2−(−4))j = 2i + 6j</div><div class="ex-answer">= 2i + 6j</div></div>`,
     questions: [
       { q:'Magnitude of vector (5,12) is:', opts:['13','17','169','7'], ans:0 },
       { q:'Sum of (3,−2) and (−1,5) is:', opts:['(2,3)','(4,3)','(2,7)','(4,7)'], ans:0 },
       { q:'Unit vector of (0,4) is:', opts:['(0,1)','(0,4)','(1,0)','(0,2)'], ans:0 },
       { q:'If a = 2i − 3j and b = i + j, find a − b.', opts:['i − 4j','3i − 2j','i − 2j','3i − 4j'], ans:0 },
+      { q:'The position vector of the midpoint of A(4,6) and B(2,−2) is:', opts:['(3,2)','(2,4)','(6,4)','(1,−4)'], ans:0 },
+      { q:'If |v| = 10 and v makes 60° with the x-axis, the y-component is:', opts:['5√3','5','10√3','10'], ans:0 },
     ]
   },
 
@@ -1152,12 +1247,18 @@ const TOPICS = {
       <div class="formula-block">Pie chart angle = (f / Σf) × 360°<br>Frequency density = frequency / class width</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Pie Chart</div><div class="ex-q">In a class of 40, 10 students play football. What angle represents football in a pie chart?</div><div class="ex-steps">(10/40) × 360°</div><div class="ex-answer">= 90°</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Pie Chart Angle</div><div class="ex-q">In a class of 40, 10 students play football. What angle represents football in a pie chart?</div><div class="ex-steps">(10/40) × 360° = ¼ × 360°</div><div class="ex-answer">= 90°</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Frequency Density</div><div class="ex-q">A class interval 20–30 has a frequency of 15. Find the frequency density.</div><div class="ex-steps">Frequency density = frequency / class width = 15 / (30−20) = 15/10</div><div class="ex-answer">= 1.5</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Reading a Bar Chart</div><div class="ex-q">A bar chart shows: Maths = 30, English = 25, Science = 20, French = 15. What percentage study Maths?</div><div class="ex-steps">Total = 30+25+20+15 = 90<br>% for Maths = (30/90) × 100</div><div class="ex-answer">≈ 33.3%</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Cumulative Frequency</div><div class="ex-q">Frequencies for scores 1–10, 11–20, 21–30 are 5, 12, 8 respectively. Write the cumulative frequencies.</div><div class="ex-steps">CF for 1–10: 5<br>CF for 11–20: 5+12 = 17<br>CF for 21–30: 17+8 = 25</div><div class="ex-answer">Cumulative frequencies: 5, 17, 25</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Constructing a Pie Chart</div><div class="ex-q">80 students prefer: Jollof Rice = 40, Fried Rice = 20, Pounded Yam = 20. Find the angle for each.</div><div class="ex-steps">Jollof Rice: (40/80)×360° = 180°<br>Fried Rice: (20/80)×360° = 90°<br>Pounded Yam: (20/80)×360° = 90°<br>Total = 360° ✓</div><div class="ex-answer">Jollof=180°, Fried Rice=90°, Pounded Yam=90°</div></div>`,
     questions: [
       { q:'In a pie chart, a sector for 20 out of 80 students subtends an angle of:', opts:['90°','60°','72°','45°'], ans:0 },
       { q:'In a histogram, the area of each bar represents:', opts:['Frequency','Class width','Frequency density','Class boundary'], ans:0 },
       { q:'Which chart is best for showing parts of a whole?', opts:['Pie chart','Bar chart','Histogram','Scatter plot'], ans:0 },
       { q:'Cumulative frequency is the:', opts:['Running total of frequencies','Middle frequency','Highest frequency','Frequency density'], ans:0 },
+      { q:'A bar chart differs from a histogram in that:', opts:['Bars in a bar chart have gaps; histogram bars touch','They look the same','Histogram uses curved lines','Bar charts show continuous data'], ans:0 },
+      { q:'Frequency density = frequency ÷ ___', opts:['Class width','Total frequency','Number of classes','Class boundary'], ans:0 },
     ]
   },
 
@@ -1168,13 +1269,19 @@ const TOPICS = {
       <div class="info-box box-teal"><strong>Ogive</strong>Cumulative frequency curve. Used to estimate median, quartiles and percentiles.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Mean</div><div class="ex-q">Find the mean of 5, 7, 9, 11, 13.</div><div class="ex-steps">Σx = 45, n = 5<br>Mean = 45/5</div><div class="ex-answer">= 9</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Median</div><div class="ex-q">Find the median of 3, 7, 2, 9, 5, 1, 8.</div><div class="ex-steps">Arranged: 1,2,3,5,7,8,9. Middle (4th) value</div><div class="ex-answer">= 5</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Mean of Raw Data</div><div class="ex-q">Find the mean of 5, 7, 9, 11, 13.</div><div class="ex-steps">Σx = 5+7+9+11+13 = 45, n = 5<br>Mean = 45/5</div><div class="ex-answer">= 9</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Median (Odd Count)</div><div class="ex-q">Find the median of 3, 7, 2, 9, 5, 1, 8.</div><div class="ex-steps">Arranged in order: 1, 2, 3, 5, 7, 8, 9. Middle (4th) value is 5.</div><div class="ex-answer">= 5</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Median (Even Count)</div><div class="ex-q">Find the median of 4, 6, 8, 10, 12, 14.</div><div class="ex-steps">6 values; middle two are 3rd and 4th: 8 and 10<br>Median = (8+10)/2 = 18/2</div><div class="ex-answer">= 9</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Mean from Frequency Table</div><div class="ex-q">Scores: 1 (freq 3), 2 (freq 5), 3 (freq 2). Find the mean.</div><div class="ex-steps">Σfx = 1×3 + 2×5 + 3×2 = 3+10+6 = 19<br>Σf = 3+5+2 = 10<br>Mean = 19/10</div><div class="ex-answer">= 1.9</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Mode and its Limitations</div><div class="ex-q">Find the mode of 3, 5, 3, 7, 5, 3, 9, 5, 5.</div><div class="ex-steps">3 appears 3 times, 5 appears 4 times, 7 once, 9 once.<br>Mode = value with highest frequency.</div><div class="ex-answer">Mode = 5</div></div>
+      <div class="example-box"><div class="ex-label">Example 6 — Quartiles</div><div class="ex-q">Find Q1 and Q3 for: 2, 4, 6, 8, 10, 12, 14, 16.</div><div class="ex-steps">n = 8. Q1 = value at position (n+1)/4 = 9/4 ≈ 2.25 → between 2nd and 3rd values = (4+6)/2 = 5<br>Q3 = value at position 3(n+1)/4 = 6.75 → between 6th and 7th values = (12+14)/2 = 13</div><div class="ex-answer">Q1 = 5, Q3 = 13, IQR = 8</div></div>`,
     questions: [
       { q:'Mean of 4, 6, 8, 10, 12 is:', opts:['8','6','10','7'], ans:0 },
       { q:'Median of 2, 5, 7, 9, 11, 14 is:', opts:['8','7','9','6'], ans:0 },
       { q:'Mode of 3, 5, 3, 7, 5, 3, 9 is:', opts:['3','5','7','9'], ans:0 },
       { q:'IQR = Q3 − Q1 is a measure of:', opts:['Spread','Central tendency','Skewness','Symmetry'], ans:0 },
+      { q:'If mean of 5 values is 8, what is their sum?', opts:['40','45','35','8'], ans:0 },
+      { q:'For an even number of data values, the median is:', opts:['The mean of the two middle values','The lower middle value','The upper middle value','Any middle value'], ans:0 },
     ]
   },
 
@@ -1185,12 +1292,18 @@ const TOPICS = {
       <div class="info-box box-orange"><strong>Interpretation</strong>Low standard deviation → data clustered near the mean. High → data spread out.</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">Find the variance of 2, 4, 4, 4, 5, 5, 7, 9.</div><div class="ex-steps">x̄ = 40/8 = 5<br>Σ(x−x̄)² = 9+1+1+1+0+0+4+16 = 32<br>Variance = 32/8</div><div class="ex-answer">= 4, SD = 2</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Variance and Standard Deviation</div><div class="ex-q">Find the variance and standard deviation of 2, 4, 4, 4, 5, 5, 7, 9.</div><div class="ex-steps">x̄ = 40/8 = 5<br>Deviations: −3, −1, −1, −1, 0, 0, 2, 4<br>Squared deviations: 9, 1, 1, 1, 0, 0, 4, 16<br>Σ(x−x̄)² = 32<br>Variance = 32/8 = 4<br>SD = √4</div><div class="ex-answer">Variance = 4, SD = 2</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Range</div><div class="ex-q">Find the range of the dataset: 14, 7, 3, 21, 9, 5.</div><div class="ex-steps">Max = 21, Min = 3<br>Range = 21 − 3</div><div class="ex-answer">= 18</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Mean Deviation</div><div class="ex-q">Find the mean deviation of 3, 7, 7, 9, 14.</div><div class="ex-steps">x̄ = (3+7+7+9+14)/5 = 40/5 = 8<br>|x − x̄|: |3−8|=5, |7−8|=1, |7−8|=1, |9−8|=1, |14−8|=6<br>Mean deviation = (5+1+1+1+6)/5 = 14/5</div><div class="ex-answer">= 2.8</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Variance Shortcut Formula</div><div class="ex-q">Use the shortcut formula σ² = (Σx²/n) − x̄² to find the variance of 1, 3, 5, 7, 9.</div><div class="ex-steps">x̄ = 25/5 = 5<br>Σx² = 1+9+25+49+81 = 165<br>σ² = 165/5 − 25 = 33 − 25</div><div class="ex-answer">= 8; SD = √8 = 2√2</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Interpreting Spread</div><div class="ex-q">Two classes take a test. Class A has mean 60 and SD 2. Class B has mean 60 and SD 15. What can you conclude?</div><div class="ex-steps">Both classes have the same average (mean = 60).<br>Class A has a much lower SD (2 vs 15), meaning scores in A are clustered closely around 60.<br>Class B has a higher SD, meaning scores vary widely — some very high, some very low.</div><div class="ex-answer">Class A is more consistent; Class B is more spread out despite the same mean.</div></div>`,
     questions: [
       { q:'Range of 4, 7, 2, 9, 14, 3 is:', opts:['12','10','11','14'], ans:0 },
       { q:'Standard deviation is the square root of:', opts:['Variance','Mean deviation','Range','IQR'], ans:0 },
       { q:'If all data values are equal, the standard deviation is:', opts:['0','1','Undefined','Equal to mean'], ans:0 },
       { q:'Which measure is most affected by extreme values?', opts:['Mean','Mode','Median','IQR'], ans:0 },
+      { q:'The variance of 3, 3, 3, 3 is:', opts:['0','3','1','9'], ans:0 },
+      { q:'Mean deviation uses which type of values for deviations?', opts:['Absolute values','Squared values','Raw differences','Reciprocals'], ans:0 },
     ]
   },
 
@@ -1202,13 +1315,20 @@ const TOPICS = {
       <div class="formula-block">Circular arrangements: (n−1)!<br>With identical objects: n! / (p! q! …)</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1 — Combination</div><div class="ex-q">In how many ways can 3 students be chosen from 7?</div><div class="ex-steps">7C3 = 7!/(3!×4!) = (7×6×5)/(3×2×1)</div><div class="ex-answer">= 35 ways</div></div>
-      <div class="example-box"><div class="ex-label">Example 2 — Permutation</div><div class="ex-q">How many 3-letter arrangements from 5 different letters?</div><div class="ex-steps">5P3 = 5!/(5−3)! = 5!/2! = 120/2</div><div class="ex-answer">= 60 arrangements</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Combination</div><div class="ex-q">In how many ways can 3 students be chosen from 7?</div><div class="ex-steps">7C3 = 7!/(3!×4!) = (7×6×5)/(3×2×1) = 210/6</div><div class="ex-answer">= 35 ways</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Permutation</div><div class="ex-q">How many 3-letter arrangements can be formed from 5 different letters?</div><div class="ex-steps">5P3 = 5!/(5−3)! = 5!/2! = 120/2</div><div class="ex-answer">= 60 arrangements</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Circular Arrangement</div><div class="ex-q">In how many ways can 5 people be seated around a circular table?</div><div class="ex-steps">Circular arrangements = (n−1)! = (5−1)! = 4!</div><div class="ex-answer">= 24 ways</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — With Restrictions</div><div class="ex-q">A committee of 4 is chosen from 6 men and 4 women. How many ways can this be done if exactly 2 women must be included?</div><div class="ex-steps">Choose 2 women from 4: 4C2 = 6<br>Choose 2 men from 6: 6C2 = 15<br>Total = 6 × 15</div><div class="ex-answer">= 90 ways</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Arrangements with Repeated Letters</div><div class="ex-q">How many distinct arrangements are there of the letters in the word "SUCCESS"?</div><div class="ex-steps">S appears 3 times, C appears 2 times, U and E once each. Total letters = 7.<br>Arrangements = 7! / (3! × 2! × 1! × 1!) = 5040 / (6×2) = 5040/12</div><div class="ex-answer">= 420 arrangements</div></div>`,
     questions: [
       { q:'5P2 =', opts:['20','10','15','60'], ans:0 },
       { q:'6C2 =', opts:['15','30','12','18'], ans:0 },
       { q:'Number of arrangements of 4 people in a circle:', opts:['6','24','12','4'], ans:0 },
       { q:'In how many ways can a committee of 2 be chosen from 8 people?', opts:['28','56','16','64'], ans:0 },
+      { q:'How many ways can 4 books be arranged on a shelf from 7 different books?', opts:['840','210','35','5040'], ans:0 },
+      { q:'A team of 3 is chosen from 5 boys and 4 girls with at least 1 girl. How many ways?', opts:['70','50','46','60'], ans:0 },
+      { q:'How many different 4-digit numbers can be formed from digits 1,2,3,4 without repetition?', opts:['24','12','48','16'], ans:0 },
+      { q:'nCr = nC(n−r). What is 10C7?', opts:['120','210','90','720'], ans:0 },
     ]
   },
 
@@ -1222,13 +1342,21 @@ const TOPICS = {
       <div class="formula-block">P(A∩B) = P(A) × P(B|A)<br>If independent: P(A∩B) = P(A) × P(B)</div>`,
     examples: `
       <h2>💡 Worked Examples</h2>
-      <div class="example-box"><div class="ex-label">Example 1</div><div class="ex-q">A bag has 3 red and 5 blue balls. Find P(red).</div><div class="ex-steps">P(red) = 3/(3+5)</div><div class="ex-answer">= 3/8</div></div>
-      <div class="example-box"><div class="ex-label">Example 2</div><div class="ex-q">Two fair dice are thrown. Find P(sum = 7).</div><div class="ex-steps">Favourable: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = 6 outcomes. Total = 36.</div><div class="ex-answer">= 6/36 = 1/6</div></div>`,
+      <div class="example-box"><div class="ex-label">Example 1 — Basic Probability</div><div class="ex-q">A bag has 3 red and 5 blue balls. Find P(red).</div><div class="ex-steps">P(red) = 3/(3+5) = 3/8</div><div class="ex-answer">= 3/8</div></div>
+      <div class="example-box"><div class="ex-label">Example 2 — Two Fair Dice</div><div class="ex-q">Two fair dice are thrown. Find P(sum = 7).</div><div class="ex-steps">Favourable outcomes: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = 6 outcomes.<br>Total outcomes = 36.</div><div class="ex-answer">= 6/36 = 1/6</div></div>
+      <div class="example-box"><div class="ex-label">Example 3 — Mutually Exclusive Events</div><div class="ex-q">A card is drawn from a standard deck. P(Ace) = 4/52, P(King) = 4/52. Find P(Ace or King).</div><div class="ex-steps">Ace and King cannot occur simultaneously (mutually exclusive).<br>P(A or K) = P(A) + P(K) = 4/52 + 4/52 = 8/52</div><div class="ex-answer">= 2/13</div></div>
+      <div class="example-box"><div class="ex-label">Example 4 — Independent Events</div><div class="ex-q">A fair coin is tossed and a die is rolled. Find P(Head and 6).</div><div class="ex-steps">P(Head) = 1/2, P(6) = 1/6. Events are independent.<br>P(Head and 6) = (1/2) × (1/6)</div><div class="ex-answer">= 1/12</div></div>
+      <div class="example-box"><div class="ex-label">Example 5 — Without Replacement (Conditional)</div><div class="ex-q">A bag has 4 red and 6 blue balls. Two balls are drawn without replacement. Find P(both red).</div><div class="ex-steps">P(1st red) = 4/10<br>P(2nd red | 1st red) = 3/9<br>P(both red) = (4/10) × (3/9) = 12/90</div><div class="ex-answer">= 2/15</div></div>
+      <div class="example-box"><div class="ex-label">Example 6 — Tree Diagram / At Least One</div><div class="ex-q">A biased coin has P(Head) = 2/3. It is tossed twice. Find P(at least one Head).</div><div class="ex-steps">P(no Head) = P(Tail) × P(Tail) = (1/3)(1/3) = 1/9<br>P(at least one Head) = 1 − P(no Head) = 1 − 1/9</div><div class="ex-answer">= 8/9</div></div>`,
     questions: [
       { q:'P(rolling a 4 on a fair die) =', opts:['1/6','1/4','1/3','4/6'], ans:0 },
       { q:'If P(A) = 0.4 and P(B) = 0.3, and A,B are independent, P(A∩B) =', opts:['0.12','0.7','0.1','0.04'], ans:0 },
       { q:'P(E) = 1 means the event is:', opts:['Certain','Impossible','Likely','Unlikely'], ans:0 },
       { q:"P(A') when P(A) = 0.65 is:", opts:['0.35','0.65','1.65','0'], ans:0 },
+      { q:'A bag has 5 red and 3 blue balls. P(blue) =', opts:['3/8','5/8','3/5','1/3'], ans:0 },
+      { q:'Two events A and B are mutually exclusive if:', opts:['P(A∩B) = 0','P(A∪B) = 0','P(A) = P(B)','They are independent'], ans:0 },
+      { q:'A fair die is rolled twice. P(6 on both) =', opts:['1/36','1/6','1/12','2/6'], ans:0 },
+      { q:'A bag has 3 red, 4 blue, 5 green balls. P(not red) =', opts:['9/12 = 3/4','3/12','5/12','4/12'], ans:0 },
     ]
   },
 
@@ -1316,6 +1444,18 @@ const TOPICS = {
         <div class="ex-q">A rectangular field is to be fenced on three sides (one side is a wall). If the total fencing available is 60 m, find the dimensions that maximise the area.</div>
         <div class="ex-steps">Let width = x. Then: x + x + length = 60 → length = 60 − 2x<br>Area A = x(60 − 2x) = 60x − 2x<sup>2</sup><br>dA/dx = 60 − 4x = 0 → x = 15<br>d<sup>2</sup>A/dx<sup>2</sup> = −4 &lt; 0 → maximum<br>Length = 60 − 2(15) = 30 m</div>
         <div class="ex-answer">Width = 15 m, Length = 30 m. Maximum area = 450 m²</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 4 — Increasing / Decreasing Function</div>
+        <div class="ex-q">Find the range of values of x for which f(x) = x<sup>3</sup> − 3x<sup>2</sup> − 9x + 5 is decreasing.</div>
+        <div class="ex-steps">f′(x) = 3x<sup>2</sup> − 6x − 9 = 3(x<sup>2</sup> − 2x − 3) = 3(x−3)(x+1)<br>f(x) is decreasing when f′(x) < 0<br>3(x−3)(x+1) < 0 → roots at x = −1 and x = 3<br>Sign test: negative between the roots.</div>
+        <div class="ex-answer">f is decreasing for −1 < x < 3</div>
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Example 5 — Gradient of Normal</div>
+        <div class="ex-q">Find the equation of the normal to y = x<sup>2</sup> − 3x + 1 at the point where x = 2.</div>
+        <div class="ex-steps">dy/dx = 2x − 3; at x=2: gradient of tangent m = 2(2)−3 = 1<br>Gradient of normal = −1/m = −1<br>At x=2: y = 4−6+1 = −1 → point (2, −1)<br>Normal: y − (−1) = −1(x − 2) → y + 1 = −x + 2</div>
+        <div class="ex-answer">Normal: y = −x + 1</div>
       </div>`,
     questions: [
       { q:'Stationary points occur when dy/dx =', opts:['0','1','-1','undefined'], ans:0 },
