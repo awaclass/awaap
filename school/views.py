@@ -677,7 +677,7 @@ def start_live_room(request, room_name):
 @login_required
 def cbt_subjects(request):
     """Render the CBT subject picker page."""
-    return render(request, 'cbt_subjects.html')
+    return render(request, 'cbt_exams.html')
 
 
 @login_required
