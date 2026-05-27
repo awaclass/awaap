@@ -30,7 +30,7 @@ urlpatterns = [
     path('?/<str:username>', views.update_profile, name='update_profile'),
 
     # ── CBT Exam ──────────────────────────────────────────────────
-    path('cbt/',                    views.cbt_subjects,       name='cbt_subjects'),    # subject picker
+    path('cbt/',                    views.cbt_subjects,       name='cbt_exams'),       # subject picker
     path('cbt/mathematics/',        views.cbt_mathematics,           name='cbt_mathematics'),
     path('cbt/mathematics/topics/', views.cbt_mathematics_topics, name='cbt_mathematics_topics'),  # ← NEW topic selector
     path('cbt/physics/',            views.cbt_physics,        name='cbt_physics'),     # ← OLD physics CBT (kept)
