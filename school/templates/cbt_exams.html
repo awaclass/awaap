@@ -1092,6 +1092,62 @@
     .calc-panel { right: 8px; top: 110px; width: 260px; }
     .calc-fab { width: 32px; height: 32px; font-size: 16px; }
   }
+
+  /* ===== KEYBOARD SHORTCUTS HINT BAR ===== */
+  .kbd-hints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid var(--gray2);
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .kbd-hint-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--gray3);
+    font-weight: 500;
+  }
+  .kbd-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    border-radius: 5px;
+    border: 1.5px solid var(--gray2);
+    background: #f8f9fa;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark);
+    font-family: inherit;
+    box-shadow: 0 1px 0 var(--gray2);
+    transition: all 0.1s;
+    line-height: 1;
+  }
+  .kbd-key.pressed {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+  /* Option buttons keyboard flash */
+  .opt-btn.kb-flash {
+    border-color: var(--orange) !important;
+    background: var(--orange-mid) !important;
+    transform: scale(0.98);
+  }
+  @media (max-width: 500px) {
+    .kbd-hints { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -1277,6 +1333,17 @@
     <div class="q-nav">
       <button class="q-nav-btn" id="prevBtn" onclick="navQ(-1)" disabled>← Prev</button>
       <button class="q-nav-btn primary" id="nextBtn" onclick="navQ(1)">Next →</button>
+    </div>
+
+    <!-- Keyboard shortcut hints -->
+    <div class="kbd-hints" id="kbdHints">
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-A">A</span> Option A</div>
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-B">B</span> Option B</div>
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-C">C</span> Option C</div>
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-D">D</span> Option D</div>
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-N">N</span> Next</div>
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-P">P</span> Prev</div>
+      <div class="kbd-hint-item"><span class="kbd-key" id="kbd-S">S</span> Submit</div>
     </div>
 
   </div><!-- /exam-page -->
@@ -2192,6 +2259,57 @@ window.renderQuestion = function() {
   _origRenderQuestion();
   updateCalcVisibility();
 };
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
+  // Only active during exam (not review, not selection/results screens)
+  if (isReviewMode) return;
+  if (!document.getElementById('examScreen').classList.contains('active')) return;
+
+  // Don't fire if user is typing in an input/textarea (e.g. calculator, search)
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+  const key = e.key.toUpperCase();
+  const OPT_KEYS = ['A', 'B', 'C', 'D'];
+
+  if (OPT_KEYS.includes(key)) {
+    e.preventDefault();
+    const idx = OPT_KEYS.indexOf(key);
+    const btns = document.querySelectorAll('#optsGrid .opt-btn');
+    if (idx < btns.length && !btns[idx].disabled) {
+      // Flash the key badge
+      flashKbdKey(key);
+      // Flash the option button
+      btns[idx].classList.add('kb-flash');
+      setTimeout(() => btns[idx].classList.remove('kb-flash'), 180);
+      // Select the answer
+      const item = flatQuestions[currentGlobal];
+      selectAnswer(item.subjectId, item.qi, idx);
+    }
+  } else if (key === 'N') {
+    e.preventDefault();
+    flashKbdKey('N');
+    const nextBtn = document.getElementById('nextBtn');
+    if (!nextBtn.disabled) nextBtn.click();
+  } else if (key === 'P') {
+    e.preventDefault();
+    flashKbdKey('P');
+    const prevBtn = document.getElementById('prevBtn');
+    if (!prevBtn.disabled) prevBtn.click();
+  } else if (key === 'S') {
+    e.preventDefault();
+    flashKbdKey('S');
+    confirmSubmit();
+  }
+});
+
+function flashKbdKey(key) {
+  const el = document.getElementById('kbd-' + key);
+  if (!el) return;
+  el.classList.add('pressed');
+  setTimeout(() => el.classList.remove('pressed'), 200);
+}
 
 // ===== INIT =====
 initSelectionUI();
